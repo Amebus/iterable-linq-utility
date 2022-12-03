@@ -6,7 +6,7 @@ import { map } from "./map";
 import { materialize } from "./materialize";
 import { max } from "./max";
 import { memoize } from "./memoize";
-import { min } from "./min";
+// import { min } from "./min";
 
 // import { range } from "./range";
 

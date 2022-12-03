@@ -1,13 +1,14 @@
-import { combineMappers } from "./utils";
+import { combineMappers } from "./combiners";
 import { getDoneIteratorResult, getIteratorResult } from "./iteratorResults";
+import { Mapper } from "./types";
 
-export function map<T, R>(iterable: Iterable<T>, mapper: (value: T, index: number) => R): Iterable<R> {
+export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
   return new MapIterable(iterable, mapper);
 }
 
 class MapIterable<T,R> implements Iterable<R> {
 
-	constructor(iterable: Iterable<T>, mapper: (value: T, index: number) => R) {
+	constructor(iterable: Iterable<T>, mapper: Mapper<T,R>) {
 		let newMapper = mapper;
 		let source = iterable;
 		if (source instanceof MapIterable) { // TODO check if it's a real performance improvement
@@ -23,20 +24,20 @@ class MapIterable<T,R> implements Iterable<R> {
 		return new MapIterableIterator(this.source, this.mapper);
 	}
 
-	private mapper: (value: T, index: number) => R;
+	private mapper: Mapper<T, R>;
 	private source: Iterable<T>;
 }
 
 class MapIterableIterator<T, R> implements Iterator<R> {
 	
-	constructor(source: Iterable<T>, mapper: (value: T, index: number) => R) {
+	constructor(source: Iterable<T>, mapper: Mapper<T, R>) {
 		this.sourceIterator = source[Symbol.iterator]();
 		this.mapper = mapper;
 	}
 
 	private index = 0;
 	private sourceIterator: Iterator<T>;
-	private mapper: (value: T, index: number) => R;
+	private mapper: Mapper<T, R>;
 
 
 	next(): IteratorResult<R, any> {
