@@ -1,8 +1,7 @@
 {
   "name": "iterable-linq-utility",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An Iterable mutation utility inspired by .net Linq and Javascript Array interface",
-
   "type": "module",
   "main": "./dist/my-lib.umd.cjs",
   "module": "./dist/my-lib.js",
@@ -35,6 +34,7 @@
     "url": "https://github.com/Amebus/iterable-linq-utility/issues"
   },
   "homepage": "https://github.com/Amebus/iterable-linq-utility#readme",
+  "keywords": ["linq", "itearable", "utility"],
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "18.11.10",
