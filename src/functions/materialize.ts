@@ -1,4 +1,4 @@
-import * as LinkedList from "./linkedList";
+import * as LinkedList from "@/genericCollections";
 
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
 	if (iterable instanceof MaterializeIterable) {

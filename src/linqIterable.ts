@@ -9,11 +9,11 @@ export class LinqIterable<T> implements Iterable<T> {
 
 	private iterable: Iterable<T>;
 
-	source(): Iterable<T> {
-		return this.iterable;
+	collectToArray(): T[] {
+		return [...this.source];
 	}
 
-	collectToArray(): T[] {
-		return [...this.source()];
+	get source(): Iterable<T> {
+		return this.iterable;
 	}
 }

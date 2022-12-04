@@ -1,6 +1,6 @@
-import { combineMappers } from "./combiners";
-import { getDoneIteratorResult, getIteratorResult } from "./iteratorResults";
-import { Mapper } from "./types";
+import { combineMappers } from "@/combiners";
+import { Mapper } from "@/types";
+import { getDoneIteratorResult, getIteratorResult } from "@/utils";
 
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
   return new MapIterable(iterable, mapper);

@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getIteratorResult } from "./iteratorResults";
+import { getDoneIteratorResult, getIteratorResult } from "@/utils";
 
 export function range(end: number): Iterable<number>;
 export function range(end: number, reverse?: boolean): Iterable<number>;

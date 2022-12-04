@@ -1,4 +1,4 @@
-import { isFunction } from "./utils";
+import { isFunction } from "@/utils";
 
 // TODO find a way to replace return type with IMaybe<T>
 export function max<T>(iterable: Iterable<T>, comparer?: (a: T, b: T, index: number) => boolean): T | null | undefined {

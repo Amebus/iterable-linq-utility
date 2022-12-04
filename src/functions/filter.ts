@@ -1,6 +1,6 @@
-import { combinePredicates } from "./combiners";
-import { getFlatIteratorResult } from "./iteratorResults";
-import { Predicate } from "./types";
+import { combinePredicates } from "@/combiners";
+import { getFlatIteratorResult } from "@/utils";
+import { Predicate } from "@/types";
 
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
   return new FilterIterable(iterable, predicate);

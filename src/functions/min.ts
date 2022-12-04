@@ -1,5 +1,5 @@
-import type { Comparer } from "./types";
-import { isFunction } from "./utils";
+import type { Comparer } from "@/types";
+import { isFunction } from "@/utils";
 
 // TODO find a way to replace return type with IMaybe<T>
 export function min<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null | undefined {
