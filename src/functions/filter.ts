@@ -1,12 +1,13 @@
-import { combinePredicates } from "./utils";
-import { getFlatIteratorResult } from "./iteratorResults";
+import { combinePredicates } from "@/combiners";
+import { getFlatIteratorResult } from "@/utils";
+import { Predicate } from "@/types";
 
-export function filter<T>(iterable: Iterable<T>, predicate: (value: T, index: number) => boolean): Iterable<T> {
+export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
   return new FilterIterable(iterable, predicate);
 }
 
 class FilterIterable<T> implements Iterable<T> {
-	constructor(iterable: Iterable<T>, predicate: (value: T, index: number) => boolean) {
+	constructor(iterable: Iterable<T>, predicate: Predicate<T>) {
 		let newPredicate = predicate;
 		let source = iterable;
 		if (source instanceof FilterIterable) { // TODO check if it's a real performance improvement
@@ -21,20 +22,20 @@ class FilterIterable<T> implements Iterable<T> {
 		return new FilterIterableIterator(this.source, this.predicate);
 	}
 
-	private predicate: (value: T, index: number) => boolean;
+	private predicate: Predicate<T>;
 	private source: Iterable<T>;
 }
 
 class FilterIterableIterator<T> implements Iterator<T> {
 
-	constructor(source: Iterable<T>, predicate: (value: T, index: number) => boolean) {
+	constructor(source: Iterable<T>, predicate: Predicate<T>) {
 		this.sourceIterator = source[Symbol.iterator]();
 		this.predicate = predicate;
 	}
 
 	private index = 0;
 	private sourceIterator: Iterator<T>;
-	private predicate: (value: T, index: number) => boolean;
+	private predicate: Predicate<T>;
 
 	next(): IteratorResult<T, any> {
 		// eslint-disable-next-line no-constant-condition

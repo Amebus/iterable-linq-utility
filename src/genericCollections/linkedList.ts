@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getIteratorResult } from "./iteratorResults";
+import { getDoneIteratorResult, getIteratorResult } from "@/utils";
 
 export function from<T>(iterable: Iterable<T>): LinkedList<T> {
 	const iterator: Iterator<T> = iterable[Symbol.iterator]();

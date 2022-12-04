@@ -1,5 +1,5 @@
-import { getFlatIteratorResult } from "./iteratorResults";
-import { LinkedList } from "./linkedList";
+import { LinkedList } from "@/genericCollections";
+import { getFlatIteratorResult } from "@/utils";
 
 export function memoize<T>(iterable: Iterable<T>): Iterable<T> {
   if (iterable instanceof MemoizeIterable) {

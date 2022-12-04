@@ -1,6 +1,6 @@
 {
   "name": "iterable-linq-utility",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "description": "An Iterable mutation utility inspired by .net Linq and Javascript Array interface",
   "type": "module",
   "main": "./dist/my-lib.umd.cjs",
@@ -16,7 +16,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && vite build",
+    "build": "tsc -p tsconfig.build.json && vite build",
     "dev": "vite",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-path .eslintignore",
     "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix --ignore-path .eslintignore",
@@ -49,6 +49,7 @@
     "typescript": "4.9.3",
     "vite": "3.2.4",
     "vite-plugin-dts": "1.7.1",
+    "vite-tsconfig-paths": "3.6.0",
     "vitest": "0.25.3"
   }
 }
