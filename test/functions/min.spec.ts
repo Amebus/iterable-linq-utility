@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 
-import * as LinqIterable from '../src';
+import * as LinqIterable from '../../src';
 
 import { 
 	min,

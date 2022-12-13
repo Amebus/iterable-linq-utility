@@ -6,6 +6,7 @@ export function range(start: number, end: number): Iterable<number>;
 export function range(start: number, end: number, step: number): Iterable<number>;
 export function range(start: number, end: number, reverse: boolean): Iterable<number>;
 export function range(start: number, end: number, step: number, reverse: boolean): Iterable<number>;
+export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number>;
 export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number> {
 	const choosenEnd = end == null || end === true || end === false ? start : end;
 	const choosenStart = end == null || end === true || end === false ? 0 : start;
