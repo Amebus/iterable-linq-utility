@@ -1,4 +1,4 @@
-import { LinqIterable, type ILinqIterable } from "./linqIterable";
+import { LinqIterableWrapper, type ILinqIterable } from "./linqIterable";
 
 import { 
   range
@@ -6,6 +6,6 @@ import {
 
 
 export function from<T>(iterable: Iterable<T>): ILinqIterable<T> {
-  return new LinqIterable(iterable);
+  return new LinqIterableWrapper(iterable);
 }
-export { ILinqIterable };
+export { ILinqIterable, LinqIterableWrapper };

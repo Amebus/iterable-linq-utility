@@ -4,7 +4,6 @@ import { isFunction } from "@/utils";
 // TODO find a way to replace return type with IMaybe<T>
 export function min<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null | undefined {
   const iterator: Iterator<T> = iterable[Symbol.iterator]();
-  let i = 0;
   let n = iterator.next();
   let min: T | null | undefined = n.value;
 
@@ -28,7 +27,7 @@ export function min<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null 
   }
 
   for (n = iterator.next(); n.done !== true; n = iterator.next()) {
-    const c = comp(min as T, n.value, i++);
+    const c = comp(min as T, n.value);
     min = c < 0 || c === 0 ? min : n.value;
   }
   return min == null ? null : min;

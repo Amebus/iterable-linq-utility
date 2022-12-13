@@ -1,15 +1,15 @@
 {
   "name": "iterable-linq-utility",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "description": "An Iterable mutation utility inspired by .net Linq and Javascript Array interface",
   "type": "module",
-  "main": "./dist/my-lib.umd.cjs",
-  "module": "./dist/my-lib.js",
+  "main": "./dist/interable-linq-utility.umd.cjs",
+  "module": "./dist/interable-linq-utility.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/my-lib.js",
-      "require": "./dist/my-lib.umd.cjs"
+      "import": "./dist/interable-linq-utility.js",
+      "require": "./dist/interable-linq-utility.umd.cjs"
     }
   },
   "files": [
@@ -20,7 +20,7 @@
     "dev": "vite",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-path .eslintignore",
     "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix --ignore-path .eslintignore",
-    "test": "vitest",
+    "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
   },

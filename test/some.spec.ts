@@ -4,7 +4,6 @@ import * as LinqIterable from '../src';
 import {
 	range,
 	some
-
 } from '@/functions';
 
 describe('some', () => {
