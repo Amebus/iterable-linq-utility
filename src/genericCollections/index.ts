@@ -1,1 +1,3 @@
-export * from './linkedList';
+import * as LinkedListCollection from './linkedList';
+
+export { LinkedListCollection };

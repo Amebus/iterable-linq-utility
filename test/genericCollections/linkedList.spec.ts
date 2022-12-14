@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { from, LinkedList, LinkedListIterator } from '@/genericCollections';
+import { LinkedListCollection } from '@/genericCollections';
+
+const { from, LinkedList, LinkedListIterator } = LinkedListCollection;
 
 describe('LinkedList', () => {
 

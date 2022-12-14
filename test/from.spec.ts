@@ -5,7 +5,7 @@ import * as LinqIterable from '../src';
 describe('from', () => {
 
 	test.each([
-		{ iterable: 'Lorem ipsum dolor sit amet'}
+		{ iterable: 'Lorem ipsum dolor sit amet' }
 	])('from($iterable)', ({ iterable }) => {
 		const r = LinqIterable.from(iterable);
 		expect(r).toBeInstanceOf(LinqIterable.LinqIterableWrapper);
@@ -14,7 +14,7 @@ describe('from', () => {
 	});
 
 	test.each([
-		{ iterable: [1,2,3,4,5,6,7,8,9]}
+		{ iterable: [1,2,3,4,5,6,7,8,9] }
 	])('from($iterable)', ({ iterable }) => {
 		const r = LinqIterable.from(iterable);
 		expect(r).toBeInstanceOf(LinqIterable.LinqIterableWrapper);

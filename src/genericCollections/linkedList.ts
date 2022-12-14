@@ -9,21 +9,6 @@ export function from<T>(iterable: Iterable<T>): LinkedList<T> {
 	return linkedList;
 }
 
-export class LinkedListIterator<T> implements Iterator<T> {
-  private current: IListNode<T> | null = null;
-
-  constructor(current: IListNode<T> | null = null) {
-    this.current = current;
-  }
-
-  next() {
-    const r = this.current;
-    if (r === null) return getDoneIteratorResult<T>();
-    this.current = r.nextNode;
-    return getIteratorResult(false, r.data);
-  }
-}
-
 export class LinkedList<T> implements Iterable<T> {
   private internalSize: number = 0;
   private head: IListNode<T> | null = null;
@@ -73,6 +58,22 @@ export class LinkedList<T> implements Iterable<T> {
 
   size(): number {
     return this.internalSize;
+  }
+}
+
+
+export class LinkedListIterator<T> implements Iterator<T> {
+  private current: IListNode<T> | null = null;
+
+  constructor(current: IListNode<T> | null = null) {
+    this.current = current;
+  }
+
+  next() {
+    const r = this.current;
+    if (r === null) return getDoneIteratorResult<T>();
+    this.current = r.nextNode;
+    return getIteratorResult(false, r.data);
   }
 }
 

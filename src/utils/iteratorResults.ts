@@ -9,8 +9,6 @@ export function getDoneIteratorResult<T>(): IteratorResult<T> {
   return { done: true, value: undefined };
 }
 
-export function getFlatIteratorResult<T>(
-  result: IteratorResult<T>
-): IteratorResult<T> {
+export function getFlatIteratorResult<T>(result: IteratorResult<T>): IteratorResult<T> {
   return result;
 }

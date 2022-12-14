@@ -34,12 +34,17 @@
     "url": "https://github.com/Amebus/iterable-linq-utility/issues"
   },
   "homepage": "https://github.com/Amebus/iterable-linq-utility#readme",
-  "keywords": ["linq", "itearable", "utility"],
+  "keywords": [
+    "linq",
+    "itearable",
+    "utility"
+  ],
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.1.4",
+    "@rushstack/eslint-patch": "1.1.4",
     "@types/node": "18.11.10",
     "@typescript-eslint/eslint-plugin": "5.36.2",
     "@typescript-eslint/parser": "5.36.2",
+    "@vitest/coverage-c8": "0.25.8",
     "@vitest/ui": "0.25.2",
     "eslint": "8.22.0",
     "eslint-plugin-import": "2.26.0",

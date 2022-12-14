@@ -1,4 +1,4 @@
-import { LinkedList } from "@/genericCollections";
+import { LinkedListCollection } from "@/genericCollections";
 import { getFlatIteratorResult } from "@/utils";
 
 export function memoize<T>(iterable: Iterable<T>): Iterable<T> {
@@ -13,7 +13,7 @@ class MemoizeIterable<T> implements Iterable<T> {
   constructor(iterable: Iterable<T>) {
     this.source = iterable;
 		this.sourceIterator = iterable[Symbol.iterator]();
-    if (iterable instanceof LinkedList) {
+    if (iterable instanceof LinkedListCollection.LinkedList) {
       // console.log("constructor - saving the input");
       this.linkedList = iterable;
       this.isMemoized = true;
@@ -22,7 +22,7 @@ class MemoizeIterable<T> implements Iterable<T> {
 
   private isMemoized = false;
 	private sourceIterator: Iterator<T>;
-	private linkedList = new LinkedList<T>();
+	private linkedList = new LinkedListCollection.LinkedList<T>();
   private source: Iterable<T>;
 
   [Symbol.iterator](): Iterator<T, any, undefined> {
@@ -44,7 +44,7 @@ class MemoizeIterable<T> implements Iterable<T> {
 
 
 class MemoizeIterableIterator<T> implements Iterator<T> {
-	constructor(sourceIterator: Iterator<T>, linkedList: LinkedList<T>, setAsMemoized: (n: IteratorResult<T, any>) => boolean) {
+	constructor(sourceIterator: Iterator<T>, linkedList: LinkedListCollection.LinkedList<T>, setAsMemoized: (n: IteratorResult<T, any>) => boolean) {
 		this.linkedList = linkedList;
 		this.linkedListIterator = linkedList[Symbol.iterator]();
 		this.setAsMemoized = setAsMemoized;
@@ -52,7 +52,7 @@ class MemoizeIterableIterator<T> implements Iterator<T> {
 	}
 
 	private index = 0;
-	private linkedList: LinkedList<T>;
+	private linkedList: LinkedListCollection.LinkedList<T>;
 	private linkedListIterator: Iterator<T>;
 	private setAsMemoized: (n: IteratorResult<T, any>) => boolean;
 	private sourceIterator: Iterator<T>;
