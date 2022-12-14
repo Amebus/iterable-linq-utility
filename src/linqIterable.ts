@@ -32,7 +32,7 @@ export interface ILinqIterable<T> {
 
   map<R>(mapper: Mapper<T, R>): ILinqIterable<R>;
   materialize(): ILinqIterable<T>;
-  // max<T>(comparer?: Comparer<T>): T | null | undefined;
+  max(comparer?: Comparer<T>): T | null | undefined;
   memoize(): ILinqIterable<T>;
   min(comparer?: Comparer<T>): T | null | undefined;
 
@@ -64,6 +64,9 @@ export class LinqIterableWrapper<T> implements ILinqIterable<T> {
 	materialize(): ILinqIterable<T> {
 		return new LinqIterableWrapper(materialize(this.iterable));
 	}
+	max(comparer?: Comparer<T>): T | null | undefined {
+		return max(this.iterable, comparer);
+	}
 	memoize(): ILinqIterable<T> {
 		return new LinqIterableWrapper(memoize(this.iterable));
 	}
@@ -75,11 +78,3 @@ export class LinqIterableWrapper<T> implements ILinqIterable<T> {
 		return some(this.iterable, predicate);
 	}
 }
-
-// LinqIterable.prototype.max = function<T>(comparer?: (a: T, b: T, index: number) => boolean): T | null | undefined {
-//   return max(this.source(), comparer);
-// };
-
-// LinqIterable.prototype.min = function<T>(comparer?: (a: T, b: T, index: number) => boolean): T | null | undefined {
-//   return min(this.source(), comparer);
-// };
