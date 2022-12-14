@@ -42,6 +42,25 @@ describe('materialize', () => {
 		{ iterable: generatedRange },
 		{ iterable: linkedList },
 		{ iterable: stringIterable }
+	])('materialize($iterable) generate new iterable with same data', ({ iterable }) => {
+		const data = [...iterable];
+		const originalDataLength = data.length;
+		
+		const materialized = materialize(data as any);
+		expect([...materialized].length).toEqual(originalDataLength);
+		
+		data.push(...data);
+		const newDataLength = data.length;
+		expect([...materialized].length).toEqual(originalDataLength);
+
+		// to be sure that data has changed correctly, if we change some code in the previous lines the next one might break
+		expect(newDataLength).toEqual(originalDataLength * 2);
+	});
+
+	test.each([
+		{ iterable: generatedRange },
+		{ iterable: linkedList },
+		{ iterable: stringIterable }
 	])('materialize($iterable) doesn\'t generate new iterable from itself', ({ iterable }) => {
 		const materialized = materialize(iterable as any);
 		const materialized2 = materialize(materialized);
