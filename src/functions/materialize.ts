@@ -10,10 +10,6 @@ export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
 class MaterializeIterable<T> implements Iterable<T> {
 
 	constructor(iterable: Iterable<T>) {
-		if (iterable instanceof LinkedListCollection.LinkedList) {
-			this.source = iterable;
-			return;
-		}
 		this.source = LinkedListCollection.from(iterable);
 	}
 

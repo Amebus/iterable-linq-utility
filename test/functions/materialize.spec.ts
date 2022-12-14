@@ -28,6 +28,7 @@ describe('materialize', () => {
 	])('materialize($iterable) generate new iterable with same data', ({ iterable }) => {
 		const materialized = materialize(iterable as any);
 		expect(materialized).not.toBe(iterable);
+		expect(materialized['source']).not.toBe(iterable);
 		expect(materialized).not.toEqual(iterable);
 		expect([...materialized]).toEqual([...iterable]);
 
