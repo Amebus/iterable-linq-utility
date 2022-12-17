@@ -1,14 +1,8 @@
-import { beforeEach, describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../../src';
 
 describe('some', () => {
-
-	let functionCalls = 0;
-
-	beforeEach(() => {
-		functionCalls = 0;
-	});
 
 	test.each([
 		{ start: 10, end: 50, predicate: v => v > 10, expectedResult: true },
@@ -51,43 +45,46 @@ describe('some', () => {
 	});
 
 	test.each([
-		{ start: 10, end: 50, predicate: v => { functionCalls++; return v > 10; }, expectedFunctionCalls: 2 },
-		{ start: 10, end: 50, predicate: v => { functionCalls++; return v > 100; }, expectedFunctionCalls: 40 },
-		{ start: 10, end: 50, predicate: v => { functionCalls++; return v < 10; }, expectedFunctionCalls: 40 },
-		{ start: 10, end: 50, predicate: v => { functionCalls++; return v < 100; }, expectedFunctionCalls: 1 },
+		{ start: 10, end: 50, predicate: v => v > 10, expectedFunctionCalls: 2 },
+		{ start: 10, end: 50, predicate: v => v > 100, expectedFunctionCalls: 40 },
+		{ start: 10, end: 50, predicate: v => v < 10, expectedFunctionCalls: 40 },
+		{ start: 10, end: 50, predicate: v => v < 100, expectedFunctionCalls: 1 },
 
-		{ start: 50, end: 10, predicate: v => { functionCalls++; return v > 10; }, expectedFunctionCalls: 1 },
-		{ start: 50, end: 10, predicate: v => { functionCalls++; return v > 100; }, expectedFunctionCalls: 40 },
-		{ start: 50, end: 10, predicate: v => { functionCalls++; return v < 10; }, expectedFunctionCalls: 40 },
-		{ start: 50, end: 10, predicate: v => { functionCalls++; return v < 100; }, expectedFunctionCalls: 1 }
+		{ start: 50, end: 10, predicate: v => v > 10, expectedFunctionCalls: 1 },
+		{ start: 50, end: 10, predicate: v => v > 100, expectedFunctionCalls: 40 },
+		{ start: 50, end: 10, predicate: v => v < 10, expectedFunctionCalls: 40 },
+		{ start: 50, end: 10, predicate: v => v < 100, expectedFunctionCalls: 1 }
 	])('short circuits - IterableLinq.fromRange($start, $end).some($predicate)', ({ start, end, predicate, expectedFunctionCalls}) => {
-		IterableLinq.fromRange(start,end).some(predicate);
-		expect(functionCalls).toBe(expectedFunctionCalls);
+		const predicateSpy = vi.fn(predicate);
+		IterableLinq.fromRange(start,end).some(predicateSpy);
+		expect(predicateSpy).toHaveBeenCalledTimes(expectedFunctionCalls);
 	});
 
 	test.each([
-		{ text: 'ciao', predicate: v => { functionCalls++; return v === 'a'; }, expectedFunctionCalls: 3 },
-		{ text: 'ciao', predicate: v => { functionCalls++; return v === 'z'; }, expectedFunctionCalls: 4 },
-		{ text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', predicate: v => { functionCalls++; return v === 'a'; }, expectedFunctionCalls: 23 },
-		{ text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', predicate: v => { functionCalls++; return v === 'z'; }, expectedFunctionCalls: 56 }
+		{ text: 'ciao', predicate: v => v === 'a', expectedFunctionCalls: 3 },
+		{ text: 'ciao', predicate: v => v === 'z', expectedFunctionCalls: 4 },
+		{ text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', predicate: v => v === 'a', expectedFunctionCalls: 23 },
+		{ text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', predicate: v => v === 'z', expectedFunctionCalls: 56 }
 	])('short circuits - IterableLinq.from($text).some($predicate)', ({ text, predicate, expectedFunctionCalls }) => {
-		IterableLinq.from(text).some(predicate);
-		expect(functionCalls).toBe(expectedFunctionCalls);
+		const predicateSpy = vi.fn(predicate);
+		IterableLinq.from(text).some(predicateSpy);
+		expect(predicateSpy).toHaveBeenCalledTimes(expectedFunctionCalls);
 	});
 
 	test.each([
-		{ start: 10, end: 50, predicate: (_v, idx) => { functionCalls++; return idx > 10; }, expectedFunctionCalls: 12 },
-		{ start: 10, end: 50, predicate: (_v, idx) => { functionCalls++; return idx > 100; }, expectedFunctionCalls: 40 },
-		{ start: 10, end: 50, predicate: (_v, idx) => { functionCalls++; return idx < 10; }, expectedFunctionCalls: 1 },
-		{ start: 10, end: 50, predicate: (_v, idx) => { functionCalls++; return idx < 100; }, expectedFunctionCalls: 1 },
+		{ start: 10, end: 50, predicate: (_v, idx) => idx > 10, expectedFunctionCalls: 12 },
+		{ start: 10, end: 50, predicate: (_v, idx) => idx > 100, expectedFunctionCalls: 40 },
+		{ start: 10, end: 50, predicate: (_v, idx) => idx < 10, expectedFunctionCalls: 1 },
+		{ start: 10, end: 50, predicate: (_v, idx) => idx < 100, expectedFunctionCalls: 1 },
 
-		{ start: 50, end: 10, predicate: (_v, idx) => { functionCalls++; return idx > 10; }, expectedFunctionCalls: 12 },
-		{ start: 50, end: 10, predicate: (_v, idx) => { functionCalls++; return idx > 100; }, expectedFunctionCalls: 40 },
-		{ start: 50, end: 10, predicate: (_v, idx) => { functionCalls++; return idx < 10; }, expectedFunctionCalls: 1 },
-		{ start: 50, end: 10, predicate: (_v, idx) => { functionCalls++; return idx < 100; }, expectedFunctionCalls: 1 }
+		{ start: 50, end: 10, predicate: (_v, idx) => idx > 10, expectedFunctionCalls: 12 },
+		{ start: 50, end: 10, predicate: (_v, idx) => idx > 100, expectedFunctionCalls: 40 },
+		{ start: 50, end: 10, predicate: (_v, idx) => idx < 10, expectedFunctionCalls: 1 },
+		{ start: 50, end: 10, predicate: (_v, idx) => idx < 100, expectedFunctionCalls: 1 }
 	])('short circuits - IterableLinq.fromRange($start, $end).some($predicate)', ({ start, end, predicate, expectedFunctionCalls}) => {
-		IterableLinq.fromRange(start,end).some(predicate);
-		expect(functionCalls).toBe(expectedFunctionCalls);
+		const predicateSpy = vi.fn(predicate);
+		IterableLinq.fromRange(start,end).some(predicateSpy);
+		expect(predicateSpy).toHaveBeenCalledTimes(expectedFunctionCalls);
 	});
 
 });
