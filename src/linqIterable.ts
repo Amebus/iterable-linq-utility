@@ -39,7 +39,7 @@ export interface IIterableLinq<T> {
   some(predicate: Predicate<T>): boolean;
 }
 
-export class IterableLinQWrapper<T> implements IIterableLinq<T> {
+export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 
 	constructor(iterable: Iterable<T>) {
 		this.iterable = iterable;
@@ -55,20 +55,20 @@ export class IterableLinQWrapper<T> implements IIterableLinq<T> {
 	}
 
 	filter(predicate: Predicate<T>): IIterableLinq<T> {
-		return new IterableLinQWrapper(filter(this.iterable, predicate));
+		return new IterableLinqWrapper(filter(this.iterable, predicate));
 	}
 
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {
-		return new IterableLinQWrapper(map(this.iterable, mapper));
+		return new IterableLinqWrapper(map(this.iterable, mapper));
 	}
 	materialize(): IIterableLinq<T> {
-		return new IterableLinQWrapper(materialize(this.iterable));
+		return new IterableLinqWrapper(materialize(this.iterable));
 	}
 	max(comparer?: Comparer<T>): T | null | undefined {
 		return max(this.iterable, comparer);
 	}
 	memoize(): IIterableLinq<T> {
-		return new IterableLinQWrapper(memoize(this.iterable));
+		return new IterableLinqWrapper(memoize(this.iterable));
 	}
 	min(comparer?: Comparer<T>): T | null | undefined {
 		return min(this.iterable, comparer);

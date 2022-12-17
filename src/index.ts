@@ -1,22 +1,22 @@
-import { LinqIterableWrapper, type ILinqIterable } from "./linqIterable";
+import { IterableLinqWrapper, type IIterableLinq } from "./linqIterable";
 
 import { 
   range
 } from "@/functions";
 
 
-export function from<T>(iterable: Iterable<T>): ILinqIterable<T> {
-  return new LinqIterableWrapper(iterable);
+export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
+  return new IterableLinqWrapper(iterable);
 }
 
-export function fromRange(end: number): ILinqIterable<number>;
-export function fromRange(end: number, reverse?: boolean): ILinqIterable<number>;
-export function fromRange(start: number, end: number): ILinqIterable<number>;
-export function fromRange(start: number, end: number, step: number): ILinqIterable<number>;
-export function fromRange(start: number, end: number, reverse: boolean): ILinqIterable<number>;
-export function fromRange(start: number, end: number, step: number, reverse: boolean): ILinqIterable<number>;
-export function fromRange(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): ILinqIterable<number> {
+export function fromRange(end: number): IIterableLinq<number>;
+export function fromRange(end: number, reverse?: boolean): IIterableLinq<number>;
+export function fromRange(start: number, end: number): IIterableLinq<number>;
+export function fromRange(start: number, end: number, step: number): IIterableLinq<number>;
+export function fromRange(start: number, end: number, reverse: boolean): IIterableLinq<number>;
+export function fromRange(start: number, end: number, step: number, reverse: boolean): IIterableLinq<number>;
+export function fromRange(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): IIterableLinq<number> {
   return from(range(start, end, step, reverse));
 }
 
-export { ILinqIterable, LinqIterableWrapper };
+export { IIterableLinq, IterableLinqWrapper };

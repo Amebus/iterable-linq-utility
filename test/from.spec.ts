@@ -8,7 +8,7 @@ describe('from', () => {
 		{ iterable: 'Lorem ipsum dolor sit amet' }
 	])('from($iterable)', ({ iterable }) => {
 		const r = IterableLinq.from(iterable);
-		expect(r).toBeInstanceOf(IterableLinq.LinqIterableWrapper);
+		expect(r).toBeInstanceOf(IterableLinq.IterableLinqWrapper);
 		expect(r['iterable']).toBe(iterable);
 		expect([...r].join('')).toEqual(iterable);
 	});
@@ -17,7 +17,7 @@ describe('from', () => {
 		{ iterable: [1,2,3,4,5,6,7,8,9] }
 	])('from($iterable)', ({ iterable }) => {
 		const r = IterableLinq.from(iterable);
-		expect(r).toBeInstanceOf(IterableLinq.LinqIterableWrapper);
+		expect(r).toBeInstanceOf(IterableLinq.IterableLinqWrapper);
 		expect(r['iterable']).toBe(iterable);
 		expect([...r]).toEqual(iterable);
 	});
