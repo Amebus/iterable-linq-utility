@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import { 
 	filter,
@@ -14,12 +14,6 @@ describe('materialize', () => {
 	const linkedList = LinkedListCollection.from(generatedRange);
 	const stringIterable = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 	const stringIterableItemCount = stringIterable.length;
-
-	let filtersCount = 0;
-
-	beforeEach(() => {
-		filtersCount = 0;
-	});
 
 	test.each([
 		{ iterable: generatedRange },
@@ -68,29 +62,31 @@ describe('materialize', () => {
 	});
 
 	test.each([
-		{ iterable: generatedRange, iterableItemCount: rangeIterableItemCount , filterPredicate: v => { filtersCount++;	return v % 4 === 0;	} },
-		{ iterable: linkedList, iterableItemCount: linkedList.size() , filterPredicate: v => { filtersCount++;	return v % 4 === 0;	} },
-		{ iterable: stringIterable, iterableItemCount: stringIterableItemCount , filterPredicate: v => { filtersCount++;	return v === 'm'; } }
+		{ iterable: generatedRange, iterableItemCount: rangeIterableItemCount , filterPredicate: v => v % 4 === 0 },
+		{ iterable: linkedList, iterableItemCount: linkedList.size() , filterPredicate: v => v % 4 === 0 },
+		{ iterable: stringIterable, iterableItemCount: stringIterableItemCount , filterPredicate: v => v === 'm' }
 	])('materialize($iterable) imediatly iterate the source iterable', ({ iterable, iterableItemCount, filterPredicate }) => {
 
-		const filtered = filter(iterable, filterPredicate);
-		expect(filtersCount).toBe(0);
+		const filterPredicateSpy = vi.fn(filterPredicate);
+		const filtered = filter(iterable, filterPredicateSpy);
+		expect(filterPredicateSpy).not.toHaveBeenCalled();
 		materialize(filtered);
-		expect(filtersCount).toBe(iterableItemCount);
+		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
 	});
 
 	test.each([
-		{ iterable: generatedRange, iterableItemCount: rangeIterableItemCount , filterPredicate: v => { filtersCount++;	return v % 4 === 0;	} },
-		{ iterable: linkedList, iterableItemCount: linkedList.size() , filterPredicate: v => { filtersCount++;	return v % 4 === 0;	} },
-		{ iterable: stringIterable, iterableItemCount: stringIterableItemCount , filterPredicate: v => { filtersCount++;	return v === 'm'; } }
-	])('materialize($iterable) do not itarate the source iterable multiple time', ({ iterable, iterableItemCount, filterPredicate }) => {
+		{ iterable: generatedRange, iterableItemCount: rangeIterableItemCount , filterPredicate: v => v % 4 === 0 },
+		{ iterable: linkedList, iterableItemCount: linkedList.size() , filterPredicate: v => v % 4 === 0 },
+		{ iterable: stringIterable, iterableItemCount: stringIterableItemCount , filterPredicate: v => v === 'm' }
+	])('materialize($iterable) do not iterate the source iterable multiple time', ({ iterable, iterableItemCount, filterPredicate }) => {
 
-		const filtered = filter(iterable, filterPredicate);
+		const filterPredicateSpy = vi.fn(filterPredicate);
+		const filtered = filter(iterable, filterPredicateSpy);
 		const materialized = materialize(filtered);
 		const filterResult1 = [...materialized];
-		expect(filtersCount).toBe(iterableItemCount);
+		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
 		const filterResult2 = [...materialized];
-		expect(filtersCount).toBe(iterableItemCount);
+		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
 		
 		expect(filterResult1).toEqual(filterResult2);
 	});
