@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import * as LinqIterable from '../../src';
+import * as IterableLinq from '../../src';
 
 describe('collectToArray', () => {
 
@@ -10,7 +10,7 @@ describe('collectToArray', () => {
 		{input: [1,2,3,4]},
 		{input: [-3,-5,-8,1,2,3,4]},
 	])('linqIterable($input).collectToArray()', ({input}) => {
-		const stream = LinqIterable.from(input);
+		const stream = IterableLinq.from(input);
 
 		expect(stream).not.toBeInstanceOf(Array);
 

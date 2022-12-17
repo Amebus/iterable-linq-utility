@@ -1,16 +1,16 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import * as LinqIterable from '../src';
+import * as IterableLinq from '../src';
 
 describe('fromRange', () => {
 
-  test('checks LinqIterable.fromRange function definition', () => {
-    expect(LinqIterable.fromRange).toHaveLength(4);
+  test('checks IterableLinq.fromRange function definition', () => {
+    expect(IterableLinq.fromRange).toHaveLength(4);
   });
 
-  test('LinqIterable.fromRange function with one argument', () => {
+  test('IterableLinq.fromRange function with one argument', () => {
     
-    const fromRangeSpyFunc = vi.fn((start) => LinqIterable.fromRange(start));
+    const fromRangeSpyFunc = vi.fn((start) => IterableLinq.fromRange(start));
     const fromRanged = fromRangeSpyFunc(10);
     expect(fromRangeSpyFunc).toHaveReturned();
     expect(fromRanged[Symbol.iterator]).toBeInstanceOf(Function);
@@ -19,9 +19,9 @@ describe('fromRange', () => {
     expect(fromRangeIterator).toHaveProperty('next');
   });
 
-  test('LinqIterable.fromRange function with two arguments', () => {
+  test('IterableLinq.fromRange function with two arguments', () => {
     
-    const fromRangeSpyFunc = vi.fn((start, end) => LinqIterable.fromRange(start, end));
+    const fromRangeSpyFunc = vi.fn((start, end) => IterableLinq.fromRange(start, end));
     let fromRanged = fromRangeSpyFunc(10, 20);
     
     expect(fromRangeSpyFunc).toHaveReturned();
@@ -39,9 +39,9 @@ describe('fromRange', () => {
     expect(fromRangeIterator).toHaveProperty('next');
   });
 
-  test('LinqIterable.fromRange function with three arguments', () => {
+  test('IterableLinq.fromRange function with three arguments', () => {
     
-    const fromRangeSpyFunc = vi.fn((start, end, step) => LinqIterable.fromRange(start, end, step));
+    const fromRangeSpyFunc = vi.fn((start, end, step) => IterableLinq.fromRange(start, end, step));
     let fromRanged = fromRangeSpyFunc(10, 20, 2);
     
     expect(fromRangeSpyFunc).toHaveReturned();
@@ -59,9 +59,9 @@ describe('fromRange', () => {
     expect(fromRangeIterator).toHaveProperty('next');
   });
 
-  test('LinqIterable.fromRange function with four arguments', () => {
+  test('IterableLinq.fromRange function with four arguments', () => {
     
-    const fromRangeSpyFunc = vi.fn((start, end, step, reverse) => LinqIterable.fromRange(start, end, step, reverse));
+    const fromRangeSpyFunc = vi.fn((start, end, step, reverse) => IterableLinq.fromRange(start, end, step, reverse));
     let fromRanged = fromRangeSpyFunc(10, 20, 2, false);
     
     expect(fromRangeSpyFunc).toHaveReturned();
@@ -85,8 +85,8 @@ describe('fromRange', () => {
     { end: -10, length: 10, generatedRange: [0,-1,-2,-3,-4,-5,-6,-7,-8,-9] },
     { end: 15, length: 15, generatedRange: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14] },
     { end: -15, length: 15, generatedRange: [0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14] },
-  ])('create LinqIterable.fromRange(end: $end)', ({ end, length, generatedRange }) => {
-    const fromRanged = LinqIterable.fromRange(end);
+  ])('create IterableLinq.fromRange(end: $end)', ({ end, length, generatedRange }) => {
+    const fromRanged = IterableLinq.fromRange(end);
     const iterated = [...fromRanged];
     expect(iterated).toHaveLength(length);
     expect(iterated).toEqual(generatedRange);
@@ -105,8 +105,8 @@ describe('fromRange', () => {
     { end: 15, reverse: true, length: 15, generatedRange: [14,13,12,11,10,9,8,7,6,5,4,3,2,1,0] },
     { end: -15, reverse: false, length: 15, generatedRange: [0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14] },
     { end: -15, reverse: true, length: 15, generatedRange: [-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0] }
-  ])('create LinqIterable.fromRange(end: $end, reverse: $reverse)', ({ end, reverse, length, generatedRange }) => {
-    const fromRanged = LinqIterable.fromRange(end, reverse);
+  ])('create IterableLinq.fromRange(end: $end, reverse: $reverse)', ({ end, reverse, length, generatedRange }) => {
+    const fromRanged = IterableLinq.fromRange(end, reverse);
     const iterated = [...fromRanged];
     expect(iterated).toHaveLength(length);
     expect(iterated).toEqual(generatedRange);
@@ -122,8 +122,8 @@ describe('fromRange', () => {
     { start: 10, end: 5, length: 5, generatedRange: [10,9,8,7,6] },
     { start: 5, end: -10, length: 15, generatedRange: [5,4,3,2,1,0,-1,-2,-3,-4,-5,-6,-7,-8,-9] },
     { start: -5, end: -10, length: 5, generatedRange: [-5,-6,-7,-8,-9] },
-  ])('create LinqIterable.fromRange(start: $start, end: $end)', ({ start, end, length, generatedRange }) => {
-    const fromRanged = LinqIterable.fromRange(start, end);
+  ])('create IterableLinq.fromRange(start: $start, end: $end)', ({ start, end, length, generatedRange }) => {
+    const fromRanged = IterableLinq.fromRange(start, end);
     const iterated = [...fromRanged];
     expect(iterated).toHaveLength(length);
     expect(iterated).toEqual(generatedRange);
@@ -146,8 +146,8 @@ describe('fromRange', () => {
     { start: 5, end: -10, reverse: true, length: 15, generatedRange: [-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5] },
     { start: -5, end: -10, reverse: false, length: 5, generatedRange: [-5,-6,-7,-8,-9] },
     { start: -5, end: -10, reverse: true, length: 5, generatedRange: [-9,-8,-7,-6,-5,] },
-  ])('create LinqIterable.fromRange(start: $start, end: $end, reverse: $reverse)', ({ start, end, reverse, length, generatedRange }) => {
-    const fromRanged = LinqIterable.fromRange(start, end, reverse);
+  ])('create IterableLinq.fromRange(start: $start, end: $end, reverse: $reverse)', ({ start, end, reverse, length, generatedRange }) => {
+    const fromRanged = IterableLinq.fromRange(start, end, reverse);
     const iterated = [...fromRanged];
     expect(iterated).toHaveLength(length);
     expect(iterated).toEqual(generatedRange);
@@ -169,8 +169,8 @@ describe('fromRange', () => {
     { start: 5, end: -10, step: -2, length: 8, generatedRange: [5,3,1,-1,-3,-5,-7,-9] },
     { start: -5, end: -10, step: 2, length: 3, generatedRange: [-5,-7,-9] },
     { start: -5, end: -10, step: -2, length: 3, generatedRange: [-5,-7,-9] },
-  ])('create LinqIterable.fromRange(start: $start, end: $end, step: $step)', ({ start, end, step, length, generatedRange }) => {
-    const fromRanged = LinqIterable.fromRange(start, end, step);
+  ])('create IterableLinq.fromRange(start: $start, end: $end, step: $step)', ({ start, end, step, length, generatedRange }) => {
+    const fromRanged = IterableLinq.fromRange(start, end, step);
     const iterated = [...fromRanged];
     expect(iterated).toHaveLength(length);
     expect(iterated).toEqual(generatedRange);
@@ -205,8 +205,8 @@ describe('fromRange', () => {
     { start: -5, end: -10, step: 2, reverse: true, length: 3, generatedRange: [-9,-7,-5] },
     { start: -5, end: -10, step: -2, reverse: false, length: 3, generatedRange: [-5,-7,-9] },
     { start: -5, end: -10, step: -2, reverse: true, length: 3, generatedRange: [-9,-7,-5] },
-  ])('create LinqIterable.fromRange(start: $start, end: $end, step: $step, reverse: $reverse)', ({ start, end, step, reverse, length, generatedRange }) => {
-    const fromRanged = LinqIterable.fromRange(start, end, step, reverse);
+  ])('create IterableLinq.fromRange(start: $start, end: $end, step: $step, reverse: $reverse)', ({ start, end, step, reverse, length, generatedRange }) => {
+    const fromRanged = IterableLinq.fromRange(start, end, step, reverse);
     const iterated = [...fromRanged];
     expect(iterated).toHaveLength(length);
     expect(iterated).toEqual(generatedRange);

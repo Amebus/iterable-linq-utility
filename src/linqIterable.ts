@@ -22,24 +22,24 @@ import {
 
 
 
-export interface ILinqIterable<T> {
+export interface IIterableLinq<T> {
 
   [Symbol.iterator](): Iterator<T, any, undefined>;
 
   collectToArray(): T[];
 
-  filter(predicate: Predicate<T>): ILinqIterable<T>; 
+  filter(predicate: Predicate<T>): IIterableLinq<T>; 
 
-  map<R>(mapper: Mapper<T, R>): ILinqIterable<R>;
-  materialize(): ILinqIterable<T>;
+  map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
+  materialize(): IIterableLinq<T>;
   max(comparer?: Comparer<T>): T | null | undefined;
-  memoize(): ILinqIterable<T>;
+  memoize(): IIterableLinq<T>;
   min(comparer?: Comparer<T>): T | null | undefined;
 
   some(predicate: Predicate<T>): boolean;
 }
 
-export class LinqIterableWrapper<T> implements ILinqIterable<T> {
+export class IterableLinQWrapper<T> implements IIterableLinq<T> {
 
 	constructor(iterable: Iterable<T>) {
 		this.iterable = iterable;
@@ -54,21 +54,21 @@ export class LinqIterableWrapper<T> implements ILinqIterable<T> {
 		return [...this.iterable];
 	}
 
-	filter(predicate: Predicate<T>): ILinqIterable<T> {
-		return new LinqIterableWrapper(filter(this.iterable, predicate));
+	filter(predicate: Predicate<T>): IIterableLinq<T> {
+		return new IterableLinQWrapper(filter(this.iterable, predicate));
 	}
 
-	map<R>(mapper: Mapper<T, R>): ILinqIterable<R> {
-		return new LinqIterableWrapper(map(this.iterable, mapper));
+	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {
+		return new IterableLinQWrapper(map(this.iterable, mapper));
 	}
-	materialize(): ILinqIterable<T> {
-		return new LinqIterableWrapper(materialize(this.iterable));
+	materialize(): IIterableLinq<T> {
+		return new IterableLinQWrapper(materialize(this.iterable));
 	}
 	max(comparer?: Comparer<T>): T | null | undefined {
 		return max(this.iterable, comparer);
 	}
-	memoize(): ILinqIterable<T> {
-		return new LinqIterableWrapper(memoize(this.iterable));
+	memoize(): IIterableLinq<T> {
+		return new IterableLinQWrapper(memoize(this.iterable));
 	}
 	min(comparer?: Comparer<T>): T | null | undefined {
 		return min(this.iterable, comparer);
