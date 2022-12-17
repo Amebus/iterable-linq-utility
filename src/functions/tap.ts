@@ -5,7 +5,6 @@ export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
 	return new TapIterable(iterable, tapper);
 }
 
-
 class TapIterable<T> implements Iterable<T> {
 	
 	constructor(iterable: Iterable<T>, tapper: Tapper<T>) {
@@ -50,6 +49,4 @@ class TapIterableIterator<T> implements Iterator<T> {
 		this.innerNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);
 	}
-	
-
 }

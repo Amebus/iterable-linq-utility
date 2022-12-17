@@ -4,6 +4,8 @@ import {
   range
 } from "@/functions";
 
+import * as Functions from '@/functions';
+
 
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
   return new IterableLinqWrapper(iterable);
@@ -19,4 +21,7 @@ export function fromRange(start: number, end?: number | boolean, step?: number |
   return from(range(start, end, step, reverse));
 }
 
-export { IIterableLinq, IterableLinqWrapper };
+export {
+  Functions,
+  IIterableLinq, IterableLinqWrapper
+};

@@ -23,4 +23,8 @@ export { some };
 
 
 import { tap } from './tap';
-export { tap };
+import { tapChain } from './tapChain';
+export {
+	tap,
+	tapChain
+};

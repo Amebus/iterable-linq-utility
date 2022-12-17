@@ -22,7 +22,8 @@ import {
 } from "@/functions";
 
 import {
-  tap
+  tap,
+	tapChain
 } from "@/functions";
 
 export interface IIterableLinq<T> {
@@ -42,6 +43,7 @@ export interface IIterableLinq<T> {
   some(predicate: Predicate<T>): boolean;
 
 	tap(tapper: Tapper<T>): IIterableLinq<T>;
+	tapChain(tapper: Tapper<Iterable<T>>): IIterableLinq<T>;
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T>;
 }
 
@@ -86,6 +88,9 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 
 	tap(tapper: Tapper<T>): IIterableLinq<T> {
 		return new IterableLinqWrapper(tap(this.iterable, tapper));
+	}
+	tapChain(tapper: Tapper<Iterable<T>>): IIterableLinq<T> {
+		return new IterableLinqWrapper(tapChain(this.iterable, tapper));
 	}
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T> {
 		chainCreationTapper(this);
