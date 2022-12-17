@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import * as IterableLinq from '../../src';
 
-describe('collectToArray', () => {
+describe('IterableLinq.collectToArray', () => {
 
 	test.each([
 		{input: [1,2,3,4,5,6,7,8,9]},

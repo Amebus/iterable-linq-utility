@@ -5,8 +5,8 @@ export function getIteratorResult<T>(done: boolean, value?: T): IteratorResult<T
   } as IteratorResult<T>;
 }
 
-export function getDoneIteratorResult<T>(): IteratorResult<T> {
-  return { done: true, value: undefined };
+export function getDoneIteratorResult<T>(value?: T): IteratorResult<T> {
+  return { done: true, value };
 }
 
 export function getFlatIteratorResult<T>(result: IteratorResult<T>): IteratorResult<T> {

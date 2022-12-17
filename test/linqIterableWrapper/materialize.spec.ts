@@ -4,7 +4,7 @@ import * as IterableLinq from '../../src';
 
 import { LinkedListCollection } from "@/genericCollections";
 
-describe('materialize', () => {
+describe('IterableLinq.materialize', () => {
 	
 	const rangeIterableItemCount = 50;
 	const generatedRange = IterableLinq.fromRange(rangeIterableItemCount);

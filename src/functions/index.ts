@@ -1,11 +1,26 @@
-export * from './filter';
+import { filter } from './filter';
+export { filter };
 
-export * from './map';
-export * from './materialize';
-export * from './max';
-export * from './memoize';
-export * from './min';
+import { map } from './map';
+import { materialize } from './materialize';
+import { max } from './max';
+import { memoize } from './memoize';
+import { min } from './min';
+export { 
+	map,
+	materialize,
+	max,
+	memoize,
+	min
+};
 
-export * from './range';
 
-export * from './some';
+import { range } from './range';
+export { range };
+
+import { some } from './some';
+export { some };
+
+
+import { tap } from './tap';
+export { tap };

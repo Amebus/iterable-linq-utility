@@ -1,7 +1,8 @@
 import {
   Comparer,
   Mapper,
-  Predicate
+  Predicate,
+	Tapper
 } from '@/types';
 
 import { 
@@ -20,7 +21,9 @@ import {
   some
 } from "@/functions";
 
-
+import {
+  tap
+} from "@/functions";
 
 export interface IIterableLinq<T> {
 
@@ -37,6 +40,9 @@ export interface IIterableLinq<T> {
   min(comparer?: Comparer<T>): T | null | undefined;
 
   some(predicate: Predicate<T>): boolean;
+
+	tap(tapper: Tapper<T>): IIterableLinq<T>;
+	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T>;
 }
 
 export class IterableLinqWrapper<T> implements IIterableLinq<T> {
@@ -76,5 +82,13 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 
 	some(predicate: Predicate<T>): boolean {
 		return some(this.iterable, predicate);
+	}
+
+	tap(tapper: Tapper<T>): IIterableLinq<T> {
+		return new IterableLinqWrapper(tap(this.iterable, tapper));
+	}
+	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T> {
+		chainCreationTapper(this);
+		return this;
 	}
 }

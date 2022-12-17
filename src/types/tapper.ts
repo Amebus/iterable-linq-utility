@@ -1,0 +1,1 @@
+export type Tapper<T> = (value: T, index: number) => void;
