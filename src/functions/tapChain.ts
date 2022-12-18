@@ -1,5 +1,12 @@
 import { Tapper } from "@/types";
 
+/**
+ * 
+ * @operation `Tap`
+ * @param iterable 
+ * @param tapper 
+ * @returns 
+ */
 export function tapChain<T>(iterable: Iterable<T>, tapper: Tapper<Iterable<T>>): Iterable<T> {
 	return new TapChainIterable(iterable, tapper);
 }

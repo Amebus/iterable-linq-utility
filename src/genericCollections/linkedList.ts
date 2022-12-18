@@ -18,42 +18,84 @@ export class LinkedList<T> implements Iterable<T> {
     return new LinkedListIterator(this.head);
   }
 
-  addFirst(value: T): this {
+  private internalAddFirst: (value: T) => this = value => {
     const newNode: IListNode<T> = {
       data: value,
       nextNode: null
     };
-
-    switch (this.internalSize) {
-      case 0:
-        this.head = newNode;
-        this.tail = newNode;
-        break;
-      default:
-        newNode.nextNode = this.head;
-        this.head = newNode;
-    }
+    this.head = newNode;
+    this.tail = newNode;
     this.internalSize++;
+    this.internalAddFirst = v => {
+      const newNode: IListNode<T> = {
+        data: v,
+        nextNode: null
+      };
+      newNode.nextNode = this.head;
+      this.head = newNode;
+      this.internalSize++;
+      return this;
+    };
     return this;
+  };
+  addFirst(value: T): this {
+    return this.internalAddFirst(value);
+    // const newNode: IListNode<T> = {
+    //   data: value,
+    //   nextNode: null
+    // };
+
+    // switch (this.internalSize) {
+    //   case 0:
+    //     this.head = newNode;
+    //     this.tail = newNode;
+    //     break;
+    //   default:
+    //     newNode.nextNode = this.head;
+    //     this.head = newNode;
+    // }
+    // this.internalSize++;
+    // return this;
   }
 
-  addLast(value: T): this {
+  private internalAddLast: (value: T) => this = value => {
     const newNode: IListNode<T> = {
       data: value,
       nextNode: null
     };
-
-    switch (this.internalSize) {
-      case 0:
-        this.head = newNode;
-        this.tail = newNode;
-        break;
-      default:
-        this.tail!.nextNode = newNode;
-        this.tail = newNode;
-    }
+    this.head = newNode;
+    this.tail = newNode;
     this.internalSize++;
+    this.internalAddLast = v => {
+      const newNode: IListNode<T> = {
+        data: v,
+        nextNode: null
+      };
+      this.tail!.nextNode = newNode;
+      this.tail = newNode;
+      this.internalSize++;
+      return this;
+    };
     return this;
+  };
+  addLast(value: T): this {
+    return this.internalAddLast(value);
+    // const newNode: IListNode<T> = {
+    //   data: value,
+    //   nextNode: null
+    // };
+
+    // switch (this.internalSize) {
+    //   case 0:
+    //     this.head = newNode;
+    //     this.tail = newNode;
+    //     break;
+    //   default:
+    //     this.tail!.nextNode = newNode;
+    //     this.tail = newNode;
+    // }
+    // this.internalSize++;
+    // return this;
   }
 
   size(): number {

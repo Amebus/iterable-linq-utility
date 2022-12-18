@@ -17,6 +17,7 @@ export function fromRange(start: number, end: number): IIterableLinq<number>;
 export function fromRange(start: number, end: number, step: number): IIterableLinq<number>;
 export function fromRange(start: number, end: number, reverse: boolean): IIterableLinq<number>;
 export function fromRange(start: number, end: number, step: number, reverse: boolean): IIterableLinq<number>;
+export function fromRange(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number>;
 export function fromRange(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): IIterableLinq<number> {
   return from(range(start, end, step, reverse));
 }

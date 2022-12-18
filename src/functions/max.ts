@@ -1,7 +1,13 @@
 import type { Comparer } from "@/types";
 import { isFunction } from "@/utils";
 
-// TODO find a way to replace return type with IMaybe<T>
+/**
+ * 
+ * @operation `Action`
+ * @param iterable 
+ * @param comparer 
+ * @returns 
+ */
 export function max<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null | undefined {
   const iterator: Iterator<T> = iterable[Symbol.iterator]();
   let n = iterator.next();

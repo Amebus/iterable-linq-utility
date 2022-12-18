@@ -1,6 +1,13 @@
 import { Tapper } from "@/types";
 import { getDoneIteratorResult, getFlatIteratorResult } from "@/utils";
 
+/**
+ * 
+ * @operation `Tap`
+ * @param iterable 
+ * @param tapper 
+ * @returns 
+ */
 export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
 	return new TapIterable(iterable, tapper);
 }

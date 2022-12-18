@@ -44,6 +44,11 @@ export interface IIterableLinq<T> {
 
 	tap(tapper: Tapper<T>): IIterableLinq<T>;
 	tapChain(tapper: Tapper<Iterable<T>>): IIterableLinq<T>;
+	/**
+	 * 
+	 * @operation `Tap`
+	 * @param chainCreationTapper 
+	 */
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T>;
 }
 
@@ -59,7 +64,7 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	private iterable: Iterable<T>;
 
 	collectToArray(): T[] {
-		return [...this.iterable];
+		return Array.from(this.iterable);
 	}
 
 	filter(predicate: Predicate<T>): IIterableLinq<T> {

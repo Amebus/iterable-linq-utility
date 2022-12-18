@@ -1,5 +1,11 @@
 import { LinkedListCollection } from "@/genericCollections";
 
+/**
+ * 
+ * @operation `Action`
+ * @param iterable 
+ * @returns 
+ */
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
 	if (iterable instanceof MaterializeIterable) {
     return iterable;

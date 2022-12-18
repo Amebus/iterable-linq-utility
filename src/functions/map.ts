@@ -2,6 +2,13 @@ import { combineMappers } from "@/combiners";
 import { Mapper } from "@/types";
 import { getDoneIteratorResult, getIteratorResult } from "@/utils";
 
+/**
+ * 
+ * @operation `Transformation`
+ * @param iterable 
+ * @param mapper 
+ * @returns 
+ */
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
   return new MapIterable(iterable, mapper);
 }

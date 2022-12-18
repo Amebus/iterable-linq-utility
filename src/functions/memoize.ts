@@ -1,6 +1,12 @@
 import { LinkedListCollection } from "@/genericCollections";
 import { getFlatIteratorResult } from "@/utils";
 
+/**
+ * 
+ * @operation `Transformation`
+ * @param iterable 
+ * @returns 
+ */
 export function memoize<T>(iterable: Iterable<T>): Iterable<T> {
   if (iterable instanceof MemoizeIterable) {
     return iterable;
