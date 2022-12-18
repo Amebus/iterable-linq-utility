@@ -1,4 +1,3 @@
-import { combinePredicates } from "@/combiners";
 import { getFlatIteratorResult } from "@/utils";
 import { Predicate } from "@/types";
 
@@ -15,15 +14,8 @@ export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Itera
 
 class FilterIterable<T> implements Iterable<T> {
 	constructor(iterable: Iterable<T>, predicate: Predicate<T>) {
-		let newPredicate = predicate;
-		let source = iterable;
-		if (source instanceof FilterIterable) { // TODO check if it's a real performance improvement
-			const oldPredicate = source.predicate;
-			source = source.source;
-			newPredicate = combinePredicates(oldPredicate, newPredicate);
-		}
-		this.source = source;
-		this.predicate = newPredicate;
+		this.source = iterable;
+		this.predicate = predicate;
 	}
 	[Symbol.iterator](): Iterator<T, any, undefined> {
 		return new FilterIterableIterator(this.source, this.predicate);

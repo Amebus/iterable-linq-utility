@@ -1,4 +1,3 @@
-import { combineMappers } from "@/combiners";
 import { Mapper } from "@/types";
 import { getDoneIteratorResult, getIteratorResult } from "@/utils";
 
@@ -16,15 +15,8 @@ export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable
 class MapIterable<T,R> implements Iterable<R> {
 
 	constructor(iterable: Iterable<T>, mapper: Mapper<T,R>) {
-		let newMapper = mapper;
-		let source = iterable;
-		if (source instanceof MapIterable) { // TODO check if it's a real performance improvement
-			const oldMapper = source.mapper;
-			source = source.source;
-			newMapper = combineMappers(oldMapper, newMapper);
-		}
 		this.source = iterable;
-		this.mapper = newMapper;
+		this.mapper = mapper;
 	}
 
 	[Symbol.iterator](): Iterator<R, any, undefined> {
