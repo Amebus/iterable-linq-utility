@@ -10,7 +10,7 @@ describe('from', () => {
 		const r = IterableLinq.from(iterable);
 		expect(r).toBeInstanceOf(IterableLinq.IterableLinqWrapper);
 		expect(r['iterable']).toBe(iterable);
-		expect([...r].join('')).toEqual(iterable);
+		expect(r.collectToArray().join('')).toEqual(iterable);
 	});
 
 	test.each([
@@ -19,7 +19,7 @@ describe('from', () => {
 		const r = IterableLinq.from(iterable);
 		expect(r).toBeInstanceOf(IterableLinq.IterableLinqWrapper);
 		expect(r['iterable']).toBe(iterable);
-		expect([...r]).toEqual(iterable);
+		expect(r.collectToArray()).toEqual(iterable);
 	});
 
 });
