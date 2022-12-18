@@ -19,11 +19,11 @@ describe('IterableLinq.tapChain', () => {
 		
 		expect(tapperSpy).not.toHaveBeenCalled();
 		
-		[...tapped];
+		tapped.collectToArray();
 		
 		expect(tapperSpy).toHaveBeenCalledOnce();
 
-		[...tapped];
+		tapped.collectToArray();
 
 		expect(tapperSpy).toHaveBeenCalledTimes(2);
 	});

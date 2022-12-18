@@ -22,7 +22,7 @@ describe('IterableLinq.tapChainCreation', () => {
 			.tapChainCreation(chainCreationTapperSpy);
 		
 		expect(chainCreationTapperSpy).toHaveBeenCalledTimes(2);
-		[...tapped];
+		tapped.collectToArray();
 		expect(chainCreationTapperSpy).toHaveBeenCalledTimes(2);
 	});
 
