@@ -48,16 +48,16 @@ describe('IterableLinq.materialize', () => {
 		{ iterable: generatedRange, iterableItemCount: rangeIterableItemCount , filterPredicate: v => v % 4 === 0 },
 		{ iterable: linkedList, iterableItemCount: linkedList.size() , filterPredicate: v => v % 4 === 0 },
 		{ iterable: stringIterable, iterableItemCount: stringIterableItemCount , filterPredicate: v => v === 'm' }
-	])('IterableLinq.from($iterable).materialize() do not itarate the source iterable multiple time', ({ iterable, iterableItemCount, filterPredicate }) => {
+	])('IterableLinq.from($iterable).materialize() does not itarate the source iterable multiple time', ({ iterable, iterableItemCount, filterPredicate }) => {
 
 		const filterPredicateSpy = vi.fn(filterPredicate);
 		const filtered = IterableLinq
 			.from(iterable as any)
 			.filter(filterPredicateSpy);
 		const materialized = filtered.materialize();
-		const filterResult1 = [...materialized];
+		const filterResult1 = materialized.collectToArray();
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
-		const filterResult2 = [...materialized];
+		const filterResult2 = materialized.collectToArray();
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
 
 		expect(filterResult1).toEqual(filterResult2);

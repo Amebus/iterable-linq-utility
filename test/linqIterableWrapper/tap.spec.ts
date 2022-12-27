@@ -18,7 +18,7 @@ describe('IterableLinq.tap', () => {
 		
 		expect(tapperSpy).not.toHaveBeenCalled();
 		
-		[...tapped];
+		tapped.collectToArray();
 		expect(tappedValue).toBe(expectedTappedValue);
 		expect(tapperSpy).toHaveBeenCalledTimes(end);
 	});

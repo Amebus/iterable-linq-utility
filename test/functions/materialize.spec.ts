@@ -55,7 +55,7 @@ describe('materialize', () => {
 		{ iterable: generatedRange },
 		{ iterable: linkedList },
 		{ iterable: stringIterable }
-	])('materialize($iterable) doesn\'t generate new iterable from itself', ({ iterable }) => {
+	])('materialize($iterable) does not generate new iterable from itself', ({ iterable }) => {
 		const materialized = materialize(iterable as any);
 		const materialized2 = materialize(materialized);
 		expect(materialized2).toBe(materialized);

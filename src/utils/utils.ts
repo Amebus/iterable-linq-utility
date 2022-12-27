@@ -1,35 +1,3 @@
-export type BooleanComparePredicate<T> = (current: T, other: T) => boolean;
-
-/**
- * 
- * @since 1.0.0
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is `null`, `undefined` or `NaN`, else false.
- * @example
- * 
- * isNullOrUndefined(null)
- * // => true
- * 
- * isNullOrUndefined(undefined)
- * // => true
- * 
- * isNullOrUndefined()
- * // => true
- * 
- * const myVariable = undefined
- * isNullOrUndefined(myVariable)
- * // => true
- * 
- * isNullOrUndefined('')
- * // => false
- * 
- */
-export function isNullOrUndefined(value?: any): value is null | undefined {
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN
-	return typeof value === 'undefined' || value === void 0 || value === null || Number.isNaN(value);
-  // value == null || Number.isNaN(value);
-}
-
 /**
  * Checks if `value` is classified as a `Function` object.
  *
