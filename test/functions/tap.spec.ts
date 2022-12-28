@@ -4,8 +4,21 @@ import {
 	range,
 	tap
 } from '@/functions';
+import { returnClosesTheIterator } from './functionsTestUtility';
 
 describe('tap', () => {
+
+	test.each([
+		{ end: 20, returnValue: 'a value' },
+		{ end: 20, returnValue: 123 },
+		{ end: 20, returnValue: null },
+		{ end: 20 }
+	])('repeat($value, $count)[Symbol.iterator]().return() closes the iterator', ({ end, returnValue }) => {
+		const repeatIterable = tap(range(end), () => {
+			// empty is ok
+		});
+		returnClosesTheIterator(repeatIterable, returnValue);
+	});
 
 	test.each([
 		{ end: 10, expectedTappedValue: -1 },

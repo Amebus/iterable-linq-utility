@@ -4,8 +4,19 @@ import {
 	collectToArray,
 	repeat
 } from "@/functions";
+import { returnClosesTheIterator } from './functionsTestUtility';
 
 describe('repeat', () => {
+
+	test.each([
+		{ value: 42, count: 20, returnValue: 'a value' },
+		{ value: 42, count: 20, returnValue: 123 },
+		{ value: 42, count: 20, returnValue: null },
+		{ value: 42, count: 20 }
+	])('repeat($value, $count)[Symbol.iterator]().return() closes the iterator', ({ value, count, returnValue }) => {
+		const repeatIterable = repeat(value, count);
+		returnClosesTheIterator(repeatIterable, returnValue);
+	});
 
 	test.each([
 		{ value: 'a', count: 0, expectedResult: [] },

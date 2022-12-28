@@ -1,4 +1,4 @@
-import { getFlatIteratorResult, isFunction } from "@/utils";
+import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "@/utils";
 import { Predicate } from "@/types";
 
 /**
@@ -9,7 +9,9 @@ import { Predicate } from "@/types";
  * @returns 
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
-	if(!isFunction(predicate))
+	if (iterable == null)
+		throw 'The source "iterable" must be provided';
+	if (!isFunction(predicate))
 		throw '"predicate" function must be provided';
   return new FilterIterable(iterable, predicate);
 }
@@ -38,12 +40,20 @@ class FilterIterableIterator<T> implements Iterator<T> {
 	private sourceIterator: Iterator<T>;
 	private predicate: Predicate<T>;
 
-	next(): IteratorResult<T, any> {
+	private internalNext: () => IteratorResult<T, any> = () => {
 		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const n = this.sourceIterator.next();
 			if (n.done === true || this.predicate(n.value, this.index++))
 				return getFlatIteratorResult(n);
 		}
+	};
+
+	next(): IteratorResult<T, any> {
+		return this.internalNext();
+	}
+	return?(value?: any): IteratorResult<T, any> {
+		this.internalNext = getDoneIteratorResult;
+		return getDoneIteratorResult(value);
 	}
 }

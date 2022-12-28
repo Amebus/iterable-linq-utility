@@ -9,6 +9,8 @@ import { isFunction } from "@/utils";
  * @returns 
  */
 export function max<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null | undefined {
+  if (iterable == null)
+		throw 'The source "iterable" must be provided';
   const iterator: Iterator<T> = iterable[Symbol.iterator]();
   let n = iterator.next();
   let max: T | null | undefined = n.value;

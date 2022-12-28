@@ -4,8 +4,13 @@ import {
 	max,
 	range
 } from '@/functions';
+import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('max', () => {
+
+	test('max without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(max);
+	});
 
 	test.each([
 		{ start: 0, end: 0, expectedResult: null },

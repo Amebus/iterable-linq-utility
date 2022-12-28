@@ -9,10 +9,10 @@ import { getDoneIteratorResult, getIteratorResult, isFunction } from "@/utils";
  * @returns 
  */
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
-
+	if (iterable == null)
+		throw 'The source "iterable" must be provided';
 	if(!isFunction(mapper))
 		throw '"mapper" function must be provided';
-
   return new MapIterable(iterable, mapper);
 }
 
@@ -42,10 +42,19 @@ class MapIterableIterator<T, R> implements Iterator<R> {
 	private readonly sourceIterator: Iterator<T>;
 	private readonly mapper: Mapper<T, R>;
 
-
-	next(): IteratorResult<R, any> {
+	internalNext: () => IteratorResult<R> = () => {
 		const n = this.sourceIterator.next();
 		if (n.done !== true) return getIteratorResult<R>(false, this.mapper(n.value, this.index++));
-		return getDoneIteratorResult<R>();
+		this.internalNext = getDoneIteratorResult;
+		return this.internalNext();
+	};
+
+	next(): IteratorResult<R, any> {
+		return this.internalNext();
+	}
+
+	return(value?: any): IteratorResult<R, any> {
+		this.internalNext = getDoneIteratorResult;
+		return getDoneIteratorResult(value);
 	}
 }

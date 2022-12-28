@@ -6,9 +6,37 @@ import {
 	range
 } from "@/functions";
 
+import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
+
 const loremIpsum = 'Lorem ipsum dolor sit amte';
 
 describe('flatMap', () => {
+
+	test('flatMap without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(flatMap);
+	});
+
+	test.each([
+		{ start: 0, end: 20 },
+		{ start: -10, end: 10 },
+		{ start: 0, end: 20, mapper: undefined },
+		{ start: 0, end: 20, mapper: null },
+		{ start: 0, end: 20, mapper: {} }
+	])('flatMap without mapper -> throw exception', ({ start, end, mapper }) => {
+		const flatMapJs = flatMap as any;
+		expect(() => flatMapJs(range(start, end))).toThrowError();
+		expect(() => flatMapJs(range(start, end), mapper)).toThrowError();
+	});
+
+	test.each([
+		{ start: 0, end: 20, mapPredicate: v => range(v), returnValue: 'a value' },
+		{ start: 0, end: 20, mapPredicate: v => range(v), returnValue: 123 },
+		{ start: 0, end: 20, mapPredicate: v => range(v), returnValue: null },
+		{ start: 0, end: 20, mapPredicate: v => range(v) }
+	])('flatMap(range($start, $end), $mapPredicate)[Symbol.iterator]().return() closes the iterator', ({ start, end, mapPredicate, returnValue }) => {
+		const flatMapIterable = flatMap(range(start, end), mapPredicate);
+		returnClosesTheIterator(flatMapIterable, returnValue);
+	});
 
 	test.each([
 		{ start: 0, end: 3, mapPredicate: v => range(v) },

@@ -4,8 +4,25 @@ import {
 	reduce,
 	range
 } from "@/functions";
+import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('reduce', () => {
+
+	test('max without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(reduce);
+	});
+
+	test.each([
+		{ start: 0, end: 20 },
+		{ start: -10, end: 10 },
+		{ start: 0, end: 20, reducer: undefined },
+		{ start: 0, end: 20, reducer: null },
+		{ start: 0, end: 20, reducer: {} }
+	])('flatMap without mapper -> throw exception', ({ start, end, reducer }) => {
+		const reduceJs = reduce as any;
+		expect(() => reduceJs(range(start, end))).toThrowError();
+		expect(() => reduceJs(range(start, end), reducer)).toThrowError();
+	});
 
 	test.each([
 		{ start: 0, end: 15, acc: 0, reducer: (acc, v) => acc + v, expectedResult: 105 },

@@ -1,10 +1,19 @@
 import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../../src';
+import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 const loremIpsum = 'Lorem ipsum dolor sit amte';
 
 describe('IterableLinq.flatMap', () => {
+
+	test.each([
+		{ start: 0, end: 20 },
+		{ start: 0, end: 20 },
+		{ start: -10, end: 10 }
+	])('flatMap without filter predicate -> throw exception', ({ start, end }) => {
+		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'flatMap');
+	});
 
 	test.each([
 		{ start: 0, end: 3, mapPredicate: v => IterableLinq.fromRange(v) },

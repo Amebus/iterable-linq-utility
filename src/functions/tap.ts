@@ -39,21 +39,21 @@ class TapIterableIterator<T> implements Iterator<T> {
 	private sourceIterator: Iterator<T>;
 	private tapper: Tapper<T>;
 
-	innerNext: () => IteratorResult<T, any> = () => {
+	private internalNext: () => IteratorResult<T, any> = () => {
 		const n = this.sourceIterator.next();
 		if (n.done !== true) {
 			this.tapper(n.value, this.index++);
 			return getFlatIteratorResult(n);
 		}
-		this.innerNext = getDoneIteratorResult;
+		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult();
 	};
 
 	next(): IteratorResult<T, any> {
-		return this.innerNext();
+		return this.internalNext();
 	}
 	return?(value?: any): IteratorResult<T, any> {
-		this.innerNext = getDoneIteratorResult;
+		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);
 	}
 }

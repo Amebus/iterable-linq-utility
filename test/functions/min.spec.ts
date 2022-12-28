@@ -4,8 +4,13 @@ import {
 	min,
 	range
 } from '@/functions';
+import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('min', () => {
+
+	test('max without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(min);
+	});
 
 	test.each([
 		{ start: 0, end: 0, expectedResult: null },
@@ -28,7 +33,7 @@ describe('min', () => {
 
 
 	test.each([
-		{ data: [], expectedResult: null },
+		{ data: [], expectedResult: null },	
 		{ data: [{ val: 10 }], expectedResult: { val: 10 } },
 		{ data: [{ val: 10 }, { val: 1 }], expectedResult: { val: 1 } }
 	])('min($data, "val") -> $expectedResult', ({ data, expectedResult }) => {

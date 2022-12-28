@@ -5,9 +5,36 @@ import {
 	map,
 	range
 } from "@/functions";
+import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 
 describe('map', () => {
+
+	test('map without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(map);
+	});
+
+	test.each([
+		{ start: 0, end: 20 },
+		{ start: -10, end: 10 },
+		{ start: 0, end: 20, mapper: undefined },
+		{ start: 0, end: 20, mapper: null },
+		{ start: 0, end: 20, mapper: {} }
+	])('map without mapper -> throw exception', ({ start, end, mapper }) => {
+		const mapJs = map as any;
+		expect(() => mapJs(range(start, end))).toThrowError();
+		expect(() => mapJs(range(start, end), mapper)).toThrowError();
+	});
+
+	test.each([
+		{ start: 0, end: 20, mapPredicate: v => range(v), returnValue: 'a value' },
+		{ start: 0, end: 20, mapPredicate: v => range(v), returnValue: 123 },
+		{ start: 0, end: 20, mapPredicate: v => range(v), returnValue: null },
+		{ start: 0, end: 20, mapPredicate: v => range(v) }
+	])('map(range($start, $end), $mapPredicate)[Symbol.iterator]().return() closes the iterator', ({ start, end, mapPredicate, returnValue }) => {
+		const mapIterable = map(range(start, end), mapPredicate);
+		returnClosesTheIterator(mapIterable, returnValue);
+	});
 
 	test.each([
 		{ start: 0, end: 5, mapPredicate: v => v * 10 },

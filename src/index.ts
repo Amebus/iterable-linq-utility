@@ -7,6 +7,8 @@ export function empty<T>(): IIterableLinq<T> {
 }
 
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
+  if (iterable == null)
+    throw 'The source "iterable" must be provided';
   return new IterableLinqWrapper(iterable);
 }
 

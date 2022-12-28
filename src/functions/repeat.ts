@@ -29,7 +29,7 @@ class RepeatIterableIterator<T> implements Iterator<T> {
 		this.count = count;
 		this.leftToRepeat = count;
 		if (count === 0)
-			this.internalNext = () => getDoneIteratorResult();
+			this.internalNext = getDoneIteratorResult;
 	}
 
 	leftToRepeat: number = 0;
@@ -39,7 +39,7 @@ class RepeatIterableIterator<T> implements Iterator<T> {
 	internalNext: () => IteratorResult<T,any> = () => {
 		if (this.leftToRepeat--)
 			return getIteratorResult(false, this.value);
-		this.internalNext = () => getDoneIteratorResult();
+		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult();
 	};
 
@@ -47,7 +47,7 @@ class RepeatIterableIterator<T> implements Iterator<T> {
 		return this.internalNext();
 	}
 	return(value?: any): IteratorResult<T, any> {
-		this.internalNext = () => getDoneIteratorResult();
+		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);
 	}
 }

@@ -10,7 +10,8 @@ import { isFunction } from "@/utils";
  * @returns 
  */
 export function reduce<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>) {
-
+  if (iterable == null)
+    throw 'The source "iterable" must be provided';
 	if(!isFunction(reducer))
 		throw '"reducer" function must be provided';
 

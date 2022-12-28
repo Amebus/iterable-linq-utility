@@ -1,12 +1,17 @@
 import { describe, expect, test } from 'vitest';
 
 import * as IterableLinq from '../src';
+import { withoutInputIterableThrowsException } from './functions/functionsTestUtility';
 
 describe('IterableLinq.from', () => {
 
+	test('IterableLinq.from without iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(IterableLinq.from);
+	});
+
 	test.each([
 		{ iterable: 'Lorem ipsum dolor sit amet' }
-	])('from($iterable)', ({ iterable }) => {
+	])('IterableLinq.from($iterable)', ({ iterable }) => {
 		const r = IterableLinq.from(iterable);
 		expect(r).toBeInstanceOf(IterableLinq.IterableLinqWrapper);
 		expect(r['iterable']).toBe(iterable);
@@ -15,7 +20,7 @@ describe('IterableLinq.from', () => {
 
 	test.each([
 		{ iterable: [1,2,3,4,5,6,7,8,9] }
-	])('from($iterable)', ({ iterable }) => {
+	])('IterableLinq.from($iterable)', ({ iterable }) => {
 		const r = IterableLinq.from(iterable);
 		expect(r).toBeInstanceOf(IterableLinq.IterableLinqWrapper);
 		expect(r['iterable']).toBe(iterable);

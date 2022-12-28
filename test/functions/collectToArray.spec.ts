@@ -3,15 +3,20 @@ import { describe, expect, test } from 'vitest';
 import { 
 	collectToArray
 } from "@/functions";
+import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
-describe('IterableLinq.collectToArray', () => {
+describe('collectToArray', () => {
+	
+	test('collectToArray without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(collectToArray);
+	});
 
 	test.each([
 		{ input: [1,2,3,4,5,6,7,8,9] },
 		{ input: [-1,-2,-3,-4,-5,-6,-7,-8,-9] },
 		{ input: [1,2,3,4] },
 		{ input: [-3,-5,-8,1,2,3,4] }
-	])('collectToArray($input)', ({ input }) => {
+	])('collectToArray($input) generates new array', ({ input }) => {
 		const arr = collectToArray(input);
 
 		expect(arr).toBeInstanceOf(Array);

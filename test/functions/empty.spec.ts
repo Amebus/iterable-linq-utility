@@ -5,13 +5,22 @@ import {
 	empty
 } from "@/functions";
 
+import { returnClosesTheIterator } from './functionsTestUtility';
+
 describe('empty', () => {
 
 	test('empty() generates an empty array', () => {
 		const r = collectToArray(empty<number>());
-
 		expect(r).toEqual([]);
+	});
 
+	test.each([
+		{ returnValue: 'a value' },
+		{ returnValue: 123 },
+		{ returnValue: null },
+		{ }
+	])('empty()[Symbol.iterator]().return() closes the iterator', ({ returnValue }) => {
+		returnClosesTheIterator(empty<number>(), returnValue);
 	});
 
 	test('same empty() generates new empty array each time', () => {
@@ -26,7 +35,6 @@ describe('empty', () => {
 		expect(r1).toEqual([]);
 		expect(r2).toEqual([]);
 		expect(r3).toEqual([]);
-
 	});
 
 });
