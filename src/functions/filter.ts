@@ -1,4 +1,4 @@
-import { getFlatIteratorResult } from "@/utils";
+import { getFlatIteratorResult, isFunction } from "@/utils";
 import { Predicate } from "@/types";
 
 /**
@@ -9,6 +9,8 @@ import { Predicate } from "@/types";
  * @returns 
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
+	if(!isFunction(predicate))
+		throw '"predicate" function must be provided';
   return new FilterIterable(iterable, predicate);
 }
 

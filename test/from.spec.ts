@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import * as IterableLinq from '../src';
 
-describe('from', () => {
+describe('IterableLinq.from', () => {
 
 	test.each([
 		{ iterable: 'Lorem ipsum dolor sit amet' }

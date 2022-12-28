@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../src';
 
-describe('fromRange', () => {
+describe('IterableLinq.fromRange', () => {
 
   test('checks IterableLinq.fromRange function definition', () => {
     expect(IterableLinq.fromRange).toHaveLength(4);

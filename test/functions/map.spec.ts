@@ -1,6 +1,7 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from 'vitest';
 
 import { 
+	collectToArray,
 	map,
 	range
 } from "@/functions";
@@ -17,8 +18,8 @@ describe('map', () => {
 		const mapPredicateSpy = vi.fn(mapPredicate);
 		const mapped = map(range(start, end), mapPredicateSpy);
 		expect(mapPredicateSpy).not.toHaveBeenCalled();
-		[...mapped];
-		expect(mapPredicateSpy).toHaveBeenCalled();
+		collectToArray(mapped);
+		expect(mapPredicateSpy).toHaveReturned();
 	});
 
 	test.each([
@@ -29,12 +30,12 @@ describe('map', () => {
 	])('map(range($start, $end), $mapPredicate) allows re-run', ({ start, end, mapPredicate, expectedPredicateCalls }) => {
 		const mapPredicateSpy = vi.fn(mapPredicate);
 		const mapped = map(range(start, end), mapPredicateSpy);
-		expect(mapPredicateSpy).not.toHaveBeenCalled();
+		expect(mapPredicateSpy).not.toHaveReturned();
 
 		expectedPredicateCalls
 			.forEach(expectedCalls => {
-				[...mapped];
-				expect(mapPredicateSpy).toHaveBeenCalledTimes(expectedCalls);
+				collectToArray(mapped);
+				expect(mapPredicateSpy).toHaveReturnedTimes(expectedCalls);
 			});
 	});
 
@@ -44,7 +45,7 @@ describe('map', () => {
 		{ start: 0, end: 5, mapPredicate: (v, idx) => v * idx, expectedResult: [0,1,4,9,16] },
 		{ start: -5, end: 5, mapPredicate: (v, idx) => v * idx, expectedResult: [-0, -4, -6, -6, -4, 0, 6, 14, 24, 36] }
 	])('map(range($start, $end), $mapPredicate) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
-		const r = [...map(range(start, end), mapPredicate)];
+		const r = collectToArray(map(range(start, end), mapPredicate));
 		expect(r).toEqual(expectedResult);
 	});
 

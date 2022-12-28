@@ -1,6 +1,7 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from 'vitest';
 
 import { 
+	collectToArray,
 	filter,
 	materialize,
 	range
@@ -24,12 +25,12 @@ describe('materialize', () => {
 		expect(materialized).not.toBe(iterable);
 		expect(materialized['source']).not.toBe(iterable);
 		expect(materialized).not.toEqual(iterable);
-		expect([...materialized]).toEqual([...iterable]);
+		expect(collectToArray(materialized)).toEqual(collectToArray(iterable as any));
 
 		const materialized2 = materialize(iterable as any);
 		expect(materialized2).not.toBe(materialized);
 		expect(materialized2).toEqual(materialized);
-		expect([...materialized2]).toEqual([...materialized]);
+		expect(collectToArray(materialized2)).toEqual(collectToArray(materialized));
 	});
 
 	test.each([
@@ -37,15 +38,15 @@ describe('materialize', () => {
 		{ iterable: linkedList },
 		{ iterable: stringIterable }
 	])('materialize($iterable) generate new iterable with same data', ({ iterable }) => {
-		const data = [...iterable];
+		const data = collectToArray(iterable as any);
 		const originalDataLength = data.length;
 		
 		const materialized = materialize(data as any);
-		expect([...materialized].length).toEqual(originalDataLength);
+		expect(collectToArray(materialized).length).toEqual(originalDataLength);
 		
 		data.push(...data);
 		const newDataLength = data.length;
-		expect([...materialized].length).toEqual(originalDataLength);
+		expect(collectToArray(materialized).length).toEqual(originalDataLength);
 
 		// to be sure that data has changed correctly, if we change some code in the previous lines the next one might break
 		expect(newDataLength).toEqual(originalDataLength * 2);
@@ -83,9 +84,9 @@ describe('materialize', () => {
 		const filterPredicateSpy = vi.fn(filterPredicate);
 		const filtered = filter(iterable, filterPredicateSpy);
 		const materialized = materialize(filtered);
-		const filterResult1 = [...materialized];
+		const filterResult1 = collectToArray(materialized);
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
-		const filterResult2 = [...materialized];
+		const filterResult2 = collectToArray(materialized);
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
 		
 		expect(filterResult1).toEqual(filterResult2);

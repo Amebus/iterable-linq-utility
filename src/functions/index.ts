@@ -1,3 +1,9 @@
+import { collectToArray } from './collectToArray';
+export { collectToArray };
+
+import { empty } from './empty';
+export { empty };
+
 import { filter } from './filter';
 export { filter };
 
@@ -14,13 +20,17 @@ export {
 	min
 };
 
-
 import { range } from './range';
-export { range };
+import { reduce } from './reduce';
+import { repeat } from './repeat';
+export {
+	range,
+	reduce,
+	repeat
+};
 
 import { some } from './some';
 export { some };
-
 
 import { tap } from './tap';
 import { tapChain } from './tapChain';

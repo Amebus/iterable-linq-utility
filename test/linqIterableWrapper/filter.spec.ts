@@ -1,11 +1,11 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../../src';
 
 describe('IterableLinq.filter', () => {
 
 	
-	test.each([
+	test.each([		
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0 },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 1 },
 		{ start: -10, end: 10, filterPredicate: v => v > -5 && v < 5 },
@@ -19,11 +19,12 @@ describe('IterableLinq.filter', () => {
 			.filter(filterPredicateSpy);
 		expect(filterPredicateSpy).not.toHaveBeenCalled();
 		filtered.collectToArray();
-		expect(filterPredicateSpy).toHaveBeenCalled();
+		expect(filterPredicateSpy).toHaveReturned();
 	});
 
 
 	test.each([
+		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [0,0,0,0] },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [20,40,60,80] },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 1, expectedPredicateCalls: [20,40,60,80] },
 		{ start: -10, end: 10, filterPredicate: v => v > -5 && v < 5, expectedPredicateCalls: [20,40,60,80] },
@@ -41,11 +42,12 @@ describe('IterableLinq.filter', () => {
 		expectedPredicateCalls
 			.forEach(expectedCalls => {
 				filtered.collectToArray();
-				expect(filterPredicateSpy).toHaveBeenCalledTimes(expectedCalls);
+				expect(filterPredicateSpy).toHaveReturnedTimes(expectedCalls);
 			});
 	});
 
 	test.each([
+		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedResult: [] },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0, expectedResult: [0,2,4,6,8,10,12,14,16,18] },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 1, expectedResult: [1,3,5,7,9,11,13,15,17,19] },
 		{ start: -10, end: 10, filterPredicate: v => v > -5 && v < 5, expectedResult: [-4,-3,-2,-1,0,1,2,3,4] },

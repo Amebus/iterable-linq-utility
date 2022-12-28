@@ -60,7 +60,7 @@ describe('some', () => {
 	])('short circuits - some(range($start, $end), $predicate)', ({ start, end, predicate, expectedFunctionCalls}) => {
 		const predicateSpy = vi.fn(predicate);
 		some(range(start,end), predicateSpy);
-		expect(predicateSpy).toHaveBeenCalledTimes(expectedFunctionCalls);
+		expect(predicateSpy).toHaveReturnedTimes(expectedFunctionCalls);
 	});
 
 	test.each([
@@ -71,7 +71,7 @@ describe('some', () => {
 	])('short circuits - some($text, $predicate)', ({ text, predicate, expectedFunctionCalls }) => {
 		const predicateSpy = vi.fn(predicate);
 		some(text, predicateSpy);
-		expect(predicateSpy).toHaveBeenCalledTimes(expectedFunctionCalls);
+		expect(predicateSpy).toHaveReturnedTimes(expectedFunctionCalls);
 	});
 
 	test.each([
@@ -87,7 +87,7 @@ describe('some', () => {
 	])('short circuits - some(range($start, $end), $predicate)', ({ start, end, predicate, expectedFunctionCalls}) => {
 		const predicateSpy = vi.fn(predicate);
 		some(range(start,end), predicateSpy);
-		expect(predicateSpy).toHaveBeenCalledTimes(expectedFunctionCalls);
+		expect(predicateSpy).toHaveReturnedTimes(expectedFunctionCalls);
 	});
 
 });

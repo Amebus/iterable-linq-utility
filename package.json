@@ -1,6 +1,6 @@
 {
   "name": "iterable-linq-utility",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "An Iterable mutation utility inspired by .net Linq and Javascript Array interface",
   "type": "module",
   "main": "./dist/interable-linq-utility.umd.cjs",
@@ -29,7 +29,7 @@
     "url": "git+https://github.com/Amebus/iterable-linq-utility.git"
   },
   "author": "Amebus",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Amebus/iterable-linq-utility/issues"
   },

@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../../src';
 
@@ -16,7 +16,7 @@ describe('map', () => {
 			.map(mapPredicateSpy);
 		expect(mapPredicateSpy).not.toHaveBeenCalled();
 		mapped.collectToArray();
-		expect(mapPredicateSpy).toHaveBeenCalled();
+		expect(mapPredicateSpy).toHaveReturned();
 	});
 
 
@@ -35,7 +35,7 @@ describe('map', () => {
 		expectedPredicateCalls
 			.forEach(expectedCalls => {
 				mapped.collectToArray();
-				expect(mapPredicateSpy).toHaveBeenCalledTimes(expectedCalls);
+				expect(mapPredicateSpy).toHaveReturnedTimes(expectedCalls);
 			});
 	});
 

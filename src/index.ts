@@ -1,11 +1,10 @@
 import { IterableLinqWrapper, type IIterableLinq } from "./linqIterable";
 
-import { 
-  range
-} from "@/functions";
-
 import * as Functions from '@/functions';
 
+export function empty<T>(): IIterableLinq<T> {
+  return from(Functions.empty());
+}
 
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
   return new IterableLinqWrapper(iterable);
@@ -19,7 +18,11 @@ export function fromRange(start: number, end: number, reverse: boolean): IIterab
 export function fromRange(start: number, end: number, step: number, reverse: boolean): IIterableLinq<number>;
 export function fromRange(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number>;
 export function fromRange(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): IIterableLinq<number> {
-  return from(range(start, end, step, reverse));
+  return from(Functions.range(start, end, step, reverse));
+}
+
+export function repeat<T>(value: T, count: number): IIterableLinq<T> {
+  return from(Functions.repeat(value, count));
 }
 
 export {

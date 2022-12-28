@@ -1,5 +1,5 @@
 import { Mapper } from "@/types";
-import { getDoneIteratorResult, getIteratorResult } from "@/utils";
+import { getDoneIteratorResult, getIteratorResult, isFunction } from "@/utils";
 
 /**
  * 
@@ -9,6 +9,10 @@ import { getDoneIteratorResult, getIteratorResult } from "@/utils";
  * @returns 
  */
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
+
+	if(!isFunction(mapper))
+		throw '"mapper" function must be provided';
+
   return new MapIterable(iterable, mapper);
 }
 

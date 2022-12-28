@@ -1,7 +1,12 @@
 import {
   Comparer,
+
   Mapper,
+	
+	Reducer,
+
   Predicate,
+	
 	Tapper
 } from '@/types';
 
@@ -15,6 +20,10 @@ import {
   max,
   memoize,
   min
+} from '@/functions';
+
+import {
+	reduce
 } from '@/functions';
 
 import {
@@ -39,6 +48,8 @@ export interface IIterableLinq<T> {
   max(comparer?: Comparer<T>): T | null | undefined;
   memoize(): IIterableLinq<T>;
   min(comparer?: Comparer<T>): T | null | undefined;
+
+	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
   some(predicate: Predicate<T>): boolean;
 
@@ -85,6 +96,10 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	}
 	min(comparer?: Comparer<T>): T | null | undefined {
 		return min(this.iterable, comparer);
+	}
+
+	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R {
+		return reduce(this.iterable, neutralElement, reducer);
 	}
 
 	some(predicate: Predicate<T>): boolean {

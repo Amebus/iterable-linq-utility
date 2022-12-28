@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../../src';
 
@@ -36,8 +36,8 @@ describe('IterableLinq.materialize', () => {
 
 		const filterPredicateSpy = vi.fn(filterPredicate);
 		const filtered =  IterableLinq
-		.from(iterable as any)
-		.filter(filterPredicateSpy);
+			.from(iterable as any)
+			.filter(filterPredicateSpy);
 		expect(filterPredicateSpy).not.toHaveBeenCalled();
 		filtered.materialize();
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);

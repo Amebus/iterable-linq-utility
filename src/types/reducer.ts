@@ -1,0 +1,1 @@
+export type Reducer<T, R> = (acc: R, value: T, index: number) => R;
