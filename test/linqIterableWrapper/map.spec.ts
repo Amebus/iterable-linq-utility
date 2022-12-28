@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../../src';
 
-describe('map', () => {
+describe('IterableLinq.map', () => {
 
 	test.each([
 		{ start: 0, end: 5, mapPredicate: v => v * 10 },

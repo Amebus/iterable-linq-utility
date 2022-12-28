@@ -11,7 +11,8 @@ import {
 } from '@/types';
 
 import { 
-  filter
+  filter,
+	flatMap
 } from "@/functions";
 
 import {
@@ -42,6 +43,7 @@ export interface IIterableLinq<T> {
   collectToArray(): T[];
 
   filter(predicate: Predicate<T>): IIterableLinq<T>; 
+	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R>;
 
   map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
   materialize(): IIterableLinq<T>;
@@ -80,6 +82,9 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 
 	filter(predicate: Predicate<T>): IIterableLinq<T> {
 		return new IterableLinqWrapper(filter(this.iterable, predicate));
+	}
+	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R> {
+		return new IterableLinqWrapper(flatMap(this.iterable, mapper));
 	}
 
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {

@@ -15,6 +15,7 @@ describe('IterableLinq.repeat', () => {
 		const r = IterableLinq
 			.repeat(value, count)
 			.collectToArray();
+		expect(r.length).toBe(count);
 		expect(r).toEqual(expectedResult);
 	});
 

@@ -27,8 +27,8 @@ class MapIterable<T,R> implements Iterable<R> {
 		return new MapIterableIterator(this.source, this.mapper);
 	}
 
-	private mapper: Mapper<T, R>;
-	private source: Iterable<T>;
+	private readonly mapper: Mapper<T, R>;
+	private readonly source: Iterable<T>;
 }
 
 class MapIterableIterator<T, R> implements Iterator<R> {
@@ -39,8 +39,8 @@ class MapIterableIterator<T, R> implements Iterator<R> {
 	}
 
 	private index = 0;
-	private sourceIterator: Iterator<T>;
-	private mapper: Mapper<T, R>;
+	private readonly sourceIterator: Iterator<T>;
+	private readonly mapper: Mapper<T, R>;
 
 
 	next(): IteratorResult<R, any> {

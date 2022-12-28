@@ -15,7 +15,7 @@ describe('repeat', () => {
 		{ value: 42, count: 0, expectedResult: [] },
 	])('repeat($value, $count) -> $expectedResult', ({ value, count, expectedResult }) => {
 		const r = collectToArray(repeat(value, count));
-
+		expect(r.length).toBe(count);
 		expect(r).toEqual(expectedResult);
 
 	});

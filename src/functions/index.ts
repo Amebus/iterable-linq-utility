@@ -5,7 +5,11 @@ import { empty } from './empty';
 export { empty };
 
 import { filter } from './filter';
-export { filter };
+import { flatMap } from './flatMap';
+export {
+	filter,
+	flatMap
+};
 
 import { map } from './map';
 import { materialize } from './materialize';
