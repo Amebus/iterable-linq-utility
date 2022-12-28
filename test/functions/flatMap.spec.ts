@@ -48,7 +48,7 @@ describe('flatMap', () => {
 		{ start: 1, end: 4, mapPredicate: (v, idx) => range(idx), expectedResult: [0,0,1] },
 		{ start: 1, end: 5, mapPredicate: (v, idx) => range(idx), expectedResult: [0,0,1,0,1,2] },
 		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v), expectedResult: ['L', 'L', 'o', 'L', 'o', 'r', 'L', 'o', 'r', 'e' ] },
-	])('flatMap(range($start, $end), $mapper) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
+	])('flatMap(range($start, $end), $mapPredicate) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
 		const r = collectToArray(flatMap<number, number | string>(range(start, end), mapPredicate));
 		expect(r).toEqual(expectedResult);
 	});

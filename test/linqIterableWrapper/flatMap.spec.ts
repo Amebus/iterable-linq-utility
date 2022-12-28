@@ -12,7 +12,7 @@ describe('IterableLinq.flatMap', () => {
 		{ start: 1, end: 4, mapPredicate: (v, idx) => IterableLinq.fromRange(idx) },
 		{ start: 1, end: 5, mapPredicate: (v, idx) => IterableLinq.fromRange(idx) },
 		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v) },
-	])('IterableLinq.fromRange($start, $end).flatMap($mapper) is transformation', ({ start, end, mapPredicate }) => {
+	])('IterableLinq.fromRange($start, $end).flatMap($mapPredicate) is transformation', ({ start, end, mapPredicate }) => {
 		const mapPredicateSpy = vi.fn(mapPredicate as any);
 		const mapped = IterableLinq
 			.fromRange(start, end)
@@ -28,7 +28,7 @@ describe('IterableLinq.flatMap', () => {
 		{ start: 1, end: 4, mapPredicate: (v, idx) => IterableLinq.fromRange(idx), expectedPredicateCalls: [3,6,9,12] },
 		{ start: 1, end: 5, mapPredicate: (v, idx) => IterableLinq.fromRange(idx), expectedPredicateCalls: [4,8,12,16] },
 		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v), expectedPredicateCalls: [4,8,12,16] }
-	])('IterableLinq.fromRange($start, $end).flatMap($mapper) allows re-run', ({ start, end, mapPredicate, expectedPredicateCalls }) => {
+	])('IterableLinq.fromRange($start, $end).flatMap($mapPredicate) allows re-run', ({ start, end, mapPredicate, expectedPredicateCalls }) => {
 		const mapPredicateSpy = vi.fn(mapPredicate as any);
 		const mapped = IterableLinq
 			.fromRange(start, end)
@@ -48,7 +48,7 @@ describe('IterableLinq.flatMap', () => {
 		{ start: 1, end: 4, mapPredicate: (v, idx) => IterableLinq.fromRange(idx), expectedResult: [0,0,1] },
 		{ start: 1, end: 5, mapPredicate: (v, idx) => IterableLinq.fromRange(idx), expectedResult: [0,0,1,0,1,2] },
 		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v), expectedResult: ['L', 'L', 'o', 'L', 'o', 'r', 'L', 'o', 'r', 'e' ] },
-	])('IterableLinq.fromRange($start, $end).flatMap($mapper) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
+	])('IterableLinq.fromRange($start, $end).flatMap($mapPredicate) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
 		const r = IterableLinq
 			.fromRange(start,end)
 			.flatMap<number | string>(mapPredicate)
