@@ -5,7 +5,7 @@ export function getIteratorResult<T>(done: boolean, value?: T): IteratorResult<T
   } as IteratorResult<T>;
 }
 
-export function getContinueIteratorResult<T>(value?: T): IteratorResult<T> {
+export function getContinueIteratorResult<T>(value: T): IteratorResult<T> {
   return { done: false, value };
 }
 
