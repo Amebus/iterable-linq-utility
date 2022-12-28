@@ -11,7 +11,7 @@ describe('IterableLinq.flatMap', () => {
 		{ start: 0, end: 20 },
 		{ start: 0, end: 20 },
 		{ start: -10, end: 10 }
-	])('flatMap without filter predicate -> throw exception', ({ start, end }) => {
+	])('IterableLinq.flatMap without mapper -> throw exception', ({ start, end }) => {
 		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'flatMap');
 	});
 

@@ -8,7 +8,7 @@ import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('reduce', () => {
 
-	test('max without input iterable -> throw exception', () => {
+	test('reduce without input iterable -> throw exception', () => {
 		withoutInputIterableThrowsException(reduce);
 	});
 
@@ -18,7 +18,7 @@ describe('reduce', () => {
 		{ start: 0, end: 20, reducer: undefined },
 		{ start: 0, end: 20, reducer: null },
 		{ start: 0, end: 20, reducer: {} }
-	])('flatMap without mapper -> throw exception', ({ start, end, reducer }) => {
+	])('reduce without mapper -> throw exception', ({ start, end, reducer }) => {
 		const reduceJs = reduce as any;
 		expect(() => reduceJs(range(start, end))).toThrowError();
 		expect(() => reduceJs(range(start, end), reducer)).toThrowError();

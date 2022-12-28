@@ -9,7 +9,7 @@ describe('IterableLinq.filter', () => {
 		{ start: 0, end: 20 },
 		{ start: 0, end: 20 },
 		{ start: -10, end: 10 }
-	])('filter without filter predicate -> throw exception', ({ start, end }) => {
+	])('IterableLinq.filter without filter predicate -> throw exception', ({ start, end }) => {
 		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'filter');
 	});
 	

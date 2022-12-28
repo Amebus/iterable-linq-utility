@@ -4,9 +4,27 @@ import {
 	range,
 	some
 } from '@/functions';
+import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('some', () => {
  
+	
+	test('some without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(some);
+	});
+
+	test.each([
+		{ start: 0, end: 20 },
+		{ start: -10, end: 10 },
+		{ start: 0, end: 20, reducer: undefined },
+		{ start: 0, end: 20, reducer: null },
+		{ start: 0, end: 20, reducer: {} }
+	])('some without mapper -> throw exception', ({ start, end, reducer }) => {
+		const someJs = some as any;
+		expect(() => someJs(range(start, end))).toThrowError();
+		expect(() => someJs(range(start, end), reducer)).toThrowError();
+	});
+
 	test.each([
 		{ start: 10, end: 50, predicate: v => v > 10, expectedResult: true },
 		{ start: 10, end: 50, predicate: v => v > 100, expectedResult: false },

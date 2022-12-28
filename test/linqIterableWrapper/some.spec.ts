@@ -1,8 +1,17 @@
 import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '../../src';
+import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 describe('some', () => {
+
+	test.each([
+		{ start: 0, end: 20 },
+		{ start: 0, end: 20 },
+		{ start: -10, end: 10 }
+	])('IterableLinq.some without predicate -> throw exception', ({ start, end }) => {
+		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'some');
+	});
 
 	test.each([
 		{ start: 10, end: 50, predicate: v => v > 10, expectedResult: true },
