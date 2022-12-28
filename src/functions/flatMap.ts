@@ -39,7 +39,7 @@ class FlatMapIterableIterator<T,R> implements Iterator<R> {
 	private readonly mapper: Mapper<T, Iterable<R>>;
 	private readonly sourceIterator: Iterator<T>;
 
-	private fmIterator: Iterator<R>;
+	private fmIterator!: Iterator<R>;
 
 	private sourceNext: () => IteratorResult<R, any> =() => {
 		const n = this.sourceIterator.next();
