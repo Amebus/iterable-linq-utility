@@ -50,12 +50,12 @@ export function isFunction(value?: any): value is (...args: any[]) => any {
  * isString(1)
  * // => false
  */
-export function isString(value?: any): value is string {
-	const type = typeof value;
-  return type === 'string' || (type === 'object' && value != null && !Array.isArray(value) && getTag(value) == '[object String]');
-}
+// export function isString(value?: any): value is string {
+// 	const type = typeof value;
+//   return type === 'string' || (type === 'object' && value != null && !Array.isArray(value) && getTag(value) == '[object String]');
+// }
 
-const toString = Object.prototype.toString;
+// const toString = Object.prototype.toString;
 
 /**
  * Gets the `toStringTag` of `value`.
@@ -66,9 +66,9 @@ const toString = Object.prototype.toString;
  * @param {*} value The value to query.
  * @returns {string} Returns the `toStringTag`.
  */
-function getTag(value: any): string {
-  if (value == null) {
-    return value === undefined ? '[object Undefined]' : '[object Null]';
-  }
-  return toString.call(value);
-}
+// function getTag(value: any): string {
+//   if (value == null) {
+//     return value === undefined ? '[object Undefined]' : '[object Null]';
+//   }
+//   return toString.call(value);
+// }

@@ -2,6 +2,8 @@ import { IterableLinqWrapper, type IIterableLinq } from "./linqIterable";
 
 import * as Functions from '@/functions';
 
+import * as Types from '@/types';
+
 export function empty<T>(): IIterableLinq<T> {
   return from(Functions.empty());
 }
@@ -29,5 +31,6 @@ export function repeat<T>(value: T, count: number): IIterableLinq<T> {
 
 export {
   Functions,
-  IIterableLinq, IterableLinqWrapper
+  IIterableLinq, IterableLinqWrapper,
+  Types
 };

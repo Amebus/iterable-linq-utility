@@ -1,4 +1,7 @@
 import {
+	Action,
+	AsyncAction,
+
   Comparer,
 
   Mapper,
@@ -7,12 +10,15 @@ import {
 
   Predicate,
 	
-	Tapper
+	Tapper,
+
+	Unit
 } from '@/types';
 
 import { 
   filter,
-	flatMap
+	flatMap,
+	forEach, forEachAsync
 } from "@/functions";
 
 import {
@@ -36,6 +42,8 @@ import {
 	tapChain
 } from "@/functions";
 
+import { isFunction } from '@/utils';
+
 export interface IIterableLinq<T> {
 
   [Symbol.iterator](): Iterator<T, any, undefined>;
@@ -44,6 +52,8 @@ export interface IIterableLinq<T> {
 
   filter(predicate: Predicate<T>): IIterableLinq<T>; 
 	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R>;
+	forEach(action: Action<T>): Unit;
+	forEachAsync(action: AsyncAction<T>): Promise<Unit>;
 
   map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
   materialize(): IIterableLinq<T>;
@@ -86,6 +96,12 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R> {
 		return new IterableLinqWrapper(flatMap(this.iterable, mapper));
 	}
+	forEach(action: Action<T>): Unit {
+		return forEach(this.iterable, action);
+	}
+	forEachAsync(action: AsyncAction<T>): Promise<Unit> {
+		return forEachAsync(this.iterable, action);
+	}
 
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {
 		return new IterableLinqWrapper(map(this.iterable, mapper));
@@ -118,6 +134,8 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 		return new IterableLinqWrapper(tapChain(this.iterable, tapper));
 	}
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T> {
+		if(!isFunction(chainCreationTapper))
+			throw '"tapper" function must be provided';
 		chainCreationTapper(this);
 		return this;
 	}

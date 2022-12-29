@@ -1,3 +1,5 @@
+export * from './action';
+
 export * from './comparer';
 
 export * from './mapper';

@@ -51,25 +51,7 @@ describe('filter', () => {
 		collectToArray(filtered);
 		expect(filterPredicateSpy).toHaveReturned();
 	});
-
-	test.each([
-		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0 },
-		{ start: 0, end: 20, filterPredicate: v => v % 2 === 1 },
-		{ start: -10, end: 10, filterPredicate: v => v > -5 && v < 5 },
-		{ start: 0, end: 20, filterPredicate: (v, idx) => v % 2 === 0 && idx < 10 },
-		{ start: 0, end: 20, filterPredicate: (v, idx) => v % 2 === 1 && idx > 10 },
-		{ start: -10, end: 10, filterPredicate: (v, idx) => v > -5 && v < 5 && idx === 0 }
-	])('filter(range($start, $end), $filterPredicate) is transformation', ({ start, end, filterPredicate }) => {
-		const filterPredicateSpy = vi.fn(filterPredicate);
-		const filtered = filter(range(start, end), filterPredicateSpy);
-
-		const [a,b,c] = filtered;
-
-		// expect(filterPredicateSpy).not.toHaveBeenCalled();
-		collectToArray(filtered);
-		expect(filterPredicateSpy).toHaveReturned();
-	});
-
+	
 	test.each([
 		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [0,0,0,0] },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [20,40,60,80] },

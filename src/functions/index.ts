@@ -6,9 +6,11 @@ export { empty };
 
 import { filter } from './filter';
 import { flatMap } from './flatMap';
+import { forEach, forEachAsync } from './forEach';
 export {
 	filter,
-	flatMap
+	flatMap,
+	forEach, forEachAsync
 };
 
 import { map } from './map';
