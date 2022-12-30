@@ -3,7 +3,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { 
 	range,
 	tapChain
-} from '@/functions';
+} from './_functions';
 
 describe('tapChain', () => {
 

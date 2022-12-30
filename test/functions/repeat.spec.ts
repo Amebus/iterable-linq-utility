@@ -1,9 +1,9 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
 import { 
 	collectToArray,
 	repeat
-} from "@/functions";
+} from './_functions';
 import { returnClosesTheIterator } from './functionsTestUtility';
 
 describe('repeat', () => {

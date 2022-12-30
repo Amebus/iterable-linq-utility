@@ -1,5 +1,5 @@
-import { Tapper } from "@/types";
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "@/utils";
+import { Tapper } from "./_types";
+import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "./_utils";
 
 /**
  * 

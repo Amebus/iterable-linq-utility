@@ -4,7 +4,7 @@ import {
 	collectToArray,
 	filter,
 	range
-} from "@/functions";
+} from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 

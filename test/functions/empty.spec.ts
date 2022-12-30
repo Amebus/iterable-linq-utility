@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { 
 	collectToArray,
 	empty
-} from "@/functions";
+} from './_functions';
 
 import { returnClosesTheIterator } from './functionsTestUtility';
 

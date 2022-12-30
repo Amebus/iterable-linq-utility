@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { 
 	min,
 	range
-} from '@/functions';
+} from './_functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('min', () => {

@@ -4,7 +4,7 @@ import {
 	collectToArray,
 	flatMap,
 	range
-} from "@/functions";
+} from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 

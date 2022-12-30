@@ -3,7 +3,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { 
 	range,
 	tap
-} from '@/functions';
+} from './_functions';
 import { returnClosesTheIterator } from './functionsTestUtility';
 
 describe('tap', () => {

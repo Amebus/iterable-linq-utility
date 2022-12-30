@@ -1,5 +1,5 @@
-import { LinkedListCollection } from "@/genericCollections";
-import { getFlatIteratorResult } from "@/utils";
+import { LinkedListCollection } from "./_genericCollections";
+import { getFlatIteratorResult } from "./_utils";
 
 /**
  * 

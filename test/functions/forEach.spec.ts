@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
 	forEach, forEachAsync,
 	range
-} from "@/functions";
+} from './_functions';
 import { withoutInputIterableThrowsException, withoutInputIterableThrowsExceptionAsync } from './functionsTestUtility';
-import { Unit, unit } from '@/types';
+import { Unit, unit } from './_types';
 
 describe('forEach', () => {
 

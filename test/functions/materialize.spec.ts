@@ -5,8 +5,8 @@ import {
 	filter,
 	materialize,
 	range
-} from "@/functions";
-import { LinkedListCollection } from "@/genericCollections";
+} from './_functions';
+import { LinkedListCollection } from "./_genericCollections";
 
 describe('materialize', () => {
 	

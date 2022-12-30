@@ -1,5 +1,5 @@
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "@/utils";
-import { Predicate } from "@/types";
+import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "../utils";
+import { Predicate } from "../types";
 
 /**
  * 

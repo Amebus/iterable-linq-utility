@@ -3,7 +3,7 @@ import { describe, expect, test, vi } from 'vitest';
 import {
 	range,
 	some
-} from '@/functions';
+} from './_functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('some', () => {

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 
 import { 
 	collectToArray
-} from "@/functions";
+} from './_functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('collectToArray', () => {

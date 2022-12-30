@@ -1,5 +1,5 @@
-import { Mapper } from "@/types";
-import { getDoneIteratorResult, getIteratorResult, isFunction } from "@/utils";
+import { Mapper } from "./_types";
+import { getDoneIteratorResult, getIteratorResult, isFunction } from "./_utils";
 
 /**
  * 

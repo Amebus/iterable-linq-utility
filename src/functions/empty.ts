@@ -1,4 +1,4 @@
-import { getDoneIteratorResult } from "@/utils";
+import { getDoneIteratorResult } from "../utils";
 
 export function empty<T>(): Iterable<T> {
 	return new EmptyIterable();

@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import * as IterableLinq from '../src';
-
+import { IterableLinq } from './_linqIterable';
 
 describe('IterableLinq.empty', () => {
 

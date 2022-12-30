@@ -13,13 +13,13 @@ import {
 	Tapper,
 
 	Unit
-} from '@/types';
+} from './types';
 
 import { 
   filter,
 	flatMap,
 	forEach, forEachAsync
-} from "@/functions";
+} from "./functions";
 
 import {
   map,
@@ -27,22 +27,22 @@ import {
   max,
   memoize,
   min
-} from '@/functions';
+} from './functions';
 
 import {
 	reduce
-} from '@/functions';
+} from './functions';
 
 import {
   some
-} from "@/functions";
+} from "./functions";
 
 import {
   tap,
 	tapChain
-} from "@/functions";
+} from "./functions";
 
-import { isFunction } from '@/utils';
+import { isFunction } from './utils';
 
 export interface IIterableLinq<T> {
 

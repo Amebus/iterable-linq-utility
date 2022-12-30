@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import * as IterableLinq from '../../src';
+import { IterableLinq } from './_linqIterable';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 describe('IterableLinq.filter', () => {

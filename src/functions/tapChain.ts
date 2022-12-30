@@ -1,5 +1,5 @@
-import { Tapper } from "@/types";
-import { isFunction } from "@/utils";
+import { Tapper } from "./_types";
+import { isFunction } from "./_utils";
 
 /**
  * 

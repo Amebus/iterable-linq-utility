@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
-import * as IterableLinq from '../../src';
+import { IterableLinq } from './_linqIterable';
 
-import { Unit, unit } from '@/types';
 import { withoutInputFunctionThrowsException, withoutInputFunctionThrowsExceptionAsync } from './linqIterableWrapperTestUtility';
+
+const unit = IterableLinq.unit;
+type Unit = IterableLinq.Unit;
 
 describe('IterableLinq.forEach', () => {
 

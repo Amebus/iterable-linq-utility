@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getIteratorResult } from "@/utils";
+import { getDoneIteratorResult, getIteratorResult } from "./_utils";
 
 export function repeat<T>(value: T, count: number): Iterable<T> {
 	if (count < 0)

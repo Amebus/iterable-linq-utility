@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import * as IterableLinq from '../../src';
+import { IterableLinq } from './_linqIterable';
 
-import { LinkedListCollection } from "@/genericCollections";
+import { LinkedListCollection } from "./_genericCollections";
 
 describe('IterableLinq.materialize', () => {
 	
