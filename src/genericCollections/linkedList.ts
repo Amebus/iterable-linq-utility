@@ -17,7 +17,7 @@ export class LinkedList<T> implements Iterable<T> {
   private tail: IListNode<T> | null = null;
 
   [Symbol.iterator](): LinkedListIterator<T> {
-    return new LinkedListIterator(this.head);
+    return new LinkedListIterator(this.head || null);
   }
 
   private internalAddFirst: (value: T) => this = value => {
@@ -107,9 +107,9 @@ export class LinkedList<T> implements Iterable<T> {
 
 
 export class LinkedListIterator<T> implements Iterator<T> {
-  private current: IListNode<T> | null = null;
+  private current: IListNode<T> | null;
 
-  constructor(current: IListNode<T> | null = null) {
+  constructor(current: IListNode<T> | null) {
     this.current = current;
   }
 
