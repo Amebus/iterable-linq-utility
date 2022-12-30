@@ -55,6 +55,8 @@ class MapIterableIterator<T, R> implements Iterator<R> {
 
 	return(value?: any): IteratorResult<R, any> {
 		this.internalNext = getDoneIteratorResult;
+		if (isFunction(this.sourceIterator.return))
+      this.sourceIterator.return(value);
 		return getDoneIteratorResult(value);
 	}
 }

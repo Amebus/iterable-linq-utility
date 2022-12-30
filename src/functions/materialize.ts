@@ -7,6 +7,8 @@ import { LinkedListCollection } from "./_genericCollections";
  * @returns 
  */
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
+	if (iterable == null)
+		throw 'The source "iterable" must be provided';
 	if (iterable instanceof MaterializeIterable) {
     return iterable;
   }

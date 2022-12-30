@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 import { 
 	collectToArray,
@@ -15,6 +16,10 @@ describe('materialize', () => {
 	const linkedList = LinkedListCollection.from(generatedRange);
 	const stringIterable = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 	const stringIterableItemCount = stringIterable.length;
+
+	test('materialize without input iterable -> throw exception', () => {
+		withoutInputIterableThrowsException(materialize);
+	});
 
 	test.each([
 		{ iterable: generatedRange },

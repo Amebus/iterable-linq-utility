@@ -21,7 +21,7 @@ describe('LinkedList', () => {
 		{input: [-1,-2,-3,-4,-5,-6,-7,-8,-9]},
 		{input: [1,2,3,4]},
 		{input: [-3,-5,-8,1,2,3,4]},
-	])('addFirst | $input', ({ input }) => {
+	])('addFirst($input)', ({ input }) => {
 		const list = new LinkedList<number>();
 		
 		let size = 0;
@@ -38,7 +38,7 @@ describe('LinkedList', () => {
 		{input: [-1,-2,-3,-4,-5,-6,-7,-8,-9]},
 		{input: [1,2,3,4]},
 		{input: [-3,-5,-8,1,2,3,4]},
-	])('addLast | $input', ({ input }) => {
+	])('addLast($input)', ({ input }) => {
 		const list = new LinkedList<number>();
 		
 		let size = 0;
@@ -66,6 +66,49 @@ describe('LinkedList', () => {
 			expect(item).toEqual(input[idx]);
 			idx++;
 		}
+	});
+
+	test.each([
+		{ },
+		{input: undefined},
+		{input: null},
+	])('from($noInput) -> throws exception', ({ input }) => {
+		expect(() => from(input)).toThrowError();
+	});
+
+
+	test.each([
+		{input: [1,2,3,4], returnValue: 'a value'},
+		{input: [1,2,3,4], returnValue: 123},
+		{input: [1,2,3,4], returnValue: null},
+		{input: [-3,-5,-8,1,2,3,4], returnValue: 'a value'},
+		{input: [-3,-5,-8,1,2,3,4], returnValue: 123},
+		{input: [-3,-5,-8,1,2,3,4], returnValue: null},
+	])('from($input)[Symbol.iterator]().return() closes the iterator', ({ input, returnValue }) => {
+		const iterable = from(input);
+
+		const iterator = iterable[Symbol.iterator]();
+		const r = iterator.return!(returnValue);
+		expect(r).toEqual({ done: true, value: returnValue });
+		const next = iterator.next();
+		expect(next.done).toBe(true);
+
+		const iterator2 = iterable[Symbol.iterator]();
+		iterator2.next();
+		iterator2.next();
+		const r2 = iterator.return!(returnValue);
+		expect(r2).toEqual({ done: true, value: returnValue });
+		const next2 = iterator.next();
+		expect(next2.done).toBe(true);
+
+		const iterator3 = iterable[Symbol.iterator]();
+		iterator3.next();
+		iterator3.next();
+		iterator3.next();
+		const r3 = iterator.return!(returnValue);
+		expect(r3).toEqual({ done: true, value: returnValue });
+		const next3 = iterator.next();
+		expect(next3.done).toBe(true);
 	});
 
 });

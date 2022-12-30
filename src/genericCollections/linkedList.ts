@@ -1,6 +1,8 @@
 import { getDoneIteratorResult, getIteratorResult } from "./_utils";
 
 export function from<T>(iterable: Iterable<T>): LinkedList<T> {
+  if (iterable == null)
+    throw 'The source "iterable" must be provided';
 	const iterator: Iterator<T> = iterable[Symbol.iterator]();
 	const linkedList = new LinkedList<T>();
 	for (let n = iterator.next(); n.done !== true; n = iterator.next()) {
@@ -14,7 +16,7 @@ export class LinkedList<T> implements Iterable<T> {
   private head: IListNode<T> | null = null;
   private tail: IListNode<T> | null = null;
 
-  [Symbol.iterator](): Iterator<T> {
+  [Symbol.iterator](): LinkedListIterator<T> {
     return new LinkedListIterator(this.head);
   }
 
@@ -111,11 +113,20 @@ export class LinkedListIterator<T> implements Iterator<T> {
     this.current = current;
   }
 
-  next() {
+  private innerNext: () => IteratorResult<T, any> = () => {
     const r = this.current;
     if (r === null) return getDoneIteratorResult<T>();
     this.current = r.nextNode;
     return getIteratorResult(false, r.data);
+  };
+
+  next() {
+    return this.innerNext();
+  }
+
+  return(value?: any): IteratorResult<T, any> {
+    this.innerNext = getDoneIteratorResult;
+    return getDoneIteratorResult(value);
   }
 }
 
