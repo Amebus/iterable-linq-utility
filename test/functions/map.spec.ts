@@ -6,6 +6,7 @@ import {
 	range
 } from './_functions';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { isTransformation } from './transformationsRules';
 
 
 describe('map', () => {
@@ -37,16 +38,12 @@ describe('map', () => {
 	});
 
 	test.each([
-		{ start: 0, end: 5, mapPredicate: v => v * 10 },
-		{ start: -5, end: 5, mapPredicate: v => v * 10 },
-		{ start: 0, end: 5, mapPredicate: (v, idx) => v * idx },
-		{ start: -5, end: 5, mapPredicate: (v, idx) => v * idx }
-	])('map(range($start, $end), $mapPredicate) is transformation', ({ start, end, mapPredicate }) => {
-		const mapPredicateSpy = vi.fn(mapPredicate);
-		const mapped = map(range(start, end), mapPredicateSpy);
-		expect(mapPredicateSpy).not.toHaveBeenCalled();
-		collectToArray(mapped);
-		expect(mapPredicateSpy).toHaveReturned();
+		{ mapPredicate: v => v * 10 },
+		{ mapPredicate: v => v * 10 },
+		{ mapPredicate: (v, idx) => v * idx },
+		{ mapPredicate: (v, idx) => v * idx }
+	])('map(range($start, $end), $mapPredicate) is transformation', ({ mapPredicate }) => {
+		isTransformation<number, number>(map, mapPredicate);
 	});
 
 	test.each([

@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 
 import { IterableLinq } from './_linqIterable';
+import { unit } from './_types';
 
 describe('IterableLinq.tapChain', () => {
 
@@ -9,10 +10,7 @@ describe('IterableLinq.tapChain', () => {
 		{ end: 10 },
 		{ end: 30 }
 	])('IterableLinq.fromRange($end).tapChain() to call taper function 2 times', ({ end }) => {
-		const tapperSpy = vi.fn(() => {
-			// just an ampty function
-			// we just need to check with the spy
-		});
+		const tapperSpy = vi.fn(() => unit());
 		const tapped = IterableLinq
 			.fromRange(end)
 			.tapChain(tapperSpy);

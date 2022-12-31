@@ -7,6 +7,7 @@ import {
 } from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { isTransformation } from './transformationsRules';
 
 
 describe('filter', () => {
@@ -38,18 +39,14 @@ describe('filter', () => {
 	});
 
 	test.each([
-		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0 },
-		{ start: 0, end: 20, filterPredicate: v => v % 2 === 1 },
-		{ start: -10, end: 10, filterPredicate: v => v > -5 && v < 5 },
-		{ start: 0, end: 20, filterPredicate: (v, idx) => v % 2 === 0 && idx < 10 },
-		{ start: 0, end: 20, filterPredicate: (v, idx) => v % 2 === 1 && idx > 10 },
-		{ start: -10, end: 10, filterPredicate: (v, idx) => v > -5 && v < 5 && idx === 0 }
-	])('filter(range($start, $end), $filterPredicate) is transformation', ({ start, end, filterPredicate }) => {
-		const filterPredicateSpy = vi.fn(filterPredicate);
-		const filtered = filter(range(start, end), filterPredicateSpy);
-		expect(filterPredicateSpy).not.toHaveBeenCalled();
-		collectToArray(filtered);
-		expect(filterPredicateSpy).toHaveReturned();
+		{ filterPredicate: v => v % 2 === 0 },
+		{ filterPredicate: v => v % 2 === 1 },
+		{ filterPredicate: v => v > -5 && v < 5 },
+		{ filterPredicate: (v, idx) => v % 2 === 0 && idx < 10 },
+		{ filterPredicate: (v, idx) => v % 2 === 1 && idx > 10 },
+		{ filterPredicate: (v, idx) => v > -5 && v < 5 && idx === 0 }
+	])('filter($filterPredicate) is transformation', ({ filterPredicate }) => {
+		isTransformation<number>(filter, filterPredicate);
 	});
 	
 	test.each([

@@ -7,6 +7,7 @@ import {
 } from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { isTransformation } from './transformationsRules';
 
 const loremIpsum = 'Lorem ipsum dolor sit amte';
 
@@ -39,17 +40,13 @@ describe('flatMap', () => {
 	});
 
 	test.each([
-		{ start: 0, end: 3, mapPredicate: v => range(v) },
-		{ start: 1, end: 4, mapPredicate: v => range(v) },
-		{ start: 1, end: 4, mapPredicate: (v, idx) => range(idx) },
-		{ start: 1, end: 5, mapPredicate: (v, idx) => range(idx) },
-		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v) },
-	])('flatMap(range($start, $end), $mapPredicate) is transformation', ({ start, end, mapPredicate }) => {
-		const mapPredicateSpy = vi.fn(mapPredicate as any);
-		const mapped = flatMap<number, number | string>(range(start, end), mapPredicateSpy);
-		expect(mapPredicateSpy).not.toHaveBeenCalled();
-		collectToArray(mapped);
-		expect(mapPredicateSpy).toHaveReturned();
+		{ mapPredicate: v => range(v) },
+		{ mapPredicate: v => range(v) },
+		{ mapPredicate: (v, idx) => range(idx) },
+		{ mapPredicate: (v, idx) => range(idx) },
+		{ mapPredicate: v => loremIpsum.substring(0, v) },
+	])('flatMap($mapPredicate) is transformation', ({ mapPredicate }) => {
+		isTransformation<number, number | string>(flatMap, mapPredicate);
 	});
 
 	test.each([

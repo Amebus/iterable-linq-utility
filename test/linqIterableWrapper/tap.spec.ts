@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 
 import { IterableLinq } from './_linqIterable';
+import { unit } from './_types';
 
 describe('IterableLinq.tap', () => {
 
@@ -12,6 +13,7 @@ describe('IterableLinq.tap', () => {
 		const tapperSpy = vi.fn(v => {
 			if (v === expectedTappedValue)
 				tappedValue = expectedTappedValue;
+			return unit();
 		});
 		let tappedValue = -1;
 		const tapped = IterableLinq

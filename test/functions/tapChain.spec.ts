@@ -1,9 +1,11 @@
 import { describe, expect, test, vi } from 'vitest';
 
 import { 
+	collectToArray,
 	range,
 	tapChain
 } from './_functions';
+import { unit } from './_types';
 
 describe('tapChain', () => {
 
@@ -12,19 +14,16 @@ describe('tapChain', () => {
 		{ end: 10 },
 		{ end: 30 }
 	])('tapChain(range($end)) to call taper function 2 times', ({ end }) => {
-		const tapperSpy = vi.fn(() => {
-			// just an ampty function
-			// we just need to check with the spy
-		});
+		const tapperSpy = vi.fn(() => unit());
 		const tapped = tapChain(range(end), tapperSpy);
 		
 		expect(tapperSpy).not.toHaveBeenCalled();
 		
-		[...tapped];
+		collectToArray(tapped);
 		
 		expect(tapperSpy).toHaveBeenCalledOnce();
 
-		[...tapped];
+		collectToArray(tapped);
 
 		expect(tapperSpy).toHaveBeenCalledTimes(2);
 	});

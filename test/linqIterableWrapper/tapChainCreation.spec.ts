@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { IterableLinq } from './_linqIterable';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
+import { unit } from './_types';
 
 describe('IterableLinq.tapChainCreation', () => {
 
@@ -18,16 +19,11 @@ describe('IterableLinq.tapChainCreation', () => {
 		{ end: 10 },
 		{ end: 30 }
 	])('IterableLinq.fromRange($end).tapChainCreation() to being hit 2 times', ({ end }) => {
-		const chainCreationTapperSpy = vi.fn(() => {
-			// just an ampty function
-			// we just need to check with the spy
-		});
+		const chainCreationTapperSpy = vi.fn(() => unit());
 		const tapped = IterableLinq
 			.fromRange(end)
 			.tapChainCreation(chainCreationTapperSpy)
-			.tap(() => {
-				// just an empty function
-			})
+			.tap(() => unit())
 			.tapChainCreation(chainCreationTapperSpy);
 		
 		expect(chainCreationTapperSpy).toHaveBeenCalledTimes(2);

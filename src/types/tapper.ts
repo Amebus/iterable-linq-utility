@@ -1,1 +1,3 @@
-export type Tapper<T> = (value: T, index: number) => void;
+import { Unit } from "./unit";
+
+export type Tapper<T> = (value: T, index: number) => Unit;

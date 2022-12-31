@@ -1,10 +1,9 @@
 import { describe, expect, test, vi } from 'vitest';
+import { unit } from './_types';
 
 import { IterableLinq } from './_linqIterable';
 
-const tapper = () => {
-	// just an empty function
-};
+const tapper = () => unit();
 
 describe('IterableLinq.memoize', () => {
 

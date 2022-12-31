@@ -72,7 +72,7 @@ export interface IIterableLinq<T> {
 	 * @operation `Tap`
 	 * @param chainCreationTapper 
 	 */
-	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T>;
+	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => Unit): IIterableLinq<T>;
 }
 
 export class IterableLinqWrapper<T> implements IIterableLinq<T> {
