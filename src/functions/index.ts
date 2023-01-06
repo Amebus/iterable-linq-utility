@@ -16,13 +16,13 @@ export {
 import { map } from './map';
 import { materialize } from './materialize';
 import { max } from './max';
-import { memoize } from './memoize';
+import { memoize, getMemoizeDefaultOptions, IMemoizeOptions } from './memoize';
 import { min } from './min';
 export { 
 	map,
 	materialize,
 	max,
-	memoize,
+	memoize, getMemoizeDefaultOptions, type IMemoizeOptions,
 	min
 };
 

@@ -43,15 +43,3 @@ export function isTransformation<T,R>(transformation: Transformation,	fnToSpy: F
 
 	return unit();
 }
-
-export function withoutInputIterableThrowsException(fn: any) {
-	expect(() => fn()).toThrowError();
-	expect(() => fn(undefined)).toThrowError();
-	expect(() => fn(null)).toThrowError();
-}
-
-export async function withoutInputIterableThrowsExceptionAsync(fn: any) {
-	await expect(() => fn()).rejects.toThrowError();
-	await expect(() => fn(undefined)).rejects.toThrowError();
-	await expect(() => fn(null)).rejects.toThrowError();
-}

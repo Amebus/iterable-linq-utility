@@ -9,10 +9,9 @@ import {
 } from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { unit } from './_types';
 
-const tapper = () => {
-	// just an empty function
-};
+const tapper = () => unit();
 
 describe('memoize', () => {
 
@@ -25,12 +24,12 @@ describe('memoize', () => {
 		{ start: 0, end: 20, returnValue: 123 },
 		{ start: 0, end: 20, returnValue: null },
 		{ start: 0, end: 20 },
-		{ start: 0, end: 20, allowPartialMemoization: true, returnValue: 'a value' },
-		{ start: 0, end: 20, allowPartialMemoization: true, returnValue: 123 },
-		{ start: 0, end: 20, allowPartialMemoization: true, returnValue: null },
-		{ start: 0, end: 20, allowPartialMemoization: true }
+		{ start: 0, end: 20, allowPartialMemoization: false, returnValue: 'a value' },
+		{ start: 0, end: 20, allowPartialMemoization: false, returnValue: 123 },
+		{ start: 0, end: 20, allowPartialMemoization: false, returnValue: null },
+		{ start: 0, end: 20, allowPartialMemoization: false }
 	])('memoize(range($start, $end))[Symbol.iterator]().return() closes the iterator', ({ start, end, allowPartialMemoization, returnValue }) => {
-		const filterIterable = memoize(range(start, end), allowPartialMemoization);
+		const filterIterable = memoize(range(start, end), { allowPartialMemoization });
 		returnClosesTheIterator(filterIterable, returnValue);
 	});
 
@@ -39,12 +38,12 @@ describe('memoize', () => {
 		{ start: 0, end: 20 },
 		{ start: 0, end: 20 },
 		{ start: -10, end: 10 },
-		{ start: 0, end: 20, allowPartialMemoization: true },
-		{ start: 0, end: 20, allowPartialMemoization: true },
-		{ start: -10, end: 10, allowPartialMemoization: true }
+		{ start: 0, end: 20, allowPartialMemoization: false },
+		{ start: 0, end: 20, allowPartialMemoization: false },
+		{ start: -10, end: 10, allowPartialMemoization: false }
 	])('memoize() is transformation - range($start, $end)', ({ start, end, allowPartialMemoization }) => {
 		const tapperSpy = vi.fn(tapper);
-		const memoized = memoize(tap(range(start, end), tapperSpy), allowPartialMemoization);
+		const memoized = memoize(tap(range(start, end), tapperSpy), { allowPartialMemoization });
 		expect(tapperSpy).not.toHaveBeenCalled();
 		collectToArray(memoized);
 		expect(tapperSpy).toHaveReturned();
@@ -60,7 +59,7 @@ describe('memoize', () => {
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: true }
 	])('memoize() saves data - range($start, $end)', ({ start, end, expectedTapperCalls, allowPartialMemoization }) => {
 		const tapperSpy = vi.fn(tapper);
-		const memoized = memoize(tap(range(start, end), tapperSpy), allowPartialMemoization);
+		const memoized = memoize(tap(range(start, end), tapperSpy), { allowPartialMemoization });
 		expectedTapperCalls
 			.forEach(expectedCalls => {
 				collectToArray(memoized);
@@ -74,7 +73,7 @@ describe('memoize', () => {
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], expectedSomeCalls: [12,12,12,12], expectedTapperCallsAfterSome: [12,20,20,20] }
 	])('memoize(true) partially saves data - range($start, $end)', ({ start, end, expectedTapperCalls, expectedSomeCalls, expectedTapperCallsAfterSome }) => {
 		const tapperSpy = vi.fn(tapper);
-		const memoized = memoize(tap(range(start, end), tapperSpy), true);
+		const memoized = memoize(tap(range(start, end), tapperSpy));
 		expectedTapperCalls
 		.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
@@ -94,7 +93,7 @@ describe('memoize', () => {
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], expectedSomeCalls: [12,12,12,12], expectedTapperCallsAfterSome: [12,20,20,20] }
 	])('memoize(memoize() ,true) partially saves data - range($start, $end)', ({ start, end, expectedTapperCalls, expectedSomeCalls, expectedTapperCallsAfterSome }) => {
 		const tapperSpy = vi.fn(tapper);
-		const memoized = memoize(memoize(tap(range(start, end), tapperSpy)), true);
+		const memoized = memoize(memoize(tap(range(start, end), tapperSpy), { allowPartialMemoization: false }));
 		expectedTapperCalls
 		.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
@@ -112,9 +111,9 @@ describe('memoize', () => {
 		{ start: 0, end: 0, expectedTapperCalls: [0,0,0,0], expectedSomeCalls: [0,0,0,0], expectedTapperCallsAfterSome: [0,0,0,0] },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], expectedSomeCalls: [2,2,2,2], expectedTapperCallsAfterSome: [20,20,20,20] },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], expectedSomeCalls: [12,12,12,12], expectedTapperCallsAfterSome: [20,20,20,20] }
-	])('memoize() fully saves data - range($start, $end)', ({ start, end, expectedTapperCalls, expectedSomeCalls, expectedTapperCallsAfterSome }) => {
+	])('memoize({ allowPartialMemoization: false }) fully saves data - range($start, $end)', ({ start, end, expectedTapperCalls, expectedSomeCalls, expectedTapperCallsAfterSome }) => {
 		const tapperSpy = vi.fn(tapper);
-		const memoized = memoize(tap(range(start, end), tapperSpy));
+		const memoized = memoize(tap(range(start, end), tapperSpy), { allowPartialMemoization: false });
 		expectedTapperCalls
 		.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
@@ -132,9 +131,9 @@ describe('memoize', () => {
 		{ start: 0, end: 0, expectedTapperCalls: [0,0,0,0], expectedSomeCalls: [0,0,0,0], expectedTapperCallsAfterSome: [0,0,0,0] },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], expectedSomeCalls: [2,2,2,2], expectedTapperCallsAfterSome: [20,20,20,20] },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], expectedSomeCalls: [12,12,12,12], expectedTapperCallsAfterSome: [20,20,20,20] }
-	])('memoize(memoize(true)) fully saves data - range($start, $end)', ({ start, end, expectedTapperCalls, expectedSomeCalls, expectedTapperCallsAfterSome }) => {
+	])('memoize(memoize({ allowPartialMemoization: false })) fully saves data - range($start, $end)', ({ start, end, expectedTapperCalls, expectedSomeCalls, expectedTapperCallsAfterSome }) => {
 		const tapperSpy = vi.fn(tapper);
-		const memoized = memoize(memoize(tap(range(start, end), tapperSpy), true));
+		const memoized = memoize(memoize(tap(range(start, end), tapperSpy)), { allowPartialMemoization: false });
 		expectedTapperCalls
 		.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
@@ -161,9 +160,9 @@ describe('memoize', () => {
 	test.each([
 		{ start: 0, end: 20 },
 		{ start: -10, end: 10 }
-	])('memoize(memoize(true)) keeps the first one - range($start, $end)', ({ start, end }) => {
-		const memoized = memoize(tap(range(start, end), tapper), true);
-		const memoizedOfMemoized = memoize(memoized, true);
+	])('memoize(memoize({ allowPartialMemoization: false })) keeps the first one - range($start, $end)', ({ start, end }) => {
+		const memoized = memoize(tap(range(start, end), tapper), { allowPartialMemoization: false });
+		const memoizedOfMemoized = memoize(memoized, { allowPartialMemoization: false });
 
 		expect(memoizedOfMemoized).toBe(memoized);
 	});
@@ -174,8 +173,8 @@ describe('memoize', () => {
 		{ start: -10, end: 10, firstAllow: true, secondAllow: false },
 		{ start: -10, end: 10, firstAllow: false, secondAllow: true }
 	])('memoize(memoize($firstAllow), $secondAllow) changes the memoize iterable - range($start, $end)', ({ start, end, firstAllow, secondAllow }) => {
-		const memoized = memoize(tap(range(start, end), tapper), firstAllow);
-		const memoizedOfMemoized = memoize(memoized, secondAllow);
+		const memoized = memoize(tap(range(start, end), tapper), { allowPartialMemoization: firstAllow });
+		const memoizedOfMemoized = memoize(memoized, { allowPartialMemoization: secondAllow });
 
 		expect(memoizedOfMemoized).not.toBe(memoized);
 	});

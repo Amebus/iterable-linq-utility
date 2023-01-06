@@ -25,7 +25,7 @@ import {
   map,
   materialize,
   max,
-  memoize,
+  memoize, IMemoizeOptions,
   min
 } from './functions';
 
@@ -58,7 +58,7 @@ export interface IIterableLinq<T> {
   map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
   materialize(): IIterableLinq<T>;
   max(comparer?: Comparer<T>): T | null | undefined;
-  memoize(allowPartialMemoization?: boolean): IIterableLinq<T>;
+  memoize(options?: IMemoizeOptions): IIterableLinq<T>;
   min(comparer?: Comparer<T>): T | null | undefined;
 
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
@@ -112,8 +112,8 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	max(comparer?: Comparer<T>): T | null | undefined {
 		return max(this.iterable, comparer);
 	}
-	memoize(allowPartialMemoization: boolean = false): IIterableLinq<T> {
-		return new IterableLinqWrapper(memoize(this.iterable, allowPartialMemoization));
+	memoize(options?: IMemoizeOptions): IIterableLinq<T> {
+		return new IterableLinqWrapper(memoize(this.iterable, options));
 	}
 	min(comparer?: Comparer<T>): T | null | undefined {
 		return min(this.iterable, comparer);
