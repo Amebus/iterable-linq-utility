@@ -1,20 +1,102 @@
 # Transformations
 
-???+ summary "TLDR list of Transformations"
-    | Transformation        | Since   | Brief Description                                                   | Fully Deferred          | Partially Deferred      |
-    | --------------------- | ------- | ------------------------------------------------------------------- | ----------------------- | ----------------------- |
-    | [filter](#filter)     | `1.0.0` |                                                                     | :ballot_box_with_check: |
-    | [map](#map)           | `1.0.0` | Collect the data of the input `Iterable` into an `Array`            | :ballot_box_with_check: |                         |
-    | [memoize](#memoize)   | `1.0.0` | Triggers the **operations chain** and store it in a new `Iterable`. | :ballot_box_with_check: | :ballot_box_with_check: |
-    | [tap](#tap)           | `1.0.0` | Triggers the **operations chain** and store it in a new `Iterable`. | :ballot_box_with_check: |                         |
-    | [tapChain](#tapChain) | `1.0.0` | Triggers the **operations chain** and store it in a new `Iterable`. | :ballot_box_with_check: |                         |
+??? summary "TLDR list of Transformations"
+
+    - :material-ray-start: = Is start of a new chain
+    - :material-moon-full: = Fully Deferred
+    - :material-circle-half-full: = Partially Deferred
+    - :material-moon-new: = Eager
+    - :material-format-text-wrapping-wrap: = Available in the `ILinqIterable` wrapper
+    - :material-raw: = Available as raw function
+
+    | Transformation                               | Brief Description                                                   |                                                  |                                                     |
+    | -------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------- |
+    | [empty](#empty) :material-ray-start:         |                                                                     | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [filter](#filter)                            |                                                                     | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [from](#from) :material-ray-start:           | Triggers the **operations chain** and store it in a new `Iterable`. | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [fromRange](#fromRange) :material-ray-start: | Triggers the **operations chain** and store it in a new `Iterable`. | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [map](#map)                                  | Collect the data of the input `Iterable` into an `Array`            | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [memoize](#memoize)                          | Triggers the **operations chain** and store it in a new `Iterable`. | :material-moon-full: :material-circle-half-full: | :material-format-text-wrapping-wrap: :material-raw: |
+    | [repeat](#repeat) :material-ray-start:       | Triggers the **operations chain** and store it in a new `Iterable`. | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [tap](#tap)                                  | Triggers the **operations chain** and store it in a new `Iterable`. | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [tapChain](#tapChain)                        | Triggers the **operations chain** and store it in a new `Iterable`. | :material-moon-full:                             | :material-format-text-wrapping-wrap: :material-raw: |
+    | [tapChainCreation](#tapChainCreation)        | Triggers the **operations chain** and store it in a new `Iterable`. | :material-moon-new:                              | :material-format-text-wrapping-wrap:                |
+
+## empty
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility'
+
+    IterableLinq
+        .empty()
+        .collectToArray();
+    // []
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+    
+    Array.from(Functions.empty());
+    // []
+    ```
 
 ## filter
 
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility'
+
+    IterableLinq
+        .from([1,2,3,4])
+        .filter( v => v % 2 === 0)
+        .collectToArray();
+    // [2,4]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+    
+    Array.from(Functions.filter([1,2,3,4], v => v % 2 === 0));
+    // [2,4]
+    ```
+
+## from
+
+## fromRange
+
 ## map
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility'
+
+    IterableLinq
+        .from([1,2,3,4])
+        .map( v => v * 10 )
+        .collectToArray();
+    // [10,20,30,40]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+    
+    Array.from(Functions.map([1,2,3,4], v => v * 10));
+    // [10,20,30,40]
+    ```
 
 ## memoize
 
-## Tap
+## repeat
 
-## TapChain
+## tap
+
+## tapChain
+
+## tapChainCreation
