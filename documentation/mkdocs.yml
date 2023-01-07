@@ -21,10 +21,12 @@ theme:
   features:
     - navigation.top
     - navigation.tabs
+    - navigation.indexes
     - search.highlight
     - search.share
     - search.suggest
     - toc.follow
+    - content.code.copy
 plugins:
   - search
   - git-revision-date-localized:
@@ -44,6 +46,9 @@ markdown_extensions:
       smart_enable: all
   - pymdownx.caret
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
       linenums: true
@@ -57,3 +62,19 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
+
+
+nav:
+  - Overview: 
+    - index.md
+    - Getting Started: getting-started.md
+    - Basic Concepts: basic-concepts.md
+    - Alternative Projects: alternative-projects.md
+    - How to contribute: how-to-contribute.md
+  - Advanced Concepts: 
+    - advanced-concepts/index.md
+    - Interoperability with other libraries: advanced-concepts\interoperability-with-other-libraries.md
+  - Api Reference:
+    - api-reference/index.md
+    - Actions: api-reference/actions.md
+    - Transformations: api-reference/transformations.md

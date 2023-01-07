@@ -99,11 +99,11 @@ class MemoizeAsFullIterableIterator<T> implements Iterator<T> {
     this.setAsMemoized = setAsMemoized;
   }
 
-	private linkedListIterator: Iterator<T>;
+	private linkedListIterator!: Iterator<T>;
 	private readonly setAsMemoized: (linkedList: LinkedListCollection.LinkedList<T>) => Unit;
-  private readonly sourceIterable: Iterable<T>;
+  private readonly sourceIterable!: Iterable<T>;
 
-  private internalNext = () => {
+  private internalNext: () => IteratorResult<T, any> = () => {
     const linkedList = LinkedListCollection.from(this.sourceIterable);
     this.setAsMemoized(linkedList);
     this.linkedListIterator = linkedList[Symbol.iterator]();
@@ -120,8 +120,12 @@ class MemoizeAsFullIterableIterator<T> implements Iterator<T> {
     const linkedListIterator = this.linkedListIterator;
     if (linkedListIterator == null)
       return getDoneIteratorResult(value);
-    this.linkedListIterator = null!;
-    return linkedListIterator.return(value);
+    if (isFunction(linkedListIterator.return)) {
+      const val = linkedListIterator.return(value);
+      this.linkedListIterator = null!;
+      return val;
+    }
+    return getDoneIteratorResult(value);
   }
 }
 
@@ -144,7 +148,7 @@ class MemomizeAsPartialIterableIterator<T> implements Iterator<T> {
 
 	private index = 0;
 	private linkedList: LinkedListCollection.LinkedList<T>;
-	private linkedListIterator: Iterator<T>;
+	private linkedListIterator!: Iterator<T>;
 	private setAsMemoized: (n: IteratorResult<T, any>) => boolean;
 	private sourceIterator: Iterator<T>;
 
