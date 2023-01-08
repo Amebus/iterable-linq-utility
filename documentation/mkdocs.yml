@@ -78,3 +78,4 @@ nav:
     - api-reference/index.md
     - Actions: api-reference/actions.md
     - Transformations: api-reference/transformations.md
+  - Glossary: glossary.md
