@@ -28,7 +28,6 @@ describe('repeat', () => {
 		const r = collectToArray(repeat(value, count));
 		expect(r.length).toBe(count);
 		expect(r).toEqual(expectedResult);
-
 	});
 
 	test.each([

@@ -1,5 +1,5 @@
-import type { Comparer } from "./_types";
-import { isFunction } from "./_utils";
+import type { Comparer } from "../types";
+import { isFunction } from "../utils";
 
 /**
  * 

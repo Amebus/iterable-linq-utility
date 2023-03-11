@@ -1,5 +1,5 @@
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "./_utils";
-import { Predicate } from "./_types";
+import { getDoneIteratorResult, getFlatIteratorResult, Validations } from "../utils";
+import { Predicate } from "../types";
 
 /**
  * 
@@ -9,11 +9,9 @@ import { Predicate } from "./_types";
  * @returns 
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if (!isFunction(predicate))
-		throw '"predicate" function must be provided';
-  return new FilterIterable(iterable, predicate);
+	Validations.throwIfNotIterable(iterable);
+	Validations.thowIfNotValidPredicate(predicate);
+  return new FilterIterable<T>(iterable, predicate);
 }
 
 class FilterIterable<T> implements Iterable<T> {

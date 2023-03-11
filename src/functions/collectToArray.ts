@@ -1,5 +1,6 @@
+import { Validations } from "../utils";
+
 export function collectToArray<T>(iterable: Iterable<T>): T[] {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 	return Array.from(iterable);
 }

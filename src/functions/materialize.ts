@@ -1,4 +1,4 @@
-import { LinkedListCollection } from "./_genericCollections";
+import { LinkedListCollection } from "../genericCollections";
 
 /**
  * 

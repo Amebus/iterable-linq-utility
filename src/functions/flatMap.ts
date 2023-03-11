@@ -1,5 +1,5 @@
 import { Mapper } from '../types';
-import { getContinueIteratorResult, getDoneIteratorResult, isFunction } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
 
 /**
  * @operation `Transformation`
@@ -8,10 +8,8 @@ import { getContinueIteratorResult, getDoneIteratorResult, isFunction } from '..
  * @returns 
  */
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>>): Iterable<R> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(mapper))
-		throw '"mapper" function must be provided';
+	Validations.throwIfNotIterable(iterable);
+	Validations.thowIfNotValidMapper(mapper);
 	return new FlatMapIterable(iterable, mapper);
 }
 

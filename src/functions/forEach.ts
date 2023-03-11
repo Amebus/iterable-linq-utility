@@ -1,5 +1,5 @@
-import { Action, AsyncAction, Unit, unit } from "./_types";
-import { isFunction } from "./_utils";
+import { Action, AsyncAction, Unit, unit } from "../types";
+import { isFunction } from "../utils";
 
 export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
 	if (iterable == null)

@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getIteratorResult } from "./_utils";
+import { getDoneIteratorResult, getContinueIteratorResult } from "../utils";
 
 export function from<T>(iterable: Iterable<T>): LinkedList<T> {
   if (iterable == null)
@@ -117,7 +117,7 @@ export class LinkedListIterator<T> implements Iterator<T> {
     const r = this.current;
     if (r === null) return getDoneIteratorResult<T>();
     this.current = r.nextNode;
-    return getIteratorResult(false, r.data);
+    return getContinueIteratorResult(r.data);
   };
 
   next() {

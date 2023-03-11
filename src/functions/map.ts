@@ -1,5 +1,5 @@
-import { Mapper } from "./_types";
-import { getDoneIteratorResult, getIteratorResult, isFunction } from "./_utils";
+import { Mapper } from "../types";
+import { getDoneIteratorResult, getContinueIteratorResult, isFunction } from "../utils";
 
 /**
  * 
@@ -44,7 +44,7 @@ class MapIterableIterator<T, R> implements Iterator<R> {
 
 	internalNext: () => IteratorResult<R> = () => {
 		const n = this.sourceIterator.next();
-		if (n.done !== true) return getIteratorResult<R>(false, this.mapper(n.value, this.index++));
+		if (n.done !== true) return getContinueIteratorResult<R>(this.mapper(n.value, this.index++));
 		this.internalNext = getDoneIteratorResult;
 		return this.internalNext();
 	};

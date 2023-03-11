@@ -1,6 +1,6 @@
-import { LinkedListCollection } from "./_genericCollections";
-import { unit, Unit } from "./_types";
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "./_utils";
+import { LinkedListCollection } from "../genericCollections";
+import { unit, Unit } from "../types";
+import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "../utils";
 
 export interface IMemoizeOptions {
   allowPartialMemoization?: boolean;

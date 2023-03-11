@@ -17,4 +17,7 @@ class EmptyIterableIterator<T> implements Iterator<T> {
 	return?(value?: any): IteratorResult<T, any> {
 		return getDoneIteratorResult(value);
 	}
+	throw?(): IteratorResult<T> {
+		return getDoneIteratorResult();
+	}
 }

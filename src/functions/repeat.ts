@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getIteratorResult } from "./_utils";
+import { getDoneIteratorResult, getContinueIteratorResult } from "../utils";
 
 export function repeat<T>(value: T, count: number): Iterable<T> {
 	if (count < 0)
@@ -38,7 +38,7 @@ class RepeatIterableIterator<T> implements Iterator<T> {
 
 	internalNext: () => IteratorResult<T,any> = () => {
 		if (this.leftToRepeat--)
-			return getIteratorResult(false, this.value);
+			return getContinueIteratorResult(this.value);
 		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult();
 	};

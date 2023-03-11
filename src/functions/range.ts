@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getIteratorResult } from "./_utils";
+import { getDoneIteratorResult, getContinueIteratorResult } from "../utils";
 
 export function range(end: number): Iterable<number>;
 export function range(end: number, reverse?: boolean): Iterable<number>;
@@ -79,7 +79,7 @@ class RangeIterator implements Iterator<number>{
 		const value = this.value;
 		this.value += this.step;
     if (this.length--) 
-			return getIteratorResult(false, value);
+			return getContinueIteratorResult(value);
 		return getDoneIteratorResult();
 	};
 
@@ -127,7 +127,7 @@ class RangeReverseIterator implements Iterator<number>{
 		const value = this.value;
 		this.value -= this.step;
     if (this.length--) 
-			return getIteratorResult(false, value);
+			return getContinueIteratorResult(value);
 		return getDoneIteratorResult();
 	};
 

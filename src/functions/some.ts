@@ -1,5 +1,5 @@
-import { Predicate } from "./_types";
-import { isFunction } from "./_utils";
+import { Predicate } from "../types";
+import { isFunction } from "../utils";
 
 /**
  * 

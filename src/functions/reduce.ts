@@ -1,5 +1,5 @@
-import { Reducer } from "./_types";
-import { isFunction } from "./_utils";
+import { Reducer } from "../types";
+import { isFunction } from "../utils";
 
 /**
  * 
