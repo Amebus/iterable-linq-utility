@@ -2,6 +2,8 @@
 
 A [.NET Linq to Objects](https://learn.microsoft.com/it-it/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects) porting with javacript naming conventions (e.g.: `Select` as been ranamed to `map`) and some new features (e.g.: [memoize](https://amebus.github.io/iterable-linq-utility/api-reference/transformations.md#memoize) and [materialize](https://amebus.github.io/iterable-linq-utility/api-reference/actions.md#materialize)).
 
+[Official documentation available here](https://amebus.github.io/iterable-linq-utility)
+
 ## Main Idea
 
 As the previous description says, the idea is to create a kind-of-porting of [.NET Linq to Objects](https://learn.microsoft.com/it-it/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects) with a naming convetions that is more javascript and functional programming oriented and not sql oriented [^1].  
