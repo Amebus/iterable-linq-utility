@@ -1,4 +1,4 @@
-import { LinkedListCollection } from "../genericCollections";
+import { LinkedListCollection } from "../collections";
 import { unit, Unit } from "../types";
 import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "../utils";
 

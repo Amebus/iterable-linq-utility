@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 import { IterableLinq } from './_linqIterable';
 
-import { LinkedListCollection } from "./_genericCollections";
+import { LinkedListCollection } from "./_collections";
 
 describe('IterableLinq.materialize', () => {
 	

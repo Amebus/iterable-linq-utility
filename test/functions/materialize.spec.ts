@@ -7,7 +7,7 @@ import {
 	materialize,
 	range
 } from './_functions';
-import { LinkedListCollection } from "./_genericCollections";
+import { LinkedListCollection } from "./_collections";
 
 describe('materialize', () => {
 	
