@@ -1,4 +1,4 @@
-name: ci 
+name: ci for docs 
 on:
   push:
     branches:
@@ -19,4 +19,6 @@ jobs:
           key: ${{ github.ref }}
           path: .cache
       - run: pip install mkdocs-material 
-      - run: mkdocs gh-deploy --force
+      - name: Deploy doc
+        working-directory: ./documentation
+        run: mkdocs gh-deploy --force
