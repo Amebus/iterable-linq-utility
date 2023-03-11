@@ -2,7 +2,7 @@
 
 An **Action** is an operation that cause to **O~s~C** to be materialized. In other words, an **Action** is what causes triggers data manipulation to achieve the result described through the **O~s~C**.
 
-??? summary "TLDR list of Actions"
+???+ summary "TLDR list of Actions"
     | Action                           | Brief Description                                                                                                                                                                    |
     | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
     | [collectToArray](#colectToArray) | Collect the data of the input `Iterable` into an `Array`                                                                                                                             |
