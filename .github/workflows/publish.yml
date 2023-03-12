@@ -17,7 +17,7 @@ jobs:
       - run: npm run build
       - run: npm run test
 
-  publish-gpr:
+  publish-package:
       needs: build
       runs-on: ubuntu-latest
       permissions:
@@ -29,8 +29,26 @@ jobs:
           with:
             node-version: 16
             registry-url: $registry-url(npm)
-          env:
-            NODE_AUTH_TOKEN: ${{secrets.NPM_PUBLISH}}
         - run: npm ci
         - run: echo $NODE_AUTH_TOKEN
         - run: npm publish
+          env:
+              NODE_AUTH_TOKEN: ${{secrets.NPM_PUBLISH}}
+
+  deploy-doc:
+    needs: publish-package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - uses: actions/cache@v2
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+      - run: pip install mkdocs-material 
+      - run: pip install mkdocs-git-revision-date-localized-plugin
+      - name: Deploy doc
+        working-directory: ./documentation
+        run: mkdocs gh-deploy --force
