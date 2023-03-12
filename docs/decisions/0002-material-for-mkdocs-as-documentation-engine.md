@@ -12,10 +12,11 @@ Project documentation
 
 ## Decision Drivers
 
-* Allows users to search for content
-* Allows to section the documentations by topics
-* Allows to show examples code
-* Easy to use
+* Immediately identify how and where to enter new code
+* Merges and Pull requests management
+* Isolate each feature from the others
+* Allow for extensibility into projects using the library thanks to typescript module augmentation
+* Separate types from implementations
 
 ## Considered Options
 
@@ -28,32 +29,31 @@ Chosen option: "Material for MkDocs", because comes out best.
 
 ### Positive Consequences
 
-* Allow documentation versioning
-* Can be used with git hub pages with a simple git hub action
-* Rich Markdown syntax
-* Allows users to search for content
+* Easier to reason about the code
+* Easier to manage branch merges and pull requests
+* Each feature is isolated
+* Module can be augmented
 
 ### Negative Consequences
 
-* Markdown dialect
-* Need some steup to publish it
+* High coupling between utility modules
+* Importing a module ends up in specifying not easy to reason about relative paths e.g.: ../../functions
 
 ## Pros and Cons of the Options
 
 ### Git hub wiki
 
-* Good, because Simple
-* Good, because No need of external tools
-* Good, because No need of deploy
-* Good, because Markdown Based
-* Bad, because Bad navigation experience
+* Good, because Import statements are easy to reason about
+* Good, because Allows reuse of code easily
+* Good, because highly testable, almost every funtion, class and type will be exported
+* Bad, because It will sooon ends up in
+* Bad, because Chances are high to get merge conflicts
 
 ### Material for MkDocs
 
-* Good, because Based on MkDocs
-* Good, because A lot of plugins to help improve the documentation quality
-* Good, because Allow documentation versioning
-* Good, because Can be used with git hub pages with a simple git hub action
-* Good, because Rich Markdown syntax
-* Bad, because Needs to be compiled before being published
-* Bad, because The bigger the documentation is the higher is the time needed to compile it
+* Good, because every module is isolated from each others
+* Good, because every import statement is simple and points onlyt to files inside the same folder
+* Good, because highly testable, almost every funtion, class and type will be exported
+* Good, because Chances are low to get merge conflicts
+* Good, because Easy to add new features without touchig other features
+* Bad, because high code duplication, same utility might be duplicated into each module
