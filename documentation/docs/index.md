@@ -22,7 +22,7 @@ Since in javascript you cannot rely on [extensions methods](https://learn.micros
 To help document the package we also take a cue from some definitions used by [Apache Spark](https://spark.apache.org/), since, in fact, the wrapper created is similar to [Apache Spark's RDDs](https://spark.apache.org/docs/latest/rdd-programming-guide.html#resilient-distributed-datasets-rdds).  
 Hence we are going to name a code like the following:
 
-```ts
+```ts title="Operations Chain example"
 IterableLinq
   .fromRange(start, end)
   .filter(myFilterFunction)

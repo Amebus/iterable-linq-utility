@@ -27,6 +27,7 @@ theme:
     - search.suggest
     - toc.follow
     - content.code.copy
+    - content.tabs.link
 plugins:
   - search
   - git-revision-date-localized:
@@ -62,7 +63,8 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
-
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Overview: 
