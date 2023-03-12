@@ -12,8 +12,9 @@ As the previous description says, the idea is to create a kind-of-porting of [.N
 In other words the idea is:
 
 - to keep the [LINQ Deferred Exceution](https://learn.microsoft.com/en-us/dotnet/standard/linq/deferred-execution-lazy-evaluation#deferred-execution) and apply it to the [JavaScript Iterator Protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) with a more standard way of naming well known high order functions like `map`, `flatMap`, `reduce` used by javascript and some functional programming libraries (e.g.: [Ramdajs](https://github.com/functionalland/ramda), [SanctuaryJs](https://github.com/orgs/sanctuary-js/repositories?type=all), [FantasyLand](https://github.com/fantasyland) and [lodash](https://github.com/lodash/lodash)). 
-- to keep the **Linq repeatable execution** which allows to traverse the same chain multiple times without having to recreate it from scratch every time, in this way is possible to store the chain in a variable like `const myChain = IterableLinq.from([,1,2,3,4]).filter().map()` and then trigger it to get the max and min without recreating it:
-  ```ts
+- to keep the **Linq repeatable execution** which allows to traverse the same chain multiple times without having to recreate it from scratch every time, in this way is possible to store the chain in a variable and then trigger it to get the max and min without recreating it:
+  ```ts title="Repeatable execution"
+  const myChain = IterableLinq.from([1,2,3,4]).filter().map(); // chain creation
   const max = myChain.max();
   const min = myChain.min(); // using the same chain twice
   ```
