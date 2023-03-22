@@ -10,9 +10,9 @@ An **Action** is an operation that cause to **O~s~C** to be materialized. In oth
 
 ## Fully Deferred Execution
 
-## Lazy Evaluation
+## Immediate Evaluation
 
-## One by One Evaluation
+## Lazy Evaluation
 
 ## Operations Chain
 

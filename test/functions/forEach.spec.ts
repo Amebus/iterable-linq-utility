@@ -39,7 +39,7 @@ describe('forEach', () => {
 		{  iterable: [ -4,-5 ], action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1] },
 		{  iterable: 'ciao', action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3] },
 	])('forEach($iterable, $action) -> $expectedResult', ({ iterable, action, expectedResult }) => {
-		forEach(iterable, action);
+		forEach<string | number>(iterable, action);
 		expect(tempArr).toEqual(expectedResult);
 	});
 
@@ -92,7 +92,7 @@ describe('forEachAsync', () => {
 		{  iterable: [ -4,-5 ], action: asyncActionIndex, expectedResult: [0,1] },
 		{  iterable: 'ciao', action: asyncActionIndex, expectedResult: [0,1,2,3] },
 	])('forEach($iterable, $action) -> $expectedResult', async ({ iterable, action, expectedResult }) => {
-		await forEachAsync(iterable, action);
+		await forEachAsync<string | number>(iterable, action);
 		expect(tempArr).toEqual(expectedResult);
 	});
 

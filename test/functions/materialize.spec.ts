@@ -71,10 +71,10 @@ describe('materialize', () => {
 		{ iterable: generatedRange, iterableItemCount: rangeIterableItemCount , filterPredicate: v => v % 4 === 0 },
 		{ iterable: linkedList, iterableItemCount: linkedList.size() , filterPredicate: v => v % 4 === 0 },
 		{ iterable: stringIterable, iterableItemCount: stringIterableItemCount , filterPredicate: v => v === 'm' }
-	])('materialize($iterable) imediatly iterate the source iterable', ({ iterable, iterableItemCount, filterPredicate }) => {
+	])('materialize($iterable) immediatly iterate the source iterable', ({ iterable, iterableItemCount, filterPredicate }) => {
 
 		const filterPredicateSpy = vi.fn(filterPredicate);
-		const filtered = filter(iterable, filterPredicateSpy);
+		const filtered = filter<string | number>(iterable, filterPredicateSpy);
 		expect(filterPredicateSpy).not.toHaveBeenCalled();
 		materialize(filtered);
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
@@ -87,7 +87,7 @@ describe('materialize', () => {
 	])('materialize($iterable) do not iterate the source iterable multiple time', ({ iterable, iterableItemCount, filterPredicate }) => {
 
 		const filterPredicateSpy = vi.fn(filterPredicate);
-		const filtered = filter(iterable, filterPredicateSpy);
+		const filtered = filter<string | number>(iterable, filterPredicateSpy);
 		const materialized = materialize(filtered);
 		const filterResult1 = collectToArray(materialized);
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
