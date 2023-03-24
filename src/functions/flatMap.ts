@@ -73,4 +73,8 @@ class FlatMapIterableIterator<T,R> implements Iterator<R> {
 		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);
 	}
+	throw(): IteratorResult<R, any> {
+		this.internalNext = getDoneIteratorResult;
+		return getDoneIteratorResult();
+	}
 }
