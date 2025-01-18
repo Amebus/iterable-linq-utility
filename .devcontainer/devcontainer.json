@@ -1,5 +1,5 @@
 {
-  "name": "Node.js with pnpm",
+  "name": "iterable-linq-utility",
   "image": "node-alpine:22",
 	"customizations": {
 		"vscode": {
