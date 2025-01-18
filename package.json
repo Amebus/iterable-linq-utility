@@ -40,20 +40,21 @@
     "utility"
   ],
   "devDependencies": {
-    "@rushstack/eslint-patch": "1.1.4",
-    "@types/node": "18.11.10",
-    "@typescript-eslint/eslint-plugin": "5.36.2",
-    "@typescript-eslint/parser": "5.36.2",
-    "@vitest/coverage-istanbul": "^0.26.2",
-    "@vitest/ui": "0.25.2",
-    "eslint": "8.22.0",
-    "eslint-plugin-import": "2.26.0",
+    "@rushstack/eslint-patch": "1.10.5",
+    "@types/node": "22.10.7",
+    "@typescript-eslint/eslint-plugin": "8.20.0",
+    "@typescript-eslint/parser": "8.20.0",
+    "@vitest/coverage-istanbul": "^3.0.2",
+    "@vitest/ui": "3.0.2",
+    "eslint": "9.18.0",
+    "eslint-plugin-import": "2.31.0",
     "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "6.0.1",
-    "typescript": "4.9.4",
-    "vite": "4.0.4",
-    "vite-plugin-dts": "1.7.1",
-    "vite-tsconfig-paths": "4.0.5",
-    "vitest": "0.28.3"
-  }
+    "eslint-plugin-promise": "7.2.1",
+    "typescript": "5.7.3",
+    "vite": "6.0.7",
+    "vite-plugin-dts": "4.5.0",
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "3.0.2"
+  },
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }

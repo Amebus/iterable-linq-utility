@@ -1,0 +1,18 @@
+{
+  "name": "Node.js with pnpm",
+  "image": "node-alpine:22",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				
+				"terminal.integrated.defaultProfile.linux": "bash"
+			},
+			"extensions": [
+				"dbaeumer.vscode-eslint", // ESlint
+				"antfu.pnpm"              // Supporto pnpm
+			]
+		}
+	},
+  "forwardPorts": [3000],
+  "remoteUser": "vscode"               // Usa l'utente configurato
+}
