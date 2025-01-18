@@ -11,6 +11,8 @@
 				"dbaeumer.vscode-eslint",
 				"vitest.explorer",
 				"wmaurer.change-case",
+				"davidanson.vscode-markdownlint",
+				"yzhang.markdown-all-in-one",
 				"antfu.pnpm"
 			]
 		}
