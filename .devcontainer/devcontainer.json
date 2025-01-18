@@ -8,11 +8,13 @@
 				"terminal.integrated.defaultProfile.linux": "bash"
 			},
 			"extensions": [
-				"dbaeumer.vscode-eslint", // ESlint
-				"antfu.pnpm"              // Supporto pnpm
+				"dbaeumer.vscode-eslint",
+				"vitest.explorer",
+				"wmaurer.change-case",
+				"antfu.pnpm"
 			]
 		}
 	},
   "forwardPorts": [3000],
-  "remoteUser": "vscode"               // Usa l'utente configurato
+  "remoteUser": "vscode"
 }
