@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: pnpm ci
+      - run: pnpm install
       - run: pnpm run build
       - run: pnpm run test
       
