@@ -1,6 +1,6 @@
 {
   "name": "iterable-linq-utility",
-  "image": "node-alpine:22",
+  "image": "node-alpine:24",
 	"customizations": {
 		"vscode": {
 			"settings": {
