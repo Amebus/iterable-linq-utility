@@ -2,10 +2,10 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the swapped-function (`internalNext = …`) iterator pattern with a shared `BaseIterator`, a generic `DeferredIterable`, `unfold` for sources and explicit state data. Fix the known iterator bugs along the way.
+**Goal:** Replace the swapped-function (`internalNext = …`) iterator pattern with a shared `BaseIterator`, a generic `DeferredIterable`, `unfold` for `repeat`/`empty`, a dedicated `RangeIterator` and explicit state data. Fix the known iterator bugs along the way.
 
 **Architecture:**
-* A new `src/iterators/` folder owns the "done" state and `return()` handling (`BaseIterator`, `SourceIterator`), lazy re-runnable iterables (`DeferredIterable`) and seed-based sources (`unfold`).
+* A new `src/iterators/` folder owns the "done" state and `return()` handling (`BaseIterator`, `SourceIterator`), lazy re-runnable iterables (`DeferredIterable`) and seed-based sources (`unfold`, used by `repeat` and `empty`; `range` has its own iterator).
 * Every operator in `src/functions/` is rewritten on top of these pieces.
 * `flatMap` uses a module-level transition table keyed by an explicit `state` field.
 * `memoize` uses a shared array cache with one index per consumer.
@@ -123,15 +123,17 @@ Run: `pnpm vitest run test/iterators`, then `pnpm lint && pnpm test`. Expected: 
 
 ---
 
-### Task 2: Sources on `unfold` (`range`, `repeat`, `empty`) + integer validation
+### Task 2: Sources: dedicated `RangeIterator`, `repeat`/`empty` on `unfold`, integer validation
 
 **Files:**
 - Modify: `src/functions/range.ts`, `src/functions/repeat.ts`, `src/functions/empty.ts`, `src/utils/validations.ts`
 - Test: `test/functions/range.spec.ts`, `test/functions/repeat.spec.ts`, `test/functions/empty.spec.ts`
 
 **Interfaces:**
-- Consumes: `unfold`, `DeferredIterable` (Task 1).
-- Produces: `Validations.throwIfNotNonNegativeInteger(value: number, name: string): void`, with message `` `The "${name}" parameter must be a non-negative integer` ``. It replaces `throwIfNegative`, which is removed.
+- Consumes: `unfold`, `DeferredIterable`, `BaseIterator` (Task 1).
+- Produces:
+  - internal `class RangeIterator extends BaseIterator<number>` in `src/functions/range.ts`, with `constructor(private readonly first: number, private readonly step: number, private readonly length: number)` and a `private index = 0` field;
+  - `Validations.throwIfNotNonNegativeInteger(value: number, name: string): void`, with message `` `The "${name}" parameter must be a non-negative integer` ``. It replaces `throwIfNegative`, which is removed.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -153,8 +155,9 @@ Run: `pnpm vitest run test/functions/range.spec.ts test/functions/repeat.spec.ts
 
 - `range`: keep the overloads and the argument normalisation (`chosenStart`, `chosenEnd`, `chosenStep`, `chosenLength`, `shouldReverse`).
   - When `chosenLength === 0`, return `empty()`.
-  - Otherwise `first = shouldReverse ? chosenStart + (chosenLength - 1) * chosenStep : chosenStart` and `step = shouldReverse ? -chosenStep : chosenStep`, then return `unfold(0, i => i < chosenLength ? [first + i * step, i + 1] : undefined)`.
-  - Delete `RangeIterable`, `RangeIterator`, `RangeReverseIterable`, `RangeReverseIterator`, `RangeEmptyIterable` and `RangeEmptyIterator`.
+  - Otherwise `first = shouldReverse ? chosenStart + (chosenLength - 1) * chosenStep : chosenStart` and `step = shouldReverse ? -chosenStep : chosenStep`, then return `new DeferredIterable(() => new RangeIterator(first, step, chosenLength))`.
+  - `RangeIterator.advance()` returns `first + index * step` and increments `index` while `index < length`, then returns done. Do not use `unfold` for `range`.
+  - Delete the old `RangeIterable`, `RangeIterator`, `RangeReverseIterable`, `RangeReverseIterator`, `RangeEmptyIterable` and `RangeEmptyIterator`.
 - `repeat`: validate with `throwIfNotNonNegativeInteger(count, 'count')`, then `unfold(count, n => n > 0 ? [value, n - 1] : undefined)`.
 - `empty`: `unfold<undefined, T>(undefined, () => undefined)`. Delete its two classes.
 
@@ -168,11 +171,9 @@ Run: `pnpm lint && pnpm test && pnpm bench`. Expected:
 - all tests green;
 - the `range(2e6)` mean is not above the Task 1 baseline.
 
-If it is above, apply the spec's fallback: a dedicated `RangeIterator extends BaseIterator<number>` with the same `first + i * step` arithmetic, used only by `range`. Re-run the bench.
-
 - [ ] **Step 6: Commit**
 
-Message: `refactor(sources): build range, repeat and empty on unfold`. The body lists the fixed bugs (`range` restarting after done, `repeat` with a non-integer count, decimal drift).
+Message: `refactor(sources): dedicated RangeIterator, repeat and empty on unfold`. The body lists the fixed bugs (`range` restarting after done, `repeat` with a non-integer count, decimal drift).
 
 ---
 

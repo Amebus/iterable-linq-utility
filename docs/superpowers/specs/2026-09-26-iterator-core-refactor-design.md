@@ -113,16 +113,20 @@ export function unfold<S, T>(seed: S, step: UnfoldStep<S, T>): Iterable<T>;
 
 `step` is a pure function. It returns the value and the next state, or `undefined` to stop. `unfold` returns a `DeferredIterable` of an `UnfoldIterator extends BaseIterator`. Sources use it:
 
-* `range`: the argument normalisation stays as it is today. The iteration then becomes `unfold(0, i => i < length ? [first + i * step, i + 1] : undefined)`.
-  * Reverse order is a negative `step` with the matching `first`, so one code path handles both directions.
-  * An empty range returns `empty()`.
-  * Each value is computed with a multiplication instead of repeated additions, so decimal steps do not accumulate rounding errors.
 * `repeat`: `unfold(count, n => n > 0 ? [value, n - 1] : undefined)`.
 * `empty`: `unfold(undefined, () => undefined)`.
 
 `unfold` is internal. It is not exported from `src/index.ts`.
 
-Performance fallback: if the tuple allocation per step makes `range` slower than today on the reference benchmark, `range` gets a dedicated `RangeIterator extends BaseIterator` with the same arithmetic. `unfold` stays for `repeat` and `empty`.
+### `range`
+
+`range` does **not** use `unfold`. It is the hottest source, so it has a dedicated `RangeIterator extends BaseIterator<number>` with no per-step allocation, wrapped in a `DeferredIterable`:
+
+* The argument normalisation stays as it is today.
+* `RangeIterator(first, step, length)` keeps an `index` and yields `first + index * step` while `index < length`.
+* Reverse order is a negative `step` with the matching `first`, so one class handles both directions. It replaces `RangeIterable`, `RangeIterator`, `RangeReverseIterable` and `RangeReverseIterator`.
+* An empty range returns `empty()`.
+* Each value is computed with a multiplication instead of repeated additions, so decimal steps do not accumulate rounding errors.
 
 ### Operators
 
@@ -211,6 +215,6 @@ Because `min`/`max` change their public signature, the next release bumps the ve
 
 ## Risks
 
-* `unfold` allocates a tuple per step. Mitigated by the `range` fallback described above.
+* `unfold` allocates a tuple per step. This only affects `repeat` and `empty`, because `range` has a dedicated iterator.
 * `memoize` keeps a shared source open while it is only partially consumed. This is intentional, and the JSDoc documents it.
 * The breaking `min`/`max` change affects users who compare the result with `=== null`.
