@@ -15,28 +15,30 @@ export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Itera
 }
 
 class FilterIterable<T> implements Iterable<T> {
+	private predicate: Predicate<T>;
+	private source: Iterable<T>;
+
 	constructor(iterable: Iterable<T>, predicate: Predicate<T>) {
 		this.source = iterable;
 		this.predicate = predicate;
 	}
+
 	[Symbol.iterator](): Iterator<T, any, undefined> {
 		return new FilterIterableIterator(this.source, this.predicate);
 	}
-
-	private predicate: Predicate<T>;
-	private source: Iterable<T>;
 }
 
 class FilterIterableIterator<T> implements Iterator<T> {
+
+	private index = 0;
+
+	private sourceIterator: Iterator<T>;
+	private predicate: Predicate<T>;
 
 	constructor(source: Iterable<T>, predicate: Predicate<T>) {
 		this.sourceIterator = source[Symbol.iterator]();
 		this.predicate = predicate;
 	}
-
-	private index = 0;
-	private sourceIterator: Iterator<T>;
-	private predicate: Predicate<T>;
 
 	private internalNext: () => IteratorResult<T, any> = () => {
 		while (true) {
@@ -49,6 +51,7 @@ class FilterIterableIterator<T> implements Iterator<T> {
 	next(): IteratorResult<T, any> {
 		return this.internalNext();
 	}
+
 	return?(value?: any): IteratorResult<T, any> {
 		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);

@@ -16,6 +16,9 @@ export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable
 
 class MapIterable<T,R> implements Iterable<R> {
 
+	private readonly mapper: Mapper<T, R>;
+	private readonly source: Iterable<T>;
+
 	constructor(iterable: Iterable<T>, mapper: Mapper<T,R>) {
 		this.source = iterable;
 		this.mapper = mapper;
@@ -24,21 +27,19 @@ class MapIterable<T,R> implements Iterable<R> {
 	[Symbol.iterator](): Iterator<R, any, undefined> {
 		return new MapIterableIterator(this.source, this.mapper);
 	}
-
-	private readonly mapper: Mapper<T, R>;
-	private readonly source: Iterable<T>;
 }
 
 class MapIterableIterator<T, R> implements Iterator<R> {
+
+	private index = 0;
+
+	private readonly sourceIterator: Iterator<T>;
+	private readonly mapper: Mapper<T, R>;
 
 	constructor(source: Iterable<T>, mapper: Mapper<T, R>) {
 		this.sourceIterator = source[Symbol.iterator]();
 		this.mapper = mapper;
 	}
-
-	private index = 0;
-	private readonly sourceIterator: Iterator<T>;
-	private readonly mapper: Mapper<T, R>;
 
 	internalNext: () => IteratorResult<R> = () => {
 		const n = this.sourceIterator.next();

@@ -15,10 +15,6 @@ export class LinkedList<T> implements Iterable<T> {
 	private head: IListNode<T> | null = null;
 	private tail: IListNode<T> | null = null;
 
-	[Symbol.iterator](): LinkedListIterator<T> {
-		return new LinkedListIterator(this.head || null);
-	}
-
 	private internalAddFirst: (value: T) => this = value => {
 		const newNode: IListNode<T> = {
 			data: value,
@@ -39,9 +35,6 @@ export class LinkedList<T> implements Iterable<T> {
 		};
 		return this;
 	};
-	addFirst(value: T): this {
-		return this.internalAddFirst(value);
-	}
 
 	private internalAddLast: (value: T) => this = value => {
 		const newNode: IListNode<T> = {
@@ -63,6 +56,15 @@ export class LinkedList<T> implements Iterable<T> {
 		};
 		return this;
 	};
+
+	[Symbol.iterator](): LinkedListIterator<T> {
+		return new LinkedListIterator(this.head || null);
+	}
+
+	addFirst(value: T): this {
+		return this.internalAddFirst(value);
+	}
+
 	addLast(value: T): this {
 		return this.internalAddLast(value);
 	}

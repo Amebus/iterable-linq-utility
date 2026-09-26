@@ -30,6 +30,7 @@ export default tseslint.config(
 			'@typescript-eslint/consistent-indexed-object-style': 'error',
 			'@typescript-eslint/consistent-type-definitions': 'error',
 			'@typescript-eslint/explicit-module-boundary-types': 'off',
+			'@typescript-eslint/member-ordering': ['error', { default: ['field', 'constructor', 'method'] }],
 			'@typescript-eslint/no-duplicate-enum-values': 'error',
 			'@typescript-eslint/no-empty-function': 'warn',
 			'@typescript-eslint/no-explicit-any': 'off',

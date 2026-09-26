@@ -16,6 +16,9 @@ export function tapChain<T>(iterable: Iterable<T>, tapper: Tapper<Iterable<T>>):
 
 class TapChainIterable <T> implements Iterable<T> {
 
+	private tapper: Tapper<Iterable<T>>;
+	private source: Iterable<T>;
+
 	constructor(iterable: Iterable<T>, tapper: Tapper<Iterable<T>>) {
 		this.source = iterable;
 		this.tapper = tapper;
@@ -25,7 +28,4 @@ class TapChainIterable <T> implements Iterable<T> {
 		this.tapper(this.source, 0);
 		return this.source[Symbol.iterator]();
 	}
-
-	private tapper: Tapper<Iterable<T>>;
-	private source: Iterable<T>;
 }

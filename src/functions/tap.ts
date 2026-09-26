@@ -16,6 +16,9 @@ export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
 
 class TapIterable<T> implements Iterable<T> {
 
+	private tapper: Tapper<T>;
+	private source: Iterable<T>;
+
 	constructor(iterable: Iterable<T>, tapper: Tapper<T>) {
 		this.source = iterable;
 		this.tapper = tapper;
@@ -24,22 +27,19 @@ class TapIterable<T> implements Iterable<T> {
 	[Symbol.iterator](): Iterator<T, any, undefined> {
 		return new TapIterableIterator(this.source, this.tapper);
 	}
-
-	private tapper: Tapper<T>;
-	private source: Iterable<T>;
-
 }
 
 class TapIterableIterator<T> implements Iterator<T> {
+
+	private index = 0;
+
+	private sourceIterator: Iterator<T>;
+	private tapper: Tapper<T>;
 
 	constructor(source: Iterable<T>, tapper: Tapper<T>) {
 		this.sourceIterator = source[Symbol.iterator]();
 		this.tapper = tapper;
 	}
-
-	private index = 0;
-	private sourceIterator: Iterator<T>;
-	private tapper: Tapper<T>;
 
 	private internalNext: () => IteratorResult<T, any> = () => {
 		const n = this.sourceIterator.next();
@@ -54,6 +54,7 @@ class TapIterableIterator<T> implements Iterator<T> {
 	next(): IteratorResult<T, any> {
 		return this.internalNext();
 	}
+
 	return?(value?: any): IteratorResult<T, any> {
 		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);

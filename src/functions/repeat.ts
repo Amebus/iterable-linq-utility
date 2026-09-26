@@ -7,6 +7,9 @@ export function repeat<T>(value: T, count: number): Iterable<T> {
 
 class RepeatIterable<T> implements Iterable<T> {
 
+	private readonly value: T;
+	private readonly count: number;
+
 	constructor(value: T, count: number) {
 		this.value = value;
 		this.count = count;
@@ -15,13 +18,13 @@ class RepeatIterable<T> implements Iterable<T> {
 	[Symbol.iterator](): Iterator<T, any, undefined> {
 		return new RepeatIterableIterator(this.value, this.count);
 	}
-
-	private readonly value: T;
-	private readonly count: number;
-
 }
 
 class RepeatIterableIterator<T> implements Iterator<T> {
+
+	leftToRepeat: number = 0;
+	private readonly value: T;
+	private readonly count: number;
 
 	constructor(value: T, count: number) {
 		this.value = value;
@@ -30,10 +33,6 @@ class RepeatIterableIterator<T> implements Iterator<T> {
 		if (count === 0)
 			this.internalNext = getDoneIteratorResult;
 	}
-
-	leftToRepeat: number = 0;
-	private readonly value: T;
-	private readonly count: number;
 
 	internalNext: () => IteratorResult<T,any> = () => {
 		if (this.leftToRepeat--)
@@ -45,6 +44,7 @@ class RepeatIterableIterator<T> implements Iterator<T> {
 	next(): IteratorResult<T, any> {
 		return this.internalNext();
 	}
+
 	return(value?: any): IteratorResult<T, any> {
 		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);
