@@ -16,27 +16,13 @@ export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
 }
 
 class MaterializeIterable<T> implements Iterable<T> {
-
-	private source: Iterable<T>;
+	private readonly source: LinkedListCollection.LinkedList<T>;
 
 	constructor(iterable: Iterable<T>) {
 		this.source = LinkedListCollection.from(iterable);
 	}
 
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new MaterializeIterableIterator(this.source);
-	}
-}
-
-class MaterializeIterableIterator<T> implements Iterator<T> {
-
-	private sourceIterator: Iterator<T>;
-
-	constructor(source: Iterable<T>) {
-		this.sourceIterator =  source[Symbol.iterator]();
-	}
-
-	next(): IteratorResult<T, any> {
-		return this.sourceIterator.next();
+	[Symbol.iterator](): Iterator<T> {
+		return this.source[Symbol.iterator]();
 	}
 }

@@ -110,4 +110,10 @@ describe('LinkedList', () => {
 		expect(next3.done).toBe(true);
 	});
 
+	test('mixed addFirst/addLast keeps every node', () => {
+		const list = new LinkedList<number>().addLast(1).addFirst(2).addLast(3).addFirst(4);
+		expect([...list]).toEqual([4, 2, 1, 3]);
+		expect(list.size()).toBe(4);
+	});
+
 });
