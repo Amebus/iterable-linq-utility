@@ -39,4 +39,15 @@ describe('repeat', () => {
 		expect(() => repeat(value, count)).toThrowError();
 	});
 
+	test.each([2.5, NaN, Infinity, -1])('repeat(x, %s) throws', count => {
+		expect(() => repeat('x', count)).toThrowError(Error);
+	});
+
+	test('iterator stays done', () => {
+		const it = repeat('x', 2)[Symbol.iterator]();
+		expect([it.next(), it.next()].map(r => r.value)).toEqual(['x', 'x']);
+		for (let i = 0; i < 3; i++)
+			expect(it.next().done).toBe(true);
+	});
+
 });
