@@ -1,19 +1,19 @@
-import { Mapper } from "../types";
-import { getDoneIteratorResult, getContinueIteratorResult, isFunction } from "../utils";
+import { Mapper } from '../types';
+import { getDoneIteratorResult, getContinueIteratorResult, isFunction } from '../utils';
 
 /**
- * 
+ *
  * @operation `Transformation`
- * @param iterable 
- * @param mapper 
- * @returns 
+ * @param iterable
+ * @param mapper
+ * @returns
  */
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
 	if (iterable == null)
 		throw 'The source "iterable" must be provided';
 	if(!isFunction(mapper))
 		throw '"mapper" function must be provided';
-  return new MapIterable(iterable, mapper);
+	return new MapIterable(iterable, mapper);
 }
 
 class MapIterable<T,R> implements Iterable<R> {
@@ -32,7 +32,7 @@ class MapIterable<T,R> implements Iterable<R> {
 }
 
 class MapIterableIterator<T, R> implements Iterator<R> {
-	
+
 	constructor(source: Iterable<T>, mapper: Mapper<T, R>) {
 		this.sourceIterator = source[Symbol.iterator]();
 		this.mapper = mapper;
@@ -56,7 +56,7 @@ class MapIterableIterator<T, R> implements Iterator<R> {
 	return(value?: any): IteratorResult<R, any> {
 		this.internalNext = getDoneIteratorResult;
 		if (isFunction(this.sourceIterator.return))
-      this.sourceIterator.return(value);
+			this.sourceIterator.return(value);
 		return getDoneIteratorResult(value);
 	}
 }

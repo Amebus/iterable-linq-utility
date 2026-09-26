@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
 	range,
 	tap
@@ -33,9 +33,9 @@ describe('tap', () => {
 		});
 		let tappedValue = -1;
 		const tapped = tap(range(end), tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		collectToArray(tapped);
 		expect(tappedValue).toBe(expectedTappedValue);
 		expect(tapperSpy).toHaveBeenCalledTimes(end);
@@ -53,9 +53,9 @@ describe('tap', () => {
 		});
 		let tappedValue = -1;
 		const tapped = tap(range(end), tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		collectToArray(tapped);
 		expect(tappedValue).toBe(expectedTappedValue);
 		expect(tapperSpy).toHaveBeenCalledTimes(end);

@@ -2,7 +2,7 @@
  * Checks if `value` is classified as a `Function` object.
  *
  * From [LoDash isFunction](https://github.com/lodash/lodash/blob/2f79053d7bc7c9c9561a30dda202b3dcd2b72b90/isFunction.js)
- * 
+ *
  * @since 1.0.0
  * @category Lang
  * @param {*} value The value to check.
@@ -28,19 +28,19 @@
  * // => false
  */
 export function isFunction(value?: any): value is (...args: any[]) => any {
-  return typeof value === 'function';
-  // https://jsben.ch/B6h73
+	return typeof value === 'function';
+	// https://jsben.ch/B6h73
 	// return !!(object && object.constructor && object.call && object.apply);
 }
 
 /**
- * 
- * Checks if `value` is classified as a `String` primitive or object.  
- * 
+ *
+ * Checks if `value` is classified as a `String` primitive or object.
+ *
  * From [LoDash isString](https://github.com/lodash/lodash/blob/master/isString.js)
- * 
+ *
  * @since 1.0.0
- * @param {*} value The value to check. 
+ * @param {*} value The value to check.
  * @returns {boolean} Returns `true` if `value` is a string, else `false`.
  * @example
  *
@@ -61,7 +61,7 @@ export function isFunction(value?: any): value is (...args: any[]) => any {
  * Gets the `toStringTag` of `value`.
  *
  * From [LoDash internal getTag](https://github.com/lodash/lodash/blob/master/.internal/getTag.js)
- * 
+ *
  * @private
  * @param {*} value The value to query.
  * @returns {string} Returns the `toStringTag`.

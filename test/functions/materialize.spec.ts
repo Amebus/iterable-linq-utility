@@ -2,16 +2,16 @@ import { describe, expect, test, vi } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
-import { 
+import {
 	collectToArray,
 	filter,
 	materialize,
 	range
 } from './_functions';
-import { LinkedListCollection } from "./_collections";
+import { LinkedListCollection } from './_collections';
 
 describe('materialize', () => {
-	
+
 	const rangeIterableItemCount = 50;
 	const generatedRange = range(rangeIterableItemCount);
 	const linkedList = LinkedListCollection.from(generatedRange);
@@ -45,10 +45,10 @@ describe('materialize', () => {
 	])('materialize($iterable) generate new iterable with same data', ({ iterable }) => {
 		const data = collectToArray(iterable as any);
 		const originalDataLength = data.length;
-		
+
 		const materialized = materialize(data as any);
 		expect(collectToArray(materialized).length).toEqual(originalDataLength);
-		
+
 		data.push(...data);
 		const newDataLength = data.length;
 		expect(collectToArray(materialized).length).toEqual(originalDataLength);
@@ -93,7 +93,7 @@ describe('materialize', () => {
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
 		const filterResult2 = collectToArray(materialized);
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
-		
+
 		expect(filterResult1).toEqual(filterResult2);
 	});
 

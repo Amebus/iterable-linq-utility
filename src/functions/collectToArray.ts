@@ -1,4 +1,4 @@
-import { Validations } from "../utils";
+import { Validations } from '../utils';
 
 /**
  * Collect the data of the input `Iterable` into an `Array`

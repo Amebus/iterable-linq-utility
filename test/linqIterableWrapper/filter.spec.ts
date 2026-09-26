@@ -13,7 +13,6 @@ describe('IterableLinq.filter', () => {
 	])('IterableLinq.filter without filter predicate -> throw exception', ({ start, end }) => {
 		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'filter');
 	});
-	
 
 	test.each([
 		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [0,0,0,0] },
@@ -29,7 +28,6 @@ describe('IterableLinq.filter', () => {
 			.fromRange(start, end)
 			.filter(filterPredicateSpy);
 		expect(filterPredicateSpy).not.toHaveBeenCalled();
-
 
 		expectedPredicateCalls
 			.forEach(expectedCalls => {

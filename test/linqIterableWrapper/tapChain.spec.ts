@@ -15,11 +15,11 @@ describe('IterableLinq.tapChain', () => {
 		const tapped = IterableLinq
 			.fromRange(end)
 			.tapChain(tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		tapped.collectToArray();
-		
+
 		expect(tapperSpy).toHaveBeenCalledOnce();
 
 		tapped.collectToArray();

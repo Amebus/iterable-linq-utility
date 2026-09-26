@@ -25,7 +25,7 @@ describe('IterableLinq.tapChainCreation', () => {
 			.tapChainCreation(chainCreationTapperSpy)
 			.tap(() => unit())
 			.tapChainCreation(chainCreationTapperSpy);
-		
+
 		expect(chainCreationTapperSpy).toHaveBeenCalledTimes(2);
 		tapped.collectToArray();
 		expect(chainCreationTapperSpy).toHaveBeenCalledTimes(2);

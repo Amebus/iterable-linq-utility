@@ -70,7 +70,6 @@ describe('forEachAsync', () => {
 		await expect(() => forEachAsyncJs(range(start, end), action)).rejects.toThrowError();
 	});
 
-	
 	const asyncActionValue = v => {
 		return new Promise<Unit>(resolve => {
 			tempArr.push(v);

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
-import { 
+import {
 	max,
 	range
 } from './_functions';
@@ -23,7 +23,6 @@ describe('max', () => {
 		expect(r).toBe(expectedResult);
 	});
 
-
 	test.each([
 		{ text: '', expectedResult: null },
 		{ text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', expectedResult: 'u' },
@@ -31,7 +30,6 @@ describe('max', () => {
 		const r = max(text);
 		expect(r).toBe(expectedResult);
 	});
-
 
 	test.each([
 		{ data: [], expectedResult: null },
@@ -78,7 +76,7 @@ describe('max', () => {
 		const r = max(data, ['t1', 't2']);
 		expect(r).toStrictEqual(expectedResult);
 	});
-	
+
 	test.each([
 		{ data: [], expectedResult: null },
 		{ data: [{ t1: 'ipsum', t2: 'dolor' }], expectedResult: { t1: 'ipsum', t2: 'dolor' } },

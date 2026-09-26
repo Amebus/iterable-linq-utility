@@ -1,4 +1,4 @@
-import { getDoneIteratorResult } from "../utils";
+import { getDoneIteratorResult } from '../utils';
 
 export function empty<T>(): Iterable<T> {
 	return new EmptyIterable();
@@ -6,7 +6,7 @@ export function empty<T>(): Iterable<T> {
 
 class EmptyIterable<T> implements Iterable<T> {
 	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new EmptyIterableIterator();	
+		return new EmptyIterableIterator();
 	}
 }
 

@@ -1,14 +1,13 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
 	filter,
 	range
 } from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-
 
 describe('filter', () => {
 
@@ -38,7 +37,6 @@ describe('filter', () => {
 		returnClosesTheIterator(filterIterable, returnValue);
 	});
 
-	
 	test.each([
 		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [0,0,0,0] },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [20,40,60,80] },

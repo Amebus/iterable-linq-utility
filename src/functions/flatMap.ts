@@ -3,9 +3,9 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
 
 /**
  * @operation `Transformation`
- * @param iterable 
- * @param mapper 
- * @returns 
+ * @param iterable
+ * @param mapper
+ * @returns
  */
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>>): Iterable<R> {
 	Validations.throwIfNotIterable(iterable);
@@ -13,9 +13,8 @@ export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<
 	return new FlatMapIterable(iterable, mapper);
 }
 
-
 class FlatMapIterable<T, R> implements Iterable<R> {
-	
+
 	constructor(iterable: Iterable<T>, mapper: Mapper<T,Iterable<R>>) {
 		this.source = iterable;
 		this.mapper = mapper;

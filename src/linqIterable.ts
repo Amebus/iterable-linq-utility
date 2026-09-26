@@ -2,31 +2,31 @@ import {
 	Action,
 	AsyncAction,
 
-  Comparer,
+	Comparer,
 
-  Mapper,
-	
+	Mapper,
+
 	Reducer,
 
-  Predicate,
-	
+	Predicate,
+
 	Tapper,
 
 	Unit
 } from './types';
 
-import { 
-  filter,
+import {
+	filter,
 	flatMap,
 	forEach, forEachAsync
-} from "./functions";
+} from './functions';
 
 import {
-  map,
-  materialize,
-  max,
-  memoize, IMemoizeOptions,
-  min
+	map,
+	materialize,
+	max,
+	memoize, IMemoizeOptions,
+	min
 } from './functions';
 
 import {
@@ -34,43 +34,43 @@ import {
 } from './functions';
 
 import {
-  some
-} from "./functions";
+	some
+} from './functions';
 
 import {
-  tap,
+	tap,
 	tapChain
-} from "./functions";
+} from './functions';
 
 import { isFunction } from './utils';
 
 export interface IIterableLinq<T> {
 
-  [Symbol.iterator](): Iterator<T, any, undefined>;
+	[Symbol.iterator](): Iterator<T, any, undefined>;
 
-  collectToArray(): T[];
+	collectToArray(): T[];
 
-  filter(predicate: Predicate<T>): IIterableLinq<T>; 
+	filter(predicate: Predicate<T>): IIterableLinq<T>;
 	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R>;
 	forEach(action: Action<T>): Unit;
 	forEachAsync(action: AsyncAction<T>): Promise<Unit>;
 
-  map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
-  materialize(): IIterableLinq<T>;
-  max(comparer?: Comparer<T>): T | null | undefined;
-  memoize(options?: IMemoizeOptions): IIterableLinq<T>;
-  min(comparer?: Comparer<T>): T | null | undefined;
+	map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
+	materialize(): IIterableLinq<T>;
+	max(comparer?: Comparer<T>): T | null | undefined;
+	memoize(options?: IMemoizeOptions): IIterableLinq<T>;
+	min(comparer?: Comparer<T>): T | null | undefined;
 
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
-  some(predicate: Predicate<T>): boolean;
+	some(predicate: Predicate<T>): boolean;
 
 	tap(tapper: Tapper<T>): IIterableLinq<T>;
 	tapChain(tapper: Tapper<Iterable<T>>): IIterableLinq<T>;
 	/**
-	 * 
+	 *
 	 * @operation `Tap`
-	 * @param chainCreationTapper 
+	 * @param chainCreationTapper
 	 */
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => Unit): IIterableLinq<T>;
 }

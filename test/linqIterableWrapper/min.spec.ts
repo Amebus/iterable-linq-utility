@@ -4,7 +4,7 @@ import { expectAction } from '../_helpers/operationKind';
 import { IterableLinq } from './_linqIterable';
 
 describe('IterableLinq.min', () => {
-	
+
 	test.each([
 		{ start: 0, end: 0, expectedResult: null },
 		{ start: 10, end: 50, expectedResult: 10 },
@@ -14,7 +14,6 @@ describe('IterableLinq.min', () => {
 		expect(r).toBe(expectedResult);
 	});
 
-
 	test.each([
 		{ text: '', expectedResult: null },
 		{ text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', expectedResult: ' ' },
@@ -22,7 +21,6 @@ describe('IterableLinq.min', () => {
 		const r = IterableLinq.from(text).min();
 		expect(r).toBe(expectedResult);
 	});
-
 
 	test.each([
 		{ data: [], expectedResult: null },
@@ -69,7 +67,7 @@ describe('IterableLinq.min', () => {
 		const r = IterableLinq.from(data).min(['t1', 't2']);
 		expect(r).toStrictEqual(expectedResult);
 	});
-	
+
 	test.each([
 		{ data: [], expectedResult: null },
 		{ data: [{ t1: 'ipsum', t2: 'dolor' }], expectedResult: { t1: 'ipsum', t2: 'dolor' } },

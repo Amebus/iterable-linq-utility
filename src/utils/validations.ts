@@ -1,5 +1,5 @@
-import { Action, AsyncAction, Mapper, Predicate } from "../types";
-import { isFunction } from "./utils";
+import { Action, AsyncAction, Mapper, Predicate } from '../types';
+import { isFunction } from './utils';
 
 export function throwIfNotIterable<T>(sourceIterable: Iterable<T>) {
 	if (sourceIterable == null)

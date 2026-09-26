@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
 	range,
 	tapChain
@@ -17,11 +17,11 @@ describe('tapChain', () => {
 	])('tapChain(range($end)) to call taper function 2 times', ({ end }) => {
 		const tapperSpy = vi.fn(() => unit());
 		const tapped = tapChain(range(end), tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		collectToArray(tapped);
-		
+
 		expect(tapperSpy).toHaveBeenCalledOnce();
 
 		collectToArray(tapped);

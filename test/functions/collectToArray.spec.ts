@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray
 } from './_functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('collectToArray', () => {
-	
+
 	test('collectToArray without input iterable -> throw exception', () => {
 		withoutInputIterableThrowsException(collectToArray);
 	});

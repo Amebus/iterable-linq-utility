@@ -18,7 +18,7 @@ import { materialize } from './materialize';
 import { max } from './max';
 import { memoize, getMemoizeDefaultOptions, IMemoizeOptions } from './memoize';
 import { min } from './min';
-export { 
+export {
 	map,
 	materialize,
 	max,

@@ -1,17 +1,17 @@
-import { getDoneIteratorResult, getFlatIteratorResult, Validations } from "../utils";
-import { Predicate } from "../types";
+import { getDoneIteratorResult, getFlatIteratorResult, Validations } from '../utils';
+import { Predicate } from '../types';
 
 /**
- * 
+ *
  * @operation `Transformation`
- * @param iterable 
- * @param predicate 
- * @returns 
+ * @param iterable
+ * @param predicate
+ * @returns
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);
 	Validations.thowIfNotValidPredicate(predicate);
-  return new FilterIterable<T>(iterable, predicate);
+	return new FilterIterable<T>(iterable, predicate);
 }
 
 class FilterIterable<T> implements Iterable<T> {

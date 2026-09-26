@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getContinueIteratorResult } from "../utils";
+import { getDoneIteratorResult, getContinueIteratorResult } from '../utils';
 
 export function repeat<T>(value: T, count: number): Iterable<T> {
 	if (count < 0)
@@ -23,7 +23,7 @@ class RepeatIterable<T> implements Iterable<T> {
 }
 
 class RepeatIterableIterator<T> implements Iterator<T> {
-	
+
 	constructor(value: T, count: number) {
 		this.value = value;
 		this.count = count;

@@ -3,10 +3,10 @@ import { expectAction } from '../_helpers/operationKind';
 
 import { IterableLinq } from './_linqIterable';
 
-import { LinkedListCollection } from "./_collections";
+import { LinkedListCollection } from './_collections';
 
 describe('IterableLinq.materialize', () => {
-	
+
 	const rangeIterableItemCount = 50;
 	const generatedRange = IterableLinq.fromRange(rangeIterableItemCount);
 	const linkedList = LinkedListCollection.from(generatedRange);

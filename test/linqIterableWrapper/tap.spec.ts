@@ -20,9 +20,9 @@ describe('IterableLinq.tap', () => {
 		const tapped = IterableLinq
 			.fromRange(end)
 			.tap(tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		tapped.collectToArray();
 		expect(tappedValue).toBe(expectedTappedValue);
 		expect(tapperSpy).toHaveReturnedTimes(end);

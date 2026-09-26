@@ -1,11 +1,11 @@
-import { Action, AsyncAction, Unit, unit } from "../types";
-import { Validations } from "../utils";
+import { Action, AsyncAction, Unit, unit } from '../types';
+import { Validations } from '../utils';
 
 /**
  * Performs the specified action on each element of the input `Iterable`
  * @param iterable input iterable
  * @param action the action to perform
- * @returns 
+ * @returns
  */
 export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
 	Validations.throwIfNotIterable(iterable);
@@ -23,12 +23,12 @@ export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
  * Performs the specified async action on each element of the input `Iterable`
  * @param iterable input iterable
  * @param action the async action to perform
- * @returns 
+ * @returns
  */
 export async function forEachAsync<T>(iterable: Iterable<T>, action: AsyncAction<T>): Promise<Unit> {
 	Validations.throwIfNotIterable(iterable);
 	Validations.thowIfNotValidAction(action);
-	
+
 	const allPromises: Promise<Unit>[] = [];
 	const iterator = iterable[Symbol.iterator]();
 	for(let n = iterator.next(), index = 0; n.done !== true; n = iterator.next(), index++) {

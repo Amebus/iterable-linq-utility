@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { 
+import {
 	collectToArray,
 	empty
 } from './_functions';

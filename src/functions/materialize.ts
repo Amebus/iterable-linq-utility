@@ -1,17 +1,17 @@
-import { LinkedListCollection } from "../collections";
+import { LinkedListCollection } from '../collections';
 
 /**
- * 
+ *
  * @operation `Action`
- * @param iterable 
- * @returns 
+ * @param iterable
+ * @returns
  */
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
 	if (iterable == null)
 		throw 'The source "iterable" must be provided';
 	if (iterable instanceof MaterializeIterable) {
-    return iterable;
-  }
+		return iterable;
+	}
 	return new MaterializeIterable(iterable);
 }
 
@@ -29,10 +29,10 @@ class MaterializeIterable<T> implements Iterable<T> {
 }
 
 class MaterializeIterableIterator<T> implements Iterator<T> {
-	
+
 	constructor(source: Iterable<T>) {
-    this.sourceIterator =  source[Symbol.iterator]();
-  }
+		this.sourceIterator =  source[Symbol.iterator]();
+	}
 
 	private sourceIterator: Iterator<T>;
 

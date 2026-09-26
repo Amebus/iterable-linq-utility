@@ -1,12 +1,12 @@
-import { Tapper } from "../types";
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "../utils";
+import { Tapper } from '../types';
+import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from '../utils';
 
 /**
- * 
+ *
  * @operation `Tap`
- * @param iterable 
- * @param tapper 
- * @returns 
+ * @param iterable
+ * @param tapper
+ * @returns
  */
 export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
 	if (iterable == null)
@@ -17,7 +17,7 @@ export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
 }
 
 class TapIterable<T> implements Iterable<T> {
-	
+
 	constructor(iterable: Iterable<T>, tapper: Tapper<T>) {
 		this.source = iterable;
 		this.tapper = tapper;

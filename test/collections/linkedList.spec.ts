@@ -23,13 +23,13 @@ describe('LinkedList', () => {
 		{input: [-3,-5,-8,1,2,3,4]},
 	])('addFirst($input)', ({ input }) => {
 		const list = new LinkedList<number>();
-		
+
 		let size = 0;
 		for(const item of input) {
 			list.addFirst(item);
 			expect(list.size()).toEqual(++size);
 		}
-		
+
 		expect([...list]).toEqual(input.reverse());
 	});
 
@@ -40,13 +40,13 @@ describe('LinkedList', () => {
 		{input: [-3,-5,-8,1,2,3,4]},
 	])('addLast($input)', ({ input }) => {
 		const list = new LinkedList<number>();
-		
+
 		let size = 0;
 		for(const item of input) {
 			list.addLast(item);
 			expect(list.size()).toEqual(++size);
 		}
-		
+
 		expect([...list]).toEqual(input);
 	});
 
@@ -75,7 +75,6 @@ describe('LinkedList', () => {
 	])('from($noInput) -> throws exception', ({ input }) => {
 		expect(() => from(input)).toThrowError();
 	});
-
 
 	test.each([
 		{input: [1,2,3,4], returnValue: 'a value'},

@@ -50,7 +50,7 @@ describe('IterableLinq.memoize', () => {
 			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -74,7 +74,7 @@ describe('IterableLinq.memoize', () => {
 			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -94,10 +94,10 @@ describe('IterableLinq.memoize', () => {
 			.tap(tapperSpy)
 			.memoize({ allowPartialMemoization: false });
 		expectedTapperCalls
-		.forEach((expectedCalls, idx) => {
+			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -121,7 +121,7 @@ describe('IterableLinq.memoize', () => {
 			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 

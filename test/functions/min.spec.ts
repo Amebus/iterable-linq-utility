@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
-import { 
+import {
 	min,
 	range
 } from './_functions';
@@ -23,7 +23,6 @@ describe('min', () => {
 		expect(r).toBe(expectedResult);
 	});
 
-
 	test.each([
 		{ text: '', expectedResult: null },
 		{ text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', expectedResult: ' ' },
@@ -32,9 +31,8 @@ describe('min', () => {
 		expect(r).toBe(expectedResult);
 	});
 
-
 	test.each([
-		{ data: [], expectedResult: null },	
+		{ data: [], expectedResult: null },
 		{ data: [{ val: 10 }], expectedResult: { val: 10 } },
 		{ data: [{ val: 10 }, { val: 1 }], expectedResult: { val: 1 } }
 	])('min($data, "val") -> $expectedResult', ({ data, expectedResult }) => {
@@ -78,7 +76,7 @@ describe('min', () => {
 		const r = min(data, ['t1', 't2']);
 		expect(r).toStrictEqual(expectedResult);
 	});
-	
+
 	test.each([
 		{ data: [], expectedResult: null },
 		{ data: [{ t1: 'ipsum', t2: 'dolor' }], expectedResult: { t1: 'ipsum', t2: 'dolor' } },

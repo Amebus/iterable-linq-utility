@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
-import { 
+import {
 	reduce,
 	range
 } from './_functions';

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
 	memoize,
 	range,
@@ -34,7 +34,6 @@ describe('memoize', () => {
 		returnClosesTheIterator(filterIterable, returnValue);
 	});
 
-	
 	test.each([
 		{ start: 0, end: 20 },
 		{ start: 0, end: 20 },
@@ -76,10 +75,10 @@ describe('memoize', () => {
 		const tapperSpy = vi.fn(tapper);
 		const memoized = memoize(tap(range(start, end), tapperSpy));
 		expectedTapperCalls
-		.forEach((expectedCalls, idx) => {
+			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				some(memoized, someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -96,10 +95,10 @@ describe('memoize', () => {
 		const tapperSpy = vi.fn(tapper);
 		const memoized = memoize(memoize(tap(range(start, end), tapperSpy), { allowPartialMemoization: false }));
 		expectedTapperCalls
-		.forEach((expectedCalls, idx) => {
+			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				some(memoized, someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -116,10 +115,10 @@ describe('memoize', () => {
 		const tapperSpy = vi.fn(tapper);
 		const memoized = memoize(tap(range(start, end), tapperSpy), { allowPartialMemoization: false });
 		expectedTapperCalls
-		.forEach((expectedCalls, idx) => {
+			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				some(memoized, someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -136,10 +135,10 @@ describe('memoize', () => {
 		const tapperSpy = vi.fn(tapper);
 		const memoized = memoize(memoize(tap(range(start, end), tapperSpy)), { allowPartialMemoization: false });
 		expectedTapperCalls
-		.forEach((expectedCalls, idx) => {
+			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				some(memoized, someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 

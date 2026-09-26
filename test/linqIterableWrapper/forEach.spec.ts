@@ -53,7 +53,6 @@ describe('IterableLinq.forEachAsync', () => {
 		withoutInputFunctionThrowsExceptionAsync(IterableLinq.fromRange(start, end), 'forEachAsync');
 	});
 
-	
 	const asyncActionValue = v => {
 		return new Promise<Unit>(resolve => {
 			tempArr.push(v);

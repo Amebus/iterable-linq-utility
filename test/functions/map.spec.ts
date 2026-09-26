@@ -1,13 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
 	map,
 	range
 } from './_functions';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-
 
 describe('map', () => {
 

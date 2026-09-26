@@ -8,8 +8,7 @@ import {
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('some', () => {
- 
-	
+
 	test('some without input iterable -> throw exception', () => {
 		withoutInputIterableThrowsException(some);
 	});
