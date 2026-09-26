@@ -1,5 +1,5 @@
 import type { Comparer } from '../types';
-import { isFunction, Validations } from '../utils';
+import { findExtreme, toCompareFunction, Validations } from '../utils';
 
 /**
  *
@@ -8,34 +8,7 @@ import { isFunction, Validations } from '../utils';
  * @param comparer
  * @returns
  */
-export function max<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null | undefined {
+export function max<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | undefined {
 	Validations.throwIfNotIterable(iterable);
-	const iterator: Iterator<T> = iterable[Symbol.iterator]();
-	let n = iterator.next();
-	let max: T | null | undefined = n.value;
-
-	let comp: Comparer<T>;
-	if (comparer == null) {
-		comp = (a: T, b: T) => a < b ? -1 : a === b ? 0 : 1;
-	} else if (isFunction(comparer)) {
-		comp = comparer;
-	} else if (Array.isArray(comparer)) {
-		comp = (a: T, b: T) => {
-			let r = 0;
-			for(const key of comparer) {
-				r = a[key] < b[key] ? -1 : a[key] === b[key] ? 0 : 1;
-				if (r !== 0)
-					break;
-			}
-			return r;
-		};
-	} else {
-		comp = (a: T, b: T) => a[comparer] < b[comparer] ? -1 : a[comparer] === b[comparer] ? 0 : 1;
-	}
-
-	for (n = iterator.next(); n.done !== true; n = iterator.next()) {
-		const c = comp(max as T, n.value);
-		max = c > 0 || c === 0 ? max : n.value;
-	}
-	return max == null ? null : max;
+	return findExtreme(iterable, toCompareFunction(comparer), 1);
 }

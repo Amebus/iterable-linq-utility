@@ -41,9 +41,9 @@ export interface IIterableLinq<T> {
 
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
 	materialize(): IIterableLinq<T>;
-	max(comparer?: Comparer<T>): T | null | undefined;
+	max(comparer?: Comparer<T>): T | undefined;
 	memoize(options?: IMemoizeOptions): IIterableLinq<T>;
-	min(comparer?: Comparer<T>): T | null | undefined;
+	min(comparer?: Comparer<T>): T | undefined;
 
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
@@ -99,7 +99,7 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 		return new IterableLinqWrapper(materialize(this.iterable));
 	}
 
-	max(comparer?: Comparer<T>): T | null | undefined {
+	max(comparer?: Comparer<T>): T | undefined {
 		return max(this.iterable, comparer);
 	}
 
@@ -107,7 +107,7 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 		return new IterableLinqWrapper(memoize(this.iterable, options));
 	}
 
-	min(comparer?: Comparer<T>): T | null | undefined {
+	min(comparer?: Comparer<T>): T | undefined {
 		return min(this.iterable, comparer);
 	}
 

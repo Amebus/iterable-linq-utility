@@ -112,7 +112,7 @@ The `forEachAsync` will wait until all the promeses are either resolved or rejec
 
 ## max
 
-Returns the maximum value found in the input `Iterable`
+Returns the maximum value found in the input `Iterable`, or `undefined` when the `Iterable` is empty. Among equal values the first one wins; `null` and `undefined` elements never win against a defined one.
 
 === "Wrapper"
 
@@ -182,7 +182,7 @@ It is possible to specify a custom comparer option:
 
 ## min
 
-Returns the minimum value found in the input `Iterable`
+Returns the minimum value found in the input `Iterable`, or `undefined` when the `Iterable` is empty. Among equal values the first one wins; `null` and `undefined` elements never win against a defined one.
 
 === "Wrapper"
 
