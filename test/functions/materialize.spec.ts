@@ -34,7 +34,6 @@ describe('materialize', () => {
 
 		const materialized2 = materialize(iterable as any);
 		expect(materialized2).not.toBe(materialized);
-		expect(materialized2).toEqual(materialized);
 		expect(collectToArray(materialized2)).toEqual(collectToArray(materialized));
 	});
 

@@ -15,7 +15,7 @@ export function min<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null 
   let n = iterator.next();
   let min: T | null | undefined = n.value;
 
-  let comp: Comparer<T> = null!;
+  let comp: Comparer<T>;
   if (comparer == null) {
     comp = (a: T, b: T) => a < b ? -1 : a === b ? 0 : 1;
   } else if (isFunction(comparer)) {

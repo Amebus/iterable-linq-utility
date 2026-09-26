@@ -1,5 +1,5 @@
 import { Action, AsyncAction, Unit, unit } from "../types";
-import { isFunction, Validations } from "../utils";
+import { Validations } from "../utils";
 
 /**
  * Performs the specified action on each element of the input `Iterable`

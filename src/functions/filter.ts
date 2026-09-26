@@ -39,7 +39,6 @@ class FilterIterableIterator<T> implements Iterator<T> {
 	private predicate: Predicate<T>;
 
 	private internalNext: () => IteratorResult<T, any> = () => {
-		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const n = this.sourceIterator.next();
 			if (n.done === true || this.predicate(n.value, this.index++))
