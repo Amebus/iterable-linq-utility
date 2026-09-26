@@ -17,10 +17,15 @@
 		}
 	},
   "forwardPorts": [3000],
+  "initializeCommand": "mkdir -p \"$HOME/Progetti/informatica/node/24/cache\" \"$HOME/Progetti/informatica/node/24/pnpm-store\"",
   "postCreateCommand": "pnpm install",
   "remoteUser": "vscode",
+  "containerEnv": {
+    "pnpm_config_store_dir": "/home/vscode/.pnpm-store"
+  },
 	"mounts": [
-     "source=${localEnv:HOME}/.ssh/alpine-containers,target=/home/.ssh,type=bind"
+    "source=${localEnv:HOME}/Progetti/informatica/node/24/cache,target=/home/vscode/.npm,type=bind",
+    "source=${localEnv:HOME}/Progetti/informatica/node/24/pnpm-store,target=/home/vscode/.pnpm-store,type=bind"
   ],
 	"runArgs": ["--name", "iterable-linq-utility_devcontainer"]
 }
