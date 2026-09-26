@@ -1,5 +1,6 @@
+import { DeferredIterable, SourceIterator } from '../iterators';
 import { Mapper } from '../types';
-import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
+import { Validations } from '../utils';
 
 /**
  * @operation `Transformation`
@@ -10,70 +11,56 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>>): Iterable<R> {
 	Validations.throwIfNotIterable(iterable);
 	Validations.throwIfNotFunction(mapper, 'mapper');
-	return new FlatMapIterable(iterable, mapper);
+	return new DeferredIterable(() => new FlatMapIterator(iterable, mapper));
 }
 
-class FlatMapIterable<T, R> implements Iterable<R> {
+type FlatMapState = 'outer' | 'inner';
 
-	private readonly mapper: Mapper<T, Iterable<R>>;
-	private readonly source: Iterable<T>;
+/**
+ * A step returns the next result, or `undefined` when it only changed state.
+ */
+type FlatMapStep = (it: FlatMapIterator<unknown, unknown>) => IteratorResult<unknown> | undefined;
 
-	constructor(iterable: Iterable<T>, mapper: Mapper<T,Iterable<R>>) {
-		this.source = iterable;
-		this.mapper = mapper;
-	}
-
-	[Symbol.iterator](): Iterator<R, any, undefined> {
-		return new FlatMapIterableIterator(this.source, this.mapper);
-	}
-}
-
-class FlatMapIterableIterator<T,R> implements Iterator<R> {
-
-	private index: number = 0;
-	private readonly mapper: Mapper<T, Iterable<R>>;
-	private readonly sourceIterator: Iterator<T>;
-	private fmIterator!: Iterator<R>;
-	internalNext: () => IteratorResult<R, any>;
-
-	constructor(source: Iterable<T>, mapper: Mapper<T,Iterable<R>>) {
-		this.sourceIterator = source[Symbol.iterator]();
-		this.mapper = mapper;
-		this.internalNext = this.sourceNext;
-	}
-
-	private sourceNext: () => IteratorResult<R, any> =() => {
-		const n = this.sourceIterator.next();
-		if (n.done !== true) {
-			const fmIterable = this.mapper(n.value, this.index++);
-			this.fmIterator = fmIterable[Symbol.iterator]();
-			this.internalNext = this.fmNext;
-			return this.internalNext();
+class FlatMapIterator<T, R> extends SourceIterator<T, R> {
+	/**
+	 * Transition table: one step per state. Static, so the steps can read the iterator's protected members.
+	 */
+	private static readonly steps: Readonly<Record<FlatMapState, FlatMapStep>> = {
+		outer: it => {
+			const n = it.source.next();
+			if (n.done === true)
+				return n;
+			it.inner = it.mapper(n.value, it.index++)[Symbol.iterator]();
+			it.state = 'inner';
+			return undefined;
+		},
+		inner: it => {
+			const n = it.inner!.next();
+			if (n.done !== true)
+				return n;
+			it.inner = undefined;
+			it.state = 'outer';
+			return undefined;
 		}
-		this.internalNext = getDoneIteratorResult;
-		return this.internalNext();
 	};
 
-	private fmNext: () => IteratorResult<R, any> =() => {
-		const n = this.fmIterator.next();
-		if (n.done !== true) {
-			return getContinueIteratorResult( n.value );
+	private state: FlatMapState = 'outer';
+	private inner?: Iterator<R>;
+
+	constructor(iterable: Iterable<T>, private readonly mapper: Mapper<T, Iterable<R>>) {
+		super(iterable);
+	}
+
+	protected advance(): IteratorResult<R> {
+		for (;;) {
+			const result = FlatMapIterator.steps[this.state](this as FlatMapIterator<unknown, unknown>);
+			if (result !== undefined)
+				return result as IteratorResult<R>;
 		}
-		this.internalNext = this.sourceNext;
-		return this.internalNext();
-	};
-
-	next(): IteratorResult<R, any> {
-		return this.internalNext();
 	}
 
-	return?(value?: any): IteratorResult<R, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult(value);
-	}
-
-	throw(): IteratorResult<R, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult();
+	protected override onReturn(): void {
+		this.inner?.return?.();
+		super.onReturn();
 	}
 }

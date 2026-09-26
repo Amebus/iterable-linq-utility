@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import {
@@ -70,6 +71,24 @@ describe('flatMap', () => {
 
 	test('flatMap is transformation', () => {
 		expectTransformation(source => flatMap(source, v => range(v)));
+	});
+
+	test('return() closes inner and source', () => {
+		const outer = closableSource([1]);
+		const inner = closableSource([10, 20]);
+		const it = flatMap(outer.iterable, () => inner.iterable)[Symbol.iterator]();
+		expect(it.next().value).toBe(10);
+		it.return!();
+		expect(inner.state.closed).toBe(true);
+		expect(outer.state.closed).toBe(true);
+	});
+
+	test('return() before next() does not throw', () => {
+		expect(() => flatMap([1], v => [v])[Symbol.iterator]().return!()).not.toThrow();
+	});
+
+	test('empty inner iterables are skipped', () => {
+		expect([...flatMap([[], [1], [], [2, 3], []], (v: number[]) => v)]).toEqual([1, 2, 3]);
 	});
 
 });
