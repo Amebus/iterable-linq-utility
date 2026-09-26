@@ -235,4 +235,13 @@ describe('range', () => {
 		expect([...range(0, 1, 0.1)]).toEqual(Array.from({ length: 10 }, (_, i) => i * 0.1));
 	});
 
+	test.each([
+		{ args: [NaN] },
+		{ args: [0, NaN] },
+		{ args: [0, 10, NaN] }
+	])('range($args) with NaN is empty', ({ args }) => {
+		const it = (range as (...a: number[]) => Iterable<number>)(...args)[Symbol.iterator]();
+		expect(it.next().done).toBe(true);
+	});
+
 });

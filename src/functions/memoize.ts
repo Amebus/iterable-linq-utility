@@ -48,6 +48,8 @@ interface IMemoizeCache<T> {
 	readonly values: T[];
 	source?: Iterator<T>;
 	finished: boolean;
+	/** Error thrown by the source: every later read past the cached values throws it again. */
+	error?: { readonly value: unknown };
 }
 
 function createCache<T>(): IMemoizeCache<T> {
@@ -59,10 +61,19 @@ function createCache<T>(): IMemoizeCache<T> {
  * @returns false when the source is exhausted
  */
 function pull<T>(iterable: Iterable<T>, cache: IMemoizeCache<T>): boolean {
+	if (cache.error)
+		throw cache.error.value;
 	if (cache.finished)
 		return false;
 	cache.source ??= iterable[Symbol.iterator]();
-	const n = cache.source.next();
+	let n: IteratorResult<T>;
+	try {
+		n = cache.source.next();
+	} catch (error) {
+		cache.error = { value: error };
+		cache.source = undefined;
+		throw error;
+	}
 	if (n.done === true) {
 		cache.finished = true;
 		cache.source = undefined;

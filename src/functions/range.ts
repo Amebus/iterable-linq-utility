@@ -20,7 +20,8 @@ export function range(start: number, end?: number | boolean, step?: number | boo
 
 	const chosenLength = Math.ceil(Math.abs(chosenEnd - chosenStart) / Math.abs(chosenStep));
 	const shouldReverse = end === true || step === true || (reverse != null && reverse) ? true : false;
-	if (chosenLength === 0)
+	// NaN bounds or steps give a NaN length: treat them as an empty range
+	if (!(chosenLength > 0))
 		return empty();
 	const first = shouldReverse ? chosenStart + (chosenLength - 1) * chosenStep : chosenStart;
 	const signedStep = shouldReverse ? -chosenStep : chosenStep;

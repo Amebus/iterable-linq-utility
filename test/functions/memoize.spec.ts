@@ -4,6 +4,7 @@ import { expectTransformation } from '../_helpers/operationKind';
 
 import {
 	collectToArray,
+	map,
 	memoize,
 	range,
 	some,
@@ -221,6 +222,22 @@ describe('memoize', () => {
 		expect(state.closed).toBe(false);
 		collectToArray(m);
 		expect(state.closed).toBe(true);
+	});
+
+	test.each([true, false])('memoize(partial: %s) re-throws a source error to later consumers', allowPartialMemoization => {
+		const err = new Error('boom');
+		const source = { *[Symbol.iterator]() { yield 1; yield 2; throw err; } };
+		const m = memoize(source, { allowPartialMemoization });
+		expect(() => collectToArray(m)).toThrow(err);
+		expect(() => collectToArray(m)).toThrow(err);
+	});
+
+	test('memoize does not drop the value whose mapper threw', () => {
+		const err = new Error('boom');
+		let calls = 0;
+		const m = memoize(map([1, 2, 3], v => { if (v === 2 && calls++ === 0) throw err; return v; }));
+		expect(() => collectToArray(m)).toThrow(err);
+		expect(() => collectToArray(m)).toThrow(err);
 	});
 
 });
