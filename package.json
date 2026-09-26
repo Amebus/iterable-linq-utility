@@ -22,6 +22,7 @@
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "test": "vitest run",
+    "bench": "vite build --logLevel error && node test/bench/chain.bench.mjs",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
   },
