@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import {
@@ -65,6 +66,19 @@ describe('map', () => {
 
 	test('map is transformation', () => {
 		expectTransformation(source => map(source, v => v * 10));
+	});
+
+	test('return() closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		const it = map(iterable, v => v)[Symbol.iterator]();
+		it.next();
+		it.return!();
+		expect(state.closed).toBe(true);
+	});
+
+	test('a throwing mapper propagates the same error', () => {
+		const err = new Error('boom');
+		expect(() => collectToArray(map([1], () => { throw err; }))).toThrow(err);
 	});
 
 });

@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import {
@@ -63,6 +64,14 @@ describe('tap', () => {
 
 	test('tap is transformation', () => {
 		expectTransformation(source => tap(source, () => unit()));
+	});
+
+	test('return() closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		const it = tap(iterable, () => unit())[Symbol.iterator]();
+		it.next();
+		it.return!();
+		expect(state.closed).toBe(true);
 	});
 
 });

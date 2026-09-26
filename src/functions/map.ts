@@ -1,5 +1,6 @@
+import { SourceIterator, DeferredIterable } from '../iterators';
 import { Mapper } from '../types';
-import { getDoneIteratorResult, getContinueIteratorResult, isFunction, Validations } from '../utils';
+import { getContinueIteratorResult, Validations } from '../utils';
 
 /**
  *
@@ -11,51 +12,18 @@ import { getDoneIteratorResult, getContinueIteratorResult, isFunction, Validatio
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
 	Validations.throwIfNotIterable(iterable);
 	Validations.throwIfNotFunction(mapper, 'mapper');
-	return new MapIterable(iterable, mapper);
+	return new DeferredIterable(() => new MapIterator(iterable, mapper));
 }
 
-class MapIterable<T,R> implements Iterable<R> {
-
-	private readonly mapper: Mapper<T, R>;
-	private readonly source: Iterable<T>;
-
-	constructor(iterable: Iterable<T>, mapper: Mapper<T,R>) {
-		this.source = iterable;
-		this.mapper = mapper;
+class MapIterator<T, R> extends SourceIterator<T, R> {
+	constructor(iterable: Iterable<T>, private readonly mapper: Mapper<T, R>) {
+		super(iterable);
 	}
 
-	[Symbol.iterator](): Iterator<R, any, undefined> {
-		return new MapIterableIterator(this.source, this.mapper);
-	}
-}
-
-class MapIterableIterator<T, R> implements Iterator<R> {
-
-	private index = 0;
-
-	private readonly sourceIterator: Iterator<T>;
-	private readonly mapper: Mapper<T, R>;
-
-	constructor(source: Iterable<T>, mapper: Mapper<T, R>) {
-		this.sourceIterator = source[Symbol.iterator]();
-		this.mapper = mapper;
-	}
-
-	internalNext: () => IteratorResult<R> = () => {
-		const n = this.sourceIterator.next();
-		if (n.done !== true) return getContinueIteratorResult<R>(this.mapper(n.value, this.index++));
-		this.internalNext = getDoneIteratorResult;
-		return this.internalNext();
-	};
-
-	next(): IteratorResult<R, any> {
-		return this.internalNext();
-	}
-
-	return(value?: any): IteratorResult<R, any> {
-		this.internalNext = getDoneIteratorResult;
-		if (isFunction(this.sourceIterator.return))
-			this.sourceIterator.return(value);
-		return getDoneIteratorResult(value);
+	protected advance(): IteratorResult<R> {
+		const n = this.source.next();
+		if (n.done === true)
+			return n;
+		return getContinueIteratorResult(this.mapper(n.value, this.index++));
 	}
 }

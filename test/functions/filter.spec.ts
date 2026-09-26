@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import {
@@ -70,6 +71,21 @@ describe('filter', () => {
 
 	test('filter is transformation', () => {
 		expectTransformation(source => filter(source, v => v % 2 === 0));
+	});
+
+	test('return() closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		const it = filter(iterable, () => true)[Symbol.iterator]();
+		it.next();
+		it.return!();
+		expect(state.closed).toBe(true);
+	});
+
+	test('independent iterators over the same chain', () => {
+		const f = filter([1, 2, 3, 4], v => v % 2 === 0);
+		const a = f[Symbol.iterator]();
+		const b = f[Symbol.iterator]();
+		expect([a.next(), b.next(), a.next(), b.next()].map(r => r.value)).toEqual([2, 2, 4, 4]);
 	});
 
 });

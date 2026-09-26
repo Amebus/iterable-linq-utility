@@ -1,5 +1,6 @@
-import { getDoneIteratorResult, Validations } from '../utils';
+import { SourceIterator, DeferredIterable } from '../iterators';
 import { Predicate } from '../types';
+import { Validations } from '../utils';
 
 /**
  *
@@ -11,49 +12,18 @@ import { Predicate } from '../types';
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);
 	Validations.throwIfNotFunction(predicate, 'predicate');
-	return new FilterIterable<T>(iterable, predicate);
+	return new DeferredIterable(() => new FilterIterator(iterable, predicate));
 }
 
-class FilterIterable<T> implements Iterable<T> {
-	private predicate: Predicate<T>;
-	private source: Iterable<T>;
-
-	constructor(iterable: Iterable<T>, predicate: Predicate<T>) {
-		this.source = iterable;
-		this.predicate = predicate;
+class FilterIterator<T> extends SourceIterator<T, T> {
+	constructor(iterable: Iterable<T>, private readonly predicate: Predicate<T>) {
+		super(iterable);
 	}
 
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new FilterIterableIterator(this.source, this.predicate);
-	}
-}
-
-class FilterIterableIterator<T> implements Iterator<T> {
-
-	private index = 0;
-
-	private sourceIterator: Iterator<T>;
-	private predicate: Predicate<T>;
-
-	constructor(source: Iterable<T>, predicate: Predicate<T>) {
-		this.sourceIterator = source[Symbol.iterator]();
-		this.predicate = predicate;
-	}
-
-	private internalNext: () => IteratorResult<T, any> = () => {
-		while (true) {
-			const n = this.sourceIterator.next();
+	protected advance(): IteratorResult<T> {
+		for (let n = this.source.next(); ; n = this.source.next()) {
 			if (n.done === true || this.predicate(n.value, this.index++))
 				return n;
 		}
-	};
-
-	next(): IteratorResult<T, any> {
-		return this.internalNext();
-	}
-
-	return?(value?: any): IteratorResult<T, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult(value);
 	}
 }
