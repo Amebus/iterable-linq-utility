@@ -1,5 +1,5 @@
 import { Tapper } from '../types';
-import { getDoneIteratorResult, getFlatIteratorResult, Validations } from '../utils';
+import { getDoneIteratorResult, Validations } from '../utils';
 
 /**
  *
@@ -45,7 +45,7 @@ class TapIterableIterator<T> implements Iterator<T> {
 		const n = this.sourceIterator.next();
 		if (n.done !== true) {
 			this.tapper(n.value, this.index++);
-			return getFlatIteratorResult(n);
+			return n;
 		}
 		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult();

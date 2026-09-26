@@ -8,42 +8,23 @@ export function range(start: number, end: number, reverse: boolean): Iterable<nu
 export function range(start: number, end: number, step: number, reverse: boolean): Iterable<number>;
 export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number>;
 export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number> {
-	const choosenEnd = end == null || end === true || end === false ? start : end;
-	const choosenStart = end == null || end === true || end === false ? 0 : start;
+	const chosenEnd = end == null || end === true || end === false ? start : end;
+	const chosenStart = end == null || end === true || end === false ? 0 : start;
 
-	const isStartBeforeEnd = choosenStart < choosenEnd;
+	const isStartBeforeEnd = chosenStart < chosenEnd;
 
 	const tempStep = step !== true && step !== false && step != null && step !== 0 ? step : isStartBeforeEnd ? 1 : -1;
-	const choosenStep = isStartBeforeEnd && tempStep < 0 ? -1 * tempStep : !isStartBeforeEnd && tempStep > 0 ? -1 * tempStep : tempStep;
-	// const choosenStep = tempStep;
+	const chosenStep = isStartBeforeEnd && tempStep < 0 ? -1 * tempStep : !isStartBeforeEnd && tempStep > 0 ? -1 * tempStep : tempStep;
 
-	const choosenLength = Math.ceil(Math.abs(choosenEnd - choosenStart) / Math.abs(choosenStep));
+	const chosenLength = Math.ceil(Math.abs(chosenEnd - chosenStart) / Math.abs(chosenStep));
 	const shouldReverse = end === true || step === true || (reverse != null && reverse) ? true : false;
-	const initialValue = shouldReverse ? choosenLength * choosenStep + choosenStart : choosenStart;
-	if (choosenStart === choosenEnd)
+	const initialValue = shouldReverse ? chosenLength * chosenStep + chosenStart : chosenStart;
+	if (chosenStart === chosenEnd)
 		return new RangeEmptyIterable(initialValue, 0, 0);
 	if (shouldReverse) {
-		return new RangeRverseIterable(initialValue, choosenLength, choosenStep);
-		// return function*() {
-		// 	const internalStep = choosenStep;
-		// 	let length = choosenLength;
-		// 	let value = initialValue;
-		// 	while(length--) {
-		// 		yield value;
-		// 		value -= internalStep;
-		// 	}
-		// }();
+		return new RangeReverseIterable(initialValue, chosenLength, chosenStep);
 	}
-	return new RangeIterable(initialValue, choosenLength, choosenStep);
-	// return function*() {
-	// 	const internalStep = choosenStep;
-	// 	let length = choosenLength;
-	// 	let value = initialValue;
-	// 	while(length--) {
-	// 		yield value;
-	// 		value += internalStep;
-	// 	}
-	// }();
+	return new RangeIterable(initialValue, chosenLength, chosenStep);
 }
 class RangeIterable implements Iterable<number> {
 
@@ -93,7 +74,7 @@ class RangeIterator implements Iterator<number>{
 	}
 }
 
-class RangeRverseIterable implements Iterable<number> {
+class RangeReverseIterable implements Iterable<number> {
 
 	constructor(initialValue: number, length: number, step: number) {
 		this.initialValue = initialValue - step;

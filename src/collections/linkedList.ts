@@ -41,22 +41,6 @@ export class LinkedList<T> implements Iterable<T> {
 	};
 	addFirst(value: T): this {
 		return this.internalAddFirst(value);
-		// const newNode: IListNode<T> = {
-		//   data: value,
-		//   nextNode: null
-		// };
-
-		// switch (this.internalSize) {
-		//   case 0:
-		//     this.head = newNode;
-		//     this.tail = newNode;
-		//     break;
-		//   default:
-		//     newNode.nextNode = this.head;
-		//     this.head = newNode;
-		// }
-		// this.internalSize++;
-		// return this;
 	}
 
 	private internalAddLast: (value: T) => this = value => {
@@ -81,22 +65,6 @@ export class LinkedList<T> implements Iterable<T> {
 	};
 	addLast(value: T): this {
 		return this.internalAddLast(value);
-		// const newNode: IListNode<T> = {
-		//   data: value,
-		//   nextNode: null
-		// };
-
-		// switch (this.internalSize) {
-		//   case 0:
-		//     this.head = newNode;
-		//     this.tail = newNode;
-		//     break;
-		//   default:
-		//     this.tail!.nextNode = newNode;
-		//     this.tail = newNode;
-		// }
-		// this.internalSize++;
-		// return this;
 	}
 
 	size(): number {
@@ -111,7 +79,7 @@ export class LinkedListIterator<T> implements Iterator<T> {
 		this.current = current;
 	}
 
-	private innerNext: () => IteratorResult<T, any> = () => {
+	private internalNext: () => IteratorResult<T, any> = () => {
 		const r = this.current;
 		if (r === null) return getDoneIteratorResult<T>();
 		this.current = r.nextNode;
@@ -119,11 +87,11 @@ export class LinkedListIterator<T> implements Iterator<T> {
 	};
 
 	next() {
-		return this.innerNext();
+		return this.internalNext();
 	}
 
 	return(value?: any): IteratorResult<T, any> {
-		this.innerNext = getDoneIteratorResult;
+		this.internalNext = getDoneIteratorResult;
 		return getDoneIteratorResult(value);
 	}
 }

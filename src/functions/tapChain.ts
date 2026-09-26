@@ -24,7 +24,6 @@ class TapChainIterable <T> implements Iterable<T> {
 	[Symbol.iterator](): Iterator<T, any, undefined> {
 		this.tapper(this.source, 0);
 		return this.source[Symbol.iterator]();
-		// return new TapChainIterableIterator(this.source, this.tapper);
 	}
 
 	private tapper: Tapper<Iterable<T>>;

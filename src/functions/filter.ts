@@ -1,4 +1,4 @@
-import { getDoneIteratorResult, getFlatIteratorResult, Validations } from '../utils';
+import { getDoneIteratorResult, Validations } from '../utils';
 import { Predicate } from '../types';
 
 /**
@@ -42,7 +42,7 @@ class FilterIterableIterator<T> implements Iterator<T> {
 		while (true) {
 			const n = this.sourceIterator.next();
 			if (n.done === true || this.predicate(n.value, this.index++))
-				return getFlatIteratorResult(n);
+				return n;
 		}
 	};
 
