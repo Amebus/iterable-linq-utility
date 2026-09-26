@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { 
 	reduce,
@@ -50,6 +51,10 @@ describe('reduce', () => {
 	])('reduce($iterable, $acc, $reducer) -> $expectedResult', ({ iterable, acc, reducer, expectedResult }) => {
 		const r = reduce(iterable, acc, reducer);
 		expect(r).toBe(expectedResult);
+	});
+
+	test('reduce is action', () => {
+		expectAction(source => reduce(source, 0, (acc, v) => acc + v));
 	});
 
 });

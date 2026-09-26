@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { IterableLinq } from './_linqIterable';
 
@@ -95,6 +96,10 @@ describe('IterableLinq.max', () => {
 	])('IterableLinq.fromRange($start, $end).max($comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
 		const r = IterableLinq.fromRange(start,end).max(comparer);
 		expect(r).toBe(expectedResult);
+	});
+
+	test('IterableLinq.max is action', () => {
+		expectAction(source => IterableLinq.from(source).max());
 	});
 
 });

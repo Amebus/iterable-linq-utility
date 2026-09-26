@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
+import { unit } from './_types';
 
 import { IterableLinq } from './_linqIterable';
 
@@ -76,6 +78,14 @@ describe('IterableLinq.forEachAsync', () => {
 	])('IterableLinq.forEach($iterable, $action) -> $expectedResult', async ({ iterable, action, expectedResult }) => {
 		await IterableLinq.from<number | string>(iterable).forEachAsync(action);
 		expect(tempArr).toEqual(expectedResult);
+	});
+
+	test('IterableLinq.forEach is action', () => {
+		expectAction(source => IterableLinq.from(source).forEach(() => unit()));
+	});
+
+	test('IterableLinq.forEachAsync is action', async () => {
+		await expectAction(source => IterableLinq.from(source).forEachAsync(async () => unit()));
 	});
 
 });

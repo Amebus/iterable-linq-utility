@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { IterableLinq } from './_linqIterable';
 
@@ -32,6 +33,10 @@ describe('IterableLinq.collectToArray', () => {
 		expect(r).toBeInstanceOf(Array);
 		expect(r).toEqual(expectedArray);
 		expect(r).not.toBe(expectedArray);
+	});
+
+	test('IterableLinq.collectToArray is action', () => {
+		expectAction(source => IterableLinq.from(source).collectToArray());
 	});
 
 });

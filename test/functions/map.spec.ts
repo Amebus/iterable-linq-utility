@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { 
 	collectToArray,
@@ -6,7 +7,6 @@ import {
 	range
 } from './_functions';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-import { isTransformation } from './transformationsRules';
 
 
 describe('map', () => {
@@ -38,15 +38,6 @@ describe('map', () => {
 	});
 
 	test.each([
-		{ mapPredicate: v => v * 10 },
-		{ mapPredicate: v => v * 10 },
-		{ mapPredicate: (v, idx) => v * idx },
-		{ mapPredicate: (v, idx) => v * idx }
-	])('map(range($start, $end), $mapPredicate) is transformation', ({ mapPredicate }) => {
-		isTransformation<number, number>(map, mapPredicate);
-	});
-
-	test.each([
 		{ start: 0, end: 5, mapPredicate: v => v * 10, expectedPredicateCalls: [5,10,15,20] },
 		{ start: -5, end: 5, mapPredicate: v => v * 10, expectedPredicateCalls: [10,20,30,40] },
 		{ start: 0, end: 5, mapPredicate: (v, idx) => v * idx, expectedPredicateCalls: [5,10,15,20] },
@@ -71,6 +62,10 @@ describe('map', () => {
 	])('map(range($start, $end), $mapPredicate) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
 		const r = collectToArray(map(range(start, end), mapPredicate));
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('map is transformation', () => {
+		expectTransformation(source => map(source, v => v * 10));
 	});
 
 });

@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import {
 	range,
@@ -106,6 +107,10 @@ describe('some', () => {
 		const predicateSpy = vi.fn(predicate);
 		some(range(start,end), predicateSpy);
 		expect(predicateSpy).toHaveReturnedTimes(expectedFunctionCalls);
+	});
+
+	test('some is action', () => {
+		expectAction(source => some(source, v => v > 2));
 	});
 
 });

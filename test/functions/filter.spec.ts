@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { 
 	collectToArray,
@@ -7,7 +8,6 @@ import {
 } from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-import { isTransformation } from './transformationsRules';
 
 
 describe('filter', () => {
@@ -38,16 +38,6 @@ describe('filter', () => {
 		returnClosesTheIterator(filterIterable, returnValue);
 	});
 
-	test.each([
-		{ filterPredicate: v => v % 2 === 0 },
-		{ filterPredicate: v => v % 2 === 1 },
-		{ filterPredicate: v => v > -5 && v < 5 },
-		{ filterPredicate: (v, idx) => v % 2 === 0 && idx < 10 },
-		{ filterPredicate: (v, idx) => v % 2 === 1 && idx > 10 },
-		{ filterPredicate: (v, idx) => v > -5 && v < 5 && idx === 0 }
-	])('filter($filterPredicate) is transformation', ({ filterPredicate }) => {
-		isTransformation<number>(filter, filterPredicate);
-	});
 	
 	test.each([
 		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [0,0,0,0] },
@@ -78,6 +68,10 @@ describe('filter', () => {
 	])('filter(range($start, $end), $filterPredicate) -> $expectedResult', ({ start, end, filterPredicate, expectedResult }) => {
 		const r = collectToArray(filter(range(start, end), filterPredicate));
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('filter is transformation', () => {
+		expectTransformation(source => filter(source, v => v % 2 === 0));
 	});
 
 });

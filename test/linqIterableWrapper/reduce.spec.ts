@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { IterableLinq } from './_linqIterable';
 
@@ -32,6 +33,10 @@ describe('reduce', () => {
 	])('IterableLinq.from.($iterable).reduce($acc, $reducer) -> $expectedResult', ({ iterable, acc, reducer, expectedResult }) => {
 		const r = IterableLinq.from(iterable).reduce(acc, reducer);
 		expect(r).toBe(expectedResult);
+	});
+
+	test('IterableLinq.reduce is action', () => {
+		expectAction(source => IterableLinq.from(source).reduce(0, (acc, v) => acc + v));
 	});
 
 });

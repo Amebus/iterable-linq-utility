@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { 
 	collectToArray
@@ -33,6 +34,10 @@ describe('collectToArray', () => {
 		expect(arr).toBeInstanceOf(Array);
 		expect(arr).toEqual(expectedArray);
 		expect(arr).not.toBe(expectedArray);
+	});
+
+	test('collectToArray is action', () => {
+		expectAction(source => collectToArray(source));
 	});
 
 });

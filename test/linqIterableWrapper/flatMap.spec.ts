@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { IterableLinq } from './_linqIterable';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
@@ -12,22 +13,6 @@ describe('IterableLinq.flatMap', () => {
 		{ start: -10, end: 10 }
 	])('IterableLinq.flatMap without mapper -> throw exception', ({ start, end }) => {
 		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'flatMap');
-	});
-
-	test.each([
-		{ start: 0, end: 3, mapPredicate: v => IterableLinq.fromRange(v) },
-		{ start: 1, end: 4, mapPredicate: v => IterableLinq.fromRange(v) },
-		{ start: 1, end: 4, mapPredicate: (v, idx) => IterableLinq.fromRange(idx) },
-		{ start: 1, end: 5, mapPredicate: (v, idx) => IterableLinq.fromRange(idx) },
-		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v) },
-	])('IterableLinq.fromRange($start, $end).flatMap($mapPredicate) is transformation', ({ start, end, mapPredicate }) => {
-		const mapPredicateSpy = vi.fn(mapPredicate as any);
-		const mapped = IterableLinq
-			.fromRange(start, end)
-			.flatMap<number | string>(mapPredicateSpy);
-		expect(mapPredicateSpy).not.toHaveBeenCalled();
-		mapped.collectToArray();
-		expect(mapPredicateSpy).toHaveReturned();
 	});
 
 	test.each([
@@ -62,6 +47,10 @@ describe('IterableLinq.flatMap', () => {
 			.flatMap<number | string>(mapPredicate)
 			.collectToArray();
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('IterableLinq.flatMap is transformation', () => {
+		expectTransformation(source => IterableLinq.from(source).flatMap(v => IterableLinq.fromRange(v)));
 	});
 
 });

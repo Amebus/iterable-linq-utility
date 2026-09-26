@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 import { 
@@ -94,6 +95,10 @@ describe('materialize', () => {
 		expect(filterPredicateSpy).toHaveBeenCalledTimes(iterableItemCount);
 		
 		expect(filterResult1).toEqual(filterResult2);
+	});
+
+	test('materialize is action', () => {
+		expectAction(source => materialize(source));
 	});
 
 });

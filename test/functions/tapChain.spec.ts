@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { 
 	collectToArray,
@@ -26,6 +27,10 @@ describe('tapChain', () => {
 		collectToArray(tapped);
 
 		expect(tapperSpy).toHaveBeenCalledTimes(2);
+	});
+
+	test('tapChain is transformation', () => {
+		expectTransformation(source => tapChain(source, () => unit()));
 	});
 
 });

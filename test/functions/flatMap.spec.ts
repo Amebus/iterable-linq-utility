@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { 
 	collectToArray,
@@ -7,7 +8,6 @@ import {
 } from './_functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-import { isTransformation } from './transformationsRules';
 
 const loremIpsum = 'Lorem ipsum dolor sit amte';
 
@@ -40,16 +40,6 @@ describe('flatMap', () => {
 	});
 
 	test.each([
-		{ mapPredicate: v => range(v) },
-		{ mapPredicate: v => range(v) },
-		{ mapPredicate: (v, idx) => range(idx) },
-		{ mapPredicate: (v, idx) => range(idx) },
-		{ mapPredicate: v => loremIpsum.substring(0, v) },
-	])('flatMap($mapPredicate) is transformation', ({ mapPredicate }) => {
-		isTransformation<number, number | string>(flatMap, mapPredicate);
-	});
-
-	test.each([
 		{ start: 0, end: 3, mapPredicate: v => range(v), expectedPredicateCalls: [3,6,9,12] },
 		{ start: 1, end: 4, mapPredicate: v => range(v), expectedPredicateCalls: [3,6,9,12] },
 		{ start: 1, end: 4, mapPredicate: (v, idx) => range(idx), expectedPredicateCalls: [3,6,9,12] },
@@ -76,6 +66,10 @@ describe('flatMap', () => {
 	])('flatMap(range($start, $end), $mapPredicate) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
 		const r = collectToArray(flatMap<number, number | string>(range(start, end), mapPredicate));
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('flatMap is transformation', () => {
+		expectTransformation(source => flatMap(source, v => range(v)));
 	});
 
 });

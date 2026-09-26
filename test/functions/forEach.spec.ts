@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import {
 	forEach, forEachAsync,
@@ -94,6 +95,14 @@ describe('forEachAsync', () => {
 	])('forEach($iterable, $action) -> $expectedResult', async ({ iterable, action, expectedResult }) => {
 		await forEachAsync<string | number>(iterable, action);
 		expect(tempArr).toEqual(expectedResult);
+	});
+
+	test('forEach is action', () => {
+		expectAction(source => forEach(source, () => unit()));
+	});
+
+	test('forEachAsync is action', async () => {
+		await expectAction(source => forEachAsync(source, async () => unit()));
 	});
 
 });

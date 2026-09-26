@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { 
 	max,
@@ -104,6 +105,10 @@ describe('max', () => {
 	])('max(range($start, $end), $comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
 		const r = max(range(start,end), comparer);
 		expect(r).toBe(expectedResult);
+	});
+
+	test('max is action', () => {
+		expectAction(source => max(source));
 	});
 
 });

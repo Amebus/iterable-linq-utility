@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 import { unit } from './_types';
 
 import { IterableLinq } from './_linqIterable';
@@ -8,21 +9,10 @@ const tapper = () => unit();
 describe('IterableLinq.memoize', () => {
 
 	test.each([
-		{ start: 0, end: 20 },
-		{ start: 0, end: 20 },
-		{ start: -10, end: 10 },
-		{ start: 0, end: 20, allowPartialMemoization: false },
-		{ start: 0, end: 20, allowPartialMemoization: false },
-		{ start: -10, end: 10, allowPartialMemoization: false }
-	])('IterableLinq.memoize() is transformation - IterableLinq.fromRange($start, $end)', ({ start, end, allowPartialMemoization }) => {
-		const tapperSpy = vi.fn(tapper);
-		const memoized = IterableLinq
-			.fromRange(start,end)
-			.tap(tapperSpy)
-			.memoize({ allowPartialMemoization });
-		expect(tapperSpy).not.toHaveBeenCalled();
-		memoized.collectToArray();
-		expect(tapperSpy).toHaveReturned();
+		{ allowPartialMemoization: true },
+		{ allowPartialMemoization: false }
+	])('IterableLinq.memoize($allowPartialMemoization) is transformation that does not re-run the source', ({ allowPartialMemoization }) => {
+		expectTransformation(source => IterableLinq.from(source).memoize({ allowPartialMemoization }), { rerunsSource: false });
 	});
 
 	test.each([

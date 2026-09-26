@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { 
 	collectToArray,
@@ -177,6 +178,13 @@ describe('memoize', () => {
 		const memoizedOfMemoized = memoize(memoized, { allowPartialMemoization: secondAllow });
 
 		expect(memoizedOfMemoized).not.toBe(memoized);
+	});
+
+	test.each([
+		{ allowPartialMemoization: true },
+		{ allowPartialMemoization: false }
+	])('memoize($allowPartialMemoization) is transformation that does not re-run the source', ({ allowPartialMemoization }) => {
+		expectTransformation(source => memoize(source, { allowPartialMemoization }), { rerunsSource: false });
 	});
 
 });

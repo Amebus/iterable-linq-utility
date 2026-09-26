@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { 
 	min,
@@ -104,6 +105,10 @@ describe('min', () => {
 	])('min(range($start, $end), $comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
 		const r = min(range(start,end), comparer);
 		expect(r).toBe(expectedResult);
+	});
+
+	test('min is action', () => {
+		expectAction(source => min(source));
 	});
 
 });

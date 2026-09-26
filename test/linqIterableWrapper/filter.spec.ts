@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { IterableLinq } from './_linqIterable';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
@@ -13,23 +14,6 @@ describe('IterableLinq.filter', () => {
 		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'filter');
 	});
 	
-	test.each([		
-		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0 },
-		{ start: 0, end: 20, filterPredicate: v => v % 2 === 1 },
-		{ start: -10, end: 10, filterPredicate: v => v > -5 && v < 5 },
-		{ start: 0, end: 20, filterPredicate: (v, idx) => v % 2 === 0 && idx < 10 },
-		{ start: 0, end: 20, filterPredicate: (v, idx) => v % 2 === 1 && idx > 10 },
-		{ start: -10, end: 10, filterPredicate: (v, idx) => v > -5 && v < 5 && idx === 0 }
-	])('IterableLinq.fromRange($start, $end).filter($filterPredicate) is transformation', ({ start, end, filterPredicate }) => {
-		const filterPredicateSpy = vi.fn(filterPredicate);
-		const filtered = IterableLinq
-			.fromRange(start, end)
-			.filter(filterPredicateSpy);
-		expect(filterPredicateSpy).not.toHaveBeenCalled();
-		filtered.collectToArray();
-		expect(filterPredicateSpy).toHaveReturned();
-	});
-
 
 	test.each([
 		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [0,0,0,0] },
@@ -68,6 +52,10 @@ describe('IterableLinq.filter', () => {
 			.filter(filterPredicate)
 			.collectToArray();
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('IterableLinq.filter is transformation', () => {
+		expectTransformation(source => IterableLinq.from(source).filter(v => v % 2 === 0));
 	});
 
 });

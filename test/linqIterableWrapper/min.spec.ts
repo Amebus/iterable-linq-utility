@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
 import { IterableLinq } from './_linqIterable';
 
@@ -95,6 +96,10 @@ describe('IterableLinq.min', () => {
 	])('IterableLinq.fromRange($start, $end).min($comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
 		const r = IterableLinq.fromRange(start,end).min(comparer);
 		expect(r).toBe(expectedResult);
+	});
+
+	test('IterableLinq.min is action', () => {
+		expectAction(source => IterableLinq.from(source).min());
 	});
 
 });
