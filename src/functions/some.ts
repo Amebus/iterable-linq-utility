@@ -15,7 +15,10 @@ export function some<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean
 	let i = 0;
 
 	for (let n = iterator.next(); n.done !== true; n = iterator.next()) {
-		if (predicate(n.value, i++)) return true;
+		if (predicate(n.value, i++)) {
+			iterator.return?.();
+			return true;
+		}
 	}
 	return false;
 }

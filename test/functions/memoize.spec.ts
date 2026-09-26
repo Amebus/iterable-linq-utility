@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import {
@@ -184,6 +185,42 @@ describe('memoize', () => {
 		{ allowPartialMemoization: false }
 	])('memoize($allowPartialMemoization) is transformation that does not re-run the source', ({ allowPartialMemoization }) => {
 		expectTransformation(source => memoize(source, { allowPartialMemoization }), { rerunsSource: false });
+	});
+
+	test('partial: break then full read completes the cache', () => {
+		const m = memoize(closableSource([1, 2, 3, 4, 5]).iterable);
+		for (const v of m)
+			if (v === 2) break;
+		expect(collectToArray(m)).toEqual([1, 2, 3, 4, 5]);
+	});
+
+	test('partial: interleaved consumers see every value', () => {
+		const m = memoize([1, 2, 3, 4]);
+		const a = m[Symbol.iterator]();
+		const b = m[Symbol.iterator]();
+		expect([a.next(), b.next(), a.next(), b.next()].map(r => r.value)).toEqual([1, 1, 2, 2]);
+	});
+
+	test('full: concurrent consumers evaluate the source once', () => {
+		const tapperSpy = vi.fn(tapper);
+		const m = memoize(tap([1, 2, 3, 4, 5], tapperSpy), { allowPartialMemoization: false });
+		const a = m[Symbol.iterator]();
+		const b = m[Symbol.iterator]();
+		a.next();
+		b.next();
+		expect([...a]).toEqual([2, 3, 4, 5]);
+		expect([...b]).toEqual([2, 3, 4, 5]);
+		expect(tapperSpy).toHaveBeenCalledTimes(5);
+	});
+
+	test('partial: consumer return() does not close the shared source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		const m = memoize(iterable);
+		for (const v of m)
+			if (v === 1) break;
+		expect(state.closed).toBe(false);
+		collectToArray(m);
+		expect(state.closed).toBe(true);
 	});
 
 });

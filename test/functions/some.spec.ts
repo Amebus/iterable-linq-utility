@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectAction } from '../_helpers/operationKind';
 
 import {
@@ -110,6 +111,12 @@ describe('some', () => {
 
 	test('some is action', () => {
 		expectAction(source => some(source, v => v > 2));
+	});
+
+	test('stopping early closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(some(iterable, v => v === 1)).toBe(true);
+		expect(state.closed).toBe(true);
 	});
 
 });
