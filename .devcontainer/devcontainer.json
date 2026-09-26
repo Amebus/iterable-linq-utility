@@ -1,6 +1,6 @@
 {
   "name": "iterable-linq-utility",
-  "image": "node-alpine:24",
+  "image": "node-alpine:24.20.0",
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -17,6 +17,7 @@
 		}
 	},
   "forwardPorts": [3000],
+  "postCreateCommand": "pnpm install",
   "remoteUser": "vscode",
 	"mounts": [
      "source=${localEnv:HOME}/.ssh/alpine-containers,target=/home/.ssh,type=bind"
