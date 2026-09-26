@@ -10,7 +10,7 @@ import { Predicate } from '../types';
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);
-	Validations.thowIfNotValidPredicate(predicate);
+	Validations.throwIfNotFunction(predicate, 'predicate');
 	return new FilterIterable<T>(iterable, predicate);
 }
 

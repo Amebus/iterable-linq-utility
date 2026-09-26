@@ -9,7 +9,7 @@ import { Validations } from '../utils';
  */
 export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
 	Validations.throwIfNotIterable(iterable);
-	Validations.thowIfNotValidAction(action);
+	Validations.throwIfNotFunction(action, 'action');
 
 	const iterator = iterable[Symbol.iterator]();
 	for(let n = iterator.next(), index = 0; n.done !== true; n = iterator.next(), index++) {
@@ -27,7 +27,7 @@ export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
  */
 export async function forEachAsync<T>(iterable: Iterable<T>, action: AsyncAction<T>): Promise<Unit> {
 	Validations.throwIfNotIterable(iterable);
-	Validations.thowIfNotValidAction(action);
+	Validations.throwIfNotFunction(action, 'action');
 
 	const allPromises: Promise<Unit>[] = [];
 	const iterator = iterable[Symbol.iterator]();

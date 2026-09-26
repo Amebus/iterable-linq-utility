@@ -1,5 +1,5 @@
 import { Predicate } from '../types';
-import { isFunction } from '../utils';
+import { Validations } from '../utils';
 
 /**
  *
@@ -9,10 +9,8 @@ import { isFunction } from '../utils';
  * @returns
  */
 export function some<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(predicate))
-		throw '"predicate" function must be provided';
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(predicate, 'predicate');
 	const iterator: Iterator<T> = iterable[Symbol.iterator]();
 	let i = 0;
 

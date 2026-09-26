@@ -1,5 +1,5 @@
 import { Tapper } from '../types';
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from '../utils';
+import { getDoneIteratorResult, getFlatIteratorResult, Validations } from '../utils';
 
 /**
  *
@@ -9,10 +9,8 @@ import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from '../uti
  * @returns
  */
 export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(tapper))
-		throw '"tapper" function must be provided';
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(tapper, 'tapper');
 	return new TapIterable(iterable, tapper);
 }
 

@@ -1,3 +1,4 @@
+import { Validations } from './utils';
 import { IterableLinqWrapper, type IIterableLinq } from './linqIterable';
 
 import * as Functions from './functions';
@@ -7,8 +8,7 @@ export function empty<T>(): IIterableLinq<T> {
 }
 
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 	return new IterableLinqWrapper(iterable);
 }
 

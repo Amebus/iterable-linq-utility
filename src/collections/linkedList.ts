@@ -1,8 +1,7 @@
-import { getDoneIteratorResult, getContinueIteratorResult } from '../utils';
+import { getDoneIteratorResult, getContinueIteratorResult, Validations } from '../utils';
 
 export function from<T>(iterable: Iterable<T>): LinkedList<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 	const iterator: Iterator<T> = iterable[Symbol.iterator]();
 	const linkedList = new LinkedList<T>();
 	for (let n = iterator.next(); n.done !== true; n = iterator.next()) {

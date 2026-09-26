@@ -1,8 +1,7 @@
-import { getDoneIteratorResult, getContinueIteratorResult } from '../utils';
+import { getDoneIteratorResult, getContinueIteratorResult, Validations } from '../utils';
 
 export function repeat<T>(value: T, count: number): Iterable<T> {
-	if (count < 0)
-		throw '"count" parameter must be greater or equal then 0';
+	Validations.throwIfNegative(count, 'count');
 	return new RepeatIterable(value, count);
 }
 

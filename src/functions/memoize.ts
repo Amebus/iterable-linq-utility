@@ -1,6 +1,6 @@
 import { LinkedListCollection } from '../collections';
 import { unit, Unit } from '../types';
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from '../utils';
+import { getDoneIteratorResult, getFlatIteratorResult, isFunction, Validations } from '../utils';
 
 export interface IMemoizeOptions {
 	allowPartialMemoization?: boolean;
@@ -19,8 +19,7 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
  * @returns
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 
 	const opt = {
 		...getMemoizeDefaultOptions(),

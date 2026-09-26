@@ -9,7 +9,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  */
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>>): Iterable<R> {
 	Validations.throwIfNotIterable(iterable);
-	Validations.thowIfNotValidMapper(mapper);
+	Validations.throwIfNotFunction(mapper, 'mapper');
 	return new FlatMapIterable(iterable, mapper);
 }
 

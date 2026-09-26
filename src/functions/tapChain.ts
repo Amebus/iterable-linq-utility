@@ -1,5 +1,5 @@
 import { Tapper } from '../types';
-import { isFunction } from '../utils';
+import { Validations } from '../utils';
 
 /**
  *
@@ -9,10 +9,8 @@ import { isFunction } from '../utils';
  * @returns
  */
 export function tapChain<T>(iterable: Iterable<T>, tapper: Tapper<Iterable<T>>): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(tapper))
-		throw '"tapper" function must be provided';
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(tapper, 'tapper');
 	return new TapChainIterable(iterable, tapper);
 }
 

@@ -1,5 +1,5 @@
 import type { Comparer } from '../types';
-import { isFunction } from '../utils';
+import { isFunction, Validations } from '../utils';
 
 /**
  *
@@ -9,8 +9,7 @@ import { isFunction } from '../utils';
  * @returns
  */
 export function min<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | null | undefined {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 	const iterator: Iterator<T> = iterable[Symbol.iterator]();
 	let n = iterator.next();
 	let min: T | null | undefined = n.value;

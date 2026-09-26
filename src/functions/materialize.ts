@@ -1,3 +1,4 @@
+import { Validations } from '../utils';
 import { LinkedListCollection } from '../collections';
 
 /**
@@ -7,8 +8,7 @@ import { LinkedListCollection } from '../collections';
  * @returns
  */
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 	if (iterable instanceof MaterializeIterable) {
 		return iterable;
 	}

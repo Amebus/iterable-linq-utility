@@ -1,5 +1,5 @@
 import { Mapper } from '../types';
-import { getDoneIteratorResult, getContinueIteratorResult, isFunction } from '../utils';
+import { getDoneIteratorResult, getContinueIteratorResult, isFunction, Validations } from '../utils';
 
 /**
  *
@@ -9,10 +9,8 @@ import { getDoneIteratorResult, getContinueIteratorResult, isFunction } from '..
  * @returns
  */
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(mapper))
-		throw '"mapper" function must be provided';
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(mapper, 'mapper');
 	return new MapIterable(iterable, mapper);
 }
 

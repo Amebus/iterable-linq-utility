@@ -42,7 +42,7 @@ import {
 	tapChain
 } from './functions';
 
-import { isFunction } from './utils';
+import { Validations } from './utils';
 
 export interface IIterableLinq<T> {
 
@@ -134,8 +134,7 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 		return new IterableLinqWrapper(tapChain(this.iterable, tapper));
 	}
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T> {
-		if(!isFunction(chainCreationTapper))
-			throw '"tapper" function must be provided';
+		Validations.throwIfNotFunction(chainCreationTapper, 'chainCreationTapper');
 		chainCreationTapper(this);
 		return this;
 	}
