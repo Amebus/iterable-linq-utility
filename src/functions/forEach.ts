@@ -4,8 +4,8 @@ import { Validations } from '../utils';
 /**
  * Calls `action` on each value of `iterable`. If `action` throws, the source is closed and the error propagates.
  * @operation `Action`
- * @param iterable the source `Iterable`
- * @param action called with each value and its index
+ * @param iterable - the source `Iterable`
+ * @param action - called with each value and its index
  * @returns `unit()`
  */
 export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
@@ -24,8 +24,8 @@ export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
  * Calls the async `action` on each value of `iterable`, sequentially: each action starts after the previous one has settled.
  * The first rejection stops the iteration and closes the source. Works on infinite sources.
  * @operation `Action`
- * @param iterable the source `Iterable`
- * @param action called with each value and its index; returns a promise
+ * @param iterable - the source `Iterable`
+ * @param action - called with each value and its index; returns a promise
  * @returns a promise resolved with `unit()` after the last action, or rejected with the first error
  */
 export async function forEachAsync<T>(iterable: Iterable<T>, action: AsyncAction<T>): Promise<Unit> {

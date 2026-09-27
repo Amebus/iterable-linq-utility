@@ -4,7 +4,7 @@ import { LinkedListCollection } from '../collections';
 /**
  * Reads `iterable` immediately and stores its values.
  * @operation `Action`
- * @param iterable the source `Iterable`
+ * @param iterable - the source `Iterable`
  * @returns an `Iterable` over the stored values; a materialized input is returned as is
  */
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {

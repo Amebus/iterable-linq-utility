@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
+import tsdoc from 'eslint-plugin-tsdoc';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -37,6 +38,15 @@ export default tseslint.config(
 			'@typescript-eslint/no-inferrable-types': 'off',
 			'@typescript-eslint/no-non-null-assertion': 'off',
 			'@typescript-eslint/no-this-alias': 'off'
+		}
+	},
+	{
+		files: ['src/**/*.ts'],
+		plugins: {
+			tsdoc
+		},
+		rules: {
+			'tsdoc/syntax': 'error'
 		}
 	}
 );

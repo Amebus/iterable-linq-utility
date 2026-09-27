@@ -4,8 +4,8 @@ import { Validations } from '../utils';
 /**
  * Returns an `Iterable` that yields `value` `count` times.
  * @operation `Transformation`
- * @param value the value to repeat
- * @param count how many times; must be a non-negative integer
+ * @param value - the value to repeat
+ * @param count - how many times; must be a non-negative integer
  * @returns a lazy, re-runnable `Iterable`
  */
 export function repeat<T>(value: T, count: number): Iterable<T> {

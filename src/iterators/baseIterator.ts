@@ -37,7 +37,7 @@ export abstract class BaseIterator<T> implements IterableIterator<T> {
 
 	/**
 	 * Releases the resources held by the iterator. Called at most once, when the consumer stops early.
-	 * @param _value the value passed to `return()`
+	 * @param _value - the value passed to `return()`
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected onReturn(_value?: any): void {

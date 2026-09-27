@@ -13,8 +13,8 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
  * With partial memoization, a consumer that stops early keeps the shared source open until another consumer finishes it.
  * If the source throws, every later read past the cached values throws the same error.
  * @operation `Transformation`
- * @param iterable the source `Iterable`
- * @param options `allowPartialMemoization: false` reads the whole source on the first read
+ * @param iterable - the source `Iterable`
+ * @param options - `allowPartialMemoization: false` reads the whole source on the first read
  * @returns a lazy `Iterable` backed by the cache
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
