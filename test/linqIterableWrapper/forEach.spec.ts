@@ -86,4 +86,17 @@ describe('IterableLinq.forEachAsync', () => {
 		await expectAction(source => IterableLinq.from(source).forEachAsync(async () => unit()));
 	});
 
+	test('IterableLinq.forEachAsync runs one action at a time', async () => {
+		let running = 0;
+		let peak = 0;
+		await IterableLinq.fromRange(10).forEachAsync(async () => {
+			running++;
+			peak = Math.max(peak, running);
+			await new Promise(resolve => setTimeout(resolve, 1));
+			running--;
+			return unit();
+		});
+		expect(peak).toBe(1);
+	});
+
 });

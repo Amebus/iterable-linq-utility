@@ -21,23 +21,21 @@ export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
 }
 
 /**
- * Calls the async `action` on each value of `iterable`. Every action starts during the iteration, so they run in parallel.
+ * Calls the async `action` on each value of `iterable`, sequentially: each action starts after the previous one has settled.
+ * The first rejection stops the iteration and closes the source. Works on infinite sources.
  * @operation `Action`
  * @param iterable the source `Iterable`
  * @param action called with each value and its index; returns a promise
- * @returns a promise resolved with `unit()` when every action has resolved, or rejected with the first error
+ * @returns a promise resolved with `unit()` after the last action, or rejected with the first error
  */
 export async function forEachAsync<T>(iterable: Iterable<T>, action: AsyncAction<T>): Promise<Unit> {
 	Validations.throwIfNotIterable(iterable);
 	Validations.throwIfNotFunction(action, 'action');
 
-	const allPromises: Promise<Unit>[] = [];
 	let index = 0;
-	// every action starts during the iteration (parallel execution); for…of closes the source if one throws
+	// sequential: each action starts after the previous one has settled; for…of closes the source on the first rejection
 	for (const value of iterable)
-		allPromises.push(action(value, index++));
-
-	await Promise.all(allPromises);
+		await action(value, index++);
 
 	return unit();
 }

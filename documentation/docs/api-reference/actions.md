@@ -74,7 +74,7 @@ Performs the specified action on each element of the `Iterable<T>`.
 ## forEachAsync
 
 Performs the specified async action on each element of the `Iterable<T>`.  
-The `forEachAsync` will wait until all the promeses are either resolved or rejected, but it will not wait the action running on the current item to complete before running the action on the next item.
+The actions run **sequentially**: `forEachAsync` waits for the action on the current item to settle before starting the action on the next item. The first rejection stops the iteration, closes the source and rejects the returned promise. It works on infinite sources.
 
 === "Wrapper"
 

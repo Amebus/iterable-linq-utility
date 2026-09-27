@@ -119,4 +119,56 @@ describe('forEachAsync', () => {
 		expect(state.closed).toBe(true);
 	});
 
+	const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+	test('forEachAsync runs one action at a time', async () => {
+		let running = 0;
+		let peak = 0;
+		await forEachAsync(range(20), async () => {
+			running++;
+			peak = Math.max(peak, running);
+			await sleep(1);
+			running--;
+			return unit();
+		});
+		expect(peak).toBe(1);
+	});
+
+	test('forEachAsync completes the actions in source order', async () => {
+		const completed: number[] = [];
+		await forEachAsync([30, 10, 20], async v => {
+			await sleep(v);
+			completed.push(v);
+			return unit();
+		});
+		expect(completed).toEqual([30, 10, 20]);
+	});
+
+	test('forEachAsync: a rejection stops the iteration', async () => {
+		const err = new Error('boom');
+		const started: number[] = [];
+		const completed: number[] = [];
+		await expect(forEachAsync([1, 2, 3], async v => {
+			started.push(v);
+			if (v === 1) throw err;
+			await sleep(10);
+			completed.push(v);
+			return unit();
+		})).rejects.toThrow(err);
+		await sleep(50);
+		expect(started).toEqual([1]);
+		expect(completed).toEqual([]);
+	});
+
+	test('forEachAsync works on an infinite source and closes it on rejection', async () => {
+		const err = new Error('stop');
+		const state = { closed: false };
+		const infinite = { *[Symbol.iterator]() { try { for (let i = 0; ; i++) yield i; } finally { state.closed = true; } } };
+		await expect(forEachAsync(infinite, async v => {
+			if (v === 2) throw err;
+			return unit();
+		})).rejects.toThrow(err);
+		expect(state.closed).toBe(true);
+	});
+
 });

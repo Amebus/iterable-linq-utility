@@ -57,10 +57,11 @@ export interface IIterableLinq<T> {
 
 	/**
 	 * Runs the chain and calls the async `action` on each value.
-	 * Every action starts during the iteration, so they run in parallel; the returned promise settles when all of them have settled.
+	 * The actions run sequentially: each one starts after the previous one has settled.
+	 * The first rejection stops the iteration and closes the source. Works on infinite sources.
 	 * @operation `Action`
 	 * @param action called with each value and its index; returns a promise
-	 * @returns a promise resolved with `unit()`, or rejected with the first error
+	 * @returns a promise resolved with `unit()` after the last action, or rejected with the first error
 	 */
 	forEachAsync(action: AsyncAction<T>): Promise<Unit>;
 
