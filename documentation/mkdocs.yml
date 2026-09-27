@@ -74,6 +74,7 @@ nav:
     - Getting Started: getting-started.md
     - Basic Concepts: basic-concepts.md
     - Alternative Projects: alternative-projects.md
+    - Migrating to 0.1.0: migrating-to-0.1.0.md
     - How to contribute: how-to-contribute.md
   - Advanced Concepts: 
     - advanced-concepts/index.md
