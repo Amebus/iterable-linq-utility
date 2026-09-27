@@ -8,6 +8,7 @@ An **Action** is an operation that cause to **O~s~C** to be materialized. In oth
     | [collectToArray](#collecttoarray) | Collect the data of the input `Iterable` into an `Array`                             |
     | [forEach](#foreach)               | Performs the specified action on each element of the input `Iterable`                |
     | [forEachAsync](#foreachasync)     | Performs the specified async action on each element of the input`Iterable`           |
+    | [materialize](#materialize)       | Runs the chain immediately and stores its values in a new `Iterable`                 |
     | [max](#max)                       | Returns the maximum value found in the input `Iterable`                              |
     | [min](#min)                       | Returns the minimum value found in the input `Iterable`                              |
     | [reduce](#reduce)                 | Accumulates all the elements of input `Iterable` into a single result and returns it |
@@ -108,6 +109,30 @@ The `forEachAsync` will wait until all the promeses are either resolved or rejec
     // 2
     // 3
     // 4
+    ```
+
+## materialize
+
+Runs the **operations chain** immediately and stores its values in a new `Iterable`, so later chains start from the stored values instead of re-running the source. It is an **Action** even if it returns an `IIterableLinq`: the returned chain starts a brand new **operations chain**.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility'
+
+    IterableLinq
+        .from([1,2,3,4])
+        .materialize()
+        .collectToArray();
+    // [1,2,3,4]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+    
+    Array.from(Functions.materialize([1,2,3,4]));
+    // [1,2,3,4]
     ```
 
 ## max
