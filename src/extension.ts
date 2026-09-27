@@ -20,11 +20,15 @@ export function isIterableLinq(value: unknown): value is IIterableLinq<unknown> 
 	return typeof value === 'object' && value !== null && (value as { [iterableLinqBrand]?: unknown })[iterableLinqBrand] === true;
 }
 
+/**
+ * Defines a chain method. New methods are not writable; a replaced method keeps its original `writable` flag.
+ */
 function defineChainMethod(name: string, implementation: ChainMethod): void {
+	const existing = Object.getOwnPropertyDescriptor(wrapperPrototype(), name);
 	Object.defineProperty(wrapperPrototype(), name, {
 		value: implementation,
 		enumerable: false,
-		writable: false,
+		writable: existing?.writable ?? false,
 		configurable: true
 	});
 }
@@ -46,12 +50,12 @@ function validateMethod(name: unknown, implementation: unknown): void {
  * @param implementation the method; `this` is the chain, typed `IIterableLinq<unknown>`
  * @throws Error if `name` already exists (use `override` to replace it), is empty, or `implementation` is not a function
  */
-export function extend<K extends keyof IIterableLinq<unknown>>(name: K, implementation: ChainMethod): void {
+export function extend<K extends Extract<keyof IIterableLinq<unknown>, string>>(name: K, implementation: ChainMethod): void {
 	validateMethod(name, implementation);
 	// check an instance, not only the prototype: instance fields would shadow the new method
 	if (name in toChain([]))
-		throw new Error(`"${String(name)}" already exists on IIterableLinq: use override() to replace it`);
-	defineChainMethod(name as string, implementation);
+		throw new Error(`"${name}" already exists on IIterableLinq: use override() to replace it`);
+	defineChainMethod(name, implementation);
 }
 
 /**
@@ -63,9 +67,9 @@ export function extend<K extends keyof IIterableLinq<unknown>>(name: K, implemen
  * @param implementation the new method; `this` is the chain, typed `IIterableLinq<unknown>`
  * @throws Error if `name` is not a chain method (use `extend` to add it), is empty, or `implementation` is not a function
  */
-export function override<K extends keyof IIterableLinq<unknown>>(name: K, implementation: ChainMethod): void {
+export function override<K extends Extract<keyof IIterableLinq<unknown>, string>>(name: K, implementation: ChainMethod): void {
 	validateMethod(name, implementation);
-	const key: string = name as string;
+	const key: string = name;
 	const isChainMethod = key !== 'constructor' && Object.prototype.hasOwnProperty.call(wrapperPrototype(), key);
 	if (!isChainMethod)
 		throw new Error(`"${key}" is not a method of IIterableLinq: use extend() to add it`);

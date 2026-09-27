@@ -15,6 +15,20 @@ declare module '@/types' {
 const proto = Object.getPrototypeOf(from([]));
 const hasOwn = (name: string) => Object.prototype.hasOwnProperty.call(proto, name);
 
+// every test starts from the same prototype: new names are removed, changed ones restored
+let snapshot: Map<PropertyKey, PropertyDescriptor>;
+beforeEach(() => {
+	snapshot = new Map(Reflect.ownKeys(proto).map(key => [key, Object.getOwnPropertyDescriptor(proto, key)!]));
+});
+afterEach(() => {
+	for (const key of Reflect.ownKeys(proto))
+		if (!snapshot.has(key))
+			delete proto[key];
+	for (const [key, descriptor] of snapshot)
+		if (descriptor.configurable)
+			Object.defineProperty(proto, key, descriptor);
+});
+
 describe('isIterableLinq', () => {
 
 	test.each([
@@ -55,12 +69,6 @@ describe('isIterableLinq', () => {
 });
 
 describe('extend', () => {
-
-	afterEach(() => {
-		for (const name of ['chunk', 'double', 'twice'])
-			if (hasOwn(name))
-				delete proto[name];
-	});
 
 	const double = function (this: IterableLinq.IIterableLinq<unknown>) {
 		return from(this).map(v => (v as number) * 2);
@@ -112,7 +120,9 @@ describe('extend', () => {
 	test('throws for Object.prototype members', () => {
 		expect(() => extend('toString' as any, double)).toThrow(Error);
 		expect(() => extend('hasOwnProperty' as any, double)).toThrow(Error);
-		expect(hasOwn('toString')).toBe(false);
+		expect(() => extend('valueOf' as any, double)).toThrow(Error);
+		for (const name of ['toString', 'hasOwnProperty', 'valueOf'])
+			expect(hasOwn(name)).toBe(false);
 	});
 
 	test('throws for a name used by the chain instances', () => {
@@ -143,21 +153,6 @@ describe('extend', () => {
 
 describe('override', () => {
 
-	let savedMap: PropertyDescriptor | undefined;
-	let savedFilter: PropertyDescriptor | undefined;
-
-	beforeEach(() => {
-		savedMap = Object.getOwnPropertyDescriptor(proto, 'map');
-		savedFilter = Object.getOwnPropertyDescriptor(proto, 'filter');
-	});
-
-	afterEach(() => {
-		Object.defineProperty(proto, 'map', savedMap!);
-		Object.defineProperty(proto, 'filter', savedFilter!);
-		if (hasOwn('twice'))
-			delete proto.twice;
-	});
-
 	const overridden = function () {
 		return from(['overridden']);
 	};
@@ -169,6 +164,16 @@ describe('override', () => {
 		expect(from([3]).map(v => v).collectToArray()).toEqual(['overridden']);
 	});
 
+	test('override keeps the writable flag of the method it replaces', () => {
+		const libraryWritable = Object.getOwnPropertyDescriptor(proto, 'map')!.writable;
+		override('map', overridden);
+		expect(Object.getOwnPropertyDescriptor(proto, 'map')!.writable).toBe(libraryWritable);
+
+		extend('twice', function () { return from([1]); });
+		override('twice', function () { return from([42]); });
+		expect(Object.getOwnPropertyDescriptor(proto, 'twice')!.writable).toBe(false);
+	});
+
 	test('Functions.map is unaffected', () => {
 		override('map', overridden);
 		expect(Functions.collectToArray(Functions.map([1], v => v + 1))).toEqual([2]);
@@ -177,6 +182,10 @@ describe('override', () => {
 	test('other methods are unaffected', () => {
 		override('map', overridden);
 		expect(from([1, 2, 3]).filter(v => v > 1).collectToArray()).toEqual([2, 3]);
+		expect(from([1, 2]).flatMap(v => [v, v]).collectToArray()).toEqual([1, 1, 2, 2]);
+		expect(from([1, 2, 3]).reduce(0, (acc, v) => acc + v)).toBe(6);
+		expect(from([1, 2, 3]).some(v => v === 2)).toBe(true);
+		expect(from([3, 1, 2]).max()).toBe(3);
 	});
 
 	test('replaces a method added by extend', () => {
@@ -204,6 +213,16 @@ describe('override', () => {
 		const typeOnly = () => {
 			// @ts-expect-error 'notDeclared' is not a key of IIterableLinq
 			override('notDeclared', overridden);
+		};
+		expect(typeOnly).toBeTypeOf('function');
+	});
+
+	test('symbol names are rejected at compile time', () => {
+		const typeOnly = () => {
+			// @ts-expect-error only string names can be extended
+			extend(Symbol.iterator, overridden);
+			// @ts-expect-error only string names can be overridden
+			override(Symbol.iterator, overridden);
 		};
 		expect(typeOnly).toBeTypeOf('function');
 	});

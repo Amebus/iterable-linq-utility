@@ -13,6 +13,8 @@ isIterableLinq([1, 2, 3]);       // false
 
 `isIterableLinq` checks a brand stored in the global symbol registry (`Symbol.for`), not `instanceof`, so it also works when two copies of the library are installed.
 
+It is a brand check, not a validation: any object can carry the same `Symbol.for` key, so do not use `isIterableLinq` to decide whether untrusted input is safe to call.
+
 ## Adding an operation
 
 Adding an operation takes two steps:
@@ -85,3 +87,5 @@ Overriding changes only the fluent operation. The raw functions in `Functions` (
 - **Extensions are global.** Every chain in the process gets them, and an `override` lasts for the whole process.
 - **`this` has no element type.** Inside the implementation `this` is `IIterableLinq<unknown>`. Callers still get full typing from your `declare module` block (in the example, `from([1, 2]).chunk(2)` is `IIterableLinq<number[]>`).
 - **The compiler does not match the implementation with the declaration.** Keeping the implementation consistent with the declared signature is up to you.
+- **Only string names.** `extend` and `override` accept string names only; symbols (for example `Symbol.iterator`) are rejected by the compiler.
+- **Assignment.** Operations added with `extend` cannot be replaced by a plain assignment: use `override`. The library's own operations keep their original behaviour here too: `override` never changes whether an operation can be reassigned.

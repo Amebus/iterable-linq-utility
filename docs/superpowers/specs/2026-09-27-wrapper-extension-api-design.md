@@ -50,7 +50,7 @@ export function isIterableLinq(value: unknown): value is IIterableLinq<unknown>;
 ### `extend`
 
 ```ts
-export function extend<K extends keyof IIterableLinq<unknown>>(
+export function extend<K extends Extract<keyof IIterableLinq<unknown>, string>>(
 	name: K,
 	implementation: (this: IIterableLinq<unknown>, ...args: any[]) => unknown
 ): void;
@@ -98,7 +98,7 @@ export function extend<K extends keyof IIterableLinq<unknown>>(
 ### `override`
 
 ```ts
-export function override<K extends keyof IIterableLinq<unknown>>(
+export function override<K extends Extract<keyof IIterableLinq<unknown>, string>>(
 	name: K,
 	implementation: (this: IIterableLinq<unknown>, ...args: any[]) => unknown
 ): void;
@@ -108,7 +108,7 @@ export function override<K extends keyof IIterableLinq<unknown>>(
 * `name` must **already exist** as an own method of the internal prototype, either a library method or a method added by `extend`/`override`. A name that does not exist throws, with a message that suggests `extend`. So the two functions never overlap: `extend` adds, `override` replaces, and each one fails where the other applies.
 * It replaces only chain methods: `constructor` and the members of `Object.prototype` (`toString`, `hasOwnProperty`, …) are rejected, so the object model cannot break. The existence check looks at own properties of the prototype, not at the prototype chain.
 * The same runtime checks as `extend`: `name` is a non-empty string and `implementation` is a function.
-* The same descriptor as `extend`: non-enumerable, non-writable, configurable. Library methods are configurable class properties, so they can be redefined.
+* The replaced method keeps its original `writable` flag (library methods stay writable, extensions stay non-writable); it is non-enumerable and configurable. Library methods are configurable class properties, so they can be redefined.
 * Scope: only the fluent method changes. `Functions.*` and the library's internal code do not call wrapper methods, so they keep the original behaviour.
 * The main use case is migration. A project registers `extend('chunk', …)`; a later library release adds its own `chunk`, so that `extend` call now throws at start-up. The project keeps its version by switching to:
 
