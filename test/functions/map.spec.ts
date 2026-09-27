@@ -4,10 +4,13 @@ import { expectTransformation } from '../_helpers/operationKind';
 
 import {
 	collectToArray,
+	filter,
 	map,
-	range
+	range,
+	tap
 } from './_functions';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { unit } from './_types';
 
 describe('map', () => {
 
@@ -79,6 +82,20 @@ describe('map', () => {
 	test('a throwing mapper propagates the same error', () => {
 		const err = new Error('boom');
 		expect(() => collectToArray(map([1], () => { throw err; }))).toThrow(err);
+	});
+
+	test('return(value) reaches the original iterator through the chain', () => {
+		const originalReturn = vi.fn((v?: unknown) => ({ done: true as const, value: v }));
+		const source: Iterable<number> = {
+			[Symbol.iterator]: () => {
+				let i = 0;
+				return { next: () => ({ done: false, value: i++ }), return: originalReturn };
+			}
+		};
+		const it = map(filter(tap(source, () => unit()), () => true), v => v)[Symbol.iterator]();
+		it.next();
+		expect(it.return!('x')).toEqual({ done: true, value: 'x' });
+		expect(originalReturn).toHaveBeenCalledWith('x');
 	});
 
 });

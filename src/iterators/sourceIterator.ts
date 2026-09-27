@@ -13,7 +13,7 @@ export abstract class SourceIterator<S, T> extends BaseIterator<T> {
 		this.source = iterable[Symbol.iterator]();
 	}
 
-	protected override onReturn(): void {
-		this.source.return?.();
+	protected override onReturn(value?: any): void {
+		this.source.return?.(value);
 	}
 }

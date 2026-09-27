@@ -5,6 +5,7 @@ import { getContinueIteratorResult, getDoneIteratorResult } from '../../src/util
 
 class CountTo3 extends BaseIterator<number> {
 	returnCalls = 0;
+	returnValues: unknown[] = [];
 	private current = 0;
 
 	protected advance(): IteratorResult<number> {
@@ -12,8 +13,9 @@ class CountTo3 extends BaseIterator<number> {
 		return this.current <= 3 ? getContinueIteratorResult(this.current) : getDoneIteratorResult();
 	}
 
-	protected override onReturn(): void {
+	protected override onReturn(value?: unknown): void {
 		this.returnCalls++;
+		this.returnValues.push(value);
 	}
 }
 
@@ -46,6 +48,17 @@ describe('BaseIterator', () => {
 	test('is its own iterable', () => {
 		const it = new CountTo3();
 		expect(it[Symbol.iterator]()).toBe(it);
+	});
+
+	test('return(value) passes the value to onReturn', () => {
+		const it = new CountTo3();
+		it.next();
+		it.return('x');
+		expect(it.returnValues).toEqual(['x']);
+	});
+
+	test('has no throw method', () => {
+		expect('throw' in new CountTo3()).toBe(false);
 	});
 
 });
