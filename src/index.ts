@@ -1,8 +1,8 @@
 import { Validations } from './utils';
-import { IterableLinqWrapper, type IIterableLinq } from './linqIterable';
+import { IterableLinqWrapper } from './linqIterable';
 
 import * as Functions from './functions';
-import type { IRangeOptions } from './functions';
+import type { IIterableLinq, IRangeOptions } from './types';
 
 /**
  * Starts a chain with no values.
@@ -59,8 +59,7 @@ export function repeat<T>(value: T, count: number): IIterableLinq<T> {
 
 export {
 	Functions,
-	IIterableLinq, IterableLinqWrapper,
-	type IRangeOptions,
+	IterableLinqWrapper
 };
 
 export * from './types';

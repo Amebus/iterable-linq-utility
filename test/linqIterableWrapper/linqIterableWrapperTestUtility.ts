@@ -1,4 +1,4 @@
-import { IIterableLinq } from '@/linqIterable';
+import { IIterableLinq } from '@/types';
 import { expect } from 'vitest';
 
 export function withoutInputFunctionThrowsException<T>(iterable: IIterableLinq<T>, fnName: keyof IIterableLinq<T>) {

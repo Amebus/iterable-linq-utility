@@ -1,9 +1,6 @@
 import { BaseIterator } from '../iterators';
+import type { IMemoizeOptions } from '../types';
 import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
-
-export interface IMemoizeOptions {
-	allowPartialMemoization?: boolean;
-}
 
 export function getMemoizeDefaultOptions(): IMemoizeOptions {
 	return {
