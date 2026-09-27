@@ -60,9 +60,8 @@ export function repeat<T>(value: T, count: number): IIterableLinq<T> {
 	return from(Functions.repeat(value, count));
 }
 
-export {
-	Functions,
-	IterableLinqWrapper
-};
+export { Functions };
+
+export { isIterableLinq } from './extension';
 
 export * from './types';

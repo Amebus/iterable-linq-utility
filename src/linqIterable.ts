@@ -27,6 +27,7 @@ import {
 	tapChain
 } from './functions';
 
+import { iterableLinqBrand } from './iterableLinqBrand';
 import { Validations } from './utils';
 
 export class IterableLinqWrapper<T> implements IIterableLinq<T> {
@@ -103,3 +104,10 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 		return this;
 	}
 }
+
+Object.defineProperty(IterableLinqWrapper.prototype, iterableLinqBrand, {
+	value: true,
+	enumerable: false,
+	writable: false,
+	configurable: false
+});
