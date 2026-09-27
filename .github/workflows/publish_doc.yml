@@ -24,11 +24,11 @@ jobs:
       - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
       - uses: actions/cache@v6
         with:
-          key: mkdocs-material-${{ env.cache_id }}
+          key: mkdocs-material-${{ env.cache_id }}-${{ hashFiles('documentation/requirements.txt') }}
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material mkdocs-git-revision-date-localized-plugin
+      - run: pip install -r documentation/requirements.txt
       - name: Deploy doc
         working-directory: ./documentation
         run: mkdocs gh-deploy --force
