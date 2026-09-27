@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import type { IIterableLinq } from '../src';
 
 import { IterableLinq } from './_linqIterable';
 
@@ -210,6 +211,12 @@ describe('IterableLinq.fromRange', () => {
 		const iterated = [...fromRanged];
 		expect(iterated).toHaveLength(length);
 		expect(iterated).toEqual(generatedRange);
+	});
+
+	test('fromRange with union arguments returns IIterableLinq', () => {
+		const end = 3 as number | boolean;
+		const ranged: IIterableLinq<number> = IterableLinq.fromRange(0, end);
+		expect(ranged.map(v => v * 2).collectToArray()).toEqual([0, 2, 4]);
 	});
 
 });

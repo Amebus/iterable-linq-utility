@@ -61,7 +61,7 @@ export interface IIterableLinq<T> {
 
 export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 
-	private iterable: Iterable<T>;
+	private readonly iterable: Iterable<T>;
 
 	constructor(iterable: Iterable<T>) {
 		this.iterable = iterable;
@@ -127,7 +127,7 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 		return new IterableLinqWrapper(tapChain(this.iterable, tapper));
 	}
 
-	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => void): IIterableLinq<T> {
+	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => Unit): IIterableLinq<T> {
 		Validations.throwIfNotFunction(chainCreationTapper, 'chainCreationTapper');
 		chainCreationTapper(this);
 		return this;

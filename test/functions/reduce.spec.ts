@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectAction } from '../_helpers/operationKind';
 
 import {
@@ -55,6 +56,13 @@ describe('reduce', () => {
 
 	test('reduce is action', () => {
 		expectAction(source => reduce(source, 0, (acc, v) => acc + v));
+	});
+
+	test('a throwing reducer closes the source and propagates the error', () => {
+		const err = new Error('boom');
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(() => reduce(iterable, 0, () => { throw err; })).toThrow(err);
+		expect(state.closed).toBe(true);
 	});
 
 });

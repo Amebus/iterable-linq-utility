@@ -11,10 +11,10 @@ export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
 	Validations.throwIfNotIterable(iterable);
 	Validations.throwIfNotFunction(action, 'action');
 
-	const iterator = iterable[Symbol.iterator]();
-	for(let n = iterator.next(), index = 0; n.done !== true; n = iterator.next(), index++) {
-		action(n.value, index);
-	}
+	let index = 0;
+	// for…of closes the source if the action throws
+	for (const value of iterable)
+		action(value, index++);
 
 	return unit();
 }
@@ -30,10 +30,10 @@ export async function forEachAsync<T>(iterable: Iterable<T>, action: AsyncAction
 	Validations.throwIfNotFunction(action, 'action');
 
 	const allPromises: Promise<Unit>[] = [];
-	const iterator = iterable[Symbol.iterator]();
-	for(let n = iterator.next(), index = 0; n.done !== true; n = iterator.next(), index++) {
-		allPromises.push(action(n.value, index));
-	}
+	let index = 0;
+	// every action starts during the iteration (parallel execution); for…of closes the source if one throws
+	for (const value of iterable)
+		allPromises.push(action(value, index++));
 
 	await Promise.all(allPromises);
 

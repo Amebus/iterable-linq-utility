@@ -9,16 +9,14 @@ import { Validations } from '../utils';
  * @param reducer
  * @returns
  */
-export function reduce<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>) {
+export function reduce<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>): R {
 	Validations.throwIfNotIterable(iterable);
 	Validations.throwIfNotFunction(reducer, 'reducer');
 
-	const iterator: Iterator<T> = iterable[Symbol.iterator]();
 	let result = neutralElement;
 	let index = 0;
-	for (let n = iterator.next(); n.done !== true; n = iterator.next()) {
-		result = reducer(result, n.value, index);
-		index++;
-	}
+	// for…of closes the source if the reducer throws
+	for (const value of iterable)
+		result = reducer(result, value, index++);
 	return result;
 }

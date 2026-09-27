@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
 import { expectAction } from '../_helpers/operationKind';
 
 import {
@@ -102,6 +103,20 @@ describe('forEachAsync', () => {
 
 	test('forEachAsync is action', async () => {
 		await expectAction(source => forEachAsync(source, async () => unit()));
+	});
+
+	test('forEach: a throwing action closes the source and propagates the error', () => {
+		const err = new Error('boom');
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(() => forEach(iterable, () => { throw err; })).toThrow(err);
+		expect(state.closed).toBe(true);
+	});
+
+	test('forEachAsync: a synchronously throwing action closes the source and rejects with the error', async () => {
+		const err = new Error('boom');
+		const { state, iterable } = closableSource([1, 2, 3]);
+		await expect(forEachAsync(iterable, () => { throw err; })).rejects.toThrow(err);
+		expect(state.closed).toBe(true);
 	});
 
 });
