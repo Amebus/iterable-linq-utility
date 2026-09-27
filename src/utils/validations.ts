@@ -16,3 +16,13 @@ export function throwIfNotNonNegativeInteger(value: number, name: string) {
 	if (!Number.isInteger(value) || value < 0)
 		throw new Error(`The "${name}" parameter must be a non-negative integer`);
 }
+
+export function throwIfNotFiniteNonZero(value: number, name: string) {
+	if (!Number.isFinite(value) || value === 0)
+		throw new Error(`The "${name}" parameter must be a finite number other than 0`);
+}
+
+export function throwIfNotObject(value: unknown, name: string) {
+	if (value === null || typeof value !== 'object')
+		throw new Error(`The "${name}" parameter must be an object`);
+}

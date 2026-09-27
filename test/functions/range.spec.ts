@@ -5,7 +5,7 @@ import { range } from '@/functions';
 describe('range', () => {
 
 	test('checks range function definition', () => {
-		expect(range).toHaveLength(4);
+		expect(range).toHaveLength(3);
 	});
 
 	test('range function with one argument', () => {
@@ -30,7 +30,7 @@ describe('range', () => {
 		let rangeIterator = ranged[Symbol.iterator]();
 		expect(rangeIterator).toHaveProperty('next');
 
-		ranged = rangeSpyFunc(10, true);
+		ranged = rangeSpyFunc(10, { reverse: true });
 
 		expect(rangeSpyFunc).toHaveReturnedTimes(2);
 		expect(ranged[Symbol.iterator]).toBeInstanceOf(Function);
@@ -41,8 +41,8 @@ describe('range', () => {
 
 	test('range function with three arguments', () => {
 
-		const rangeSpyFunc = vi.fn((start, end, step) => range(start, end, step));
-		let ranged = rangeSpyFunc(10, 20, 2);
+		const rangeSpyFunc = vi.fn((start, end, options) => range(start, end, options));
+		let ranged = rangeSpyFunc(10, 20, { step: 2 });
 
 		expect(rangeSpyFunc).toHaveReturned();
 		expect(ranged[Symbol.iterator]).toBeInstanceOf(Function);
@@ -50,27 +50,7 @@ describe('range', () => {
 		let rangeIterator = ranged[Symbol.iterator]();
 		expect(rangeIterator).toHaveProperty('next');
 
-		ranged = rangeSpyFunc(10, 20, true);
-
-		expect(rangeSpyFunc).toHaveReturnedTimes(2);
-		expect(ranged[Symbol.iterator]).toBeInstanceOf(Function);
-
-		rangeIterator = ranged[Symbol.iterator]();
-		expect(rangeIterator).toHaveProperty('next');
-	});
-
-	test('range function with four arguments', () => {
-
-		const rangeSpyFunc = vi.fn((start, end, step, reverse) => range(start, end, step, reverse));
-		let ranged = rangeSpyFunc(10, 20, 2, false);
-
-		expect(rangeSpyFunc).toHaveReturned();
-		expect(ranged[Symbol.iterator]).toBeInstanceOf(Function);
-
-		let rangeIterator = ranged[Symbol.iterator]();
-		expect(rangeIterator).toHaveProperty('next');
-
-		ranged = rangeSpyFunc(10, 20, 2, true);
+		ranged = rangeSpyFunc(10, 20, { reverse: true });
 
 		expect(rangeSpyFunc).toHaveReturnedTimes(2);
 		expect(ranged[Symbol.iterator]).toBeInstanceOf(Function);
@@ -109,7 +89,7 @@ describe('range', () => {
 		{ end: -15, reverse: true, initialValue: -14, length: 15, expectedStep: -1, generatedRange: [-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0] }
 	])('create range(end: $end, reverse: $reverse)', ({ end, reverse, length, generatedRange }) => {
 
-		const ranged = range(end, reverse);
+		const ranged = range(end, { reverse });
 
 		const iterated = [...ranged];
 		expect(iterated).toHaveLength(length);
@@ -154,7 +134,7 @@ describe('range', () => {
 		{ start: -5, end: -10, reverse: true, initialValue: -9, length: 5, expectedStep: -1, generatedRange: [-9,-8,-7,-6,-5,] },
 	])('create range(start: $start, end: $end, reverse: $reverse)', ({ start, end, reverse, length, generatedRange }) => {
 
-		const ranged = range(start, end, reverse);
+		const ranged = range(start, end, { reverse });
 
 		const iterated = [...ranged];
 		expect(iterated).toHaveLength(length);
@@ -179,7 +159,7 @@ describe('range', () => {
 		{ start: -5, end: -10, step: -2, initialValue: -5, length: 3, expectedStep: -2, generatedRange: [-5,-7,-9] },
 	])('create range(start: $start, end: $end, step: $step)', ({ start, end, step, length, generatedRange }) => {
 
-		const ranged = range(start, end, step);
+		const ranged = range(start, end, { step });
 
 		const iterated = [...ranged];
 		expect(iterated).toHaveLength(length);
@@ -217,7 +197,7 @@ describe('range', () => {
 		{ start: -5, end: -10, step: -2, reverse: true, initialValue: -9, length: 3, expectedStep: -2, generatedRange: [-9,-7,-5] },
 	])('create range(start: $start, end: $end, step: $step, reverse: $reverse)', ({ start, end, step, reverse, length, generatedRange }) => {
 
-		const ranged = range(start, end, step, reverse);
+		const ranged = range(start, end, { step, reverse });
 
 		const iterated = [...ranged];
 		expect(iterated).toHaveLength(length);
@@ -232,16 +212,32 @@ describe('range', () => {
 	});
 
 	test('decimal step has no accumulated error', () => {
-		expect([...range(0, 1, 0.1)]).toEqual(Array.from({ length: 10 }, (_, i) => i * 0.1));
+		expect([...range(0, 1, { step: 0.1 })]).toEqual(Array.from({ length: 10 }, (_, i) => i * 0.1));
 	});
 
 	test.each([
 		{ args: [NaN] },
 		{ args: [0, NaN] },
-		{ args: [0, 10, NaN] }
-	])('range($args) with NaN is empty', ({ args }) => {
+		{ args: [NaN, 5] }
+	])('range($args) with a NaN bound is empty', ({ args }) => {
 		const it = (range as (...a: number[]) => Iterable<number>)(...args)[Symbol.iterator]();
 		expect(it.next().done).toBe(true);
+	});
+
+	test.each([0, NaN, Infinity, -Infinity])('range(0, 10, { step: %s }) throws', step => {
+		expect(() => range(0, 10, { step })).toThrow(Error);
+	});
+
+	test('the old positional signatures throw', () => {
+		const legacyRange = range as (...args: unknown[]) => Iterable<number>;
+		expect(() => legacyRange(10, true)).toThrow(Error);
+		expect(() => legacyRange(0, 10, 2)).toThrow(Error);
+		expect(() => legacyRange(0, 10, true)).toThrow(Error);
+	});
+
+	test('range(end, options)', () => {
+		expect([...range(10, { step: 3 })]).toEqual([0, 3, 6, 9]);
+		expect([...range(10, { step: 3, reverse: true })]).toEqual([9, 6, 3, 0]);
 	});
 
 });

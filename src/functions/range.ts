@@ -1,37 +1,59 @@
 import { BaseIterator, DeferredIterable } from '../iterators';
-import { getContinueIteratorResult, getDoneIteratorResult } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
 import { empty } from './empty';
 
 /**
- * Returns the numbers from `start` (default 0) up to, but not including, `end`, as `start + index * step`.
- * `step` defaults to 1 and its sign follows the direction; `reverse` yields the same numbers backwards; a `NaN` bound or step gives an empty `Iterable`.
+ * Options of `range`.
+ */
+export interface IRangeOptions {
+	/** Distance between two values; defaults to 1. Only its absolute value is used: the direction comes from `start` and `end`. */
+	step?: number;
+	/** Yields the same values in reverse order; defaults to `false`. */
+	reverse?: boolean;
+}
+
+/**
+ * Returns the numbers from `start` (default 0) up to, but not including, `end`, computed as `start + index * step`.
+ * The direction follows `start` and `end`; `reverse` yields the same numbers backwards; a `NaN` bound gives an empty `Iterable`.
  * @operation `Transformation`
+ * @throws Error if `options` is not an object, or `step` is 0, `NaN` or infinite
  * @returns a lazy, re-runnable `Iterable` of numbers
  */
-export function range(end: number): Iterable<number>;
-export function range(end: number, reverse?: boolean): Iterable<number>;
-export function range(start: number, end: number): Iterable<number>;
-export function range(start: number, end: number, step: number): Iterable<number>;
-export function range(start: number, end: number, reverse: boolean): Iterable<number>;
-export function range(start: number, end: number, step: number, reverse: boolean): Iterable<number>;
-export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number>;
-export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number> {
-	const chosenEnd = end == null || end === true || end === false ? start : end;
-	const chosenStart = end == null || end === true || end === false ? 0 : start;
+export function range(end: number, options?: IRangeOptions): Iterable<number>;
+export function range(start: number, end: number, options?: IRangeOptions): Iterable<number>;
+export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number>;
+export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number> {
+	const hasStart = typeof endOrOptions === 'number';
+	const start = hasStart ? startOrEnd : 0;
+	const end = hasStart ? endOrOptions : startOrEnd;
+	const rangeOptions = hasStart ? options : endOrOptions;
+	if (rangeOptions !== undefined)
+		Validations.throwIfNotObject(rangeOptions, 'options');
+	const { step = 1, reverse = false } = rangeOptions ?? {};
+	Validations.throwIfNotFiniteNonZero(step, 'step');
 
-	const isStartBeforeEnd = chosenStart < chosenEnd;
-
-	const tempStep = step !== true && step !== false && step != null && step !== 0 ? step : isStartBeforeEnd ? 1 : -1;
-	const chosenStep = isStartBeforeEnd && tempStep < 0 ? -1 * tempStep : !isStartBeforeEnd && tempStep > 0 ? -1 * tempStep : tempStep;
-
-	const chosenLength = Math.ceil(Math.abs(chosenEnd - chosenStart) / Math.abs(chosenStep));
-	const shouldReverse = end === true || step === true || (reverse != null && reverse) ? true : false;
-	// NaN bounds or steps give a NaN length: treat them as an empty range
-	if (!(chosenLength > 0))
+	const normalized = normalizeRange(start, end, Math.abs(step), reverse);
+	// a NaN bound gives a NaN length: treat it as an empty range
+	if (!(normalized.length > 0))
 		return empty();
-	const first = shouldReverse ? chosenStart + (chosenLength - 1) * chosenStep : chosenStart;
-	const signedStep = shouldReverse ? -chosenStep : chosenStep;
-	return new DeferredIterable(() => new RangeIterator(first, signedStep, chosenLength));
+	return new DeferredIterable(() => new RangeIterator(normalized.first, normalized.step, normalized.length));
+}
+
+interface INormalizedRange {
+	readonly first: number;
+	readonly step: number;
+	readonly length: number;
+}
+
+/**
+ * Turns the user-facing bounds into the first value, the signed step and the number of values.
+ */
+function normalizeRange(start: number, end: number, distance: number, reverse: boolean): INormalizedRange {
+	const step = end < start ? -distance : distance;
+	const length = Math.ceil(Math.abs(end - start) / distance);
+	if (!reverse)
+		return { first: start, step, length };
+	return { first: start + (length - 1) * step, step: -step, length };
 }
 
 class RangeIterator extends BaseIterator<number> {

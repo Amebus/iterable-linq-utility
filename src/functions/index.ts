@@ -8,7 +8,7 @@ export { materialize } from './materialize';
 export { max } from './max';
 export { memoize, getMemoizeDefaultOptions, type IMemoizeOptions } from './memoize';
 export { min } from './min';
-export { range } from './range';
+export { range, type IRangeOptions } from './range';
 export { reduce } from './reduce';
 export { repeat } from './repeat';
 export { some } from './some';
