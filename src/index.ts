@@ -40,9 +40,12 @@ export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
  */
 export function fromRange(end: number, options?: IRangeOptions): IIterableLinq<number>;
 export function fromRange(start: number, end: number, options?: IRangeOptions): IIterableLinq<number>;
-export function fromRange(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): IIterableLinq<number>;
 export function fromRange(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): IIterableLinq<number> {
-	return from(Functions.range(startOrEnd, endOrOptions, options));
+	if (typeof endOrOptions === 'number')
+		return from(Functions.range(startOrEnd, endOrOptions, options));
+	if (options !== undefined)
+		throw new Error('The "options" parameter must be the second argument when "start" is omitted');
+	return from(Functions.range(startOrEnd, endOrOptions));
 }
 
 /**

@@ -240,4 +240,8 @@ describe('range', () => {
 		expect([...range(10, { step: 3, reverse: true })]).toEqual([9, 6, 3, 0]);
 	});
 
+	test('options in third position without a numeric start throw', () => {
+		expect(() => (range as (...a: unknown[]) => unknown)(10, undefined, { step: 2 })).toThrow(Error);
+	});
+
 });

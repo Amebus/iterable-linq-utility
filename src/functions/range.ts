@@ -12,11 +12,12 @@ import { empty } from './empty';
  */
 export function range(end: number, options?: IRangeOptions): Iterable<number>;
 export function range(start: number, end: number, options?: IRangeOptions): Iterable<number>;
-export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number>;
 export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number> {
 	const hasStart = typeof endOrOptions === 'number';
 	const start = hasStart ? startOrEnd : 0;
 	const end = hasStart ? endOrOptions : startOrEnd;
+	if (!hasStart && options !== undefined)
+		throw new Error('The "options" parameter must be the second argument when "start" is omitted');
 	const rangeOptions = hasStart ? options : endOrOptions;
 	if (rangeOptions !== undefined)
 		Validations.throwIfNotObject(rangeOptions, 'options');

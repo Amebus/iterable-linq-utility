@@ -1,5 +1,4 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { IIterableLinq, IRangeOptions } from '@/index';
 
 import * as IterableLinq from '@/index';
 
@@ -193,10 +192,8 @@ describe('IterableLinq.fromRange', () => {
 		expect(iterated).toEqual(generatedRange);
 	});
 
-	test('fromRange with union arguments returns IIterableLinq', () => {
-		const endOrOptions = 3 as number | IRangeOptions;
-		const ranged: IIterableLinq<number> = IterableLinq.fromRange(0, endOrOptions);
-		expect(ranged.map(v => v * 2).collectToArray()).toEqual([0, 2, 4]);
+	test('options in third position without a numeric start throw', () => {
+		expect(() => (IterableLinq.fromRange as (...a: unknown[]) => unknown)(10, undefined, { step: 2 })).toThrow(Error);
 	});
 
 });
