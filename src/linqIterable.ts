@@ -3,6 +3,7 @@ import type {
 	AsyncAction,
 	Comparer,
 	IIterableLinq,
+	IIterableLinqBase,
 	IMemoizeOptions,
 	Mapper,
 	Predicate,
@@ -30,7 +31,15 @@ import {
 import { iterableLinqBrand } from './iterableLinqBrand';
 import { Validations } from './utils';
 
-export class IterableLinqWrapper<T> implements IIterableLinq<T> {
+/**
+ * Wraps `iterable` in a chain. The only way the library creates chains.
+ */
+export function toChain<T>(iterable: Iterable<T>): IIterableLinq<T> {
+	// the methods added with extend() live on the prototype at runtime and reach the type through module augmentation
+	return new IterableLinqWrapper(iterable) as unknown as IIterableLinq<T>;
+}
+
+export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	private readonly iterable: Iterable<T>;
 
@@ -47,11 +56,11 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	}
 
 	filter(predicate: Predicate<T>): IIterableLinq<T> {
-		return new IterableLinqWrapper(filter(this.iterable, predicate));
+		return toChain(filter(this.iterable, predicate));
 	}
 
 	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R> {
-		return new IterableLinqWrapper(flatMap(this.iterable, mapper));
+		return toChain(flatMap(this.iterable, mapper));
 	}
 
 	forEach(action: Action<T>): Unit {
@@ -63,11 +72,11 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	}
 
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {
-		return new IterableLinqWrapper(map(this.iterable, mapper));
+		return toChain(map(this.iterable, mapper));
 	}
 
 	materialize(): IIterableLinq<T> {
-		return new IterableLinqWrapper(materialize(this.iterable));
+		return toChain(materialize(this.iterable));
 	}
 
 	max(comparer?: Comparer<T>): T | undefined {
@@ -75,7 +84,7 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	}
 
 	memoize(options?: IMemoizeOptions): IIterableLinq<T> {
-		return new IterableLinqWrapper(memoize(this.iterable, options));
+		return toChain(memoize(this.iterable, options));
 	}
 
 	min(comparer?: Comparer<T>): T | undefined {
@@ -91,17 +100,18 @@ export class IterableLinqWrapper<T> implements IIterableLinq<T> {
 	}
 
 	tap(tapper: Tapper<T>): IIterableLinq<T> {
-		return new IterableLinqWrapper(tap(this.iterable, tapper));
+		return toChain(tap(this.iterable, tapper));
 	}
 
 	tapChain(tapper: Tapper<Iterable<T>>): IIterableLinq<T> {
-		return new IterableLinqWrapper(tapChain(this.iterable, tapper));
+		return toChain(tapChain(this.iterable, tapper));
 	}
 
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => Unit): IIterableLinq<T> {
 		Validations.throwIfNotFunction(chainCreationTapper, 'chainCreationTapper');
-		chainCreationTapper(this);
-		return this;
+		const chain = this as unknown as IIterableLinq<T>;
+		chainCreationTapper(chain);
+		return chain;
 	}
 }
 

@@ -26,3 +26,8 @@ export function throwIfNotObject(value: unknown, name: string) {
 	if (value === null || typeof value !== 'object')
 		throw new Error(`The "${name}" parameter must be an object`);
 }
+
+export function throwIfNotNonEmptyString(value: unknown, name: string) {
+	if (typeof value !== 'string' || value.length === 0)
+		throw new Error(`The "${name}" parameter must be a non-empty string`);
+}

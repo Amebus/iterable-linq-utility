@@ -1,5 +1,5 @@
 import { Validations } from './utils';
-import { IterableLinqWrapper } from './linqIterable';
+import { toChain } from './linqIterable';
 
 import * as Functions from './functions';
 import type { IIterableLinq, IRangeOptions } from './types';
@@ -22,7 +22,7 @@ export function empty<T>(): IIterableLinq<T> {
  */
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
 	Validations.throwIfNotIterable(iterable);
-	return new IterableLinqWrapper(iterable);
+	return toChain(iterable);
 }
 
 /**
@@ -62,6 +62,6 @@ export function repeat<T>(value: T, count: number): IIterableLinq<T> {
 
 export { Functions };
 
-export { isIterableLinq } from './extension';
+export { extend, isIterableLinq } from './extension';
 
 export * from './types';

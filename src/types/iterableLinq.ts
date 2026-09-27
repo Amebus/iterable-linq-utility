@@ -8,10 +8,9 @@ import type { Tapper } from './tapper';
 import type { Unit } from './unit';
 
 /**
- * Fluent wrapper over an `Iterable`: every call builds a lazy, re-runnable operations chain.
- * Transformations return a new `IIterableLinq`; actions run the chain and return a result.
+ * The operations provided by the library on every chain. See `IIterableLinq`.
  */
-export interface IIterableLinq<T> {
+export interface IIterableLinqBase<T> {
 
 	[Symbol.iterator](): Iterator<T, any, undefined>;
 
@@ -162,3 +161,12 @@ export interface IIterableLinq<T> {
 	 */
 	tapChainCreation(chainCreationTapper: (iterableLinqWrapper: IIterableLinq<T>) => Unit): IIterableLinq<T>;
 }
+
+/**
+ * Fluent wrapper over an `Iterable`: every call builds a lazy, re-runnable operations chain.
+ * Transformations return a new `IIterableLinq`; actions run the chain and return a result.
+ *
+ * Augment this interface (not `IIterableLinqBase`) to declare the methods you add with `extend`.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- augmentation target for extend()
+export interface IIterableLinq<T> extends IIterableLinqBase<T> {}
