@@ -119,4 +119,11 @@ describe('some', () => {
 		expect(state.closed).toBe(true);
 	});
 
+	test('a throwing predicate closes the source', () => {
+		const err = new Error('boom');
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(() => some(iterable, () => { throw err; })).toThrow(err);
+		expect(state.closed).toBe(true);
+	});
+
 });

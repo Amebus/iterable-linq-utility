@@ -11,14 +11,11 @@ import { Validations } from '../utils';
 export function some<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
 	Validations.throwIfNotIterable(iterable);
 	Validations.throwIfNotFunction(predicate, 'predicate');
-	const iterator: Iterator<T> = iterable[Symbol.iterator]();
-	let i = 0;
-
-	for (let n = iterator.next(); n.done !== true; n = iterator.next()) {
-		if (predicate(n.value, i++)) {
-			iterator.return?.();
+	let index = 0;
+	// for…of closes the source both when we return early and when the predicate throws
+	for (const value of iterable) {
+		if (predicate(value, index++))
 			return true;
-		}
 	}
 	return false;
 }
