@@ -35,3 +35,73 @@ The **O~s~C** supports two types of operations:
 
 - [Actions](https://amebus.github.io/iterable-linq-utility/api-reference/actions.md)
 - [Transformations](https://amebus.github.io/iterable-linq-utility/api-reference/transformations.md)
+
+## Benchmarks
+
+The benchmarks use [Vitest benchmarking](https://vitest.dev/guide/benchmarking) and live in `test/bench`:
+
+- `functions/`: one file for each function, with several variants (for example `min` with no comparer, a compare function, a key and a list of keys);
+- `chains/`: whole chains, from `map(filter(range))` to multi-stage pipelines, early exits and chains read by more than one action.
+
+Every table compares the library with a native reference (an array method or a hand-written loop) and, where it exists, with the raw function in `Functions`.
+
+The benchmarks measure the built bundle (`dist/iterable-linq-utility.js`), the same code that users run. The `bench` scripts build it first.
+
+### Run
+
+```sh
+pnpm bench                        # every benchmark, about 3 minutes
+pnpm bench functions/min          # only the files whose path contains "functions/min"
+pnpm bench chains                 # only the chains
+BENCH_TIME=1000 pnpm bench        # more time for each case (default 500 ms): more samples, less noise
+```
+
+### Find regressions
+
+A baseline is a saved run. Each table shows it as extra rows, marked `(baseline)`, next to the new run.
+
+```sh
+git switch main
+pnpm bench:baseline               # saves every result in .bench/
+git switch my-branch
+pnpm bench                        # shows each case next to its "(baseline)" row
+```
+
+The timings depend on the machine, so `.bench/` is not committed and the benchmarks do not run in CI. Create the baseline and the new run on the same machine, with the same load.
+
+### Read the tables
+
+| Column | Meaning |
+|---|---|
+| `hz` | runs per second: higher is faster |
+| `mean`, `p75`, `p99` | time of one run, in ms |
+| `rme` | relative margin of error |
+| `samples` | how many runs were measured |
+
+A difference smaller than the `rme` of the two rows is noise.
+
+### Add a benchmark
+
+Create `test/bench/functions/<name>.bench.ts` or `test/bench/chains/<scenario>.bench.ts`:
+
+```ts
+import * as IterableLinq from 'iterable-linq-utility';
+import { test } from 'vitest';
+
+import * as Helpers from '../helpers';
+
+// Read the exports once: an imported binding goes through a module runner getter on every read.
+const { from } = IterableLinq;
+const { cases, numbers, sum } = Helpers;
+
+test('map: number', async ({ bench }) => {
+	await cases(bench, 'map/number')      // the baseline folder: <function>/<variant>
+		.add('native', () => sum(numbers.map(v => v * 2)))
+		.add('chain', () => sum(from(numbers).map(v => v * 2)))
+		.run();
+});
+```
+
+- Every table needs at least two cases: add a native reference.
+- Import the library and the helpers as namespaces and copy the exports into local constants, as above. Vitest prints a `Benchmark Warning` when a benchmark reads an imported binding too many times.
+- The shared data is in `test/bench/helpers.ts`: `numbers` (100,000 integers), `records` (100,000 objects) and `small` (1,000 integers).
