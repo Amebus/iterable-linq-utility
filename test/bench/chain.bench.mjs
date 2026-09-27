@@ -1,5 +1,5 @@
 // Benchmarks the built bundle: run with `pnpm bench` (builds first).
-import { Functions } from '../../dist/interable-linq-utility.js';
+import { Functions } from '../../dist/iterable-linq-utility.js';
 
 const { filter, map, range } = Functions;
 

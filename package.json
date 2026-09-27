@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "description": "An Iterable mutation utility inspired by .net Linq and Javascript Array interface",
   "type": "module",
-  "main": "./dist/interable-linq-utility.umd.cjs",
-  "module": "./dist/interable-linq-utility.js",
+  "main": "./dist/iterable-linq-utility.umd.cjs",
+  "module": "./dist/iterable-linq-utility.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/interable-linq-utility.js"
+        "default": "./dist/iterable-linq-utility.js"
       },
       "require": {
         "types": "./dist/index.d.cts",
-        "default": "./dist/interable-linq-utility.umd.cjs"
+        "default": "./dist/iterable-linq-utility.umd.cjs"
       }
     }
   },

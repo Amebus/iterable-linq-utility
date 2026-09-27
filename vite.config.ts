@@ -6,8 +6,8 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: resolve(import.meta.dirname, 'src/index.ts'),
-			name: 'interable-linq-utility',
-			fileName: 'interable-linq-utility',
+			name: 'IterableLinq',
+			fileName: 'iterable-linq-utility',
 		},
 	},
 	plugins: [dts({ entryRoot: 'src', bundleTypes: true })],

@@ -22,15 +22,26 @@ pnpm i iterable-linq-utility
 
 ### CDN
 
-Load the ES module build from a CDN in a `<script type="module">`:
+=== "ES module"
 
-```html
-<script type="module">
-    import * as IterableLinq from 'https://cdn.jsdelivr.net/npm/iterable-linq-utility/+esm';
+    ```html
+    <script type="module">
+        import * as IterableLinq from 'https://cdn.jsdelivr.net/npm/iterable-linq-utility/+esm';
 
-    console.log(IterableLinq.fromRange(3).collectToArray()); // [0, 1, 2]
-</script>
-```
+        console.log(IterableLinq.fromRange(3).collectToArray()); // [0, 1, 2]
+    </script>
+    ```
+
+=== "Classic script"
+
+    The UMD build defines the global `IterableLinq`:
+
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/iterable-linq-utility"></script>
+    <script>
+        console.log(IterableLinq.fromRange(3).collectToArray()); // [0, 1, 2]
+    </script>
+    ```
 
 ## Usage
 
