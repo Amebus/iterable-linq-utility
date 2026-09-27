@@ -21,12 +21,12 @@ How should users extend the fluent API, and should the class stay public?
 ## Considered Options
 
 * A: keep the class public as the documented extension point
-* B: hide the class and expose `extend()` and `isIterableLinq()`
+* B: hide the class and expose `extend()`, `override()` and `isIterableLinq()`
 * C: keep the class exported but mark it `@internal`
 
 ## Decision Outcome
 
-Chosen option: "B: hide the class and expose `extend()` and `isIterableLinq()`". It keeps the extensibility goal, frees the implementation, and costs the least now, because 0.1.0 is already a breaking release.
+Chosen option: "B: hide the class and expose `extend()`, `override()` and `isIterableLinq()`". It keeps the extensibility goal, frees the implementation, and costs the least now, because 0.1.0 is already a breaking release.
 
 ### Positive Consequences
 
@@ -34,12 +34,14 @@ Chosen option: "B: hide the class and expose `extend()` and `isIterableLinq()`".
 * The wrapper class can be renamed, split or regenerated without breaking users
 * `extend()` rejects names that already exist, so a built-in method cannot be overwritten by mistake
 * `isIterableLinq()` uses a `Symbol.for` brand and works across copies of the library
+* A library release that adds a method named like a project extension has an explicit migration path (`override`)
 
 ### Negative Consequences
 
 * A new public API to maintain
 * Inside an extension, `this` is `IIterableLinq<unknown>`: the element type is not available to the implementation
 * Registering the same name twice throws, so extensions must be registered once, at start-up
+* `override` can change the behaviour of library methods for the whole process
 
 ## Pros and Cons of the Options
 
@@ -53,7 +55,7 @@ Add validation to the constructor and document `IterableLinqWrapper.prototype.na
 * Bad, because a built-in method can be overwritten silently
 * Bad, because hiding the class later would be a breaking change
 
-### B: hide the class and expose `extend()` and `isIterableLinq()`
+### B: hide the class and expose `extend()`, `override()` and `isIterableLinq()`
 
 * Good, because the implementation can change freely
 * Good, because the extension point is explicit and checked at runtime

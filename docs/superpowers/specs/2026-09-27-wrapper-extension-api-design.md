@@ -24,16 +24,18 @@ Release 0.1.0 is unpublished and already breaking, so hiding the class now costs
 * A supported, explicit way to add operators to every chain, keeping the module augmentation workflow.
 * A way to recognise a chain that does not depend on `instanceof` or on a single copy of the library.
 * The class becomes an internal detail that can change without breaking users.
+* A deliberate way to replace an existing operation, so that a later library release adding a method with the same name as a project extension has an explicit migration path.
 
 ## Non-goals
 
-* Removing or overriding extensions. There is no `unextend` and no override option.
+* Removing extensions. There is no `unextend` and no way to restore a replaced method.
+* Access to the replaced implementation from inside `override` (no `super`/`previous`). The library's own version stays reachable through `Functions`.
 * Typing the element type `T` inside an extension's implementation (see "Typing limits").
 * Changing the fluent API.
 
 ## Public API
 
-Both functions live in a new module, `src/extension.ts`, and are exported from the library root.
+The three functions live in a new module, `src/extension.ts`, and are exported from the library root.
 
 ### `isIterableLinq`
 
@@ -93,6 +95,28 @@ export function extend<K extends keyof IIterableLinq<unknown>>(
   * `name` must not already exist on a chain. This rejects the built-in methods (`map`, `filter`, …), a name registered earlier and members of `Object.prototype` (`toString`, `constructor`, …).
 * The method is defined on the internal prototype as a non-enumerable, non-writable, configurable property. Unlike class methods it is not writable, so a plain assignment cannot silently replace it; being configurable lets the tests remove it.
 
+### `override`
+
+```ts
+export function override<K extends keyof IIterableLinq<unknown>>(
+	name: K,
+	implementation: (this: IIterableLinq<unknown>, ...args: any[]) => unknown
+): void;
+```
+
+* It replaces the method `name` of every chain, including chains created before the call.
+* `name` must **already exist** as an own method of the internal prototype, either a library method or a method added by `extend`/`override`. A name that does not exist throws, with a message that suggests `extend`. So the two functions never overlap: `extend` adds, `override` replaces, and each one fails where the other applies.
+* It replaces only chain methods: `constructor` and the members of `Object.prototype` (`toString`, `hasOwnProperty`, …) are rejected, so the object model cannot break. The existence check looks at own properties of the prototype, not at the prototype chain.
+* The same runtime checks as `extend`: `name` is a non-empty string and `implementation` is a function.
+* The same descriptor as `extend`: non-enumerable, non-writable, configurable. Library methods are configurable class properties, so they can be redefined.
+* Scope: only the fluent method changes. `Functions.*` and the library's internal code do not call wrapper methods, so they keep the original behaviour.
+* The main use case is migration. A project registers `extend('chunk', …)`; a later library release adds its own `chunk`, so that `extend` call now throws at start-up. The project keeps its version by switching to:
+
+  ```ts
+  // the library added its own `chunk` in a later release; keep the project's version
+  override('chunk', function (size: number) { /* project implementation */ });
+  ```
+
 ### Removed export
 
 * `IterableLinqWrapper` is no longer exported. It stays in `src/linqIterable.ts` as an internal class. Its prototype receives the brand symbol and the extended methods.
@@ -107,11 +131,14 @@ export function extend<K extends keyof IIterableLinq<unknown>>(
 * Inside `implementation`, `this` is `IIterableLinq<unknown>`. A function registered by name cannot carry the chain's element type `T`, so the implementation works with `unknown` values.
 * The method as seen by callers is typed by the user's augmentation and keeps its generics. In the example above, `from([1, 2]).chunk(2)` is `IIterableLinq<number[]>`.
 * The compiler does not check that `implementation` matches the augmented signature. That responsibility stays with the user, as with any prototype extension.
+* The same limits apply to `override`. When a project overrides a method that the library added later, the project's augmentation and the library's declaration merge into overloads of the same method. Keep the library's signature in the augmentation (or drop the augmentation) so the two declarations agree.
 
 ## Behaviour to document
 
 * Registering the same name twice throws. This includes a module that is evaluated twice (hot module replacement, test runners that re-import modules), so extensions should be registered once, at application start-up.
 * Extensions are global to the library instance: every chain in the process gets them.
+* If a library upgrade adds a method named like one of your extensions, `extend` throws at start-up: switch that call to `override`, or rename your method.
+* Overriding a library method changes only the fluent API, not `Functions`, and it lasts for the whole process.
 
 ## Testing
 
@@ -123,19 +150,26 @@ A new file, `test/extension.spec.ts`:
 * `extend` throws for an empty name and for an `implementation` that is not a function;
 * `isIterableLinq` is `true` for the results of `from`, `fromRange`, `repeat`, `empty` and of a transformation (`map`), and `false` for `[]`, `null`, `{}`, a string and a generator;
 * a type test: `extend('notDeclared', …)` under `// @ts-expect-error`. `pnpm typecheck` fails if the constraint is lost.
+* `override` of a library method (`map`) changes the result on chains created before and after the call;
+* `override` of a method added by `extend` replaces it;
+* `override` throws for a name that does not exist, for `toString`, for `constructor`, for an empty name and for an `implementation` that is not a function;
+* after `override('map', …)`, `Functions.map` behaves as before;
+* a type test: `override('notDeclared', …)` under `// @ts-expect-error`.
 
-Test isolation: an extension lives for the whole test process. Each test uses a unique name, and an `afterEach` deletes the added names from the prototype. It reaches the prototype through `Object.getPrototypeOf(from([]))`, so no test-only export is needed.
+Test isolation: extensions and overrides live for the whole test process. The tests reach the prototype through `Object.getPrototypeOf(from([]))`, so no test-only export is needed:
+* each extension test uses a unique name, and an `afterEach` deletes the added names;
+* for overrides of library methods, the test saves the original descriptor (`Object.getOwnPropertyDescriptor`) and an `afterEach` restores it with `Object.defineProperty`.
 
 `test/from.spec.ts` uses `isIterableLinq` instead of `toBeInstanceOf(IterableLinq.IterableLinqWrapper)`.
 
 ## Documentation
 
-* A new page, `documentation/docs/advanced-concepts/extending.md`, with the augmentation + `extend` example, the typing limits and the "register once" rule. It is linked from `documentation/docs/advanced-concepts/index.md`.
+* A new page, `documentation/docs/advanced-concepts/extending.md`, with the augmentation + `extend` example, `override` and the migration case, the typing limits and the "register once" rule. It is linked from `documentation/docs/advanced-concepts/index.md`.
 * ADR `docs/decisions/0003-extension-api-instead-of-public-wrapper-class.md` records the options and the decision.
-* JSDoc on `extend` and `isIterableLinq`.
+* JSDoc on `extend`, `override` and `isIterableLinq`.
 
 ## Breaking change (0.1.0)
 
 `IterableLinqWrapper` is no longer exported:
 * use `isIterableLinq(x)` instead of `x instanceof IterableLinqWrapper`;
-* use `extend(name, implementation)` instead of editing the prototype.
+* use `extend(name, implementation)` to add methods, and `override(name, implementation)` to replace them, instead of editing the prototype.
