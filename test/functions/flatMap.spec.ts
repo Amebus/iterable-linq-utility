@@ -91,4 +91,31 @@ describe('flatMap', () => {
 		expect([...flatMap([[], [1], [], [2, 3], []], (v: number[]) => v)]).toEqual([1, 2, 3]);
 	});
 
+	test('return(value) is forwarded to inner and source', () => {
+		const sourceReturn = vi.fn((v?: unknown) => ({ done: true as const, value: v }));
+		const innerReturn = vi.fn((v?: unknown) => ({ done: true as const, value: v }));
+		const source: Iterable<number> = { [Symbol.iterator]: () => ({ next: () => ({ done: false, value: 1 }), return: sourceReturn }) };
+		const inner: Iterable<number> = { [Symbol.iterator]: () => ({ next: () => ({ done: false, value: 10 }), return: innerReturn }) };
+		const it = flatMap(source, () => inner)[Symbol.iterator]();
+		it.next();
+		it.return!('x');
+		expect(innerReturn).toHaveBeenCalledWith('x');
+		expect(sourceReturn).toHaveBeenCalledWith('x');
+	});
+
+	test('outer source is closed even if inner return() throws', () => {
+		const err = new Error('inner return');
+		const outer = closableSource([1]);
+		const inner: Iterable<number> = { [Symbol.iterator]: () => ({ next: () => ({ done: false, value: 10 }), return: () => { throw err; } }) };
+		const it = flatMap(outer.iterable, () => inner)[Symbol.iterator]();
+		it.next();
+		expect(() => it.return!()).toThrow(err);
+		expect(outer.state.closed).toBe(true);
+	});
+
+	test('a throwing mapper propagates the same error', () => {
+		const err = new Error('boom');
+		expect(() => collectToArray(flatMap([1], () => { throw err; }))).toThrow(err);
+	});
+
 });

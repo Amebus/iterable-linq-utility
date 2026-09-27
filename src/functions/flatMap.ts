@@ -19,7 +19,7 @@ type FlatMapState = 'outer' | 'inner';
 /**
  * A step returns the next result, or `undefined` when it only changed state.
  */
-type FlatMapStep = (it: FlatMapIterator<unknown, unknown>) => IteratorResult<unknown> | undefined;
+type FlatMapStep = <T, R>(it: FlatMapIterator<T, R>) => IteratorResult<R> | undefined;
 
 class FlatMapIterator<T, R> extends SourceIterator<T, R> {
 	/**
@@ -53,14 +53,17 @@ class FlatMapIterator<T, R> extends SourceIterator<T, R> {
 
 	protected advance(): IteratorResult<R> {
 		for (;;) {
-			const result = FlatMapIterator.steps[this.state](this as FlatMapIterator<unknown, unknown>);
+			const result = FlatMapIterator.steps[this.state](this);
 			if (result !== undefined)
-				return result as IteratorResult<R>;
+				return result;
 		}
 	}
 
-	protected override onReturn(): void {
-		this.inner?.return?.();
-		super.onReturn();
+	protected override onReturn(value?: any): void {
+		try {
+			this.inner?.return?.(value);
+		} finally {
+			super.onReturn(value);
+		}
 	}
 }
