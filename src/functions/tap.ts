@@ -3,11 +3,11 @@ import { Tapper } from '../types';
 import { Validations } from '../utils';
 
 /**
- *
+ * Lazily calls `tapper` on each value as it flows through, without changing it.
  * @operation `Tap`
- * @param iterable
- * @param tapper
- * @returns
+ * @param iterable the source `Iterable`
+ * @param tapper called with each value and its index
+ * @returns a lazy, re-runnable `Iterable` of the same values
  */
 export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

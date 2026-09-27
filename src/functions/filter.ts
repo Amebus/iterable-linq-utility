@@ -3,11 +3,11 @@ import { Predicate } from '../types';
 import { Validations } from '../utils';
 
 /**
- *
+ * Lazily keeps only the values that satisfy `predicate`.
  * @operation `Transformation`
- * @param iterable
- * @param predicate
- * @returns
+ * @param iterable the source `Iterable`
+ * @param predicate called with each value and its index; return `true` to keep the value
+ * @returns a lazy, re-runnable `Iterable` of the kept values
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

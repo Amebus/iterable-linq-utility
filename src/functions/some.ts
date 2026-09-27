@@ -2,11 +2,11 @@ import { Predicate } from '../types';
 import { Validations } from '../utils';
 
 /**
- *
+ * Tells whether at least one value satisfies `predicate`; stops and closes the source at the first match.
  * @operation `Action`
- * @param iterable
- * @param predicate
- * @returns
+ * @param iterable the source `Iterable`
+ * @param predicate called with each value and its index
+ * @returns `true` if a value satisfies `predicate`
  */
 export function some<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
 	Validations.throwIfNotIterable(iterable);

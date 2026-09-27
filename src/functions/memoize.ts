@@ -14,9 +14,11 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
 /**
  * Caches the values of `iterable` the first time they are read, so later iterations do not re-run the source.
  * With partial memoization, a consumer that stops early keeps the shared source open until another consumer finishes it.
+ * If the source throws, every later read past the cached values throws the same error.
  * @operation `Transformation`
- * @param iterable
- * @returns
+ * @param iterable the source `Iterable`
+ * @param options `allowPartialMemoization: false` reads the whole source on the first read
+ * @returns a lazy `Iterable` backed by the cache
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

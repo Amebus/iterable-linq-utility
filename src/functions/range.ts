@@ -2,6 +2,12 @@ import { BaseIterator, DeferredIterable } from '../iterators';
 import { getContinueIteratorResult, getDoneIteratorResult } from '../utils';
 import { empty } from './empty';
 
+/**
+ * Returns the numbers from `start` (default 0) up to, but not including, `end`, as `start + index * step`.
+ * `step` defaults to 1 and its sign follows the direction; `reverse` yields the same numbers backwards; a `NaN` bound or step gives an empty `Iterable`.
+ * @operation `Transformation`
+ * @returns a lazy, re-runnable `Iterable` of numbers
+ */
 export function range(end: number): Iterable<number>;
 export function range(end: number, reverse?: boolean): Iterable<number>;
 export function range(start: number, end: number): Iterable<number>;

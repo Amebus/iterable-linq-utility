@@ -3,10 +3,11 @@ import { Mapper } from '../types';
 import { Validations } from '../utils';
 
 /**
+ * Lazily maps each value to an `Iterable` and flattens the results.
  * @operation `Transformation`
- * @param iterable
- * @param mapper
- * @returns
+ * @param iterable the source `Iterable`
+ * @param mapper called with each value and its index; returns the `Iterable` to flatten
+ * @returns a lazy, re-runnable `Iterable` of the flattened values
  */
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>>): Iterable<R> {
 	Validations.throwIfNotIterable(iterable);
