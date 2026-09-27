@@ -8,6 +8,12 @@ import { Validations } from '../utils';
  * @param iterable - the source `Iterable`
  * @param predicate - called with each value and its index; return `true` to keep the value
  * @returns a lazy, re-runnable `Iterable` of the kept values
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `predicate` is not a function
+ * @example
+ * ```ts
+ * Array.from(Functions.filter([1, 2, 3, 4], v => v % 2 === 0)); // [2, 4]
+ * ```
+ * @since 0.0.10
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

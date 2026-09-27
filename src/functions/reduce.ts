@@ -8,6 +8,12 @@ import { Validations } from '../utils';
  * @param neutralElement - the initial accumulator (the seed)
  * @param reducer - called with the accumulator, each value and its index; returns the new accumulator
  * @returns the final accumulator; `neutralElement` when `iterable` is empty
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `reducer` is not a function
+ * @example
+ * ```ts
+ * Functions.reduce([1, 2, 3], 0, (acc, v) => acc + v); // 6
+ * ```
+ * @since 0.0.10
  */
 export function reduce<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>): R {
 	Validations.throwIfNotIterable(iterable);

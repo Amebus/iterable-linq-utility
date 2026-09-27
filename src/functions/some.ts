@@ -6,7 +6,13 @@ import { Validations } from '../utils';
  * @operation `Action`
  * @param iterable - the source `Iterable`
  * @param predicate - called with each value and its index
- * @returns `true` if a value satisfies `predicate`
+ * @returns `true` if a value satisfies `predicate`; `false` when `iterable` is empty
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `predicate` is not a function
+ * @example
+ * ```ts
+ * Functions.some([1, 2, 3], v => v > 2); // true
+ * ```
+ * @since 0.0.10
  */
 export function some<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
 	Validations.throwIfNotIterable(iterable);

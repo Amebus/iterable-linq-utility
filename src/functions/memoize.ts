@@ -2,6 +2,11 @@ import { BaseIterator } from '../iterators';
 import type { IMemoizeOptions } from '../types';
 import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
 
+/**
+ * Returns the options `memoize` uses when none are given.
+ * @returns a new object: `{ allowPartialMemoization: true }`
+ * @since 0.0.16
+ */
 export function getMemoizeDefaultOptions(): IMemoizeOptions {
 	return {
 		allowPartialMemoization: true
@@ -9,13 +14,21 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
 }
 
 /**
- * Caches the values of `iterable` the first time they are read, so later iterations do not re-run the source.
+ * Caches the values of `iterable` the first time they are read, so later iterations do not run the source again.
  * With partial memoization, a consumer that stops early keeps the shared source open until another consumer finishes it.
  * If the source throws, every later read past the cached values throws the same error.
  * @operation `Transformation`
  * @param iterable - the source `Iterable`
  * @param options - `allowPartialMemoization: false` reads the whole source on the first read
  * @returns a lazy `Iterable` backed by the cache
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`
+ * @example
+ * ```ts
+ * const cached = Functions.memoize(Functions.map(readLines(), parse));
+ * Array.from(cached); // reads and parses the lines
+ * Array.from(cached); // same values, from the cache
+ * ```
+ * @since 0.0.10
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

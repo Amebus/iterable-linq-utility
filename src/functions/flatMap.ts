@@ -4,10 +4,17 @@ import { Validations } from '../utils';
 
 /**
  * Lazily maps each value to an `Iterable` and flattens the results.
+ * Each inner `Iterable` is read completely before the next value is mapped.
  * @operation `Transformation`
  * @param iterable - the source `Iterable`
  * @param mapper - called with each value and its index; returns the `Iterable` to flatten
  * @returns a lazy, re-runnable `Iterable` of the flattened values
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `mapper` is not a function
+ * @example
+ * ```ts
+ * Array.from(Functions.flatMap([1, 2], v => [v, v * 10])); // [1, 10, 2, 20]
+ * ```
+ * @since 0.0.11
  */
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>>): Iterable<R> {
 	Validations.throwIfNotIterable(iterable);

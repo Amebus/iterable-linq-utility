@@ -4,13 +4,37 @@ import type { IRangeOptions } from '../types';
 import { empty } from './empty';
 
 /**
- * Returns the numbers from `start` (default 0) up to, but not including, `end`, computed as `start + index * step`.
- * The direction follows `start` and `end`; `reverse` yields the same numbers backwards; a `NaN` bound gives an empty `Iterable`.
+ * Returns the numbers from 0 up to, but not including, `end`, computed as `index * step`.
+ * The direction follows the sign of `end`; `reverse` yields the same numbers backwards; a `NaN` bound gives an empty `Iterable`.
  * @operation `Transformation`
- * @throws Error if `options` is not an object, or `step` is 0, `NaN` or infinite
+ * @param end - the bound, not included
+ * @param options - `step` (default 1, sign ignored) and `reverse` (default `false`)
  * @returns a lazy, re-runnable `Iterable` of numbers
+ * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @example
+ * ```ts
+ * Array.from(Functions.range(3)); // [0, 1, 2]
+ * Array.from(Functions.range(3, { reverse: true })); // [2, 1, 0]
+ * ```
+ * @since 0.0.10
  */
 export function range(end: number, options?: IRangeOptions): Iterable<number>;
+/**
+ * Returns the numbers from `start` up to, but not including, `end`, computed as `start + index * step`.
+ * The direction follows `start` and `end`; `reverse` yields the same numbers backwards; a `NaN` bound gives an empty `Iterable`.
+ * @operation `Transformation`
+ * @param start - the first value
+ * @param end - the bound, not included
+ * @param options - `step` (default 1, sign ignored) and `reverse` (default `false`)
+ * @returns a lazy, re-runnable `Iterable` of numbers
+ * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @example
+ * ```ts
+ * Array.from(Functions.range(1, 7, { step: 2 })); // [1, 3, 5]
+ * Array.from(Functions.range(5, 0)); // [5, 4, 3, 2, 1]
+ * ```
+ * @since 0.0.10
+ */
 export function range(start: number, end: number, options?: IRangeOptions): Iterable<number>;
 export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number> {
 	const hasStart = typeof endOrOptions === 'number';
