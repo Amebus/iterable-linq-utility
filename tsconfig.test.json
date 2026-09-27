@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"noImplicitAny": false,
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["./src/*"],
+			"iterable-linq-utility": ["./src/index.ts"]
 		},
 		"types": ["node"]
 	},

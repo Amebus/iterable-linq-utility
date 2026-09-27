@@ -4,7 +4,9 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	resolve: {
 		alias: {
-			'@': resolve(import.meta.dirname, 'src')
+			'@': resolve(import.meta.dirname, 'src'),
+			// The benches run the built bundle, as users do.
+			'iterable-linq-utility': resolve(import.meta.dirname, 'dist/iterable-linq-utility.js')
 		}
 	},
 	test: {

@@ -29,7 +29,8 @@
     "lint-fix": "eslint . --fix",
     "typecheck": "tsc -p tsconfig.test.json --noEmit",
     "test": "vitest run",
-    "bench": "vite build --logLevel error && node test/bench/chain.bench.mjs",
+    "bench": "vite build --logLevel error && vitest bench --run",
+    "bench:baseline": "vite build --logLevel error && BENCH_SAVE=1 vitest bench --run",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
   },
