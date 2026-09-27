@@ -78,6 +78,7 @@ nav:
   - Advanced Concepts: 
     - advanced-concepts/index.md
     - Interoperability with other libraries: advanced-concepts\interoperability-with-other-libraries.md
+    - Extending the API: advanced-concepts/extending.md
   - Api Reference:
     - api-reference/index.md
     - Actions: api-reference/actions.md

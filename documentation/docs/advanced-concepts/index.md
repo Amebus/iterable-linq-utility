@@ -19,3 +19,7 @@
 ## Materialize in-depth
 
 ## Memoize vs Materialize
+
+## Extending the API
+
+Add or replace operations on every chain with `extend` and `override`, and recognise chains with `isIterableLinq`: see [Extending the API](extending.md).

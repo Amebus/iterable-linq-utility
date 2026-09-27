@@ -1,6 +1,6 @@
 # Wrapper extension API — design
 
-* Status: proposed
+* Status: implemented
 * Date: 2026-09-27
 * Branch: `chore/modernize-deps-and-test-helpers`
 * Release: 0.1.0 (breaking)
@@ -120,6 +120,12 @@ export function override<K extends keyof IIterableLinq<unknown>>(
 ### Removed export
 
 * `IterableLinqWrapper` is no longer exported. It stays in `src/linqIterable.ts` as an internal class. Its prototype receives the brand symbol and the extended methods.
+
+### Types added during implementation
+
+* `IIterableLinqBase<T>` holds the library's own operations. It is implemented by the internal class. `IIterableLinq<T> extends IIterableLinqBase<T>` is the interface users augment. Without the split, an augmentation made the internal class fail to implement `IIterableLinq` (TS2420), both in the library's tests and in projects that type-check the library's declarations.
+* `ChainMethod` is the type of the implementation passed to `extend`/`override`: `(this: IIterableLinq<unknown>, ...args: any[]) => unknown`.
+* Both live in `src/types`.
 
 ### Unchanged
 

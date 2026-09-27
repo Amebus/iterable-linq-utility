@@ -1,6 +1,6 @@
 # Extension API instead of a public wrapper class
 
-* Status: proposed
+* Status: accepted
 * Deciders: Amebus
 * Date: 2026-09-27
 
