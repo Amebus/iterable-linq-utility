@@ -209,8 +209,14 @@ describe('memoize', () => {
 		const b = m[Symbol.iterator]();
 		a.next();
 		b.next();
-		expect([...a]).toEqual([2, 3, 4, 5]);
-		expect([...b]).toEqual([2, 3, 4, 5]);
+		const rest = (it: Iterator<number>) => {
+			const values: number[] = [];
+			for (let n = it.next(); n.done !== true; n = it.next())
+				values.push(n.value);
+			return values;
+		};
+		expect(rest(a)).toEqual([2, 3, 4, 5]);
+		expect(rest(b)).toEqual([2, 3, 4, 5]);
 		expect(tapperSpy).toHaveBeenCalledTimes(5);
 	});
 

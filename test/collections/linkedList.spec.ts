@@ -9,10 +9,10 @@ describe('LinkedList', () => {
 	test('new LinkedList()', () => {
 		const list = new LinkedList<number>();
 
-		expect(list).instanceof(LinkedList);
+		expect(list).toBeInstanceOf(LinkedList);
 		expect(list.size()).toEqual(0);
-		expect(list[Symbol.iterator]).instanceOf(Function);
-		expect(list[Symbol.iterator]()).instanceOf(LinkedListIterator);
+		expect(list[Symbol.iterator]).toBeInstanceOf(Function);
+		expect(list[Symbol.iterator]()).toBeInstanceOf(LinkedListIterator);
 
 	});
 
@@ -58,7 +58,7 @@ describe('LinkedList', () => {
 	])('from($input)', ({ input }) => {
 		const list = from(input);
 
-		expect(list).instanceof(LinkedList);
+		expect(list).toBeInstanceOf(LinkedList);
 		expect(list.size()).toEqual(input.length);
 
 		let idx = 0;
@@ -73,7 +73,8 @@ describe('LinkedList', () => {
 		{input: undefined},
 		{input: null},
 	])('from($noInput) -> throws exception', ({ input }) => {
-		expect(() => from(input)).toThrowError();
+		// invalid input on purpose
+		expect(() => from(input as any)).toThrow();
 	});
 
 	test.each([

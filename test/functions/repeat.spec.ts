@@ -36,11 +36,11 @@ describe('repeat', () => {
 		{ value: 10, count: -50 },
 		{ value: '10', count: -50 },
 	])('repeat($value, $count) -> throw exception', ({ value, count }) => {
-		expect(() => repeat(value, count)).toThrowError();
+		expect(() => repeat(value, count)).toThrow();
 	});
 
 	test.each([2.5, NaN, Infinity, -1])('repeat(x, %s) throws', count => {
-		expect(() => repeat('x', count)).toThrowError(Error);
+		expect(() => repeat('x', count)).toThrow(Error);
 	});
 
 	test('iterator stays done', () => {

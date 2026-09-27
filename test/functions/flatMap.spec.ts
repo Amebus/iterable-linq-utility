@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import type { Mapper } from '../../src/types';
 import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
@@ -26,8 +27,8 @@ describe('flatMap', () => {
 		{ start: 0, end: 20, mapper: {} }
 	])('flatMap without mapper -> throw exception', ({ start, end, mapper }) => {
 		const flatMapJs = flatMap as any;
-		expect(() => flatMapJs(range(start, end))).toThrowError();
-		expect(() => flatMapJs(range(start, end), mapper)).toThrowError();
+		expect(() => flatMapJs(range(start, end))).toThrow();
+		expect(() => flatMapJs(range(start, end), mapper)).toThrow();
 	});
 
 	test.each([
@@ -43,11 +44,11 @@ describe('flatMap', () => {
 	test.each([
 		{ start: 0, end: 3, mapPredicate: v => range(v), expectedPredicateCalls: [3,6,9,12] },
 		{ start: 1, end: 4, mapPredicate: v => range(v), expectedPredicateCalls: [3,6,9,12] },
-		{ start: 1, end: 4, mapPredicate: (v, idx) => range(idx), expectedPredicateCalls: [3,6,9,12] },
-		{ start: 1, end: 5, mapPredicate: (v, idx) => range(idx), expectedPredicateCalls: [4,8,12,16] },
+		{ start: 1, end: 4, mapPredicate: (_v, idx) => range(idx), expectedPredicateCalls: [3,6,9,12] },
+		{ start: 1, end: 5, mapPredicate: (_v, idx) => range(idx), expectedPredicateCalls: [4,8,12,16] },
 		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v), expectedPredicateCalls: [4,8,12,16] }
 	])('flatMap(range($start, $end), $mapPredicate) allows re-run', ({ start, end, mapPredicate, expectedPredicateCalls }) => {
-		const mapPredicateSpy = vi.fn(mapPredicate as any);
+		const mapPredicateSpy = vi.fn(mapPredicate as Mapper<number, Iterable<number | string>>);
 		const mapped = flatMap<number, number | string>(range(start, end), mapPredicateSpy);
 		expect(mapPredicateSpy).not.toHaveReturned();
 
@@ -61,8 +62,8 @@ describe('flatMap', () => {
 	test.each([
 		{ start: 0, end: 3, mapPredicate: v => range(v), expectedResult: [0,0,1] },
 		{ start: 1, end: 4, mapPredicate: v => range(v), expectedResult: [0,0,1,0,1,2] },
-		{ start: 1, end: 4, mapPredicate: (v, idx) => range(idx), expectedResult: [0,0,1] },
-		{ start: 1, end: 5, mapPredicate: (v, idx) => range(idx), expectedResult: [0,0,1,0,1,2] },
+		{ start: 1, end: 4, mapPredicate: (_v, idx) => range(idx), expectedResult: [0,0,1] },
+		{ start: 1, end: 5, mapPredicate: (_v, idx) => range(idx), expectedResult: [0,0,1,0,1,2] },
 		{ start: 1, end: 5, mapPredicate: v => loremIpsum.substring(0, v), expectedResult: ['L', 'L', 'o', 'L', 'o', 'r', 'L', 'o', 'r', 'e' ] },
 	])('flatMap(range($start, $end), $mapPredicate) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
 		const r = collectToArray(flatMap<number, number | string>(range(start, end), mapPredicate));

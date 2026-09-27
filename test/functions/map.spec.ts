@@ -26,8 +26,8 @@ describe('map', () => {
 		{ start: 0, end: 20, mapper: {} }
 	])('map without mapper -> throw exception', ({ start, end, mapper }) => {
 		const mapJs = map as any;
-		expect(() => mapJs(range(start, end))).toThrowError();
-		expect(() => mapJs(range(start, end), mapper)).toThrowError();
+		expect(() => mapJs(range(start, end))).toThrow();
+		expect(() => mapJs(range(start, end), mapper)).toThrow();
 	});
 
 	test.each([

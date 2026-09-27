@@ -22,8 +22,8 @@ describe('some', () => {
 		{ start: 0, end: 20, reducer: {} }
 	])('some without mapper -> throw exception', ({ start, end, reducer }) => {
 		const someJs = some as any;
-		expect(() => someJs(range(start, end))).toThrowError();
-		expect(() => someJs(range(start, end), reducer)).toThrowError();
+		expect(() => someJs(range(start, end))).toThrow();
+		expect(() => someJs(range(start, end), reducer)).toThrow();
 	});
 
 	test.each([

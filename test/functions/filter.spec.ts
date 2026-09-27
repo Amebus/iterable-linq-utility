@@ -24,8 +24,8 @@ describe('filter', () => {
 		{ start: 0, end: 20, filterPredicate: {} }
 	])('filter without filter predicate -> throw exception', ({ start, end, filterPredicate }) => {
 		const filterJs = filter as any;
-		expect(() => filterJs(range(start, end))).toThrowError();
-		expect(() => filterJs(range(start, end), filterPredicate)).toThrowError();
+		expect(() => filterJs(range(start, end))).toThrow();
+		expect(() => filterJs(range(start, end), filterPredicate)).toThrow();
 	});
 
 	test.each([

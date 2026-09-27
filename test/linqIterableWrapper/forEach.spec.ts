@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
-import { unit } from './_types';
 
 import { IterableLinq } from './_linqIterable';
 
@@ -28,9 +27,9 @@ describe('IterableLinq.forEach', () => {
 		{  iterable: [ 0,1,2,3,4 ], action: v => { tempArr.push(v); return unit(); }, expectedResult: [0,1,2,3,4] },
 		{  iterable: [ -4,-5 ], action: v => { tempArr.push(v); return unit(); }, expectedResult: [-4,-5] },
 		{  iterable: 'ciao', action: v => { tempArr.push(v); return unit(); }, expectedResult: ['c','i','a','o'] },
-		{  iterable: [ 0,1,2,3,4 ], action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3,4] },
-		{  iterable: [ -4,-5 ], action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1] },
-		{  iterable: 'ciao', action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3] },
+		{  iterable: [ 0,1,2,3,4 ], action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3,4] },
+		{  iterable: [ -4,-5 ], action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1] },
+		{  iterable: 'ciao', action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3] },
 	])('IterableLinq.forEach($iterable, $action) -> $expectedResult', ({ iterable, action, expectedResult }) => {
 		IterableLinq.from<number | string>(iterable).forEach(action);
 		expect(tempArr).toEqual(expectedResult);
@@ -60,7 +59,7 @@ describe('IterableLinq.forEachAsync', () => {
 		});
 	};
 
-	const asyncActionIndex = (v, idx) => {
+	const asyncActionIndex = (_v, idx) => {
 		return new Promise<Unit>(resolve => {
 			tempArr.push(idx);
 			resolve(unit());

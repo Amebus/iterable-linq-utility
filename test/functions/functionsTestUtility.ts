@@ -26,13 +26,13 @@ export function returnClosesTheIterator<T>(iterable: Iterable<T>, returnValue: a
 }
 
 export function withoutInputIterableThrowsException(fn: any) {
-	expect(() => fn()).toThrowError();
-	expect(() => fn(undefined)).toThrowError();
-	expect(() => fn(null)).toThrowError();
+	expect(() => fn()).toThrow();
+	expect(() => fn(undefined)).toThrow();
+	expect(() => fn(null)).toThrow();
 }
 
 export async function withoutInputIterableThrowsExceptionAsync(fn: any) {
-	await expect(() => fn()).rejects.toThrowError();
-	await expect(() => fn(undefined)).rejects.toThrowError();
-	await expect(() => fn(null)).rejects.toThrowError();
+	await expect(() => fn()).rejects.toThrow();
+	await expect(() => fn(undefined)).rejects.toThrow();
+	await expect(() => fn(null)).rejects.toThrow();
 }

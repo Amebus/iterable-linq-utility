@@ -28,17 +28,17 @@ describe('forEach', () => {
 		{ start: 0, end: 20, action: {} }
 	])('forEach without action -> throw exception', ({ start, end, action }) => {
 		const forEachJs = forEach as any;
-		expect(() => forEachJs(range(start, end))).toThrowError();
-		expect(() => forEachJs(range(start, end), action)).toThrowError();
+		expect(() => forEachJs(range(start, end))).toThrow();
+		expect(() => forEachJs(range(start, end), action)).toThrow();
 	});
 
 	test.each([
 		{  iterable: [ 0,1,2,3,4 ], action: v => { tempArr.push(v); return unit(); }, expectedResult: [0,1,2,3,4] },
 		{  iterable: [ -4,-5 ], action: v => { tempArr.push(v); return unit(); }, expectedResult: [-4,-5] },
 		{  iterable: 'ciao', action: v => { tempArr.push(v); return unit(); }, expectedResult: ['c','i','a','o'] },
-		{  iterable: [ 0,1,2,3,4 ], action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3,4] },
-		{  iterable: [ -4,-5 ], action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1] },
-		{  iterable: 'ciao', action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3] },
+		{  iterable: [ 0,1,2,3,4 ], action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3,4] },
+		{  iterable: [ -4,-5 ], action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1] },
+		{  iterable: 'ciao', action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3] },
 	])('forEach($iterable, $action) -> $expectedResult', ({ iterable, action, expectedResult }) => {
 		forEach<string | number>(iterable, action);
 		expect(tempArr).toEqual(expectedResult);
@@ -66,8 +66,8 @@ describe('forEachAsync', () => {
 		{ start: 0, end: 20, action: {} }
 	])('forEachAsync without action -> throw exception', async ({ start, end, action }) => {
 		const forEachAsyncJs = forEachAsync as any;
-		await expect(() => forEachAsyncJs(range(start, end))).rejects.toThrowError();
-		await expect(() => forEachAsyncJs(range(start, end), action)).rejects.toThrowError();
+		await expect(() => forEachAsyncJs(range(start, end))).rejects.toThrow();
+		await expect(() => forEachAsyncJs(range(start, end), action)).rejects.toThrow();
 	});
 
 	const asyncActionValue = v => {
@@ -77,7 +77,7 @@ describe('forEachAsync', () => {
 		});
 	};
 
-	const asyncActionIndex = (v, idx) => {
+	const asyncActionIndex = (_v, idx) => {
 		return new Promise<Unit>(resolve => {
 			tempArr.push(idx);
 			resolve(unit());
