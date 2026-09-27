@@ -38,6 +38,23 @@ The simplest and most known **Transformation** is certainly the `map`, which is 
 Other famous [Transformations](api-reference/transformations.md) are: `filter` and `flatMap` to name some of them.  
 The full list of [Transformations](api-reference/transformations.md) provided by `Linq ITerable Utility` can be found [here](api-reference/transformations.md).  
 
+## The `Unit` type
+
+Callbacks that have nothing to return, like the ones passed to `forEach`, `forEachAsync`, `tap` and `tapChain`, return `unit()`: the only value of the `Unit` type.
+`Unit` is nominal, so the compiler rejects a callback that returns anything else (a number, a string, an object, `undefined`).
+
+```typescript
+import * as IterableLinq from 'iterable-linq-utility';
+import { unit } from 'iterable-linq-utility';
+
+IterableLinq
+    .from([1, 2, 3])
+    .forEach(v => {
+        console.log(v);
+        return unit();
+    });
+```
+
 ## Deferred Execution
 
 
