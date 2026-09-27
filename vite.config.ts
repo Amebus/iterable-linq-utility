@@ -5,10 +5,10 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
 	build: {
 		lib: {
-			entry: resolve(__dirname, 'src/index.ts'),
+			entry: resolve(import.meta.dirname, 'src/index.ts'),
 			name: 'interable-linq-utility',
 			fileName: 'interable-linq-utility',
 		},
 	},
-	plugins: [dts({ entryRoot: 'src' })],
+	plugins: [dts({ entryRoot: 'src', bundleTypes: true })],
 });

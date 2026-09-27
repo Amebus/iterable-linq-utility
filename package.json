@@ -8,16 +8,22 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/interable-linq-utility.js",
-      "require": "./dist/interable-linq-utility.umd.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/interable-linq-utility.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/interable-linq-utility.umd.cjs"
+      }
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && vite build",
+    "build": "tsc -p tsconfig.build.json && vite build && cp dist/index.d.ts dist/index.d.cts",
+    "check:package": "attw --pack .",
     "dev": "vite",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
@@ -43,7 +49,9 @@
     "utility"
   ],
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@eslint/js": "^10.0.1",
+    "@microsoft/api-extractor": "^7.59.2",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^24.19.0",
     "@vitest/coverage-istanbul": "^5.0.2",
