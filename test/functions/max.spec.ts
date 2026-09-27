@@ -97,6 +97,7 @@ describe('max', () => {
 		{ start: 10, end: 50, comparer: (a,_b) => a < 100 ? -1 : 1, expectedResult: 49 },
 
 		{ start: 10, end: 50, comparer: (_a,b) => b < 10 ? 1 : -1, expectedResult: 49 },
+		{ start: 10, end: 50, comparer: (_a,b) => b > 10 ? 1 : -1, expectedResult: 10 },
 		{ start: 10, end: 50, comparer: (_a,b) => b > 100 ? 1 : -1, expectedResult: 49 },
 		{ start: 10, end: 50, comparer: (_a,b) => b < 100 ? 1 : -1, expectedResult: 10 },
 	])('max(range($start, $end), $comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
