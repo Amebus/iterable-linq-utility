@@ -1,5 +1,5 @@
 import { iterableLinqBrand } from './iterableLinqBrand';
-import { IterableLinqWrapper } from './linqIterable';
+import { IterableLinqWrapper, toChain } from './linqIterable';
 import type { ChainMethod, IIterableLinq } from './types';
 import { Validations } from './utils';
 
@@ -48,7 +48,8 @@ function validateMethod(name: unknown, implementation: unknown): void {
  */
 export function extend<K extends keyof IIterableLinq<unknown>>(name: K, implementation: ChainMethod): void {
 	validateMethod(name, implementation);
-	if (name in wrapperPrototype())
+	// check an instance, not only the prototype: instance fields would shadow the new method
+	if (name in toChain([]))
 		throw new Error(`"${String(name)}" already exists on IIterableLinq: use override() to replace it`);
 	defineChainMethod(name as string, implementation);
 }

@@ -115,6 +115,11 @@ describe('extend', () => {
 		expect(hasOwn('toString')).toBe(false);
 	});
 
+	test('throws for a name used by the chain instances', () => {
+		expect(() => extend('iterable' as any, double)).toThrow(Error);
+		expect(hasOwn('iterable')).toBe(false);
+	});
+
 	test('throws for invalid input', () => {
 		expect(() => extend('' as any, double)).toThrow(Error);
 		expect(() => extend('double', 42 as any)).toThrow(Error);
