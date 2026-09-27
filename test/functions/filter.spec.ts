@@ -88,4 +88,9 @@ describe('filter', () => {
 		expect([a.next(), b.next(), a.next(), b.next()].map(r => r.value)).toEqual([2, 2, 4, 4]);
 	});
 
+	test('a throwing predicate propagates the same error', () => {
+		const err = new Error('boom');
+		expect(() => collectToArray(filter([1], () => { throw err; }))).toThrow(err);
+	});
+
 });

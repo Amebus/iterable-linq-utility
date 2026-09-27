@@ -74,4 +74,9 @@ describe('tap', () => {
 		expect(state.closed).toBe(true);
 	});
 
+	test('a throwing tapper propagates the same error', () => {
+		const err = new Error('boom');
+		expect(() => collectToArray(tap([1], () => { throw err; }))).toThrow(err);
+	});
+
 });
