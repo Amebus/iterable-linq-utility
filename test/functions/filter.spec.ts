@@ -6,7 +6,7 @@ import {
 	collectToArray,
 	filter,
 	range
-} from './_functions';
+} from '@/functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 

@@ -5,9 +5,9 @@ import { expectAction } from '../_helpers/operationKind';
 import {
 	forEach, forEachAsync,
 	range
-} from './_functions';
+} from '@/functions';
 import { withoutInputIterableThrowsException, withoutInputIterableThrowsExceptionAsync } from './functionsTestUtility';
-import { Unit, unit } from './_types';
+import { Unit, unit } from '@/types';
 
 describe('forEach', () => {
 

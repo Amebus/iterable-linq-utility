@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
+import { spyIterable } from '../_helpers/operationKind';
 import { expectAction } from '../_helpers/operationKind';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
@@ -7,8 +8,8 @@ import {
 	filter,
 	materialize,
 	range
-} from './_functions';
-import { LinkedListCollection } from './_collections';
+} from '@/functions';
+import { LinkedListCollection } from '@/collections';
 
 describe('materialize', () => {
 
@@ -29,7 +30,6 @@ describe('materialize', () => {
 	])('materialize($iterable) generate new iterable with same data', ({ iterable }) => {
 		const materialized = materialize(iterable as any);
 		expect(materialized).not.toBe(iterable);
-		expect(materialized['source']).not.toBe(iterable);
 		expect(materialized).not.toEqual(iterable);
 		expect(collectToArray(materialized)).toEqual(collectToArray(iterable as any));
 
@@ -99,6 +99,15 @@ describe('materialize', () => {
 
 	test('materialize is action', () => {
 		expectAction(source => materialize(source));
+	});
+
+	test('materialize reads the source once, when called', () => {
+		const source = spyIterable([1, 2, 3]);
+		const materialized = materialize(source);
+		expect(source.stats.iterations).toBe(1);
+		expect(collectToArray(materialized)).toEqual([1, 2, 3]);
+		expect(collectToArray(materialized)).toEqual([1, 2, 3]);
+		expect(source.stats.iterations).toBe(1);
 	});
 
 });

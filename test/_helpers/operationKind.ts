@@ -1,6 +1,6 @@
 import { expect } from 'vitest';
 
-import { isFunction } from '../../src/utils';
+import { isFunction } from '@/utils';
 
 export interface ISpyIterableStats {
 	/** Number of times `[Symbol.iterator]` has been called */

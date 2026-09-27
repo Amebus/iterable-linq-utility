@@ -5,7 +5,7 @@ import { expectAction } from '../_helpers/operationKind';
 import {
 	range,
 	some
-} from './_functions';
+} from '@/functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('some', () => {

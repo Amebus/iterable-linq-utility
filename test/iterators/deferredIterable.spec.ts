@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { DeferredIterable } from '../../src/iterators';
+import { DeferredIterable } from '@/iterators';
 
 describe('DeferredIterable', () => {
 

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 import { withoutInputFunctionThrowsException, withoutInputFunctionThrowsExceptionAsync } from './linqIterableWrapperTestUtility';
 

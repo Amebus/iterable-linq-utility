@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 describe('IterableLinq.repeat', () => {
 

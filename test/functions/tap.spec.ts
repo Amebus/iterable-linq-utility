@@ -6,8 +6,8 @@ import {
 	collectToArray,
 	range,
 	tap
-} from './_functions';
-import { unit } from './_types';
+} from '@/functions';
+import { unit } from '@/types';
 import { returnClosesTheIterator } from './functionsTestUtility';
 
 describe('tap', () => {

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 
-import { BaseIterator } from '../../src/iterators';
-import { getContinueIteratorResult, getDoneIteratorResult } from '../../src/utils';
+import { BaseIterator } from '@/iterators';
+import { getContinueIteratorResult, getDoneIteratorResult } from '@/utils';
 
 class CountTo3 extends BaseIterator<number> {
 	returnCalls = 0;

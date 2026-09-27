@@ -8,9 +8,9 @@ import {
 	map,
 	range,
 	tap
-} from './_functions';
+} from '@/functions';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-import { unit } from './_types';
+import { unit } from '@/types';
 
 describe('map', () => {
 

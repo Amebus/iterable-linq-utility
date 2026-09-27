@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
-import { unit } from './_types';
+import { unit } from '@/types';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 const tapper = () => unit();
 
@@ -18,9 +18,7 @@ describe('IterableLinq.memoize', () => {
 	test.each([
 		{ start: 0, end: 0, expectedTapperCalls: [0,0,0,0] },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20] },
-		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20] },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20] },
-		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: false },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: false },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: false }
 	])('IterableLinq.memoize() saves data - IterableLinq.fromRange($start, $end)', ({ start, end, expectedTapperCalls, allowPartialMemoization }) => {

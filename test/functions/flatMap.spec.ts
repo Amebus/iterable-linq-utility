@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { Mapper } from '../../src/types';
+import type { Mapper } from '@/types';
 import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
@@ -7,7 +7,7 @@ import {
 	collectToArray,
 	flatMap,
 	range
-} from './_functions';
+} from '@/functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 

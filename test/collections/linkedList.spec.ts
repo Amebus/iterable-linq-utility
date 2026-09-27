@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { LinkedListCollection } from './_collections';
+import { LinkedListCollection } from '@/collections';
 
 const { from, LinkedList, LinkedListIterator } = LinkedListCollection;
 

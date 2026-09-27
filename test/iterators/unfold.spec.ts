@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { unfold } from '../../src/iterators';
+import { unfold } from '@/iterators';
 
 describe('unfold', () => {
 

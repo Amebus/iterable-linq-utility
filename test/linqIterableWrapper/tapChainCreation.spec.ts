@@ -1,13 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
-import { unit } from './_types';
+import { unit } from '@/types';
 
 describe('IterableLinq.tapChainCreation', () => {
 
 	test.each([
-		{ start: 0, end: 20 },
 		{ start: 0, end: 20 },
 		{ start: -10, end: 10 }
 	])('IterableLinq.tapChainCreation without mapper -> throw exception', ({ start, end }) => {
@@ -15,7 +14,6 @@ describe('IterableLinq.tapChainCreation', () => {
 	});
 
 	test.each([
-		{ end: 10 },
 		{ end: 10 },
 		{ end: 30 }
 	])('IterableLinq.fromRange($end).tapChainCreation() to being hit 2 times', ({ end }) => {

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 describe('IterableLinq.max', () => {
 
@@ -89,7 +89,6 @@ describe('IterableLinq.max', () => {
 
 		{ start: 10, end: 50, comparer: (_a,b) => b < 10 ? 1 : -1, expectedResult: 49 },
 		{ start: 10, end: 50, comparer: (_a,b) => b > 100 ? 1 : -1, expectedResult: 49 },
-		{ start: 10, end: 50, comparer: (_a,b) => b < 10 ? 1 : -1, expectedResult: 49 },
 		{ start: 10, end: 50, comparer: (_a,b) => b < 100 ? 1 : -1, expectedResult: 10 },
 	])('IterableLinq.fromRange($start, $end).max($comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
 		const r = IterableLinq.fromRange(start,end).max(comparer);

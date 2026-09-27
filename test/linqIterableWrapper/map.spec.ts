@@ -1,13 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 describe('IterableLinq.map', () => {
 
 	test.each([
-		{ start: 0, end: 20 },
 		{ start: 0, end: 20 },
 		{ start: -10, end: 10 }
 	])('IterableLinq.map without mapper -> throw exception', ({ start, end }) => {

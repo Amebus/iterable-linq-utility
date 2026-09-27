@@ -1,13 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
-import { unit } from './_types';
+import * as IterableLinq from '@/index';
+import { unit } from '@/types';
 
 describe('IterableLinq.tapChain', () => {
 
 	test.each([
-		{ end: 10 },
 		{ end: 10 },
 		{ end: 30 }
 	])('IterableLinq.fromRange($end).tapChain() to call taper function 2 times', ({ end }) => {

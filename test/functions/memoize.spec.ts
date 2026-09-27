@@ -9,10 +9,10 @@ import {
 	range,
 	some,
 	tap
-} from './_functions';
+} from '@/functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-import { unit } from './_types';
+import { unit } from '@/types';
 
 const tapper = () => unit();
 
@@ -38,9 +38,7 @@ describe('memoize', () => {
 
 	test.each([
 		{ start: 0, end: 20 },
-		{ start: 0, end: 20 },
 		{ start: -10, end: 10 },
-		{ start: 0, end: 20, allowPartialMemoization: false },
 		{ start: 0, end: 20, allowPartialMemoization: false },
 		{ start: -10, end: 10, allowPartialMemoization: false }
 	])('memoize() is transformation - range($start, $end)', ({ start, end, allowPartialMemoization }) => {
@@ -54,9 +52,7 @@ describe('memoize', () => {
 	test.each([
 		{ start: 0, end: 0, expectedTapperCalls: [0,0,0,0] },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20] },
-		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20] },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20] },
-		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: true },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: true },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: true }
 	])('memoize() saves data - range($start, $end)', ({ start, end, expectedTapperCalls, allowPartialMemoization }) => {

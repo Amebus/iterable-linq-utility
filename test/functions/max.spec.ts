@@ -4,7 +4,7 @@ import { expectAction } from '../_helpers/operationKind';
 import {
 	max,
 	range
-} from './_functions';
+} from '@/functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('max', () => {
@@ -98,7 +98,6 @@ describe('max', () => {
 
 		{ start: 10, end: 50, comparer: (_a,b) => b < 10 ? 1 : -1, expectedResult: 49 },
 		{ start: 10, end: 50, comparer: (_a,b) => b > 100 ? 1 : -1, expectedResult: 49 },
-		{ start: 10, end: 50, comparer: (_a,b) => b < 10 ? 1 : -1, expectedResult: 49 },
 		{ start: 10, end: 50, comparer: (_a,b) => b < 100 ? 1 : -1, expectedResult: 10 },
 	])('max(range($start, $end), $comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
 		const r = max(range(start,end), comparer);

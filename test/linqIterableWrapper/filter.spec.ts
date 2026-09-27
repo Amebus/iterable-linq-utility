@@ -1,13 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 describe('IterableLinq.filter', () => {
 
 	test.each([
-		{ start: 0, end: 20 },
 		{ start: 0, end: 20 },
 		{ start: -10, end: 10 }
 	])('IterableLinq.filter without filter predicate -> throw exception', ({ start, end }) => {

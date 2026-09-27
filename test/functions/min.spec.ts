@@ -4,7 +4,7 @@ import { expectAction } from '../_helpers/operationKind';
 import {
 	min,
 	range
-} from './_functions';
+} from '@/functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('min', () => {
@@ -98,7 +98,6 @@ describe('min', () => {
 
 		{ start: 10, end: 50, comparer: (_a,b) => b < 10 ? 1 : -1, expectedResult: 10 },
 		{ start: 10, end: 50, comparer: (_a,b) => b > 100 ? 1 : -1, expectedResult: 10 },
-		{ start: 10, end: 50, comparer: (_a,b) => b < 10 ? 1 : -1, expectedResult: 10 },
 		{ start: 10, end: 50, comparer: (_a,b) => b < 100 ? 1 : -1, expectedResult: 49 },
 	])('min(range($start, $end), $comparer) -> $expectedResult', ({ start, end, comparer, expectedResult }) => {
 		const r = min(range(start,end), comparer);

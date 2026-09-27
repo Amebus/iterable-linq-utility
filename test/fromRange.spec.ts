@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { IIterableLinq } from '../src';
+import type { IIterableLinq } from '@/index';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 describe('IterableLinq.fromRange', () => {
 

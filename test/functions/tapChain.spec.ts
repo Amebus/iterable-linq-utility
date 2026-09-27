@@ -5,13 +5,12 @@ import {
 	collectToArray,
 	range,
 	tapChain
-} from './_functions';
-import { unit } from './_types';
+} from '@/functions';
+import { unit } from '@/types';
 
 describe('tapChain', () => {
 
 	test.each([
-		{ end: 10 },
 		{ end: 10 },
 		{ end: 30 }
 	])('tapChain(range($end)) to call taper function 2 times', ({ end }) => {

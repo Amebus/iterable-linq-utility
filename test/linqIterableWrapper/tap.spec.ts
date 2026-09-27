@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
-import { unit } from './_types';
+import * as IterableLinq from '@/index';
+import { unit } from '@/types';
 
 describe('IterableLinq.tap', () => {
 
