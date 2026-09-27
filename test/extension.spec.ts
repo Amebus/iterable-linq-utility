@@ -1,7 +1,7 @@
-import { afterEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import * as IterableLinq from '@/index';
-import { empty, extend, from, fromRange, isIterableLinq, repeat } from '@/index';
+import { empty, extend, from, fromRange, Functions, isIterableLinq, override, repeat } from '@/index';
 import { unit } from '@/types';
 
 declare module '@/types' {
@@ -130,6 +130,75 @@ describe('extend', () => {
 		const typeOnly = () => {
 			// @ts-expect-error 'notDeclared' is not a key of IIterableLinq
 			extend('notDeclared', double);
+		};
+		expect(typeOnly).toBeTypeOf('function');
+	});
+
+});
+
+describe('override', () => {
+
+	let savedMap: PropertyDescriptor | undefined;
+	let savedFilter: PropertyDescriptor | undefined;
+
+	beforeEach(() => {
+		savedMap = Object.getOwnPropertyDescriptor(proto, 'map');
+		savedFilter = Object.getOwnPropertyDescriptor(proto, 'filter');
+	});
+
+	afterEach(() => {
+		Object.defineProperty(proto, 'map', savedMap!);
+		Object.defineProperty(proto, 'filter', savedFilter!);
+		if (hasOwn('twice'))
+			delete proto.twice;
+	});
+
+	const overridden = function () {
+		return from(['overridden']);
+	};
+
+	test('replaces a library method on chains created before and after the call', () => {
+		const before = from([1, 2]);
+		override('map', overridden);
+		expect(before.map(v => v).collectToArray()).toEqual(['overridden']);
+		expect(from([3]).map(v => v).collectToArray()).toEqual(['overridden']);
+	});
+
+	test('Functions.map is unaffected', () => {
+		override('map', overridden);
+		expect(Functions.collectToArray(Functions.map([1], v => v + 1))).toEqual([2]);
+	});
+
+	test('other methods are unaffected', () => {
+		override('map', overridden);
+		expect(from([1, 2, 3]).filter(v => v > 1).collectToArray()).toEqual([2, 3]);
+	});
+
+	test('replaces a method added by extend', () => {
+		extend('twice', function () { return from([1]); });
+		override('twice', function () { return from([42]); });
+		expect(from([1]).twice().collectToArray()).toEqual([42]);
+	});
+
+	test('throws for a name that does not exist, suggesting extend', () => {
+		expect(() => override('chunk', overridden)).toThrow(/extend/);
+	});
+
+	test('throws for Object.prototype members', () => {
+		expect(() => override('toString' as any, overridden)).toThrow(Error);
+		expect(() => override('constructor' as any, overridden)).toThrow(Error);
+		expect(() => override('hasOwnProperty' as any, overridden)).toThrow(Error);
+	});
+
+	test('throws for invalid input', () => {
+		expect(() => override('' as any, overridden)).toThrow(Error);
+		expect(() => override('map', 42 as any)).toThrow(Error);
+	});
+
+	test('the name must be declared on IIterableLinq', () => {
+		const typeOnly = () => {
+			// @ts-expect-error 'notDeclared' is not a key of IIterableLinq
+			override('notDeclared', overridden);
 		};
 		expect(typeOnly).toBeTypeOf('function');
 	});

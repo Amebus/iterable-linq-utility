@@ -52,3 +52,21 @@ export function extend<K extends keyof IIterableLinq<unknown>>(name: K, implemen
 		throw new Error(`"${String(name)}" already exists on IIterableLinq: use override() to replace it`);
 	defineChainMethod(name as string, implementation);
 }
+
+/**
+ * Replaces an existing method of every chain: a library method or one added with `extend`.
+ * Typical use: a library release adds a method with the same name as one of your extensions,
+ * so `extend` throws at start-up; switch that call to `override` to keep your version.
+ * Only the fluent method changes: `Functions` and the library internals keep the original behaviour.
+ * @param name an existing chain method; `constructor` and `Object.prototype` members are rejected
+ * @param implementation the new method; `this` is the chain, typed `IIterableLinq<unknown>`
+ * @throws Error if `name` is not a chain method (use `extend` to add it), is empty, or `implementation` is not a function
+ */
+export function override<K extends keyof IIterableLinq<unknown>>(name: K, implementation: ChainMethod): void {
+	validateMethod(name, implementation);
+	const key: string = name as string;
+	const isChainMethod = key !== 'constructor' && Object.prototype.hasOwnProperty.call(wrapperPrototype(), key);
+	if (!isChainMethod)
+		throw new Error(`"${key}" is not a method of IIterableLinq: use extend() to add it`);
+	defineChainMethod(key, implementation);
+}

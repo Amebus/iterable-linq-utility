@@ -62,6 +62,6 @@ export function repeat<T>(value: T, count: number): IIterableLinq<T> {
 
 export { Functions };
 
-export { extend, isIterableLinq } from './extension';
+export { extend, isIterableLinq, override } from './extension';
 
 export * from './types';
