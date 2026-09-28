@@ -4,6 +4,7 @@ import { Validations } from '../utils';
 
 /**
  * Lazily keeps only the values that satisfy `predicate`.
+ * If `predicate` throws, the source is closed and the error propagates.
  * @operation `Transformation`
  * @param iterable - the source `Iterable`
  * @param predicate - called with each value and its index; return `true` to keep the value
@@ -28,7 +29,16 @@ class FilterIterator<T> extends SourceIterator<T, T> {
 
 	protected advance(): IteratorResult<T> {
 		for (let n = this.source.next(); ; n = this.source.next()) {
-			if (n.done === true || this.predicate(n.value, this.index++))
+			if (n.done === true)
+				return n;
+			let keep: boolean;
+			try {
+				keep = this.predicate(n.value, this.index++);
+			} catch (error) {
+				this.closeAfterCallbackError();
+				throw error;
+			}
+			if (keep)
 				return n;
 		}
 	}

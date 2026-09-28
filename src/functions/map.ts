@@ -4,6 +4,7 @@ import { getContinueIteratorResult, Validations } from '../utils';
 
 /**
  * Lazily transforms each value with `mapper`.
+ * If `mapper` throws, the source is closed and the error propagates.
  * @operation `Transformation`
  * @param iterable - the source `Iterable`
  * @param mapper - called with each value and its index; returns the new value
@@ -30,6 +31,13 @@ class MapIterator<T, R> extends SourceIterator<T, R> {
 		const n = this.source.next();
 		if (n.done === true)
 			return n;
-		return getContinueIteratorResult(this.mapper(n.value, this.index++));
+		let value: R;
+		try {
+			value = this.mapper(n.value, this.index++);
+		} catch (error) {
+			this.closeAfterCallbackError();
+			throw error;
+		}
+		return getContinueIteratorResult(value);
 	}
 }

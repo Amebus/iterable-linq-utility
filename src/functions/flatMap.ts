@@ -5,6 +5,7 @@ import { Validations } from '../utils';
 /**
  * Lazily maps each value to an `Iterable` and flattens the results.
  * Each inner `Iterable` is read completely before the next value is mapped.
+ * If `mapper` or an inner `Iterable` throws, the source is closed and the error propagates.
  * @operation `Transformation`
  * @param iterable - the source `Iterable`
  * @param mapper - called with each value and its index; returns the `Iterable` to flatten
@@ -38,12 +39,17 @@ class FlatMapIterator<T, R> extends SourceIterator<T, R> {
 			const n = it.source.next();
 			if (n.done === true)
 				return n;
-			it.inner = it.mapper(n.value, it.index++)[Symbol.iterator]();
+			try {
+				it.inner = it.mapper(n.value, it.index++)[Symbol.iterator]();
+			} catch (error) {
+				it.closeAfterCallbackError();
+				throw error;
+			}
 			it.state = 'inner';
 			return undefined;
 		},
 		inner: it => {
-			const n = it.inner!.next();
+			const n = FlatMapIterator.nextInner(it);
 			if (n.done !== true)
 				return n;
 			it.inner = undefined;
@@ -72,6 +78,19 @@ class FlatMapIterator<T, R> extends SourceIterator<T, R> {
 			this.inner?.return?.(value);
 		} finally {
 			super.onReturn(value);
+		}
+	}
+
+	/**
+	 * Reads the inner iterator. If it throws, only the outer source is closed: the inner iterator already failed.
+	 */
+	private static nextInner<T, R>(it: FlatMapIterator<T, R>): IteratorResult<R> {
+		try {
+			return it.inner!.next();
+		} catch (error) {
+			it.inner = undefined;
+			it.closeAfterCallbackError();
+			throw error;
 		}
 	}
 }

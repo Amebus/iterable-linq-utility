@@ -40,6 +40,7 @@ export interface IIterableLinqBase<T> {
 
 	/**
 	 * Keeps only the values that satisfy `predicate`.
+	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
 	 * @param predicate - called with each value and its index; return `true` to keep the value
 	 * @returns a new chain with the kept values
@@ -55,6 +56,7 @@ export interface IIterableLinqBase<T> {
 	/**
 	 * Maps each value to an `Iterable` and flattens the results into one chain.
 	 * Each inner `Iterable` is read completely before the next value of the chain is mapped.
+	 * If `mapper` or an inner `Iterable` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
 	 * @param mapper - called with each value and its index; returns the `Iterable` to flatten
 	 * @returns a new chain with the flattened values
@@ -106,6 +108,7 @@ export interface IIterableLinqBase<T> {
 
 	/**
 	 * Transforms each value with `mapper`.
+	 * If `mapper` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
 	 * @param mapper - called with each value and its index; returns the new value
 	 * @returns a new chain with the mapped values
@@ -213,6 +216,7 @@ export interface IIterableLinqBase<T> {
 
 	/**
 	 * Calls `tapper` on each value as it flows through the chain, without changing it.
+	 * If `tapper` throws, the source is closed and the error propagates.
 	 * `tapper` runs only when the chain runs, once per value and per run.
 	 * @operation `Tap`
 	 * @param tapper - called with each value and its index; returns `unit()`

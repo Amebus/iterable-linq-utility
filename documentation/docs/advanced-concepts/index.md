@@ -38,7 +38,7 @@ Every [Action](../api-reference/actions.md) runs the chain again, from the sourc
 
 - **Mutable sources.** The chain does not copy its source. If the source changes between two runs, the second run sees the new values.
 - **Side effects run again.** Callbacks passed to transformations and taps run on every run of the chain. Use [materialize](../api-reference/actions.md#materialize) or [memoize](../api-reference/transformations.md#memoize) when a callback is expensive or must run once.
-- **Closing the source.** Actions that stop early, like [some](../api-reference/actions.md#some), close the source (they call its `return()` method), as a `for…of` loop does.
+- **Closing the source.** Actions that stop early, like [some](../api-reference/actions.md#some), close the source (they call its `return()` method), as a `for…of` loop does. When the callback of `map`, `filter`, `flatMap` or `tap` throws, the chain closes the source too, and every later read of that iteration is done. An error thrown by the source itself does not close it: the source has already failed.
 
 ## Memoize in-depth
 

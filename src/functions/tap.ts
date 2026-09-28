@@ -4,6 +4,7 @@ import { Validations } from '../utils';
 
 /**
  * Lazily calls `tapper` on each value as it flows through, without changing it.
+ * If `tapper` throws, the source is closed and the error propagates.
  * @operation `Tap`
  * @param iterable - the source `Iterable`
  * @param tapper - called with each value and its index; returns `unit()`
@@ -29,8 +30,14 @@ class TapIterator<T> extends SourceIterator<T, T> {
 
 	protected advance(): IteratorResult<T> {
 		const n = this.source.next();
-		if (n.done !== true)
+		if (n.done === true)
+			return n;
+		try {
 			this.tapper(n.value, this.index++);
+		} catch (error) {
+			this.closeAfterCallbackError();
+			throw error;
+		}
 		return n;
 	}
 }
