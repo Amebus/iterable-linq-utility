@@ -13,7 +13,7 @@ Should the library keep its own operations, wrap the native helpers, or step asi
 ## Decision Drivers
 
 * The library's value is the LINQ model: re-runnable chains ([ADR 0004](0004-re-runnable-deferred-chains.md)) over any `Iterable`
-* Operations the helpers do not have: `min`/`max` with comparers, `memoize`, `materialize`, `repeat`, ranges, taps, `forEachAsync`, extensions
+* Operations the helpers do not have: `min`/`max` with comparers, `memoize`, `materialize`, `repeat`, `ranges`, `taps`, `forEachAsync`, extensions
 * Behaviour close to the helpers where they overlap, so users are not surprised
 * Runtimes without the helpers (older browsers and Node versions)
 
