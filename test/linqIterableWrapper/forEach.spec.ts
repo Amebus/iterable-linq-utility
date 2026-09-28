@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 import { withoutInputFunctionThrowsException, withoutInputFunctionThrowsExceptionAsync } from './linqIterableWrapperTestUtility';
 
@@ -26,9 +27,9 @@ describe('IterableLinq.forEach', () => {
 		{  iterable: [ 0,1,2,3,4 ], action: v => { tempArr.push(v); return unit(); }, expectedResult: [0,1,2,3,4] },
 		{  iterable: [ -4,-5 ], action: v => { tempArr.push(v); return unit(); }, expectedResult: [-4,-5] },
 		{  iterable: 'ciao', action: v => { tempArr.push(v); return unit(); }, expectedResult: ['c','i','a','o'] },
-		{  iterable: [ 0,1,2,3,4 ], action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3,4] },
-		{  iterable: [ -4,-5 ], action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1] },
-		{  iterable: 'ciao', action: (v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3] },
+		{  iterable: [ 0,1,2,3,4 ], action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3,4] },
+		{  iterable: [ -4,-5 ], action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1] },
+		{  iterable: 'ciao', action: (_v, idx) => { tempArr.push(idx); return unit(); }, expectedResult: [0,1,2,3] },
 	])('IterableLinq.forEach($iterable, $action) -> $expectedResult', ({ iterable, action, expectedResult }) => {
 		IterableLinq.from<number | string>(iterable).forEach(action);
 		expect(tempArr).toEqual(expectedResult);
@@ -51,7 +52,6 @@ describe('IterableLinq.forEachAsync', () => {
 		withoutInputFunctionThrowsExceptionAsync(IterableLinq.fromRange(start, end), 'forEachAsync');
 	});
 
-	
 	const asyncActionValue = v => {
 		return new Promise<Unit>(resolve => {
 			tempArr.push(v);
@@ -59,7 +59,7 @@ describe('IterableLinq.forEachAsync', () => {
 		});
 	};
 
-	const asyncActionIndex = (v, idx) => {
+	const asyncActionIndex = (_v, idx) => {
 		return new Promise<Unit>(resolve => {
 			tempArr.push(idx);
 			resolve(unit());
@@ -76,6 +76,27 @@ describe('IterableLinq.forEachAsync', () => {
 	])('IterableLinq.forEach($iterable, $action) -> $expectedResult', async ({ iterable, action, expectedResult }) => {
 		await IterableLinq.from<number | string>(iterable).forEachAsync(action);
 		expect(tempArr).toEqual(expectedResult);
+	});
+
+	test('IterableLinq.forEach is action', () => {
+		expectAction(source => IterableLinq.from(source).forEach(() => unit()));
+	});
+
+	test('IterableLinq.forEachAsync is action', async () => {
+		await expectAction(source => IterableLinq.from(source).forEachAsync(async () => unit()));
+	});
+
+	test('IterableLinq.forEachAsync runs one action at a time', async () => {
+		let running = 0;
+		let peak = 0;
+		await IterableLinq.fromRange(10).forEachAsync(async () => {
+			running++;
+			peak = Math.max(peak, running);
+			await new Promise(resolve => setTimeout(resolve, 1));
+			running--;
+			return unit();
+		});
+		expect(peak).toBe(1);
 	});
 
 });

@@ -1,34 +1,27 @@
-import { Tapper } from "../types";
-import { isFunction } from "../utils";
+import { DeferredIterable } from '../iterators';
+import { Tapper } from '../types';
+import { Validations } from '../utils';
 
 /**
- * 
+ * Calls `tapper` with `iterable` each time a new iteration starts, before the first value is read.
  * @operation `Tap`
- * @param iterable 
- * @param tapper 
- * @returns 
+ * @param iterable - the source `Iterable`
+ * @param tapper - called with `iterable` (the index is always 0); returns `unit()`
+ * @returns a lazy, re-runnable `Iterable` of the same values
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `tapper` is not a function
+ * @example
+ * ```ts
+ * const tapped = Functions.tapChain([1, 2], () => { console.log('run'); return unit(); });
+ * Array.from(tapped); // logs "run"
+ * Array.from(tapped); // logs "run" again
+ * ```
+ * @since 0.0.10
  */
 export function tapChain<T>(iterable: Iterable<T>, tapper: Tapper<Iterable<T>>): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(tapper))
-		throw '"tapper" function must be provided';
-	return new TapChainIterable(iterable, tapper);
-}
-
-class TapChainIterable <T> implements Iterable<T> { 
-		
-	constructor(iterable: Iterable<T>, tapper: Tapper<Iterable<T>>) {
-		this.source = iterable;
-		this.tapper = tapper;
-	}
-
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		this.tapper(this.source, 0);
-		return this.source[Symbol.iterator]();
-		// return new TapChainIterableIterator(this.source, this.tapper);
-	}
-
-	private tapper: Tapper<Iterable<T>>;
-	private source: Iterable<T>;
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(tapper, 'tapper');
+	return new DeferredIterable(() => {
+		tapper(iterable, 0);
+		return iterable[Symbol.iterator]();
+	});
 }

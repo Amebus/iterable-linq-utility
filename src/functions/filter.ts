@@ -1,57 +1,45 @@
-import { getDoneIteratorResult, getFlatIteratorResult, Validations } from "../utils";
-import { Predicate } from "../types";
+import { SourceIterator, DeferredIterable } from '../iterators';
+import { Predicate } from '../types';
+import { Validations } from '../utils';
 
 /**
- * 
+ * Lazily keeps only the values that satisfy `predicate`.
+ * If `predicate` throws, the source is closed and the error propagates.
  * @operation `Transformation`
- * @param iterable 
- * @param predicate 
- * @returns 
+ * @param iterable - the source `Iterable`
+ * @param predicate - called with each value and its index; return `true` to keep the value
+ * @returns a lazy, re-runnable `Iterable` of the kept values
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `predicate` is not a function
+ * @example
+ * ```ts
+ * Array.from(Functions.filter([1, 2, 3, 4], v => v % 2 === 0)); // [2, 4]
+ * ```
+ * @since 0.0.10
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);
-	Validations.thowIfNotValidPredicate(predicate);
-  return new FilterIterable<T>(iterable, predicate);
+	Validations.throwIfNotFunction(predicate, 'predicate');
+	return new DeferredIterable(() => new FilterIterator(iterable, predicate));
 }
 
-class FilterIterable<T> implements Iterable<T> {
-	constructor(iterable: Iterable<T>, predicate: Predicate<T>) {
-		this.source = iterable;
-		this.predicate = predicate;
-	}
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new FilterIterableIterator(this.source, this.predicate);
+class FilterIterator<T> extends SourceIterator<T, T> {
+	constructor(iterable: Iterable<T>, private readonly predicate: Predicate<T>) {
+		super(iterable);
 	}
 
-	private predicate: Predicate<T>;
-	private source: Iterable<T>;
-}
-
-class FilterIterableIterator<T> implements Iterator<T> {
-
-	constructor(source: Iterable<T>, predicate: Predicate<T>) {
-		this.sourceIterator = source[Symbol.iterator]();
-		this.predicate = predicate;
-	}
-
-	private index = 0;
-	private sourceIterator: Iterator<T>;
-	private predicate: Predicate<T>;
-
-	private internalNext: () => IteratorResult<T, any> = () => {
-		// eslint-disable-next-line no-constant-condition
-		while (true) {
-			const n = this.sourceIterator.next();
-			if (n.done === true || this.predicate(n.value, this.index++))
-				return getFlatIteratorResult(n);
+	protected advance(): IteratorResult<T> {
+		for (let n = this.source.next(); ; n = this.source.next()) {
+			if (n.done === true)
+				return n;
+			let keep: boolean;
+			try {
+				keep = this.predicate(n.value, this.index++);
+			} catch (error) {
+				this.closeAfterCallbackError();
+				throw error;
+			}
+			if (keep)
+				return n;
 		}
-	};
-
-	next(): IteratorResult<T, any> {
-		return this.internalNext();
-	}
-	return?(value?: any): IteratorResult<T, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult(value);
 	}
 }

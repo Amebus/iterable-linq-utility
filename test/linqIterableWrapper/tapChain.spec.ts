@@ -1,12 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
-import { unit } from './_types';
+import * as IterableLinq from '@/index';
+import { unit } from '@/types';
 
 describe('IterableLinq.tapChain', () => {
 
 	test.each([
-		{ end: 10 },
 		{ end: 10 },
 		{ end: 30 }
 	])('IterableLinq.fromRange($end).tapChain() to call taper function 2 times', ({ end }) => {
@@ -14,16 +14,20 @@ describe('IterableLinq.tapChain', () => {
 		const tapped = IterableLinq
 			.fromRange(end)
 			.tapChain(tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		tapped.collectToArray();
-		
+
 		expect(tapperSpy).toHaveBeenCalledOnce();
 
 		tapped.collectToArray();
 
 		expect(tapperSpy).toHaveBeenCalledTimes(2);
+	});
+
+	test('IterableLinq.tapChain is transformation', () => {
+		expectTransformation(source => IterableLinq.from(source).tapChain(() => unit()));
 	});
 
 });

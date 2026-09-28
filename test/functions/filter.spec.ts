@@ -1,14 +1,14 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
+import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
 	filter,
 	range
-} from './_functions';
+} from '@/functions';
 
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-import { isTransformation } from './transformationsRules';
-
 
 describe('filter', () => {
 
@@ -24,8 +24,8 @@ describe('filter', () => {
 		{ start: 0, end: 20, filterPredicate: {} }
 	])('filter without filter predicate -> throw exception', ({ start, end, filterPredicate }) => {
 		const filterJs = filter as any;
-		expect(() => filterJs(range(start, end))).toThrowError();
-		expect(() => filterJs(range(start, end), filterPredicate)).toThrowError();
+		expect(() => filterJs(range(start, end))).toThrow();
+		expect(() => filterJs(range(start, end), filterPredicate)).toThrow();
 	});
 
 	test.each([
@@ -38,17 +38,6 @@ describe('filter', () => {
 		returnClosesTheIterator(filterIterable, returnValue);
 	});
 
-	test.each([
-		{ filterPredicate: v => v % 2 === 0 },
-		{ filterPredicate: v => v % 2 === 1 },
-		{ filterPredicate: v => v > -5 && v < 5 },
-		{ filterPredicate: (v, idx) => v % 2 === 0 && idx < 10 },
-		{ filterPredicate: (v, idx) => v % 2 === 1 && idx > 10 },
-		{ filterPredicate: (v, idx) => v > -5 && v < 5 && idx === 0 }
-	])('filter($filterPredicate) is transformation', ({ filterPredicate }) => {
-		isTransformation<number>(filter, filterPredicate);
-	});
-	
 	test.each([
 		{ start: 0, end: 0, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [0,0,0,0] },
 		{ start: 0, end: 20, filterPredicate: v => v % 2 === 0, expectedPredicateCalls: [20,40,60,80] },
@@ -78,6 +67,30 @@ describe('filter', () => {
 	])('filter(range($start, $end), $filterPredicate) -> $expectedResult', ({ start, end, filterPredicate, expectedResult }) => {
 		const r = collectToArray(filter(range(start, end), filterPredicate));
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('filter is transformation', () => {
+		expectTransformation(source => filter(source, v => v % 2 === 0));
+	});
+
+	test('return() closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		const it = filter(iterable, () => true)[Symbol.iterator]();
+		it.next();
+		it.return!();
+		expect(state.closed).toBe(true);
+	});
+
+	test('independent iterators over the same chain', () => {
+		const f = filter([1, 2, 3, 4], v => v % 2 === 0);
+		const a = f[Symbol.iterator]();
+		const b = f[Symbol.iterator]();
+		expect([a.next(), b.next(), a.next(), b.next()].map(r => r.value)).toEqual([2, 2, 4, 4]);
+	});
+
+	test('a throwing predicate propagates the same error', () => {
+		const err = new Error('boom');
+		expect(() => collectToArray(filter([1], () => { throw err; }))).toThrow(err);
 	});
 
 });

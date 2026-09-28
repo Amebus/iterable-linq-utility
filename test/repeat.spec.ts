@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 describe('IterableLinq.repeat', () => {
 
@@ -24,7 +24,7 @@ describe('IterableLinq.repeat', () => {
 		{ value: 10, count: -50 },
 		{ value: '10', count: -50 },
 	])('IterableLinq.repeat($value, $count) -> throw exception', ({ value, count }) => {
-		expect(() => IterableLinq.repeat(value, count)).toThrowError();
+		expect(() => IterableLinq.repeat(value, count)).toThrow();
 	});
 
 });

@@ -1,26 +1,36 @@
 {
   "name": "iterable-linq-utility",
-  "version": "0.0.16",
+  "version": "0.1.0",
   "description": "An Iterable mutation utility inspired by .net Linq and Javascript Array interface",
   "type": "module",
-  "main": "./dist/interable-linq-utility.umd.cjs",
-  "module": "./dist/interable-linq-utility.js",
+  "main": "./dist/iterable-linq-utility.umd.cjs",
+  "module": "./dist/iterable-linq-utility.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/interable-linq-utility.js",
-      "require": "./dist/interable-linq-utility.umd.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/iterable-linq-utility.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/iterable-linq-utility.umd.cjs"
+      }
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && vite build",
+    "build": "tsc -p tsconfig.build.json && vite build && cp dist/index.d.ts dist/index.d.cts",
+    "check:package": "attw --pack .",
     "dev": "vite",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --ignore-path .eslintignore",
-    "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix --ignore-path .eslintignore",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
     "test": "vitest run",
+    "bench": "vite build --logLevel error && vitest bench --run",
+    "bench:baseline": "vite build --logLevel error && BENCH_SAVE=1 vitest bench --run",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
   },
@@ -40,21 +50,21 @@
     "utility"
   ],
   "devDependencies": {
-    "@rushstack/eslint-patch": "1.10.5",
-    "@types/node": "22.10.7",
-    "@typescript-eslint/eslint-plugin": "8.20.0",
-    "@typescript-eslint/parser": "8.20.0",
-    "@vitest/coverage-istanbul": "^3.0.2",
-    "@vitest/ui": "3.0.2",
-    "eslint": "9.18.0",
-    "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "7.2.1",
-    "typescript": "5.7.3",
-    "vite": "6.0.7",
-    "vite-plugin-dts": "4.5.0",
-    "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.0.2"
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@eslint/js": "^10.0.1",
+    "@microsoft/api-extractor": "^7.59.2",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/node": "^24.19.0",
+    "@vitest/coverage-istanbul": "^5.0.2",
+    "@vitest/ui": "^5.0.2",
+    "eslint": "^10.11.0",
+    "eslint-plugin-tsdoc": "^0.5.3",
+    "globals": "^17.12.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.1",
+    "vite": "^8.3.1",
+    "vite-plugin-dts": "^5.1.1",
+    "vitest": "^5.0.2"
   },
-  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
+  "packageManager": "pnpm@11.24.0"
 }

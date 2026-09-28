@@ -1,21 +1,38 @@
 name: Publish Doc
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: write
 
 jobs:
   deploy-doc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Configure Git Credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - uses: actions/setup-python@v7
         with:
           python-version: 3.x
-      - uses: actions/cache@v2
+      - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
+      - uses: actions/cache@v6
         with:
-          key: ${{ github.ref }}
+          key: mkdocs-material-${{ env.cache_id }}-${{ hashFiles('documentation/requirements.txt') }}
           path: .cache
-      - run: pip install mkdocs-material 
-      - run: pip install mkdocs-git-revision-date-localized-plugin
+          restore-keys: |
+            mkdocs-material-
+      - run: pip install -r documentation/requirements.txt
+      - name: Doc version
+        run: echo "doc_version=$(node -p "require('./package.json').version.split('.').slice(0, 2).join('.')")" >> "$GITHUB_ENV"
       - name: Deploy doc
         working-directory: ./documentation
-        run: mkdocs gh-deploy --force
+        run: |
+          mike deploy --push --update-aliases "$doc_version" latest
+          mike set-default --push latest

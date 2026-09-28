@@ -107,3 +107,5 @@ dist
 /lib
 
 documentation/site
+# Local benchmark baselines
+.bench/

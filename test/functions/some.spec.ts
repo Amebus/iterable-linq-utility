@@ -1,14 +1,15 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
+import { expectAction } from '../_helpers/operationKind';
 
 import {
 	range,
 	some
-} from './_functions';
+} from '@/functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('some', () => {
- 
-	
+
 	test('some without input iterable -> throw exception', () => {
 		withoutInputIterableThrowsException(some);
 	});
@@ -21,8 +22,8 @@ describe('some', () => {
 		{ start: 0, end: 20, reducer: {} }
 	])('some without mapper -> throw exception', ({ start, end, reducer }) => {
 		const someJs = some as any;
-		expect(() => someJs(range(start, end))).toThrowError();
-		expect(() => someJs(range(start, end), reducer)).toThrowError();
+		expect(() => someJs(range(start, end))).toThrow();
+		expect(() => someJs(range(start, end), reducer)).toThrow();
 	});
 
 	test.each([
@@ -106,6 +107,23 @@ describe('some', () => {
 		const predicateSpy = vi.fn(predicate);
 		some(range(start,end), predicateSpy);
 		expect(predicateSpy).toHaveReturnedTimes(expectedFunctionCalls);
+	});
+
+	test('some is action', () => {
+		expectAction(source => some(source, v => v > 2));
+	});
+
+	test('stopping early closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(some(iterable, v => v === 1)).toBe(true);
+		expect(state.closed).toBe(true);
+	});
+
+	test('a throwing predicate closes the source', () => {
+		const err = new Error('boom');
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(() => some(iterable, () => { throw err; })).toThrow(err);
+		expect(state.closed).toBe(true);
 	});
 
 });

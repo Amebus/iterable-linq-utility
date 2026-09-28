@@ -1,9 +1,11 @@
 import { describe, expect, test } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
+import { expectAction } from '../_helpers/operationKind';
 
-import { 
+import {
 	reduce,
 	range
-} from './_functions';
+} from '@/functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('reduce', () => {
@@ -20,8 +22,8 @@ describe('reduce', () => {
 		{ start: 0, end: 20, reducer: {} }
 	])('reduce without mapper -> throw exception', ({ start, end, reducer }) => {
 		const reduceJs = reduce as any;
-		expect(() => reduceJs(range(start, end))).toThrowError();
-		expect(() => reduceJs(range(start, end), reducer)).toThrowError();
+		expect(() => reduceJs(range(start, end))).toThrow();
+		expect(() => reduceJs(range(start, end), reducer)).toThrow();
 	});
 
 	test.each([
@@ -35,10 +37,10 @@ describe('reduce', () => {
 		{ start: -5, end: 0, acc: 0, reducer: (acc, v) => acc * v, expectedResult: -0 },
 		{ start: -5, end: 0, acc: 10, reducer: (acc, v) => acc * v, expectedResult: -1200 },
 
-		{ start: 0, end: 15, acc: 0, reducer: (acc, v, idx) => acc + idx, expectedResult: 105 },
-		{ start: 0, end: 15, acc: 10, reducer: (acc, v, idx) => acc + idx, expectedResult: 115 },
-		{ start: 20, end: 15, acc: 0, reducer: (acc, v, idx) => acc + idx, expectedResult: 10 },
-		{ start: 20, end: 15, acc: 5, reducer: (acc, v, idx) => acc + idx, expectedResult: 15 }
+		{ start: 0, end: 15, acc: 0, reducer: (acc, _v, idx) => acc + idx, expectedResult: 105 },
+		{ start: 0, end: 15, acc: 10, reducer: (acc, _v, idx) => acc + idx, expectedResult: 115 },
+		{ start: 20, end: 15, acc: 0, reducer: (acc, _v, idx) => acc + idx, expectedResult: 10 },
+		{ start: 20, end: 15, acc: 5, reducer: (acc, _v, idx) => acc + idx, expectedResult: 15 }
 	])('reduce(range($start, $end), $acc, $reducer) -> $expectedResult', ({ start, end, acc, reducer, expectedResult }) => {
 		const r = reduce(range(start, end), acc, reducer);
 		expect(r).toBe(expectedResult);
@@ -46,10 +48,21 @@ describe('reduce', () => {
 
 	test.each([
 		{ iterable: 'ciao', acc: '', reducer: (acc, v) => acc + v, expectedResult: 'ciao' },
-		{ iterable: 'ciao', acc: '', reducer: (acc, v, idx) => acc + idx, expectedResult: '0123' }
+		{ iterable: 'ciao', acc: '', reducer: (acc, _v, idx) => acc + idx, expectedResult: '0123' }
 	])('reduce($iterable, $acc, $reducer) -> $expectedResult', ({ iterable, acc, reducer, expectedResult }) => {
 		const r = reduce(iterable, acc, reducer);
 		expect(r).toBe(expectedResult);
+	});
+
+	test('reduce is action', () => {
+		expectAction(source => reduce(source, 0, (acc, v) => acc + v));
+	});
+
+	test('a throwing reducer closes the source and propagates the error', () => {
+		const err = new Error('boom');
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(() => reduce(iterable, 0, () => { throw err; })).toThrow(err);
+		expect(state.closed).toBe(true);
 	});
 
 });

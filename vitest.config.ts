@@ -1,12 +1,19 @@
-import { defineConfig } from 'vitest/config'
+import { resolve } from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  test: {
-    // ...
-    coverage: {
-      provider: 'istanbul',
-      reporter: ['text', 'json', 'html'],
-      clean: true
-    }
-  },
+	resolve: {
+		alias: {
+			'@': resolve(import.meta.dirname, 'src'),
+			// The benches run the built bundle, as users do.
+			'iterable-linq-utility': resolve(import.meta.dirname, 'dist/iterable-linq-utility.js')
+		}
+	},
+	test: {
+		coverage: {
+			provider: 'istanbul',
+			reporter: ['text', 'json', 'html'],
+			clean: true
+		}
+	},
 });

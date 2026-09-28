@@ -1,13 +1,16 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
+import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
+	filter,
 	map,
-	range
-} from './_functions';
+	range,
+	tap
+} from '@/functions';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
-import { isTransformation } from './transformationsRules';
-
+import { unit } from '@/types';
 
 describe('map', () => {
 
@@ -23,8 +26,8 @@ describe('map', () => {
 		{ start: 0, end: 20, mapper: {} }
 	])('map without mapper -> throw exception', ({ start, end, mapper }) => {
 		const mapJs = map as any;
-		expect(() => mapJs(range(start, end))).toThrowError();
-		expect(() => mapJs(range(start, end), mapper)).toThrowError();
+		expect(() => mapJs(range(start, end))).toThrow();
+		expect(() => mapJs(range(start, end), mapper)).toThrow();
 	});
 
 	test.each([
@@ -35,15 +38,6 @@ describe('map', () => {
 	])('map(range($start, $end), $mapPredicate)[Symbol.iterator]().return() closes the iterator', ({ start, end, mapPredicate, returnValue }) => {
 		const mapIterable = map(range(start, end), mapPredicate);
 		returnClosesTheIterator(mapIterable, returnValue);
-	});
-
-	test.each([
-		{ mapPredicate: v => v * 10 },
-		{ mapPredicate: v => v * 10 },
-		{ mapPredicate: (v, idx) => v * idx },
-		{ mapPredicate: (v, idx) => v * idx }
-	])('map(range($start, $end), $mapPredicate) is transformation', ({ mapPredicate }) => {
-		isTransformation<number, number>(map, mapPredicate);
 	});
 
 	test.each([
@@ -71,6 +65,37 @@ describe('map', () => {
 	])('map(range($start, $end), $mapPredicate) -> $expectedResult', ({ start, end, mapPredicate, expectedResult }) => {
 		const r = collectToArray(map(range(start, end), mapPredicate));
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('map is transformation', () => {
+		expectTransformation(source => map(source, v => v * 10));
+	});
+
+	test('return() closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		const it = map(iterable, v => v)[Symbol.iterator]();
+		it.next();
+		it.return!();
+		expect(state.closed).toBe(true);
+	});
+
+	test('a throwing mapper propagates the same error', () => {
+		const err = new Error('boom');
+		expect(() => collectToArray(map([1], () => { throw err; }))).toThrow(err);
+	});
+
+	test('return(value) reaches the original iterator through the chain', () => {
+		const originalReturn = vi.fn((v?: unknown) => ({ done: true as const, value: v }));
+		const source: Iterable<number> = {
+			[Symbol.iterator]: () => {
+				let i = 0;
+				return { next: () => ({ done: false, value: i++ }), return: originalReturn };
+			}
+		};
+		const it = map(filter(tap(source, () => unit()), () => true), v => v)[Symbol.iterator]();
+		it.next();
+		expect(it.return!('x')).toEqual({ done: true, value: 'x' });
+		expect(originalReturn).toHaveBeenCalledWith('x');
 	});
 
 });

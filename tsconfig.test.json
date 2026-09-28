@@ -1,0 +1,12 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"noImplicitAny": false,
+		"paths": {
+			"@/*": ["./src/*"],
+			"iterable-linq-utility": ["./src/index.ts"]
+		},
+		"types": ["node"]
+	},
+	"include": ["src", "test"]
+}

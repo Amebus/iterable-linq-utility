@@ -1,0 +1,282 @@
+import type { Action, AsyncAction } from './action';
+import type { Comparer } from './comparer';
+import type { Mapper } from './mapper';
+import type { IMemoizeOptions } from './memoizeOptions';
+import type { Predicate } from './predicate';
+import type { Reducer } from './reducer';
+import type { Tapper } from './tapper';
+import type { Unit } from './unit';
+
+/**
+ * The operations provided by the library on every chain. See `IIterableLinq`.
+ * @since 0.1.0
+ */
+export interface IIterableLinqBase<T> {
+
+	/**
+	 * Starts a new run of the chain. Each call iterates the source again, so a chain can be consumed many times.
+	 * @returns a new iterator over the values of the chain
+	 * @example
+	 * ```ts
+	 * const chain = IterableLinq.from([1, 2, 3]).map(v => v * 10);
+	 * [...chain]; // [10, 20, 30]
+	 * for (const value of chain) console.log(value); // 10, 20, 30
+	 * ```
+	 * @since 0.0.1
+	 */
+	[Symbol.iterator](): Iterator<T, any, undefined>;
+
+	/**
+	 * Runs the chain and collects its values into an `Array`.
+	 * @operation `Action`
+	 * @returns the values of the chain, in order; an empty array when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).map(v => v * 10).collectToArray(); // [10, 20, 30]
+	 * ```
+	 * @since 0.0.1
+	 */
+	collectToArray(): T[];
+
+	/**
+	 * Keeps only the values that satisfy `predicate`.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param predicate - called with each value and its index; return `true` to keep the value
+	 * @returns a new chain with the kept values
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4]).filter(v => v % 2 === 0).collectToArray(); // [2, 4]
+	 * ```
+	 * @since 0.0.1
+	 */
+	filter(predicate: Predicate<T>): IIterableLinq<T>;
+
+	/**
+	 * Maps each value to an `Iterable` and flattens the results into one chain.
+	 * Each inner `Iterable` is read completely before the next value of the chain is mapped.
+	 * Inner arrays are read by index, as in `Array.prototype.flatMap`: their `[Symbol.iterator]` is not called.
+	 * If `mapper` or an inner `Iterable` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param mapper - called with each value and its index; returns the `Iterable` to flatten
+	 * @returns a new chain with the flattened values
+	 * @throws Error if `mapper` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2]).flatMap(v => [v, v * 10]).collectToArray(); // [1, 10, 2, 20]
+	 * ```
+	 * @since 0.0.11
+	 */
+	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R>;
+
+	/**
+	 * Runs the chain and calls `action` on each value.
+	 * If `action` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param action - called with each value and its index; returns `unit()`
+	 * @returns `unit()`
+	 * @throws Error if `action` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2]).forEach(v => {
+	 * 	console.log(v); // 1, 2
+	 * 	return unit();
+	 * });
+	 * ```
+	 * @since 0.0.11
+	 */
+	forEach(action: Action<T>): Unit;
+
+	/**
+	 * Runs the chain and calls the async `action` on each value.
+	 * The actions run sequentially: each one starts after the previous one has settled.
+	 * The first rejection stops the iteration and closes the source. Works on infinite sources.
+	 * @operation `Action`
+	 * @param action - called with each value and its index; returns a promise of `unit()`
+	 * @returns a promise resolved with `unit()` after the last action, or rejected with the first error
+	 * @throws Error, as a rejection of the returned promise, if `action` is not a function
+	 * @example
+	 * ```ts
+	 * await IterableLinq.from(['a.txt', 'b.txt']).forEachAsync(async file => {
+	 * 	await upload(file); // 'b.txt' starts after 'a.txt' has finished
+	 * 	return unit();
+	 * });
+	 * ```
+	 * @since 0.0.11
+	 */
+	forEachAsync(action: AsyncAction<T>): Promise<Unit>;
+
+	/**
+	 * Transforms each value with `mapper`.
+	 * If `mapper` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param mapper - called with each value and its index; returns the new value
+	 * @returns a new chain with the mapped values
+	 * @throws Error if `mapper` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4]).map(v => v * 10).collectToArray(); // [10, 20, 30, 40]
+	 * ```
+	 * @since 0.0.1
+	 */
+	map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
+
+	/**
+	 * Runs the chain immediately and stores its values, so later chains start from the stored values
+	 * instead of running the source again. Materializing a materialized chain does not copy the values again.
+	 * @operation `Action`
+	 * @returns a new chain over the stored values
+	 * @example
+	 * ```ts
+	 * const stored = IterableLinq.fromRange(1_000_000).filter(isPrime).materialize(); // runs now
+	 * stored.max(); // reads the stored values, does not run filter again
+	 * ```
+	 * @since 0.0.1
+	 */
+	materialize(): IIterableLinq<T>;
+
+	/**
+	 * Runs the chain and returns its greatest value. Among equal values the first one wins;
+	 * `null` and `undefined` never win against a defined value.
+	 * @operation `Action`
+	 * @param comparer - a compare function, a key, or a list of keys to compare by; defaults to `<`
+	 * @returns the greatest value, or `undefined` when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([3, 1, 2]).max(); // 3
+	 * IterableLinq.from([{ v: 1 }, { v: 3 }]).max('v'); // { v: 3 }
+	 * IterableLinq.empty<number>().max(); // undefined
+	 * ```
+	 * @since 0.0.1
+	 */
+	max(comparer?: Comparer<T>): T | undefined;
+
+	/**
+	 * Caches the values the first time they are read, so later runs do not run the chain again.
+	 * With partial memoization (the default) the cache fills as far as consumers read;
+	 * a consumer that stops early keeps the source open until another consumer finishes it.
+	 * If the source throws, every later read past the cached values throws the same error.
+	 * @operation `Transformation`
+	 * @param options - `allowPartialMemoization: false` reads the whole source on the first read
+	 * @returns a new chain backed by the cache
+	 * @example
+	 * ```ts
+	 * const cached = IterableLinq.from(readLines()).map(parse).memoize();
+	 * cached.collectToArray(); // reads and parses the lines
+	 * cached.collectToArray(); // same values, from the cache
+	 * ```
+	 * @since 0.0.1
+	 */
+	memoize(options?: IMemoizeOptions): IIterableLinq<T>;
+
+	/**
+	 * Runs the chain and returns its smallest value. Among equal values the first one wins;
+	 * `null` and `undefined` never win against a defined value.
+	 * @operation `Action`
+	 * @param comparer - a compare function, a key, or a list of keys to compare by; defaults to `<`
+	 * @returns the smallest value, or `undefined` when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([3, 1, 2]).min(); // 1
+	 * IterableLinq.from([{ v: 1 }, { v: 3 }]).min('v'); // { v: 1 }
+	 * IterableLinq.empty<number>().min(); // undefined
+	 * ```
+	 * @since 0.0.8
+	 */
+	min(comparer?: Comparer<T>): T | undefined;
+
+	/**
+	 * Runs the chain and accumulates its values into a single result.
+	 * @operation `Action`
+	 * @param neutralElement - the initial accumulator (the seed)
+	 * @param reducer - called with the accumulator, each value and its index; returns the new accumulator
+	 * @returns the final accumulator; `neutralElement` when the chain is empty
+	 * @throws Error if `reducer` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).reduce(0, (acc, v) => acc + v); // 6
+	 * ```
+	 * @since 0.0.10
+	 */
+	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
+
+	/**
+	 * Runs the chain until a value satisfies `predicate`, then stops and closes the source.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index
+	 * @returns `true` if at least one value satisfies `predicate`; `false` when the chain is empty
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).some(v => v > 2); // true
+	 * ```
+	 * @since 0.0.1
+	 */
+	some(predicate: Predicate<T>): boolean;
+
+	/**
+	 * Calls `tapper` on each value as it flows through the chain, without changing it.
+	 * If `tapper` throws, the source is closed and the error propagates.
+	 * `tapper` runs only when the chain runs, once per value and per run.
+	 * @operation `Tap`
+	 * @param tapper - called with each value and its index; returns `unit()`
+	 * @returns a new chain with the same values
+	 * @throws Error if `tapper` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2])
+	 * 	.tap(v => { console.log('read', v); return unit(); })
+	 * 	.map(v => v * 10)
+	 * 	.collectToArray(); // logs "read 1", "read 2"; returns [10, 20]
+	 * ```
+	 * @since 0.0.10
+	 */
+	tap(tapper: Tapper<T>): IIterableLinq<T>;
+
+	/**
+	 * Calls `tapper` with the upstream `Iterable` each time the chain starts a run, before the first value is read.
+	 * @operation `Tap`
+	 * @param tapper - called with the upstream `Iterable` (the index is always 0); returns `unit()`
+	 * @returns a new chain with the same values
+	 * @throws Error if `tapper` is not a function
+	 * @example
+	 * ```ts
+	 * const chain = IterableLinq.from([1, 2]).tapChain(() => { console.log('run'); return unit(); });
+	 * chain.collectToArray(); // logs "run"
+	 * chain.collectToArray(); // logs "run" again
+	 * ```
+	 * @since 0.0.10
+	 */
+	tapChain(tapper: Tapper<Iterable<T>>): IIterableLinq<T>;
+
+	/**
+	 * Calls `chainCreationTapper` immediately with this chain, while the chain is being built. Nothing runs.
+	 * @operation `Tap`
+	 * @param chainCreationTapper - called once, now, with this chain; returns `unit()`
+	 * @returns this same chain
+	 * @throws Error if `chainCreationTapper` is not a function
+	 * @example
+	 * ```ts
+	 * let evens: IIterableLinq<number> | undefined;
+	 * IterableLinq.fromRange(10)
+	 * 	.filter(v => v % 2 === 0)
+	 * 	.tapChainCreation(chain => { evens = chain; return unit(); })
+	 * 	.map(v => v * 10);
+	 * evens?.collectToArray(); // [0, 2, 4, 6, 8]
+	 * ```
+	 * @since 0.0.10
+	 */
+	tapChainCreation(chainCreationTapper: (chain: IIterableLinq<T>) => Unit): IIterableLinq<T>;
+}
+
+/**
+ * Fluent wrapper over an `Iterable`: every call builds a lazy, re-runnable operations chain.
+ * Transformations and taps return a new `IIterableLinq`; actions run the chain and return a result.
+ * Create chains with `from`, `fromRange`, `repeat` and `empty`; recognise them with `isIterableLinq`.
+ *
+ * Augment this interface (not `IIterableLinqBase`) to declare the methods you add with `extend`.
+ * @since 0.0.10
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- augmentation target for extend()
+export interface IIterableLinq<T> extends IIterableLinqBase<T> {}

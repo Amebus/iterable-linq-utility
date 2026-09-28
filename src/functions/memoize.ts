@@ -1,186 +1,144 @@
-import { LinkedListCollection } from "../collections";
-import { unit, Unit } from "../types";
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "../utils";
+import { BaseIterator } from '../iterators';
+import type { IMemoizeOptions } from '../types';
+import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
 
-export interface IMemoizeOptions {
-  allowPartialMemoization?: boolean;
-}
-
+/**
+ * Returns the options `memoize` uses when none are given.
+ * @returns a new object: `{ allowPartialMemoization: true }`
+ * @since 0.0.16
+ */
 export function getMemoizeDefaultOptions(): IMemoizeOptions {
-  return {
-    allowPartialMemoization: true
-  };
+	return {
+		allowPartialMemoization: true
+	};
 }
 
 /**
- * 
+ * Caches the values of `iterable` the first time they are read, so later iterations do not run the source again.
+ * With partial memoization, a consumer that stops early keeps the shared source open until another consumer finishes it.
+ * If the source throws, every later read past the cached values throws the same error.
  * @operation `Transformation`
- * @param iterable 
- * @returns 
+ * @param iterable - the source `Iterable`
+ * @param options - `allowPartialMemoization: false` reads the whole source on the first read
+ * @returns a lazy `Iterable` backed by the cache
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`
+ * @example
+ * ```ts
+ * const cached = Functions.memoize(Functions.map(readLines(), parse));
+ * Array.from(cached); // reads and parses the lines
+ * Array.from(cached); // same values, from the cache
+ * ```
+ * @since 0.0.10
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
-  if (iterable == null)
-    throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 
-  const opt = {
-    ...getMemoizeDefaultOptions(),
-    ...options
-  };
+	const opt = {
+		...getMemoizeDefaultOptions(),
+		...options
+	};
 
-  const allowPartialMemoization = opt.allowPartialMemoization;
+	const allowPartialMemoization = opt.allowPartialMemoization;
 
-  if (iterable instanceof MemomizeAsFullIterable) {
-    if (allowPartialMemoization)
-      return iterable.changePartialMemoizationBehaviour();
-    return iterable;
-  }
-  if (iterable instanceof MemomizeAsPartialIterable) {
-    if (allowPartialMemoization)
-      return iterable;
-    return iterable.changePartialMemoizationBehaviour();
-  }
-
-  if (allowPartialMemoization)
-    return new MemomizeAsPartialIterable(iterable);
-  return new MemomizeAsFullIterable(iterable);
-}
-
-// TODO maybe memoize should forget the original chain after first run
-class MemomizeAsFullIterable<T> implements Iterable<T> {
-  constructor(iterable: Iterable<T>) {
-    this.source = iterable;
-  }
-  private source: Iterable<T>;
-  private isMemoized = false;
-	private memoized = new LinkedListCollection.LinkedList<T>();
-
-  [Symbol.iterator](): Iterator<T, any, undefined> {
-    if (this.isMemoized) return new MemoizeMemoizedIterator(this.memoized);
-    return new MemoizeAsFullIterableIterator(this.source, ll => {
-      this.memoized = ll;
-      this.isMemoized = true;
-      return unit();
-    });
-  }
-
-  changePartialMemoizationBehaviour(): MemomizeAsPartialIterable<T> {
-    return new MemomizeAsPartialIterable(this.source);
-  }
-}
-class MemomizeAsPartialIterable<T> implements Iterable<T> {
-  constructor(iterable: Iterable<T>) {
-    this.source = iterable;
-  }
-
-  private isMemoized = false;
-  private isMemoizationStarted = false;
-	private sourceIterator!: Iterator<T>;
-	private readonly linkedList = new LinkedListCollection.LinkedList<T>();
-  private readonly source: Iterable<T>;
-
-  [Symbol.iterator](): Iterator<T, any, undefined> {
-    if (!this.isMemoizationStarted) {
-      this.sourceIterator = this.source[Symbol.iterator]();
-      this.isMemoizationStarted = true;
-    }
-
-    if (this.isMemoized) return new MemoizeMemoizedIterator(this.linkedList);
-		return new MemomizeAsPartialIterableIterator(this.sourceIterator, this.linkedList, (n: IteratorResult<T, any>) => this.isMemoized = n.done === true);
-  }
-
-  changePartialMemoizationBehaviour(): MemomizeAsFullIterable<T> {
-    return new MemomizeAsFullIterable(this.source);
-  }
-}
-
-class MemoizeAsFullIterableIterator<T> implements Iterator<T> {
-  constructor(sourceIterable: Iterable<T>, setAsMemoized: (linkedList: LinkedListCollection.LinkedList<T>) => Unit) {
-    this.sourceIterable = sourceIterable;
-    this.setAsMemoized = setAsMemoized;
-  }
-
-	private linkedListIterator!: Iterator<T>;
-	private readonly setAsMemoized: (linkedList: LinkedListCollection.LinkedList<T>) => Unit;
-  private readonly sourceIterable!: Iterable<T>;
-
-  private internalNext: () => IteratorResult<T, any> = () => {
-    const linkedList = LinkedListCollection.from(this.sourceIterable);
-    this.setAsMemoized(linkedList);
-    this.linkedListIterator = linkedList[Symbol.iterator]();
-    this.internalNext = () => this.linkedListIterator.next();
-    return this.internalNext();
-  };
-
-  next(): IteratorResult<T, any> {
-    return this.internalNext();
-  }
-
-  return(value?: any): IteratorResult<T, any> {
-    this.internalNext = getDoneIteratorResult;
-    const linkedListIterator = this.linkedListIterator;
-    if (linkedListIterator == null)
-      return getDoneIteratorResult(value);
-    if (isFunction(linkedListIterator.return)) {
-      const val = linkedListIterator.return(value);
-      this.linkedListIterator = null!;
-      return val;
-    }
-    return getDoneIteratorResult(value);
-  }
-}
-
-class MemomizeAsPartialIterableIterator<T> implements Iterator<T> {
-	constructor(sourceIterator: Iterator<T>, linkedList: LinkedListCollection.LinkedList<T>, setAsMemoized: (n: IteratorResult<T, any>) => boolean) {
-		this.linkedList = linkedList;
-		this.linkedListIterator = linkedList[Symbol.iterator]();
-		this.setAsMemoized = setAsMemoized;
-		this.sourceIterator = sourceIterator;
-    this.internalNext = () => {
-      if (this.linkedList.size() > this.index++)
-        return this.linkedListIterator.next();
-      const n = this.sourceIterator.next();
-      if (!this.setAsMemoized(n)) {
-        this.linkedList.addLast(n.value);
-      }
-      return getFlatIteratorResult(n);
-    };
+	if (iterable instanceof MemoizeAsFullIterable) {
+		if (allowPartialMemoization)
+			return iterable.changePartialMemoizationBehaviour();
+		return iterable;
+	}
+	if (iterable instanceof MemoizeAsPartialIterable) {
+		if (allowPartialMemoization)
+			return iterable;
+		return iterable.changePartialMemoizationBehaviour();
 	}
 
+	if (allowPartialMemoization)
+		return new MemoizeAsPartialIterable(iterable);
+	return new MemoizeAsFullIterable(iterable);
+}
+
+interface IMemoizeCache<T> {
+	readonly values: T[];
+	source?: Iterator<T>;
+	finished: boolean;
+	/** Error thrown by the source: every later read past the cached values throws it again. */
+	error?: { readonly value: unknown };
+}
+
+function createCache<T>(): IMemoizeCache<T> {
+	return { values: [], finished: false };
+}
+
+/**
+ * Reads one more value from the source into the cache.
+ * @returns false when the source is exhausted
+ */
+function pull<T>(iterable: Iterable<T>, cache: IMemoizeCache<T>): boolean {
+	if (cache.error)
+		throw cache.error.value;
+	if (cache.finished)
+		return false;
+	cache.source ??= iterable[Symbol.iterator]();
+	let n: IteratorResult<T>;
+	try {
+		n = cache.source.next();
+	} catch (error) {
+		cache.error = { value: error };
+		cache.source = undefined;
+		throw error;
+	}
+	if (n.done === true) {
+		cache.finished = true;
+		cache.source = undefined;
+		return false;
+	}
+	cache.values.push(n.value);
+	return true;
+}
+
+class MemoizeAsFullIterable<T> implements Iterable<T> {
+	private readonly cache = createCache<T>();
+
+	constructor(private readonly source: Iterable<T>) {}
+
+	[Symbol.iterator](): Iterator<T> {
+		return new MemoizeIterator(this.source, this.cache, true);
+	}
+
+	changePartialMemoizationBehaviour(): MemoizeAsPartialIterable<T> {
+		return new MemoizeAsPartialIterable(this.source);
+	}
+}
+
+class MemoizeAsPartialIterable<T> implements Iterable<T> {
+	private readonly cache = createCache<T>();
+
+	constructor(private readonly source: Iterable<T>) {}
+
+	[Symbol.iterator](): Iterator<T> {
+		return new MemoizeIterator(this.source, this.cache, false);
+	}
+
+	changePartialMemoizationBehaviour(): MemoizeAsFullIterable<T> {
+		return new MemoizeAsFullIterable(this.source);
+	}
+}
+
+/**
+ * One consumer of a memoized iterable: it reads the shared cache by index and fills it from the source when needed.
+ * It does not override `onReturn()`: stopping one consumer must not close the source shared with the others.
+ */
+class MemoizeIterator<T> extends BaseIterator<T> {
 	private index = 0;
-	private linkedList: LinkedListCollection.LinkedList<T>;
-	private linkedListIterator!: Iterator<T>;
-	private setAsMemoized: (n: IteratorResult<T, any>) => boolean;
-	private sourceIterator: Iterator<T>;
 
-  private internalNext: () => IteratorResult<T, any>;
-
-	next(): IteratorResult<T, any> {
-		return this.internalNext();
+	constructor(private readonly source: Iterable<T>, private readonly cache: IMemoizeCache<T>, private readonly drainFirst: boolean) {
+		super();
 	}
 
-  return(value?: any): IteratorResult<T, any> {
-    this.internalNext = getDoneIteratorResult;
-    this.linkedList = null!;
-		this.linkedListIterator = null!;
-    this.internalNext = getDoneIteratorResult;
-    if (isFunction(this.sourceIterator.return))
-      return this.sourceIterator.return(value);
-    return getDoneIteratorResult(value);
-  }
-}
-
-class MemoizeMemoizedIterator<T>  implements Iterator<T> {
-	constructor(memoizedSource: LinkedListCollection.LinkedList<T>) {
-		this.memoizedSourceIterator = memoizedSource[Symbol.iterator]();
+	protected advance(): IteratorResult<T> {
+		if (this.drainFirst)
+			while (pull(this.source, this.cache));
+		if (this.index < this.cache.values.length || pull(this.source, this.cache))
+			return getContinueIteratorResult(this.cache.values[this.index++]);
+		return getDoneIteratorResult();
 	}
-
-	private memoizedSourceIterator: LinkedListCollection.LinkedListIterator<T>;
-
-	next(): IteratorResult<T, any> {
-		return this.memoizedSourceIterator.next();
-	}
-
-  return(value?: any): IteratorResult<T, any> {
-    return this.memoizedSourceIterator.return(value);
-  }
 }

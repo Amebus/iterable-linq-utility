@@ -1,23 +1,27 @@
-import { Predicate } from "../types";
-import { isFunction } from "../utils";
+import { Predicate } from '../types';
+import { Validations } from '../utils';
 
 /**
- * 
+ * Tells whether at least one value satisfies `predicate`; stops and closes the source at the first match.
  * @operation `Action`
- * @param iterable 
- * @param predicate 
- * @returns 
+ * @param iterable - the source `Iterable`
+ * @param predicate - called with each value and its index
+ * @returns `true` if a value satisfies `predicate`; `false` when `iterable` is empty
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `predicate` is not a function
+ * @example
+ * ```ts
+ * Functions.some([1, 2, 3], v => v > 2); // true
+ * ```
+ * @since 0.0.10
  */
 export function some<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
-  if (iterable == null)
-    throw 'The source "iterable" must be provided';
-	if(!isFunction(predicate))
-		throw '"predicate" function must be provided';
-  const iterator: Iterator<T> = iterable[Symbol.iterator]();
-  let i = 0;
-
-  for (let n = iterator.next(); n.done !== true; n = iterator.next()) {
-    if (predicate(n.value, i++)) return true;
-  }
-  return false;
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(predicate, 'predicate');
+	let index = 0;
+	// for…of closes the source both when we return early and when the predicate throws
+	for (const value of iterable) {
+		if (predicate(value, index++))
+			return true;
+	}
+	return false;
 }

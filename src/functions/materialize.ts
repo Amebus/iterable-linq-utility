@@ -1,43 +1,35 @@
-import { LinkedListCollection } from "../collections";
+import { Validations } from '../utils';
+import { LinkedListCollection } from '../collections';
 
 /**
- * 
+ * Reads `iterable` immediately and stores its values.
  * @operation `Action`
- * @param iterable 
- * @returns 
+ * @param iterable - the source `Iterable`
+ * @returns an `Iterable` over the stored values; a materialized input is returned as is
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`
+ * @example
+ * ```ts
+ * const stored = Functions.materialize(Functions.map([1, 2, 3], v => v * 10)); // runs now
+ * Array.from(stored); // [10, 20, 30], read from the stored values
+ * ```
+ * @since 0.0.10
  */
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
+	Validations.throwIfNotIterable(iterable);
 	if (iterable instanceof MaterializeIterable) {
-    return iterable;
-  }
+		return iterable;
+	}
 	return new MaterializeIterable(iterable);
 }
 
 class MaterializeIterable<T> implements Iterable<T> {
+	private readonly source: LinkedListCollection.LinkedList<T>;
 
 	constructor(iterable: Iterable<T>) {
 		this.source = LinkedListCollection.from(iterable);
 	}
 
-	private source: Iterable<T>;
-
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new MaterializeIterableIterator(this.source);
+	[Symbol.iterator](): Iterator<T> {
+		return this.source[Symbol.iterator]();
 	}
-}
-
-class MaterializeIterableIterator<T> implements Iterator<T> {
-	
-	constructor(source: Iterable<T>) {
-    this.sourceIterator =  source[Symbol.iterator]();
-  }
-
-	private sourceIterator: Iterator<T>;
-
-	next(): IteratorResult<T, any> {
-		return this.sourceIterator.next();
-	}
-
 }

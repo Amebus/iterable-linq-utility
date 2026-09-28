@@ -1,53 +1,20 @@
-import { getDoneIteratorResult, getContinueIteratorResult } from "../utils";
+import { unfold } from '../iterators';
+import { Validations } from '../utils';
 
+/**
+ * Returns an `Iterable` that yields `value` `count` times.
+ * @operation `Transformation`
+ * @param value - the value to repeat
+ * @param count - how many times; must be a non-negative integer
+ * @returns a lazy, re-runnable `Iterable`
+ * @throws Error if `count` is negative, not an integer, `NaN` or `Infinity`
+ * @example
+ * ```ts
+ * Array.from(Functions.repeat('a', 3)); // ['a', 'a', 'a']
+ * ```
+ * @since 0.0.10
+ */
 export function repeat<T>(value: T, count: number): Iterable<T> {
-	if (count < 0)
-		throw '"count" parameter must be greater or equal then 0';
-	return new RepeatIterable(value, count);
-}
-
-class RepeatIterable<T> implements Iterable<T> {
-
-	constructor(value: T, count: number) {
-		this.value = value;
-		this.count = count;
-	}
-
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new RepeatIterableIterator(this.value, this.count);
-	}
-
-	private readonly value: T;
-	private readonly count: number;
-
-}
-
-class RepeatIterableIterator<T> implements Iterator<T> {
-	
-	constructor(value: T, count: number) {
-		this.value = value;
-		this.count = count;
-		this.leftToRepeat = count;
-		if (count === 0)
-			this.internalNext = getDoneIteratorResult;
-	}
-
-	leftToRepeat: number = 0;
-	private readonly value: T;
-	private readonly count: number;
-
-	internalNext: () => IteratorResult<T,any> = () => {
-		if (this.leftToRepeat--)
-			return getContinueIteratorResult(this.value);
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult();
-	};
-
-	next(): IteratorResult<T, any> {
-		return this.internalNext();
-	}
-	return(value?: any): IteratorResult<T, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult(value);
-	}
+	Validations.throwIfNotNonNegativeInteger(count, 'count');
+	return unfold(count, left => left > 0 ? [value, left - 1] as const : undefined);
 }

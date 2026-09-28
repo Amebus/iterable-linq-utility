@@ -1,46 +1,16 @@
-import { collectToArray } from './collectToArray';
-export { collectToArray };
-
-import { empty } from './empty';
-export { empty };
-
-import { filter } from './filter';
-import { flatMap } from './flatMap';
-import { forEach, forEachAsync } from './forEach';
-export {
-	filter,
-	flatMap,
-	forEach, forEachAsync
-};
-
-import { map } from './map';
-import { materialize } from './materialize';
-import { max } from './max';
-import { memoize, getMemoizeDefaultOptions, IMemoizeOptions } from './memoize';
-import { min } from './min';
-export { 
-	map,
-	materialize,
-	max,
-	memoize, getMemoizeDefaultOptions, type IMemoizeOptions,
-	min
-};
-
-import { range } from './range';
-import { reduce } from './reduce';
-import { repeat } from './repeat';
-export {
-	range,
-	reduce,
-	repeat
-};
-
-import { some } from './some';
-export { some };
-
-import { tap } from './tap';
-import { tapChain } from './tapChain';
-export {
-	tap,
-	tapChain
-};
+export { collectToArray } from './collectToArray';
+export { empty } from './empty';
+export { filter } from './filter';
+export { flatMap } from './flatMap';
+export { forEach, forEachAsync } from './forEach';
+export { map } from './map';
+export { materialize } from './materialize';
+export { max } from './max';
+export { memoize, getMemoizeDefaultOptions } from './memoize';
+export { min } from './min';
+export { range } from './range';
+export { reduce } from './reduce';
+export { repeat } from './repeat';
+export { some } from './some';
+export { tap } from './tap';
+export { tapChain } from './tapChain';

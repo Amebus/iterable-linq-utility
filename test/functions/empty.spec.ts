@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest';
 
-import { 
+import {
 	collectToArray,
 	empty
-} from './_functions';
+} from '@/functions';
 
 import { returnClosesTheIterator } from './functionsTestUtility';
 

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { LinkedListCollection } from './_collections';
+import { LinkedListCollection } from '@/collections';
 
 const { from, LinkedList, LinkedListIterator } = LinkedListCollection;
 
@@ -9,10 +9,10 @@ describe('LinkedList', () => {
 	test('new LinkedList()', () => {
 		const list = new LinkedList<number>();
 
-		expect(list).instanceof(LinkedList);
+		expect(list).toBeInstanceOf(LinkedList);
 		expect(list.size()).toEqual(0);
-		expect(list[Symbol.iterator]).instanceOf(Function);
-		expect(list[Symbol.iterator]()).instanceOf(LinkedListIterator);
+		expect(list[Symbol.iterator]).toBeInstanceOf(Function);
+		expect(list[Symbol.iterator]()).toBeInstanceOf(LinkedListIterator);
 
 	});
 
@@ -23,13 +23,13 @@ describe('LinkedList', () => {
 		{input: [-3,-5,-8,1,2,3,4]},
 	])('addFirst($input)', ({ input }) => {
 		const list = new LinkedList<number>();
-		
+
 		let size = 0;
 		for(const item of input) {
 			list.addFirst(item);
 			expect(list.size()).toEqual(++size);
 		}
-		
+
 		expect([...list]).toEqual(input.reverse());
 	});
 
@@ -40,13 +40,13 @@ describe('LinkedList', () => {
 		{input: [-3,-5,-8,1,2,3,4]},
 	])('addLast($input)', ({ input }) => {
 		const list = new LinkedList<number>();
-		
+
 		let size = 0;
 		for(const item of input) {
 			list.addLast(item);
 			expect(list.size()).toEqual(++size);
 		}
-		
+
 		expect([...list]).toEqual(input);
 	});
 
@@ -58,7 +58,7 @@ describe('LinkedList', () => {
 	])('from($input)', ({ input }) => {
 		const list = from(input);
 
-		expect(list).instanceof(LinkedList);
+		expect(list).toBeInstanceOf(LinkedList);
 		expect(list.size()).toEqual(input.length);
 
 		let idx = 0;
@@ -73,9 +73,9 @@ describe('LinkedList', () => {
 		{input: undefined},
 		{input: null},
 	])('from($noInput) -> throws exception', ({ input }) => {
-		expect(() => from(input)).toThrowError();
+		// invalid input on purpose
+		expect(() => from(input as any)).toThrow();
 	});
-
 
 	test.each([
 		{input: [1,2,3,4], returnValue: 'a value'},
@@ -109,6 +109,12 @@ describe('LinkedList', () => {
 		expect(r3).toEqual({ done: true, value: returnValue });
 		const next3 = iterator.next();
 		expect(next3.done).toBe(true);
+	});
+
+	test('mixed addFirst/addLast keeps every node', () => {
+		const list = new LinkedList<number>().addLast(1).addFirst(2).addLast(3).addFirst(4);
+		expect([...list]).toEqual([4, 2, 1, 3]);
+		expect(list.size()).toBe(4);
 	});
 
 });

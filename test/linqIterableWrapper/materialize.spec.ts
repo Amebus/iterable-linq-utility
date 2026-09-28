@@ -1,11 +1,12 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectAction } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
-import { LinkedListCollection } from "./_collections";
+import { LinkedListCollection } from '@/collections';
 
 describe('IterableLinq.materialize', () => {
-	
+
 	const rangeIterableItemCount = 50;
 	const generatedRange = IterableLinq.fromRange(rangeIterableItemCount);
 	const linkedList = LinkedListCollection.from(generatedRange);
@@ -62,6 +63,10 @@ describe('IterableLinq.materialize', () => {
 
 		expect(filterResult1).toEqual(filterResult2);
 
+	});
+
+	test('IterableLinq.materialize is action', () => {
+		expectAction(source => IterableLinq.from(source).materialize());
 	});
 
 });

@@ -1,23 +1,15 @@
-import { getDoneIteratorResult } from "../utils";
+import { unfold } from '../iterators';
 
+/**
+ * Returns an `Iterable` with no values.
+ * @operation `Transformation`
+ * @returns an empty, re-runnable `Iterable`
+ * @example
+ * ```ts
+ * Array.from(Functions.empty<number>()); // []
+ * ```
+ * @since 0.0.10
+ */
 export function empty<T>(): Iterable<T> {
-	return new EmptyIterable();
-}
-
-class EmptyIterable<T> implements Iterable<T> {
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new EmptyIterableIterator();	
-	}
-}
-
-class EmptyIterableIterator<T> implements Iterator<T> {
-	next(): IteratorResult<T, any> {
-		return getDoneIteratorResult();
-	}
-	return?(value?: any): IteratorResult<T, any> {
-		return getDoneIteratorResult(value);
-	}
-	throw?(): IteratorResult<T> {
-		return getDoneIteratorResult();
-	}
+	return unfold<undefined, T>(undefined, () => undefined);
 }

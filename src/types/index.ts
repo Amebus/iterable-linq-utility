@@ -1,13 +1,11 @@
 export * from './action';
-
+export * from './chainMethod';
 export * from './comparer';
-
+export * from './iterableLinq';
 export * from './mapper';
-
+export * from './memoizeOptions';
 export * from './predicate';
-
+export * from './rangeOptions';
 export * from './reducer';
-
 export * from './tapper';
-
 export * from './unit';

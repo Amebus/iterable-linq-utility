@@ -1,36 +1,24 @@
 import { describe, expect, test, vi } from 'vitest';
-import { unit } from './_types';
+import { expectTransformation } from '../_helpers/operationKind';
+import { unit } from '@/types';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 
 const tapper = () => unit();
 
 describe('IterableLinq.memoize', () => {
 
 	test.each([
-		{ start: 0, end: 20 },
-		{ start: 0, end: 20 },
-		{ start: -10, end: 10 },
-		{ start: 0, end: 20, allowPartialMemoization: false },
-		{ start: 0, end: 20, allowPartialMemoization: false },
-		{ start: -10, end: 10, allowPartialMemoization: false }
-	])('IterableLinq.memoize() is transformation - IterableLinq.fromRange($start, $end)', ({ start, end, allowPartialMemoization }) => {
-		const tapperSpy = vi.fn(tapper);
-		const memoized = IterableLinq
-			.fromRange(start,end)
-			.tap(tapperSpy)
-			.memoize({ allowPartialMemoization });
-		expect(tapperSpy).not.toHaveBeenCalled();
-		memoized.collectToArray();
-		expect(tapperSpy).toHaveReturned();
+		{ allowPartialMemoization: true },
+		{ allowPartialMemoization: false }
+	])('IterableLinq.memoize($allowPartialMemoization) is transformation that does not re-run the source', ({ allowPartialMemoization }) => {
+		expectTransformation(source => IterableLinq.from(source).memoize({ allowPartialMemoization }), { rerunsSource: false });
 	});
 
 	test.each([
 		{ start: 0, end: 0, expectedTapperCalls: [0,0,0,0] },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20] },
-		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20] },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20] },
-		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: false },
 		{ start: 0, end: 20, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: false },
 		{ start: -10, end: 10, expectedTapperCalls: [20,20,20,20], allowPartialMemoization: false }
 	])('IterableLinq.memoize() saves data - IterableLinq.fromRange($start, $end)', ({ start, end, expectedTapperCalls, allowPartialMemoization }) => {
@@ -60,7 +48,7 @@ describe('IterableLinq.memoize', () => {
 			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -84,7 +72,7 @@ describe('IterableLinq.memoize', () => {
 			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -104,10 +92,10 @@ describe('IterableLinq.memoize', () => {
 			.tap(tapperSpy)
 			.memoize({ allowPartialMemoization: false });
 		expectedTapperCalls
-		.forEach((expectedCalls, idx) => {
+			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 
@@ -131,7 +119,7 @@ describe('IterableLinq.memoize', () => {
 			.forEach((expectedCalls, idx) => {
 				const someSpy = vi.fn(v => v > 0);
 				memoized.some(someSpy);
-				
+
 				expect(someSpy).toHaveReturnedTimes(expectedSomeCalls[idx]);
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedTapperCallsAfterSome[idx]);
 

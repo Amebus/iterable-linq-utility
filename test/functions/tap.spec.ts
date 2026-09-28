@@ -1,11 +1,13 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
+import { expectTransformation } from '../_helpers/operationKind';
 
-import { 
+import {
 	collectToArray,
 	range,
 	tap
-} from './_functions';
-import { unit } from './_types';
+} from '@/functions';
+import { unit } from '@/types';
 import { returnClosesTheIterator } from './functionsTestUtility';
 
 describe('tap', () => {
@@ -32,9 +34,9 @@ describe('tap', () => {
 		});
 		let tappedValue = -1;
 		const tapped = tap(range(end), tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		collectToArray(tapped);
 		expect(tappedValue).toBe(expectedTappedValue);
 		expect(tapperSpy).toHaveBeenCalledTimes(end);
@@ -52,12 +54,29 @@ describe('tap', () => {
 		});
 		let tappedValue = -1;
 		const tapped = tap(range(end), tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		collectToArray(tapped);
 		expect(tappedValue).toBe(expectedTappedValue);
 		expect(tapperSpy).toHaveBeenCalledTimes(end);
+	});
+
+	test('tap is transformation', () => {
+		expectTransformation(source => tap(source, () => unit()));
+	});
+
+	test('return() closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		const it = tap(iterable, () => unit())[Symbol.iterator]();
+		it.next();
+		it.return!();
+		expect(state.closed).toBe(true);
+	});
+
+	test('a throwing tapper propagates the same error', () => {
+		const err = new Error('boom');
+		expect(() => collectToArray(tap([1], () => { throw err; }))).toThrow(err);
 	});
 
 });

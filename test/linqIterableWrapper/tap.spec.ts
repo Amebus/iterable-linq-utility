@@ -1,7 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
-import { unit } from './_types';
+import * as IterableLinq from '@/index';
+import { unit } from '@/types';
 
 describe('IterableLinq.tap', () => {
 
@@ -19,12 +20,16 @@ describe('IterableLinq.tap', () => {
 		const tapped = IterableLinq
 			.fromRange(end)
 			.tap(tapperSpy);
-		
+
 		expect(tapperSpy).not.toHaveBeenCalled();
-		
+
 		tapped.collectToArray();
 		expect(tappedValue).toBe(expectedTappedValue);
 		expect(tapperSpy).toHaveReturnedTimes(end);
+	});
+
+	test('IterableLinq.tap is transformation', () => {
+		expectTransformation(source => IterableLinq.from(source).tap(() => unit()));
 	});
 
 });

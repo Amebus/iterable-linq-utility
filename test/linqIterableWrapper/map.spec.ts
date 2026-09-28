@@ -1,33 +1,17 @@
 import { describe, expect, test, vi } from 'vitest';
+import { expectTransformation } from '../_helpers/operationKind';
 
-import { IterableLinq } from './_linqIterable';
+import * as IterableLinq from '@/index';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 describe('IterableLinq.map', () => {
 
 	test.each([
 		{ start: 0, end: 20 },
-		{ start: 0, end: 20 },
 		{ start: -10, end: 10 }
 	])('IterableLinq.map without mapper -> throw exception', ({ start, end }) => {
 		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'map');
 	});
-
-	test.each([
-		{ start: 0, end: 5, mapPredicate: v => v * 10 },
-		{ start: -5, end: 5, mapPredicate: v => v * 10 },
-		{ start: 0, end: 5, mapPredicate: (v, idx) => v * idx },
-		{ start: -5, end: 5, mapPredicate: (v, idx) => v * idx }
-	])('IterableLinq.fromRange($start, $end).map($mapPredicate) is transformation', ({ start, end, mapPredicate }) => {
-		const mapPredicateSpy = vi.fn(mapPredicate);
-		const mapped = IterableLinq
-			.fromRange(start, end)
-			.map(mapPredicateSpy);
-		expect(mapPredicateSpy).not.toHaveBeenCalled();
-		mapped.collectToArray();
-		expect(mapPredicateSpy).toHaveReturned();
-	});
-
 
 	test.each([
 		{ start: 0, end: 5, mapPredicate: v => v * 10, expectedPredicateCalls: [5,10,15,20] },
@@ -48,8 +32,6 @@ describe('IterableLinq.map', () => {
 			});
 	});
 
-
-
 	test.each([
 		{ start: 0, end: 5, mapPredicate: v => v * 10, expectedResult: [0,10,20,30,40] },
 		{ start: -5, end: 5, mapPredicate: v => v * 10, expectedResult: [-50,-40,-30,-20,-10,0,10,20,30,40] },
@@ -61,6 +43,10 @@ describe('IterableLinq.map', () => {
 			.map(mapPredicate)
 			.collectToArray();
 		expect(r).toEqual(expectedResult);
+	});
+
+	test('IterableLinq.map is transformation', () => {
+		expectTransformation(source => IterableLinq.from(source).map(v => v * 10));
 	});
 
 });

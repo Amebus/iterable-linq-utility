@@ -1,180 +1,87 @@
-import { getDoneIteratorResult, getContinueIteratorResult } from "../utils";
+import { BaseIterator, DeferredIterable } from '../iterators';
+import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
+import type { IRangeOptions } from '../types';
+import { empty } from './empty';
 
-export function range(end: number): Iterable<number>;
-export function range(end: number, reverse?: boolean): Iterable<number>;
-export function range(start: number, end: number): Iterable<number>;
-export function range(start: number, end: number, step: number): Iterable<number>;
-export function range(start: number, end: number, reverse: boolean): Iterable<number>;
-export function range(start: number, end: number, step: number, reverse: boolean): Iterable<number>;
-export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number>;
-export function range(start: number, end?: number | boolean, step?: number | boolean, reverse?: boolean): Iterable<number> {
-	const choosenEnd = end == null || end === true || end === false ? start : end;
-	const choosenStart = end == null || end === true || end === false ? 0 : start;
-	
-	const isStartBeforeEnd = choosenStart < choosenEnd;
+/**
+ * Returns the numbers from 0 up to, but not including, `end`, computed as `index * step`.
+ * The direction follows the sign of `end`; `reverse` yields the same numbers backwards; a `NaN` bound gives an empty `Iterable`.
+ * @operation `Transformation`
+ * @param end - the bound, not included
+ * @param options - `step` (default 1, sign ignored) and `reverse` (default `false`)
+ * @returns a lazy, re-runnable `Iterable` of numbers
+ * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @example
+ * ```ts
+ * Array.from(Functions.range(3)); // [0, 1, 2]
+ * Array.from(Functions.range(3, { reverse: true })); // [2, 1, 0]
+ * ```
+ * @since 0.0.10
+ */
+export function range(end: number, options?: IRangeOptions): Iterable<number>;
+/**
+ * Returns the numbers from `start` up to, but not including, `end`, computed as `start + index * step`.
+ * The direction follows `start` and `end`; `reverse` yields the same numbers backwards; a `NaN` bound gives an empty `Iterable`.
+ * @operation `Transformation`
+ * @param start - the first value
+ * @param end - the bound, not included
+ * @param options - `step` (default 1, sign ignored) and `reverse` (default `false`)
+ * @returns a lazy, re-runnable `Iterable` of numbers
+ * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @example
+ * ```ts
+ * Array.from(Functions.range(1, 7, { step: 2 })); // [1, 3, 5]
+ * Array.from(Functions.range(5, 0)); // [5, 4, 3, 2, 1]
+ * ```
+ * @since 0.0.10
+ */
+export function range(start: number, end: number, options?: IRangeOptions): Iterable<number>;
+export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number> {
+	const hasStart = typeof endOrOptions === 'number';
+	const start = hasStart ? startOrEnd : 0;
+	const end = hasStart ? endOrOptions : startOrEnd;
+	if (!hasStart && options !== undefined)
+		throw new Error('The "options" parameter must be the second argument when "start" is omitted');
+	const rangeOptions = hasStart ? options : endOrOptions;
+	if (rangeOptions !== undefined)
+		Validations.throwIfNotObject(rangeOptions, 'options');
+	const { step = 1, reverse = false } = rangeOptions ?? {};
+	Validations.throwIfNotFiniteNonZero(step, 'step');
 
-	const tempStep = step !== true && step !== false && step != null && step !== 0 ? step : isStartBeforeEnd ? 1 : -1;
-	const choosenStep = isStartBeforeEnd && tempStep < 0 ? -1 * tempStep : !isStartBeforeEnd && tempStep > 0 ? -1 * tempStep : tempStep;
-	// const choosenStep = tempStep;
-
-	const choosenLength = Math.ceil(Math.abs(choosenEnd - choosenStart) / Math.abs(choosenStep));
-	const shouldReverse = end === true || step === true || (reverse != null && reverse) ? true : false;
-	const initialValue = shouldReverse ? choosenLength * choosenStep + choosenStart : choosenStart;
-	if (choosenStart === choosenEnd)
-		return new RangeEmptyIterable(initialValue, 0, 0);
-	if (shouldReverse) {
-		return new RangeRverseIterable(initialValue, choosenLength, choosenStep);
-		// return function*() {
-		// 	const internalStep = choosenStep;
-		// 	let length = choosenLength;
-		// 	let value = initialValue;
-		// 	while(length--) {
-		// 		yield value;
-		// 		value -= internalStep;
-		// 	}
-		// }();
-	}
-	return new RangeIterable(initialValue, choosenLength, choosenStep);
-	// return function*() {
-	// 	const internalStep = choosenStep;
-	// 	let length = choosenLength;
-	// 	let value = initialValue;
-	// 	while(length--) {
-	// 		yield value;
-	// 		value += internalStep;
-	// 	}
-	// }();
-}
-class RangeIterable implements Iterable<number> {
-	
-	constructor(initialValue: number, length: number, step: number) {
-		this.initialValue = initialValue;
-		this.length = length;
-		this.step = step;
-	}
-
-	[Symbol.iterator](): Iterator<number, any, undefined> {
-		return new RangeIterator(this.initialValue, this.length, this.step);
-	}
-
-	private readonly initialValue: number;
-	private readonly length: number;
-	private readonly step: number;
-
+	const normalized = normalizeRange(start, end, Math.abs(step), reverse);
+	// a NaN bound gives a NaN length: treat it as an empty range
+	if (!(normalized.length > 0))
+		return empty();
+	return new DeferredIterable(() => new RangeIterator(normalized.first, normalized.step, normalized.length));
 }
 
-class RangeIterator implements Iterator<number>{
-
-	constructor(value: number, length: number, step: number) {
-		this.value = value;
-		this.length = length;
-		this.step = step;
-	}
-
-	private value: number;
-	private length: number;
-	private readonly step: number;
-
-	internalNext: () => IteratorResult<number, any> = () => {
-		const value = this.value;
-		this.value += this.step;
-    if (this.length--) 
-			return getContinueIteratorResult(value);
-		return getDoneIteratorResult();
-	};
-
-	next(): IteratorResult<number, any> {
-		return this.internalNext();
-	}
-
-	return(value?: any): IteratorResult<number, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult(value);
-	}
+interface INormalizedRange {
+	readonly first: number;
+	readonly step: number;
+	readonly length: number;
 }
 
-
-class RangeRverseIterable implements Iterable<number> {
-	
-	constructor(initialValue: number, length: number, step: number) {
-		this.initialValue = initialValue - step;
-		this.length = length;
-		this.step = step;
-	}
-
-	[Symbol.iterator](): Iterator<number, any, undefined> {
-		return new RangeReverseIterator(this.initialValue, this.length, this.step);
-	}
-
-	private readonly initialValue: number;
-	private readonly length: number;
-	private readonly step: number;
-
+/**
+ * Turns the user-facing bounds into the first value, the signed step and the number of values.
+ */
+function normalizeRange(start: number, end: number, distance: number, reverse: boolean): INormalizedRange {
+	const step = end < start ? -distance : distance;
+	const length = Math.ceil(Math.abs(end - start) / distance);
+	if (!reverse)
+		return { first: start, step, length };
+	return { first: start + (length - 1) * step, step: -step, length };
 }
 
-class RangeReverseIterator implements Iterator<number>{
+class RangeIterator extends BaseIterator<number> {
+	private index = 0;
 
-	constructor(value: number, length: number, step: number) {
-		this.value = value;
-		this.length = length;
-		this.step = step;
+	constructor(private readonly first: number, private readonly step: number, private readonly length: number) {
+		super();
 	}
 
-	private value: number;
-	private length: number;
-	private readonly step: number;
-	internalNext: () => IteratorResult<number, any> = () => {
-		const value = this.value;
-		this.value -= this.step;
-    if (this.length--) 
-			return getContinueIteratorResult(value);
-		return getDoneIteratorResult();
-	};
-
-
-	next(): IteratorResult<number, any> {
-		return this.internalNext();
-	}
-
-	return(value?: any): IteratorResult<number, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult(value);
-	}
-}
-
-
-class RangeEmptyIterable implements Iterable<number> {
-  constructor(initialValue: number, length: number, step: number) {
-    this.initialValue = initialValue;
-    this.length = length;
-    this.step = step;
-  }
-
-  [Symbol.iterator](): Iterator<number, any, undefined> {
-    return new RangeEmptyIterator(this.initialValue, this.length, this.step);
-  }
-
-  private readonly initialValue: number;
-  private readonly length: number;
-  private readonly step: number;
-}
-
-class RangeEmptyIterator implements Iterator<number> {
-  constructor(value: number, length: number, step: number) {
-    this.value = value;
-    this.length = length;
-    this.step = step;
-  }
-
-  private value: number;
-  private length: number;
-  private readonly step: number;
-
-  next(): IteratorResult<number, any> {
-    return getDoneIteratorResult();
-  }
-
-	return(value?: any): IteratorResult<number, any> {
-		return getDoneIteratorResult(value);
+	protected advance(): IteratorResult<number> {
+		if (this.index >= this.length)
+			return getDoneIteratorResult();
+		return getContinueIteratorResult(this.first + this.index++ * this.step);
 	}
 }

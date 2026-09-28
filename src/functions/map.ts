@@ -1,62 +1,43 @@
-import { Mapper } from "../types";
-import { getDoneIteratorResult, getContinueIteratorResult, isFunction } from "../utils";
+import { SourceIterator, DeferredIterable } from '../iterators';
+import { Mapper } from '../types';
+import { getContinueIteratorResult, Validations } from '../utils';
 
 /**
- * 
+ * Lazily transforms each value with `mapper`.
+ * If `mapper` throws, the source is closed and the error propagates.
  * @operation `Transformation`
- * @param iterable 
- * @param mapper 
- * @returns 
+ * @param iterable - the source `Iterable`
+ * @param mapper - called with each value and its index; returns the new value
+ * @returns a lazy, re-runnable `Iterable` of the mapped values
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `mapper` is not a function
+ * @example
+ * ```ts
+ * Array.from(Functions.map([1, 2, 3], v => v * 10)); // [10, 20, 30]
+ * ```
+ * @since 0.0.10
  */
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(mapper))
-		throw '"mapper" function must be provided';
-  return new MapIterable(iterable, mapper);
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(mapper, 'mapper');
+	return new DeferredIterable(() => new MapIterator(iterable, mapper));
 }
 
-class MapIterable<T,R> implements Iterable<R> {
-
-	constructor(iterable: Iterable<T>, mapper: Mapper<T,R>) {
-		this.source = iterable;
-		this.mapper = mapper;
+class MapIterator<T, R> extends SourceIterator<T, R> {
+	constructor(iterable: Iterable<T>, private readonly mapper: Mapper<T, R>) {
+		super(iterable);
 	}
 
-	[Symbol.iterator](): Iterator<R, any, undefined> {
-		return new MapIterableIterator(this.source, this.mapper);
-	}
-
-	private readonly mapper: Mapper<T, R>;
-	private readonly source: Iterable<T>;
-}
-
-class MapIterableIterator<T, R> implements Iterator<R> {
-	
-	constructor(source: Iterable<T>, mapper: Mapper<T, R>) {
-		this.sourceIterator = source[Symbol.iterator]();
-		this.mapper = mapper;
-	}
-
-	private index = 0;
-	private readonly sourceIterator: Iterator<T>;
-	private readonly mapper: Mapper<T, R>;
-
-	internalNext: () => IteratorResult<R> = () => {
-		const n = this.sourceIterator.next();
-		if (n.done !== true) return getContinueIteratorResult<R>(this.mapper(n.value, this.index++));
-		this.internalNext = getDoneIteratorResult;
-		return this.internalNext();
-	};
-
-	next(): IteratorResult<R, any> {
-		return this.internalNext();
-	}
-
-	return(value?: any): IteratorResult<R, any> {
-		this.internalNext = getDoneIteratorResult;
-		if (isFunction(this.sourceIterator.return))
-      this.sourceIterator.return(value);
-		return getDoneIteratorResult(value);
+	protected advance(): IteratorResult<R> {
+		const n = this.source.next();
+		if (n.done === true)
+			return n;
+		let value: R;
+		try {
+			value = this.mapper(n.value, this.index++);
+		} catch (error) {
+			this.closeAfterCallbackError();
+			throw error;
+		}
+		return getContinueIteratorResult(value);
 	}
 }

@@ -1,63 +1,43 @@
-import { Tapper } from "../types";
-import { getDoneIteratorResult, getFlatIteratorResult, isFunction } from "../utils";
+import { SourceIterator, DeferredIterable } from '../iterators';
+import { Tapper } from '../types';
+import { Validations } from '../utils';
 
 /**
- * 
+ * Lazily calls `tapper` on each value as it flows through, without changing it.
+ * If `tapper` throws, the source is closed and the error propagates.
  * @operation `Tap`
- * @param iterable 
- * @param tapper 
- * @returns 
+ * @param iterable - the source `Iterable`
+ * @param tapper - called with each value and its index; returns `unit()`
+ * @returns a lazy, re-runnable `Iterable` of the same values
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if `tapper` is not a function
+ * @example
+ * ```ts
+ * const logged = Functions.tap([1, 2], v => { console.log(v); return unit(); });
+ * Array.from(logged); // logs 1, 2; returns [1, 2]
+ * ```
+ * @since 0.0.10
  */
 export function tap<T>(iterable: Iterable<T>, tapper: Tapper<T>): Iterable<T> {
-	if (iterable == null)
-		throw 'The source "iterable" must be provided';
-	if(!isFunction(tapper))
-		throw '"tapper" function must be provided';
-	return new TapIterable(iterable, tapper);
+	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotFunction(tapper, 'tapper');
+	return new DeferredIterable(() => new TapIterator(iterable, tapper));
 }
 
-class TapIterable<T> implements Iterable<T> {
-	
-	constructor(iterable: Iterable<T>, tapper: Tapper<T>) {
-		this.source = iterable;
-		this.tapper = tapper;
+class TapIterator<T> extends SourceIterator<T, T> {
+	constructor(iterable: Iterable<T>, private readonly tapper: Tapper<T>) {
+		super(iterable);
 	}
 
-	[Symbol.iterator](): Iterator<T, any, undefined> {
-		return new TapIterableIterator(this.source, this.tapper);
-	}
-
-	private tapper: Tapper<T>;
-	private source: Iterable<T>;
-
-}
-
-class TapIterableIterator<T> implements Iterator<T> {
-
-	constructor(source: Iterable<T>, tapper: Tapper<T>) {
-		this.sourceIterator = source[Symbol.iterator]();
-		this.tapper = tapper;
-	}
-
-	private index = 0;
-	private sourceIterator: Iterator<T>;
-	private tapper: Tapper<T>;
-
-	private internalNext: () => IteratorResult<T, any> = () => {
-		const n = this.sourceIterator.next();
-		if (n.done !== true) {
+	protected advance(): IteratorResult<T> {
+		const n = this.source.next();
+		if (n.done === true)
+			return n;
+		try {
 			this.tapper(n.value, this.index++);
-			return getFlatIteratorResult(n);
+		} catch (error) {
+			this.closeAfterCallbackError();
+			throw error;
 		}
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult();
-	};
-
-	next(): IteratorResult<T, any> {
-		return this.internalNext();
-	}
-	return?(value?: any): IteratorResult<T, any> {
-		this.internalNext = getDoneIteratorResult;
-		return getDoneIteratorResult(value);
+		return n;
 	}
 }
