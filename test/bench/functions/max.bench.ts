@@ -28,6 +28,17 @@ function nativeByScore(values: IRecord[]): IRecord | undefined {
 	return best;
 }
 
+// The same order as the list of keys ['group', 'score']: by group, then by score.
+function nativeByGroupAndScore(values: IRecord[]): IRecord | undefined {
+	let best = values[0];
+	for (const r of values) {
+		if (r.group > best.group || (r.group === best.group && r.score > best.score)) {
+			best = r;
+		}
+	}
+	return best;
+}
+
 test('max: numbers, no comparer', async ({ bench }) => {
 	await cases(bench, 'max/numbers')
 		.add('native loop', () => native(numbers))
@@ -54,7 +65,7 @@ test('max: key', async ({ bench }) => {
 
 test('max: list of keys', async ({ bench }) => {
 	await cases(bench, 'max/keys')
-		.add('native loop', () => nativeByScore(records))
+		.add('native loop', () => nativeByGroupAndScore(records))
 		.add('chain', () => from(records).max(['group', 'score']))
 		.add('Functions', () => Functions.max(records, ['group', 'score']))
 		.run();
