@@ -56,6 +56,7 @@ export interface IIterableLinqBase<T> {
 	/**
 	 * Maps each value to an `Iterable` and flattens the results into one chain.
 	 * Each inner `Iterable` is read completely before the next value of the chain is mapped.
+	 * Inner arrays are read by index, as in `Array.prototype.flatMap`: their `[Symbol.iterator]` is not called.
 	 * If `mapper` or an inner `Iterable` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
 	 * @param mapper - called with each value and its index; returns the `Iterable` to flatten

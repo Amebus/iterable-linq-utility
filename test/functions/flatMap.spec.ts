@@ -92,6 +92,43 @@ describe('flatMap', () => {
 		expect([...flatMap([[], [1], [], [2, 3], []], (v: number[]) => v)]).toEqual([1, 2, 3]);
 	});
 
+	test('inner arrays are read by index, as in Array.prototype.flatMap', () => {
+		const iteratorSpy = vi.fn(() => [][Symbol.iterator]());
+		const inner = Object.assign([1, 2], { [Symbol.iterator]: iteratorSpy });
+		expect([...flatMap([0], () => inner)]).toEqual([1, 2]);
+		expect(iteratorSpy).not.toHaveBeenCalled();
+	});
+
+	test('holes of an inner array become undefined', () => {
+		// eslint-disable-next-line no-sparse-arrays
+		expect([...flatMap([0], () => [1, , 3])]).toEqual([1, undefined, 3]);
+	});
+
+	test('values pushed to an inner array while reading it are read', () => {
+		const inner = [1];
+		const result: number[] = [];
+		for (const v of flatMap([0], () => inner)) {
+			result.push(v);
+			if (inner.length < 3)
+				inner.push(v + 1);
+		}
+		expect(result).toEqual([1, 2, 3]);
+	});
+
+	test('stopping inside an inner array closes the source', () => {
+		const outer = closableSource([1, 2, 3]);
+		const it = flatMap(outer.iterable, v => [v, v])[Symbol.iterator]();
+		expect(it.next()).toEqual({ done: false, value: 1 });
+		expect(it.next()).toEqual({ done: false, value: 1 });
+		it.return!();
+		expect(outer.state.closed).toBe(true);
+		expect(it.next()).toEqual({ done: true, value: undefined });
+	});
+
+	test('arrays and other iterables can be mixed', () => {
+		expect([...flatMap([0, 1, 2, 3], v => v % 2 === 0 ? [v, v] : range(v, v + 2))]).toEqual([0, 0, 1, 2, 2, 2, 3, 4]);
+	});
+
 	test('return(value) is forwarded to inner and source', () => {
 		const sourceReturn = vi.fn((v?: unknown) => ({ done: true as const, value: v }));
 		const innerReturn = vi.fn((v?: unknown) => ({ done: true as const, value: v }));
