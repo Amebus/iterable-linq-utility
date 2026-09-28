@@ -29,6 +29,10 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install -r documentation/requirements.txt
+      - name: Doc version
+        run: echo "doc_version=$(node -p "require('./package.json').version.split('.').slice(0, 2).join('.')")" >> "$GITHUB_ENV"
       - name: Deploy doc
         working-directory: ./documentation
-        run: mkdocs gh-deploy --force
+        run: |
+          mike deploy --push --update-aliases "$doc_version" latest
+          mike set-default --push latest

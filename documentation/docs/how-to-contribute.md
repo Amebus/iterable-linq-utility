@@ -87,6 +87,13 @@ cd documentation
 mkdocs serve
 ```
 
+The `publish_doc.yml` workflow publishes one version of the site per minor release with [mike](https://github.com/jimporter/mike). To preview the version selector, deploy locally without `--push` and serve the result:
+
+```bash
+mike deploy 0.1 latest
+mike serve
+```
+
 ## Commits and pull requests
 
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `build` or `ci`, an optional scope, and `!` for a breaking change. For example: `fix(range): empty range for NaN arguments`.

@@ -27,7 +27,7 @@ The library needs user documentation: the idea behind the project, the concepts 
 
 Chosen option: "Material for MkDocs", because it is the only option that keeps the documentation in the repository, reviewed with the code, and supports tabbed examples and search out of the box.
 
-The site is in `documentation/`. The `publish_doc.yml` workflow deploys it to GitHub Pages with `mkdocs gh-deploy`. The JSDoc stays the reference inside the editor; the site explains concepts and gives examples.
+The site is in `documentation/`. The `publish_doc.yml` workflow deploys it to GitHub Pages with [mike](https://github.com/jimporter/mike), one version per minor release. The JSDoc stays the reference inside the editor; the site explains concepts and gives examples.
 
 ### Positive Consequences
 
@@ -39,7 +39,7 @@ The site is in `documentation/`. The `publish_doc.yml` workflow deploys it to Gi
 
 * A Python toolchain is needed next to Node. Its versions are pinned in `documentation/requirements.txt`, so a new major version (MkDocs 2.0 removes the plugin system that Material depends on) cannot break the deploy
 * The API reference is written by hand, so it can drift from the JSDoc
-* The site shows only the latest version. Versioning the documentation (for example with mike) is a separate decision: https://github.com/Amebus/iterable-linq-utility/issues/20
+* mike keeps one version per minor release (`0.1`, `0.2`, …) and a patch release replaces the documentation of its minor. The `latest` alias is the default version, and the site published before mike is archived as `0.0` (https://github.com/Amebus/iterable-linq-utility/issues/20)
 
 ## Pros and Cons of the Options
 
