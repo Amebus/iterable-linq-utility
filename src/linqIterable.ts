@@ -13,6 +13,7 @@ import type {
 } from './types';
 
 import {
+	collectToArray,
 	filter,
 	flatMap,
 	forEach,
@@ -52,7 +53,7 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 	}
 
 	collectToArray(): T[] {
-		return Array.from(this.iterable);
+		return collectToArray(this.iterable);
 	}
 
 	filter(predicate: Predicate<T>): IIterableLinq<T> {
