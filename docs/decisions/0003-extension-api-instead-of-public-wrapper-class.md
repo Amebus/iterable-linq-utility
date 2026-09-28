@@ -6,13 +6,13 @@
 
 ## Context and Problem Statement
 
-The library exports the class `IterableLinqWrapper`, which implements `IIterableLinq`. The class is the only way to add operators to every chain, which ADR 0001 and ADR 0002 require ("Allow for extensibility into projects using the library thanks to typescript module augmentation"). It also lets users skip the validation of `from()`, ties them to `instanceof` and to the class name, and publishes its private members in the type declarations.
+The library exports the class `IterableLinqWrapper`, which implements `IIterableLinq`. The class is the only way to add operators to every chain, which [ADR 0001](0001-folder-structure-based-on-topics.md) requires ("Allow extensibility in projects that use the library, through TypeScript module augmentation"). It also lets users skip the validation of `from()`, ties them to `instanceof` and to the class name, and publishes its private members in the type declarations.
 
 How should users extend the fluent API, and should the class stay public?
 
 ## Decision Drivers
 
-* Allow for extensibility into projects using the library thanks to typescript module augmentation
+* Allow extensibility in projects that use the library, through TypeScript module augmentation
 * Freedom to change the wrapper implementation (for example sync and async wrappers) without breaking users
 * Validation of the input must always run
 * Chains must be recognisable even with two copies of the library installed

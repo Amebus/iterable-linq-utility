@@ -8,69 +8,70 @@ Technical Story: https://github.com/Amebus/iterable-linq-utility/issues/13
 
 ## Context and Problem Statement
 
-How should we strcutture the code? Where should we put features and utility methods and types?
-Each macro area might have it's own folder/module to
+How should the code be structured? Where should features, utility functions and types go?
 
 ## Decision Drivers
 
-* Immediately identify how and where to enter new code
-* Merges and Pull requests management
+* Immediately identify how and where to add new code
+* Easy merges and pull requests
 * Isolate each feature from the others
-* Allow for extensibility into projects using the library thanks to typescript module augmentation
+* Allow extensibility in projects that use the library, through TypeScript module augmentation
 * Separate types from implementations
 
 ## Considered Options
 
 * Every file at the root folder level
 * One module per feature
-* One module per topic, one file per feature into the module
+* One module per topic, one file per feature inside the module
 
 ## Decision Outcome
 
-Chosen option: "One module per topic, one file per feature into the module", because Isolations of features and code reausability with reagards to core and commons utility
+Chosen option: "One module per topic, one file per feature inside the module", because it isolates the features and still lets them share the core and common utilities.
+
+Today the topics are `src/functions` (one file per operation), `src/types`, `src/iterators`, `src/utils` and `src/collections`.
 
 ### Positive Consequences
 
 * Easier to reason about the code
 * Easier to manage branch merges and pull requests
 * Each feature is isolated
-* Module can be augmented
+* Modules can be augmented: [ADR 0003](0003-extension-api-instead-of-public-wrapper-class.md) builds the extension API on this
 
 ### Negative Consequences
 
-* High coupling between utility modules
-* Importing a module ends up in specifying not easy to reason about relative paths e.g.: ../../functions
+* High coupling between the utility modules
+* Relative imports across topics (for example `../functions`) are harder to read. The tests avoid them with the `@/` alias.
 
 ## Pros and Cons of the Options
 
 ### Every file at the root folder level
 
-src/map.ts, src/linkedList.ts, src/linqIterable.ts, src/types.ts ...
+`src/map.ts`, `src/linkedList.ts`, `src/linqIterable.ts`, `src/types.ts`, …
 
-* Good, because Import statements are easy to reason about
-* Good, because Allows reuse of code easily
-* Good, because highly testable, almost every funtion, class and type will be exported
-* Bad, because It will sooon ends up in
-* Bad, because Chances are high to get merge conflicts
+* Good, because import statements are easy to reason about
+* Good, because code is easy to reuse
+* Good, because it is highly testable: almost every function, class and type is exported
+* Bad, because the root folder soon becomes too crowded to navigate
+* Bad, because the chances of merge conflicts are high
 
 ### One module per feature
 
-Each fatures should have it's own folter e.g.: src/map/index.ts, src/map/mapIterable.ts, src/map/utils.ts, src/map/collectons.ts
+Each feature has its own folder, for example `src/map/index.ts`, `src/map/mapIterable.ts`, `src/map/utils.ts`, `src/map/collections.ts`.
 
-* Good, because every module is isolated from each others
-* Good, because every import statement is simple and points onlyt to files inside the same folder
-* Good, because highly testable, almost every funtion, class and type will be exported
-* Good, because Chances are low to get merge conflicts
-* Good, because Easy to add new features without touchig other features
-* Bad, because high code duplication, same utility might be duplicated into each module
+* Good, because every module is isolated from the others
+* Good, because every import points only to files inside the same folder
+* Good, because it is highly testable: almost every function, class and type is exported
+* Good, because the chances of merge conflicts are low
+* Good, because a new feature does not touch the other features
+* Bad, because of high code duplication: the same utility may be duplicated in each module
 
-### One module per topic, one file per feature into the module
+### One module per topic, one file per feature inside the module
 
-Each topic should have it's own module, each feature should be isolated from each others and have it's own file. Each file should export only the feature and the types to allow users to use that feature.
+Each topic has its own module, and each feature is isolated in its own file. Each file exports only the feature and the types needed to use it.
 
-* Good, because Code duplication is low
-* Good, because Chances are low to get merge conflicts
-* Good, because Easy to add new features without touchig other features
-* Good, because Private code to each feature needs not to be exported
-* Bad, because It may be difficult to test every single aspect of a feature
-* Bad, because Import statements are not easy to reason about
+* Good, because code duplication is low
+* Good, because the chances of merge conflicts are low
+* Good, because a new feature does not touch the other features
+* Good, because the private code of a feature does not need to be exported
+* Bad, because it may be difficult to test every single aspect of a feature
+* Bad, because import statements are not easy to reason about
