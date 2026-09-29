@@ -4,7 +4,7 @@
 * Deciders: Amebus
 * Date: 2026-09-29
 
-Technical Story: [design](../superpowers/specs/2026-09-29-release-process-design.md)
+Technical Story: https://github.com/Amebus/iterable-linq-utility/pull/70
 
 ## Context and Problem Statement
 
