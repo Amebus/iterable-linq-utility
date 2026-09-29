@@ -24,6 +24,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && vite build && cp dist/index.d.ts dist/index.d.cts",
     "check:package": "attw --pack .",
+    "check:changeset": "changeset status --since=origin/main",
     "check:since": "node scripts/check-since.ts",
     "dev": "vite",
     "lint": "eslint .",

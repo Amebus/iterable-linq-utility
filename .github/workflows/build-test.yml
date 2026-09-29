@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # check:changeset compares with origin/main
+          fetch-depth: 0
       - name: Install pnpm
         uses: pnpm/action-setup@v6
       - name: Setup Node
@@ -27,6 +30,8 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run typecheck
       - run: pnpm run check:since
+      - if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'changeset-release/')
+        run: pnpm run check:changeset
       - run: pnpm run build
       - run: pnpm run check:package
       - run: pnpm run test

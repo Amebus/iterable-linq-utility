@@ -43,7 +43,7 @@ The documentation has the same gap. `publish_doc.yml` publishes what is on `main
 * Before 1.0, a breaking change is declared as `minor`.
 * New public APIs use `@since next` in their JSDoc.
 * Two new checks, run by `build-test.yml`:
-  * `pnpm check:changeset` (`scripts/check-changeset.ts`), on pull requests only: fails when the diff against the base branch changes a file under `src/` and adds no `.changeset/*.md` file. Branches named `changeset-release/*` are skipped.
+  * `pnpm check:changeset` (`changeset status --since=origin/main`, with `changedFilePatterns: ["src/**"]` in `.changeset/config.json`), on pull requests only: fails when the diff against `main` changes a file under `src/` and adds no changeset. Branches named `changeset-release/*` are skipped.
   * `pnpm check:since` (`scripts/check-since.ts`), always: every `@since` under `src/` is `next` or a version lower than or equal to `package.json` `version`.
 
 ### 2. Preparing a release
