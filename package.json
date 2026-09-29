@@ -26,6 +26,7 @@
     "check:package": "attw --pack .",
     "check:changeset": "changeset status --since=origin/main",
     "check:since": "node scripts/check-since.ts",
+    "check:instructions": "node scripts/check-instructions.ts",
     "check:structure": "node scripts/check-structure.ts",
     "dev": "vite",
     "lint": "eslint .",

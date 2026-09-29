@@ -9,15 +9,16 @@ Instructions for AI coding agents (Claude Code, Copilot, Cursor, Codex…). Huma
 Run Node and pnpm in the devcontainer (`.devcontainer/`) when it is available, not on the host: `node_modules` is installed for Linux.
 
 ```bash
-pnpm lint             # ESLint (pnpm lint-fix to fix)
+pnpm lint                 # ESLint (pnpm lint-fix to fix)
 pnpm typecheck
-pnpm check:since      # @since is `next` or a released version
-pnpm check:structure  # every operation has specs, bench, export, chain method and a complete JSDoc
-pnpm check:changeset  # the branch adds a changeset when it changes src/
+pnpm check:since          # @since is `next` or a released version
+pnpm check:structure      # every operation has specs, bench, export, chain method and a complete JSDoc
+pnpm check:instructions   # AGENTS.md and the skills link to existing files and ADRs
+pnpm check:changeset      # the branch adds a changeset when it changes src/
 pnpm build
 pnpm check:package
 pnpm test
-pnpm bench            # benchmarks, see the README
+pnpm bench                # benchmarks, see the README
 ```
 
 ## Rules

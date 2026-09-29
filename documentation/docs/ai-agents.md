@@ -27,6 +27,7 @@ The instructions help the agent; the checks hold whoever writes the code:
 
 - `pnpm check:structure`: every operation has its specs, its bench, its export and its chain method, and a complete JSDoc;
 - `pnpm check:since`: `@since` is `next` or a released version;
+- `pnpm check:instructions`: the links of `AGENTS.md` and of the skills point to existing files, and the ADRs they cite exist; it cannot tell whether a rule still matches its ADR;
 - `pnpm check:changeset`: a pull request that changes `src/` has a changeset.
 
 The documentation site and the quality of the changelog note are not checked: look at them in the review.

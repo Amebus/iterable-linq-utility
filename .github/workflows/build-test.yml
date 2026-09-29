@@ -37,6 +37,7 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run check:since
       - run: pnpm run check:structure
+      - run: pnpm run check:instructions
       - if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'changeset-release/')
         run: pnpm run check:changeset
       - run: pnpm run build
