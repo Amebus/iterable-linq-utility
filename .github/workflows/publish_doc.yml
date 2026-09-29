@@ -60,7 +60,13 @@ jobs:
           fi
           last_tag=$(git tag --sort=-v:refname | head -1)
           if [ "$mode" = redeploy ]; then
-            git checkout "${INPUT_REF:-$last_tag}"
+            ref="${INPUT_REF:-$last_tag}"
+            # main or a commit would publish unreleased documentation over a released version
+            if [ -z "$(git tag -l "$ref")" ] && [ "${ref#docs/}" = "$ref" ]; then
+              echo "::error::ref must be a release tag or a docs/<minor> branch, not '$ref'"
+              exit 1
+            fi
+            git checkout "$ref"
           elif [ -n "$INPUT_REF" ]; then
             git checkout "$INPUT_REF"
           fi
