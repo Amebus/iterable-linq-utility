@@ -12,5 +12,6 @@ export { range } from './range';
 export { reduce } from './reduce';
 export { repeat } from './repeat';
 export { some } from './some';
+export { take } from './take';
 export { tap } from './tap';
 export { tapChain } from './tapChain';

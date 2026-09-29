@@ -22,6 +22,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
 
@@ -266,6 +267,32 @@ Starts a chain that yields the same value *count* times.
 
     Array.from(Functions.repeat(5, 3));
     // [5, 5, 5]
+    ```
+
+Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.
+
+## take
+
+Yields the first *count* values, then closes the source. The source is never read past the *count*-th value, so `take` also ends an infinite chain.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .take(3)
+        .collectToArray();
+    // [1, 2, 3]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.take([1, 2, 3, 4, 5], 3));
+    // [1, 2, 3]
     ```
 
 Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.

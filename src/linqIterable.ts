@@ -25,6 +25,7 @@ import {
 	min,
 	reduce,
 	some,
+	take,
 	tap,
 	tapChain
 } from './functions';
@@ -103,6 +104,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	some(predicate: Predicate<T>): boolean {
 		return some(this.iterable, predicate);
+	}
+
+	take(count: number): IIterableLinq<T> {
+		return toChain(take(this.iterable, count));
 	}
 
 	tap(tapper: Tapper<T>): IIterableLinq<T> {
