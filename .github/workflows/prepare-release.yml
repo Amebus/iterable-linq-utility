@@ -40,6 +40,7 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run check:since
       - run: pnpm run check:structure
+      - run: pnpm run check:instructions
       - run: pnpm run build
       - run: pnpm run check:package
       - run: pnpm run test

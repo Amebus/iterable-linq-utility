@@ -30,7 +30,7 @@ pnpm changeset --empty  # a change to src/ that releases nothing, e.g. an intern
 The same as the CI, in the devcontainer:
 
 ```bash
-pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm check:changeset && pnpm build && pnpm check:package && pnpm test
+pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm check:instructions && pnpm check:changeset && pnpm build && pnpm check:package && pnpm test
 ```
 
 For a change that can affect performance, compare the benchmarks with `main` (`pnpm bench:baseline` on `main`, then `pnpm bench`).

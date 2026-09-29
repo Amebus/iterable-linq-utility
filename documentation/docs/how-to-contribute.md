@@ -67,6 +67,7 @@ pnpm lint
 pnpm typecheck
 pnpm check:since
 pnpm check:structure
+pnpm check:instructions
 pnpm check:changeset
 pnpm build
 pnpm check:package
