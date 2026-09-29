@@ -30,6 +30,8 @@ The instructions help the agent; the checks hold whoever writes the code:
 - `pnpm check:instructions`: the links of `AGENTS.md` and of the skills point to existing files, and the ADRs they cite exist; it cannot tell whether a rule still matches its ADR;
 - `pnpm check:changeset`: a pull request that changes `src/` has a changeset.
 
+GitHub also protects `main` and the release tags ([ADR 0016](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0016-protection-rules-for-main-and-release-tags.md)): a push to `main`, a force-push or a merge with the CI red is rejected, even when the agent uses your credentials.
+
 The documentation site and the quality of the changelog note are not checked: look at them in the review.
 
 ## Tips

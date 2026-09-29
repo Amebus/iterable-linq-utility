@@ -1,6 +1,6 @@
 # Checks on the release pull request
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0016](0016-protection-rules-for-main-and-release-tags.md)
 * Deciders: Amebus
 * Date: 2026-09-29
 

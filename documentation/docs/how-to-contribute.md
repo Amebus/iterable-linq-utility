@@ -106,13 +106,14 @@ mike serve
 - Open the pull request against `main` and link the issues it solves with `Closes #<number>`.
 - A pull request that changes `src/` adds a changeset: run `pnpm changeset`, choose the bump and write a note for the users of the library. The CI fails without it. Before 1.0 a breaking change is a `minor`. A change to `src/` that releases nothing (an internal refactor) adds an empty one with `pnpm changeset --empty`. The check also accepts a changeset that the pull request modifies: extending the note of a pending changeset is fine when it describes the new change too.
 - Describe every breaking change in the migration guide of the next version, like [Migrating to 0.1.0](migrating-to-0.1.0.md).
+- `main` accepts changes only through a pull request whose `build` check passed: a direct push or a force-push is rejected. No review is required, and the branch does not have to be up to date with `main`. See [Protection rules](#protection-rules).
 
 ## Releases
 
 The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md), [ADR 0015](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0015-checks-on-the-release-pull-request.md)).
 
 1. Run the **Prepare release** workflow from the Actions tab. It runs the checks and opens, or updates, the `chore: release` pull request: the new version in `package.json`, the entries of `CHANGELOG.md`, the changesets deleted, `@since next` replaced with the version.
-2. Review the version and the changelog in that pull request. The workflow already ran the checks, so its CI run, created by `github-actions`, waits for an approval ("Approve and run workflows") and can be left pending. If `main` ever requires status checks, approve it, or close and reopen the pull request to run the CI (`check:changeset` is skipped for `changeset-release/*` branches), or merge it as an administrator.
+2. Review the version and the changelog in that pull request. Its CI run, created by `github-actions`, waits for an approval: click "Approve and run workflows", or close and reopen the pull request (`check:changeset` is skipped for `changeset-release/*` branches). `main` requires the `build` check, so the pull request cannot be merged until that run passes.
 3. **Before merging, check that nothing changed `src/` on `main` since the workflow ran.** The pull request is computed when the workflow runs: a pull request merged later keeps its changeset pending for the next release, and its `@since next` is not replaced, so an API published in this version would get the next version at the next release. If that happened, run **Prepare release** again: it recomputes the release from `main` and updates the same pull request. A change outside `src/` (documentation, CI) needs nothing. To check, an empty output means nothing to do:
 
     ```bash
@@ -121,6 +122,22 @@ The repository has one long-lived branch, `main`, and the changesets of the merg
     ```
 
 4. Merge it. The **Npm Publish** workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as `latest`.
+
+### Protection rules
+
+Two rulesets protect the repository ([ADR 0016](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0016-protection-rules-for-main-and-release-tags.md)), and nobody bypasses them, administrators included:
+
+- `main`: no deletion, no force-push, changes only through a pull request with the `build` check passed;
+- `release-tags` (`X.Y.Z`): a tag can be created, but not deleted or moved.
+
+Their definitions are in `.github/rulesets/`. To change a rule, change the file in a pull request, then apply it:
+
+```bash
+gh api repos/Amebus/iterable-linq-utility/rulesets --jq '.[] | "\(.id) \(.name)"'   # the ids
+gh api -X PUT repos/Amebus/iterable-linq-utility/rulesets/<id> --input .github/rulesets/main.json
+```
+
+On a new repository, create them with `gh api -X POST repos/<owner>/<repo>/rulesets --input .github/rulesets/<name>.json`. In an emergency, an administrator can disable a ruleset in Settings → Rules → Rulesets, and must enable it again afterwards.
 
 ### Documentation between releases
 

@@ -18,7 +18,8 @@ Each file records one decision: its context, the options considered and the cons
 | [0012](0012-trunk-based-releases-with-changesets.md) | Trunk-based releases with changesets | accepted, amended by [0015](0015-checks-on-the-release-pull-request.md) |
 | [0013](0013-documentation-versions-between-releases.md) | Documentation versions between releases | accepted |
 | [0014](0014-instructions-for-ai-coding-agents.md) | Instructions for AI coding agents | accepted |
-| [0015](0015-checks-on-the-release-pull-request.md) | Checks on the release pull request | accepted |
+| [0015](0015-checks-on-the-release-pull-request.md) | Checks on the release pull request | accepted, amended by [0016](0016-protection-rules-for-main-and-release-tags.md) |
+| [0016](0016-protection-rules-for-main-and-release-tags.md) | Protection rules for main and the release tags | accepted |
 
 ## Adding a decision
 

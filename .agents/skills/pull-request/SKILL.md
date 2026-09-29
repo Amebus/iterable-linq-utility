@@ -42,3 +42,5 @@ For a change that can affect performance, compare the benchmarks with `main` (`p
 ## 5. Pull request
 
 Against `main`. The description says what changes and why, lists what was verified, and links the issues it solves with `Closes #<number>`.
+
+`main` accepts changes only through a pull request whose `build` check passed ([ADR 0016](../../../docs/decisions/0016-protection-rules-for-main-and-release-tags.md)): never push to it directly. The branch does not have to be up to date with `main` to be merged.

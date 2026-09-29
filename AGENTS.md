@@ -33,7 +33,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - A pull request that changes `src/` adds a changeset (`pnpm changeset`); before 1.0 a breaking change is a `minor` (ADR 0012).
 - A new or changed operation is documented in `documentation/docs/api-reference/` (ADR 0013).
 - An architecture decision is recorded as a new ADR.
-- Commits follow Conventional Commits; branch from `main`, one pull request per topic.
+- Commits follow Conventional Commits; branch from `main`, one pull request per topic. `main` changes only through a pull request with the `build` check passed, and the release tags cannot be deleted or moved: GitHub rejects anything else (ADR 0016).
 
 ## Never
 
@@ -41,7 +41,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - Write a version in `@since` for a new API: use `next`.
 - Upgrade Node, pnpm, the devcontainer image or dependencies unless asked.
 - Edit an accepted ADR: supersede or amend it with a new one (only its status changes).
-- Commit, push or open pull requests unless asked.
+- Commit, push or open pull requests unless asked. Never push to `main` or force-push it, and never change the rulesets in the settings: change `.github/rulesets/` in a pull request.
 
 ## Keeping the instructions in sync
 
