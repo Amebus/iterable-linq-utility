@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.reduce([3, 7, 2], (acc, v) => (v > acc ? v : acc)); // 7
  * ```
- * @since 0.2.0
+ * @since next
  */
 export function reduce<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T;
 /**

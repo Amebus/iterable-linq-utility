@@ -43,8 +43,8 @@ The documentation has the same gap. `publish_doc.yml` publishes what is on `main
 * Before 1.0, a breaking change is declared as `minor`.
 * New public APIs use `@since next` in their JSDoc.
 * Two new checks, run by `build-test.yml`:
-  * `pnpm check:changeset` (`scripts/check-changeset.mjs`), on pull requests only: fails when the diff against the base branch changes a file under `src/` and adds no `.changeset/*.md` file. Branches named `changeset-release/*` are skipped.
-  * `pnpm check:since` (`scripts/check-since.mjs`), always: every `@since` under `src/` is `next` or a version lower than or equal to `package.json` `version`.
+  * `pnpm check:changeset` (`scripts/check-changeset.ts`), on pull requests only: fails when the diff against the base branch changes a file under `src/` and adds no `.changeset/*.md` file. Branches named `changeset-release/*` are skipped.
+  * `pnpm check:since` (`scripts/check-since.ts`), always: every `@since` under `src/` is `next` or a version lower than or equal to `package.json` `version`.
 
 ### 2. Preparing a release
 
@@ -54,8 +54,8 @@ New workflow `prepare-release.yml`, started by hand (`workflow_dispatch`) on `ma
 2. Stops with an error when there is no pending changeset.
 3. Runs `lint`, `typecheck`, `check:since`, `build`, `check:package` and `test`.
 4. Runs `changesets/action` with `version: pnpm release:version`, title and commit message `chore: release`. The action commits on the branch `changeset-release/main` and opens, or updates, the "Version Packages" pull request to `main`. It uses `GITHUB_TOKEN`, so the normal CI does not run on that pull request: step 3 already ran the same checks.
-   * `release:version` runs `changeset version` (bumps `package.json`, writes `CHANGELOG.md` with links to the pull requests through `@changesets/changelog-github`, deletes the consumed changesets), then `scripts/set-since.mjs`.
-   * `scripts/set-since.mjs` replaces `@since next` with the new `package.json` `version` in `src/**/*.ts`.
+   * `release:version` runs `changeset version` (bumps `package.json`, writes `CHANGELOG.md` with links to the pull requests through `@changesets/changelog-github`, deletes the consumed changesets), then `scripts/set-since.ts`.
+   * `scripts/set-since.ts` replaces `@since next` with the new `package.json` `version` in `src/**/*.ts`.
 
 The maintainer reviews the version and the changelog in that pull request and merges it when the release should go out. Changesets merged in the meantime are added to the next run of the workflow.
 

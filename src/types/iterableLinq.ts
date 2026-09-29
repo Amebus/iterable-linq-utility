@@ -196,7 +196,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([3, 7, 2]).reduce((acc, v) => (v > acc ? v : acc)); // 7
 	 * ```
-	 * @since 0.2.0
+	 * @since next
 	 */
 	reduce(reducer: Reducer<T, T>): T;
 
