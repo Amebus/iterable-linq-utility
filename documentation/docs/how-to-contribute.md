@@ -19,7 +19,7 @@ pwsh .devcontainer/build.ps1     # Windows (PowerShell)
 
 The npm cache and the pnpm store live in the Docker volumes `node24-npm-cache` and `node24-pnpm-store`: they survive a rebuild of the container, and every devcontainer that uses the same names shares them. `docker volume rm node24-pnpm-store` empties the store.
 
-Without the devcontainer, install Node 24 and pnpm 11 (the version is pinned in the `packageManager` field of `package.json`), then:
+Without the devcontainer, install Node 24 and pnpm 12 (the version is pinned in the `packageManager` field of `package.json`), then:
 
 ```bash
 pnpm install
