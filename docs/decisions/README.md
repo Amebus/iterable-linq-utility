@@ -15,6 +15,8 @@ Each file records one decision: its context, the options considered and the cons
 | [0009](0009-transition-tables-instead-of-switch-statements.md) | Transition tables instead of switch statements | accepted |
 | [0010](0010-package-formats-and-type-declarations.md) | Package formats and type declarations | accepted |
 | [0011](0011-local-benchmarks-with-a-saved-baseline.md) | Local benchmarks with a saved baseline | accepted |
+| [0012](0012-trunk-based-releases-with-changesets.md) | Trunk-based releases with changesets | accepted |
+| [0013](0013-documentation-versions-between-releases.md) | Documentation versions between releases | accepted |
 
 ## Adding a decision
 
