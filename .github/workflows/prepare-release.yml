@@ -16,6 +16,8 @@ concurrency:
 
 jobs:
   prepare:
+    # from another branch the action would open changeset-release/<branch> against it
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
