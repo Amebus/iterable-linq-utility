@@ -10,7 +10,14 @@ Contributions are welcome: bug reports, new operations, fixes, benchmarks and do
 
 ## Set up
 
-The repository has a devcontainer: open it in VS Code (or any editor that supports devcontainers). It runs on `node-alpine:24.18.0` and runs `pnpm install` when the container is created.
+The repository has a devcontainer: open it in VS Code (or any editor that supports devcontainers). It runs on the local image `node-alpine:24.20.0`, built from `.devcontainer/Dockerfile`, and runs `pnpm install` when the container is created. Build the image once before opening the devcontainer, and again after changing the Dockerfile:
+
+```bash
+.devcontainer/build.sh           # macOS, Linux, WSL (sh, bash or zsh)
+pwsh .devcontainer/build.ps1     # Windows (PowerShell)
+```
+
+The npm cache and the pnpm store live in the Docker volumes `node24-npm-cache` and `node24-pnpm-store`: they survive a rebuild of the container, and every devcontainer that uses the same names shares them. `docker volume rm node24-pnpm-store` empties the store.
 
 Without the devcontainer, install Node 24 and pnpm 11 (the version is pinned in the `packageManager` field of `package.json`), then:
 

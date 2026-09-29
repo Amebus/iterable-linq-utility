@@ -1,6 +1,6 @@
 {
   "name": "iterable-linq-utility",
-  "image": "node-alpine:24.18.0",
+  "image": "node-alpine:24.20.0",
 	"customizations": {
 		"vscode": {
 			"settings": {
@@ -17,15 +17,14 @@
 		}
 	},
   "forwardPorts": [3000],
-  "initializeCommand": "mkdir -p \"$HOME/Progetti/informatica/node/24/cache\" \"$HOME/Progetti/informatica/node/24/pnpm-store\"",
   "postCreateCommand": "pnpm install",
-  "remoteUser": "vscode",
+  "remoteUser": "node",
   "containerEnv": {
-    "pnpm_config_store_dir": "/home/vscode/.pnpm-store"
+    "pnpm_config_store_dir": "/home/node/.pnpm-store"
   },
 	"mounts": [
-    "source=${localEnv:HOME}/Progetti/informatica/node/24/cache,target=/home/vscode/.npm,type=bind",
-    "source=${localEnv:HOME}/Progetti/informatica/node/24/pnpm-store,target=/home/vscode/.pnpm-store,type=bind"
+    "source=node24-npm-cache,target=/home/node/.npm,type=volume",
+    "source=node24-pnpm-store,target=/home/node/.pnpm-store,type=volume"
   ],
 	"runArgs": ["--name", "iterable-linq-utility_devcontainer"]
 }
