@@ -9,7 +9,7 @@ Contributions are welcome: bug reports, new operations, fixes, benchmarks and do
 
 ## Set up
 
-The repository has a devcontainer: open it in VS Code (or any editor that supports devcontainers). It runs on `node-alpine:24.20.0` and runs `pnpm install` when the container is created.
+The repository has a devcontainer: open it in VS Code (or any editor that supports devcontainers). It runs on `node-alpine:24.18.0` and runs `pnpm install` when the container is created.
 
 Without the devcontainer, install Node 24 and pnpm 11 (the version is pinned in the `packageManager` field of `package.json`), then:
 
