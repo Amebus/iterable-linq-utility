@@ -80,6 +80,7 @@ nav:
     - Alternative Projects: alternative-projects.md
     - Migrating to 0.1.0: migrating-to-0.1.0.md
     - How to contribute: how-to-contribute.md
+    - Working with AI agents: ai-agents.md
   - Advanced Concepts: 
     - advanced-concepts/index.md
     - Interoperability with other libraries: advanced-concepts/interoperability-with-other-libraries.md

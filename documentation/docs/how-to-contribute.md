@@ -6,6 +6,7 @@ Contributions are welcome: bug reports, new operations, fixes, benchmarks and do
 
 - **Open an issue first** for a new operation or for a change of behaviour, so the design can be agreed before the code is written. For a new operation, write its signatures in the issue: the chain method and the raw function in `Functions`.
 - **Record architecture decisions** as an ADR in [`docs/decisions/`](https://github.com/Amebus/iterable-linq-utility/tree/main/docs/decisions). Copy the format of the existing ones.
+- **Working with an AI agent?** The repository has instructions for it: see [Working with AI agents](ai-agents.md).
 
 ## Set up
 

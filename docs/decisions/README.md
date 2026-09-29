@@ -17,6 +17,7 @@ Each file records one decision: its context, the options considered and the cons
 | [0011](0011-local-benchmarks-with-a-saved-baseline.md) | Local benchmarks with a saved baseline | accepted |
 | [0012](0012-trunk-based-releases-with-changesets.md) | Trunk-based releases with changesets | accepted |
 | [0013](0013-documentation-versions-between-releases.md) | Documentation versions between releases | accepted |
+| [0014](0014-instructions-for-ai-coding-agents.md) | Instructions for AI coding agents | accepted |
 
 ## Adding a decision
 
