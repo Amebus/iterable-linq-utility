@@ -230,6 +230,21 @@ export interface IIterableLinqBase<T> {
 	some(predicate: Predicate<T>): boolean;
 
 	/**
+	 * Yields the first `count` values, then closes the source.
+	 * The source is never read past the `count`-th value, so `take` also ends an infinite chain.
+	 * @operation `Transformation`
+	 * @param count - how many values to yield; must be a non-negative integer
+	 * @returns a new chain with at most `count` values
+	 * @throws Error if `count` is negative, not an integer, `NaN` or `Infinity`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).take(3).collectToArray(); // [1, 2, 3]
+	 * ```
+	 * @since next
+	 */
+	take(count: number): IIterableLinq<T>;
+
+	/**
 	 * Calls `tapper` on each value as it flows through the chain, without changing it.
 	 * If `tapper` throws, the source is closed and the error propagates.
 	 * `tapper` runs only when the chain runs, once per value and per run.
