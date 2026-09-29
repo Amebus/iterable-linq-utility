@@ -65,6 +65,7 @@ Run the same checks as the CI:
 pnpm lint
 pnpm typecheck
 pnpm check:since
+pnpm check:changeset
 pnpm build
 pnpm check:package
 pnpm test
@@ -100,7 +101,7 @@ mike serve
 
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `build` or `ci`, an optional scope, and `!` for a breaking change. For example: `fix(range): empty range for NaN arguments`.
 - Open the pull request against `main` and link the issues it solves with `Closes #<number>`.
-- A pull request that changes `src/` adds a changeset: run `pnpm changeset`, choose the bump and write a note for the users of the library. The CI fails without it. Before 1.0 a breaking change is a `minor`. A change to `src/` that releases nothing (an internal refactor) adds an empty one with `pnpm changeset --empty`.
+- A pull request that changes `src/` adds a changeset: run `pnpm changeset`, choose the bump and write a note for the users of the library. The CI fails without it. Before 1.0 a breaking change is a `minor`. A change to `src/` that releases nothing (an internal refactor) adds an empty one with `pnpm changeset --empty`. The check also accepts a changeset that the pull request modifies: extending the note of a pending changeset is fine when it describes the new change too.
 - Describe every breaking change in the migration guide of the next version, like [Migrating to 0.1.0](migrating-to-0.1.0.md).
 
 ## Releases
@@ -108,7 +109,7 @@ mike serve
 The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md)).
 
 1. Run the **Prepare release** workflow from the Actions tab. It runs the checks and opens, or updates, the `chore: release` pull request: the new version in `package.json`, the entries of `CHANGELOG.md`, the changesets deleted, `@since next` replaced with the version.
-2. Review the version and the changelog in that pull request. The CI does not run on it: the workflow already ran the checks.
+2. Review the version and the changelog in that pull request. The CI does not run on it, because it is opened with `GITHUB_TOKEN`: the workflow already ran the checks. If `main` ever requires status checks, close and reopen the pull request to run the CI (`check:changeset` is skipped for `changeset-release/*` branches), or merge it as an administrator.
 3. Merge it. The **Npm Publish** workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as `latest`.
 
 ### Documentation between releases

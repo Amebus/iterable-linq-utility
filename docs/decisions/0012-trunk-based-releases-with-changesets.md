@@ -50,6 +50,7 @@ Chosen options: "B: `main` only" and "D: changesets".
 ### Negative Consequences
 
 * One more file in every pull request that changes `src/`, and an empty changeset for the ones that release nothing
+* The check needs a changeset in the diff, added or modified: a pull request can extend the note of a pending changeset instead of adding one, and the review decides whether that is enough
 * `main` contains unreleased changes; the documentation handles that with a `next` version ([ADR 0013](0013-documentation-versions-between-releases.md))
 * The CI does not run on the Version Packages pull request, because it is opened with `GITHUB_TOKEN`; `prepare-release.yml` runs the same checks before opening it
 * Two more devDependencies: `@changesets/cli` and `@changesets/changelog-github`
