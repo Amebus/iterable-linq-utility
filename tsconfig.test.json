@@ -1,6 +1,8 @@
 {
 	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
 		"noImplicitAny": false,
 		"paths": {
 			"@/*": ["./src/*"],
@@ -8,5 +10,5 @@
 		},
 		"types": ["node"]
 	},
-	"include": ["src", "test"]
+	"include": ["src", "test", "scripts"]
 }

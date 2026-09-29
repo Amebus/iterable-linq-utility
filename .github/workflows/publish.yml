@@ -1,37 +1,117 @@
 name: Npm Publish
 
+# Publishes when package.json has a version without a tag, that is after the merge of the release pull request.
+# Every job works on the release commit (the last commit of main that changed the version), not on the commit of the run:
+# a queued push or a later re-run must not publish unreleased changes.
+# The file name is bound to the npm trusted publisher: do not rename it.
+
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
 jobs:
+  check-version:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.version.outputs.release }}
+      sha: ${{ steps.version.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          # --first-parent: with a merge commit, the release commit is the merge on main
+          sha=$(git log -1 --first-parent --format=%H -G'"version":' -- package.json)
+          if [ -z "$(git ls-remote --tags origin "refs/tags/$version")" ]; then
+            release=true
+          else
+            release=false
+          fi
+          {
+            echo "version=$version"
+            echo "sha=$sha"
+            echo "release=$release"
+          } >> "$GITHUB_OUTPUT"
+
   build:
+    needs: check-version
+    if: needs.check-version.outputs.release == 'true'
     uses: ./.github/workflows/build-test.yml
+    with:
+      ref: ${{ needs.check-version.outputs.sha }}
 
   publish-package:
-    needs: build
+    needs: [check-version, build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       # required by npm trusted publishing (OIDC)
       id-token: write
+    env:
+      VERSION: ${{ needs.check-version.outputs.version }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.check-version.outputs.sha }}
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org/
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
-      - run: npm publish
+      - id: published
+        # a re-run after a failed tag or release must not publish twice
+        run: |
+          if npm view "iterable-linq-utility@$VERSION" version > /dev/null 2>&1; then
+            echo "done=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "done=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.published.outputs.done == 'false'
+        run: pnpm install --frozen-lockfile
+      - if: steps.published.outputs.done == 'false'
+        run: pnpm run build
+      - if: steps.published.outputs.done == 'false'
+        run: npm publish
+
+  github-release:
+    needs: [check-version, publish-package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.check-version.outputs.version }}
+      SHA: ${{ needs.check-version.outputs.sha }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.check-version.outputs.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/release-notes.ts "$VERSION" > notes.md
+      # creates the tag X.Y.Z too
+      - run: gh release create "$VERSION" --target "$SHA" --title "$VERSION" --notes-file notes.md
 
   deploy-doc:
-    needs: publish-package
+    needs: [check-version, github-release]
     permissions:
       contents: write
     uses: ./.github/workflows/publish_doc.yml
+    with:
+      mode: release
+      ref: ${{ needs.check-version.outputs.sha }}
