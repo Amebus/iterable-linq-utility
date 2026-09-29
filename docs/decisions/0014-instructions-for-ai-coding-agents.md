@@ -4,7 +4,7 @@
 * Deciders: Amebus
 * Date: 2026-09-29
 
-Technical Story: https://github.com/Amebus/iterable-linq-utility/pull/<number>
+Technical Story: https://github.com/Amebus/iterable-linq-utility/pull/72
 
 ## Context and Problem Statement
 
