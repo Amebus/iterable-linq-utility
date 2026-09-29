@@ -187,6 +187,20 @@ export interface IIterableLinqBase<T> {
 	min(comparer?: Comparer<T>): T | undefined;
 
 	/**
+	 * Runs the chain and accumulates its values into a single result, starting from the first value.
+	 * @operation `Action`
+	 * @param reducer - called with the accumulator, each value from the second one and its index (starting at 1); returns the new accumulator
+	 * @returns the final accumulator; the only value when the chain has one value, without calling `reducer`
+	 * @throws Error if the chain is empty or if `reducer` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([3, 7, 2]).reduce((acc, v) => (v > acc ? v : acc)); // 7
+	 * ```
+	 * @since 0.2.0
+	 */
+	reduce(reducer: Reducer<T, T>): T;
+
+	/**
 	 * Runs the chain and accumulates its values into a single result.
 	 * @operation `Action`
 	 * @param neutralElement - the initial accumulator (the seed)

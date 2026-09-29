@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 import { closableSource } from '../_helpers/closableSource';
 import { expectAction } from '../_helpers/operationKind';
 
@@ -63,6 +63,84 @@ describe('reduce', () => {
 		const { state, iterable } = closableSource([1, 2, 3]);
 		expect(() => reduce(iterable, 0, () => { throw err; })).toThrow(err);
 		expect(state.closed).toBe(true);
+	});
+
+	describe('without a seed', () => {
+
+		test.each([
+			{ iterable: [1, 2, 3], reducer: (acc, v) => acc + v, expectedResult: 6 },
+			{ iterable: [3, 7, 2], reducer: (acc, v) => (v > acc ? v : acc), expectedResult: 7 },
+			{ iterable: 'ciao', reducer: (acc, v) => v + acc, expectedResult: 'oaic' }
+		])('reduce($iterable, $reducer) -> $expectedResult', ({ iterable, reducer, expectedResult }) => {
+			expect(reduce(iterable as Iterable<any>, reducer)).toBe(expectedResult);
+		});
+
+		test('the first value is the seed and the reducer starts at index 1', () => {
+			const calls: [number, number, number][] = [];
+			const r = reduce([10, 20, 30], (acc, v, index) => {
+				calls.push([acc, v, index]);
+				return acc + v;
+			});
+			expect(r).toBe(60);
+			expect(calls).toEqual([[10, 20, 1], [30, 30, 2]]);
+		});
+
+		test('with one value returns it without calling the reducer', () => {
+			let called = false;
+			const r = reduce([42], (acc) => {
+				called = true;
+				return acc;
+			});
+			expect(r).toBe(42);
+			expect(called).toBe(false);
+		});
+
+		test('an empty source throws', () => {
+			expect(() => reduce([] as number[], (acc, v) => acc + v)).toThrow('must not be empty');
+		});
+
+		test.each([
+			{ reducer: undefined },
+			{ reducer: null },
+			{ reducer: {} }
+		])('reducer $reducer -> throw exception, also on an empty source', ({ reducer }) => {
+			const reduceJs = reduce as any;
+			expect(() => reduceJs([1, 2], reducer)).toThrow('"reducer"');
+			expect(() => reduceJs([], reducer)).toThrow('"reducer"');
+		});
+
+		test('is action', () => {
+			expectAction(source => reduce(source, (acc, v) => acc + v));
+		});
+
+		test('a throwing reducer closes the source and propagates the error', () => {
+			const err = new Error('boom');
+			const { state, iterable } = closableSource([1, 2, 3]);
+			expect(() => reduce(iterable, () => { throw err; })).toThrow(err);
+			expect(state.closed).toBe(true);
+		});
+
+	});
+
+	describe('the number of arguments picks the form', () => {
+
+		test('an undefined seed is a seed', () => {
+			const r = reduce([1, 2], undefined as number | undefined, (acc, v) => (acc ?? 0) + v);
+			expect(r).toBe(3);
+			expect(reduce([] as number[], undefined, (acc) => acc)).toBeUndefined();
+		});
+
+		test('a function can be a seed', () => {
+			const seed = (x: number) => x;
+			const r = reduce([1, 2], seed, (acc) => acc);
+			expect(r).toBe(seed);
+		});
+
+	});
+
+	test('the return type follows the form', () => {
+		expectTypeOf(reduce([1, 2], (acc, v) => acc + v)).toEqualTypeOf<number>();
+		expectTypeOf(reduce([1, 2], '', (acc, v) => acc + v)).toEqualTypeOf<string>();
 	});
 
 });

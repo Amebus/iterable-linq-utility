@@ -11,7 +11,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
     | [max](#max)                       | Returns the greatest value                                                            | `T \| undefined`            |
     | [min](#min)                       | Returns the smallest value                                                            | `T \| undefined`            |
-    | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`                         |
+    | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`, or `T` without a seed  |
     | [some](#some)                     | Tells whether at least one value satisfies a predicate                                | `boolean`                   |
 
 ## collectToArray
@@ -290,6 +290,29 @@ Accumulates the values into a single result. The reducer is called with the accu
     ```
 
 Throws an `Error` if the reducer is not a function.
+
+Without a seed, the first value is the initial accumulator, like `Array.prototype.reduce` without `initialValue` and `Aggregate(func)` in LINQ. The reducer starts from the second value, with `index` 1; with one value, `reduce` returns it and does not call the reducer.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([3, 7, 2])
+        .reduce((acc, v) => (v > acc ? v : acc));
+    // 7
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.reduce([3, 7, 2], (acc, v) => (v > acc ? v : acc));
+    // 7
+    ```
+
+The number of arguments, not their type, tells the two forms apart: `reduce(undefined, reducer)` has the seed `undefined`. Without a seed, `reduce` throws an `Error` if the chain is empty.
 
 ## some
 
