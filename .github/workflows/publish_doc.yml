@@ -1,6 +1,6 @@
 name: Publish Doc
 
-# release:  called by publish.yml, deploys the released minor and moves `latest`
+# release:  called by publish.yml with the release commit as `ref`, deploys the released minor and moves `latest`
 # next:     every push to main that changes the docs or the sources, deploys `next`
 # redeploy: manual, deploys the minor of `ref` (default: the last tag); moves `latest` only for the latest minor
 
@@ -10,6 +10,9 @@ on:
       mode:
         type: string
         default: release
+      ref:
+        type: string
+        default: ''
   workflow_dispatch:
     inputs:
       ref:
@@ -29,9 +32,10 @@ permissions:
 jobs:
   deploy-doc:
     runs-on: ubuntu-latest
-    # every deployment pushes to gh-pages
+    # A group keeps one pending run, and a newer one replaces it: releases get their own group, so a queued
+    # `next` cannot replace a release. Deployments of different groups can race on gh-pages: see deploy() below.
     concurrency:
-      group: gh-pages
+      group: ${{ inputs.mode == 'release' && 'gh-pages-release' || 'gh-pages' }}
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v7
@@ -57,6 +61,8 @@ jobs:
           last_tag=$(git tag --sort=-v:refname | head -1)
           if [ "$mode" = redeploy ]; then
             git checkout "${INPUT_REF:-$last_tag}"
+          elif [ -n "$INPUT_REF" ]; then
+            git checkout "$INPUT_REF"
           fi
           {
             echo "mode=$mode"
@@ -77,19 +83,28 @@ jobs:
       - name: Deploy doc
         working-directory: ./documentation
         run: |
+          # starts every attempt from the remote gh-pages, so a push rejected by a concurrent deployment is retried
+          deploy() {
+            for attempt in 1 2 3; do
+              git fetch origin gh-pages && git branch -f gh-pages origin/gh-pages && "$@" && return 0
+              echo "Attempt $attempt failed, retrying" >&2
+              sleep 10
+            done
+            return 1
+          }
           case "$mode" in
             release)
-              mike deploy --push --update-aliases "$doc_version" latest
-              mike set-default --push latest
+              deploy mike deploy --push --update-aliases "$doc_version" latest
+              deploy mike set-default --push latest
               ;;
             next)
-              mike deploy --push --title "next (unreleased)" next
+              deploy mike deploy --push --title "next (unreleased)" next
               ;;
             redeploy)
               if [ "$doc_version" = "$latest_version" ]; then
-                mike deploy --push --update-aliases "$doc_version" latest
+                deploy mike deploy --push --update-aliases "$doc_version" latest
               else
-                mike deploy --push "$doc_version"
+                deploy mike deploy --push "$doc_version"
               fi
               ;;
             *)

@@ -63,7 +63,7 @@ The maintainer reviews the version and the changelog in that pull request and me
 
 `publish.yml` keeps its name. Its trigger changes from `release: created` to `push` on `main`, plus `workflow_dispatch` to retry a failed publication.
 
-1. `check-version` job: reads `package.json` `version` and sets `release=true` when no tag with that name exists on the remote.
+1. `check-version` job (only on `main`): reads `package.json` `version`, sets `release=true` when no tag with that name exists on the remote, and resolves the release commit: the last first-parent commit of `main` that changed the version (`git log -1 --first-parent -G'"version":' -- package.json`). Every later job checks out that commit and the tag points to it, so a queued push or a later re-run never publishes unreleased changes.
 2. When `release=true`:
    1. `build`: reuses `build-test.yml`.
    2. `publish-package`: unchanged, `npm publish` with trusted publishing.
@@ -75,9 +75,9 @@ A push to `main` that does not change the version finds the tag and does nothing
 
 ### 4. Documentation
 
-`publish_doc.yml` gets a `mode` (`release`, `next` or `redeploy`) and a `ref`. A `concurrency` group serialises the pushes of mike to `gh-pages`.
+`publish_doc.yml` gets a `mode` (`release`, `next` or `redeploy`) and a `ref`. A `concurrency` group keeps one pending run and a newer one replaces it, so releases use their own group (`gh-pages-release`) and the other modes share `gh-pages`. Deployments of the two groups can race on `gh-pages`: each mike command is retried up to three times, starting again from the remote branch.
 
-* `release` (called by `publish.yml`): as today, `mike deploy --update-aliases <minor> latest` and `mike set-default latest`.
+* `release` (called by `publish.yml` with the release commit as `ref`): as today, `mike deploy --update-aliases <minor> latest` and `mike set-default latest`.
 * `next` (new trigger: `push` on `main` with `paths` `documentation/**` and `src/**`): `mike deploy next --title "next (unreleased)"`. `latest` and the default version do not change.
 * `redeploy` (`workflow_dispatch`, input `ref`, default the last tag): checks out `ref` and deploys its `<minor>`. It moves `latest` only when that minor is the minor of the last tag. For an urgent fix to released documentation: merge the fix into `main` (it goes online in `next`), create `docs/<minor>` from the release tag, cherry-pick the fix, run the workflow with that branch as `ref`.
 

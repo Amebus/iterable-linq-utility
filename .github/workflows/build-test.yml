@@ -6,6 +6,11 @@ on:
       - main
   pull_request:
   workflow_call:
+    inputs:
+      ref:
+        description: Commit to build (default the commit of the run)
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -17,6 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          ref: ${{ inputs.ref }}
           # check:changeset compares with origin/main
           fetch-depth: 0
       - name: Install pnpm
