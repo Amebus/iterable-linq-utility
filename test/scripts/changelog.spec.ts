@@ -31,6 +31,10 @@ describe('extractChangelogSection', () => {
 		expect(extractChangelogSection(changelog, '0.1.0')).toBeUndefined();
 	});
 
+	test('returns undefined for a section without a body', () => {
+		expect(extractChangelogSection('## 0.3.0\n\n## 0.2.0\n\n- x\n', '0.3.0')).toBeUndefined();
+	});
+
 	test('does not match a longer version with the same prefix', () => {
 		expect(extractChangelogSection('## 0.2.01\n\n- other\n', '0.2.0')).toBeUndefined();
 	});
