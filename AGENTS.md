@@ -42,6 +42,10 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - Edit an accepted ADR: supersede or amend it with a new one (only its status changes).
 - Commit, push or open pull requests unless asked.
 
+## Keeping the instructions in sync
+
+The rules live in three places: this file, the skills in `.agents/skills/` (with their `references/`) and `documentation/docs/how-to-contribute.md`. The ADRs hold the reasons; the instructions point to them and never copy them. In the same pull request that adds, changes, supersedes or amends an ADR or a convention, update all three, and remove the rules that no longer hold. A change to the code the templates in `references/` are taken from (`map`, `some`, the test helpers, the bench helpers) updates those templates too.
+
 ## Skills
 
 Procedures with templates, in [`.agents/skills/`](.agents/skills) (`.claude/skills` links there):

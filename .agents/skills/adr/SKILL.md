@@ -23,4 +23,7 @@ A bug fix or a new operation that follows the existing ADRs needs no ADR.
     - `Technical Story` links the issue or the pull request.
 3. Add a row to the table in `docs/decisions/README.md`.
 4. When it replaces an ADR, set the old one's status to `superseded by [ADR NNNN](NNNN-….md)` (the only edit allowed on an accepted ADR); when it only corrects or completes part of one, set it to `accepted, amended by [ADR NNNN](…)` instead and link the old one from the new one.
-5. If the decision creates a rule for contributors, add it to `AGENTS.md` (with the ADR number), to `documentation/docs/how-to-contribute.md`, and to a check in `scripts/` when it can be verified mechanically (ADR 0014).
+5. Keep the instructions in sync, in the same pull request (ADR 0014):
+    - a new rule for contributors goes in `AGENTS.md` (with the ADR number), in `documentation/docs/how-to-contribute.md`, in every skill of `.agents/skills/` whose procedure it touches (`SKILL.md` and its `references/`), and in a check in `scripts/` when it can be verified mechanically;
+    - when the ADR supersedes or amends another one, find where the old rule is written (`grep -rn "NNNN" AGENTS.md .agents documentation/docs`, with the number of the old ADR) and change or remove it in the same places;
+    - the skills keep pointing to the ADR: they hold checklists and templates, never a copy of its reasons.
