@@ -92,8 +92,13 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return min(this.iterable, comparer);
 	}
 
-	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R {
-		return reduce(this.iterable, neutralElement, reducer);
+	reduce(reducer: Reducer<T, T>): T;
+	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
+	reduce<R>(...args: [Reducer<T, T>] | [R, Reducer<T, R>]): T | R {
+		// spreading args would not resolve the overloads: the number of arguments picks the form
+		return args.length === 1
+			? reduce(this.iterable, args[0])
+			: reduce(this.iterable, args[0], args[1]);
 	}
 
 	some(predicate: Predicate<T>): boolean {

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, expectTypeOf, test } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
 import * as IterableLinq from '@/index';
@@ -37,6 +37,44 @@ describe('reduce', () => {
 
 	test('IterableLinq.reduce is action', () => {
 		expectAction(source => IterableLinq.from(source).reduce(0, (acc, v) => acc + v));
+	});
+
+	describe('without a seed', () => {
+
+		test.each([
+			{ iterable: [1, 2, 3], reducer: (acc, v) => acc + v, expectedResult: 6 },
+			{ iterable: [3, 7, 2], reducer: (acc, v) => (v > acc ? v : acc), expectedResult: 7 },
+			{ iterable: [42], reducer: () => { throw new Error('not called'); }, expectedResult: 42 }
+		])('IterableLinq.from($iterable).reduce($reducer) -> $expectedResult', ({ iterable, reducer, expectedResult }) => {
+			expect(IterableLinq.from(iterable).reduce(reducer)).toBe(expectedResult);
+		});
+
+		test('the reducer starts at index 1', () => {
+			const indexes: number[] = [];
+			IterableLinq.from([10, 20, 30]).reduce((acc, v, index) => {
+				indexes.push(index);
+				return acc + v;
+			});
+			expect(indexes).toEqual([1, 2]);
+		});
+
+		test('an empty chain throws', () => {
+			expect(() => IterableLinq.empty<number>().reduce((acc, v) => acc + v)).toThrow('must not be empty');
+		});
+
+		test('an undefined seed is a seed', () => {
+			expect(IterableLinq.empty<number>().reduce(undefined, (acc) => acc)).toBeUndefined();
+		});
+
+		test('IterableLinq.reduce is action', () => {
+			expectAction(source => IterableLinq.from(source).reduce((acc, v) => acc + v));
+		});
+
+	});
+
+	test('the return type follows the form', () => {
+		expectTypeOf(IterableLinq.from([1, 2]).reduce((acc, v) => acc + v)).toEqualTypeOf<number>();
+		expectTypeOf(IterableLinq.from([1, 2]).reduce('', (acc, v) => acc + v)).toEqualTypeOf<string>();
 	});
 
 });

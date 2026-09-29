@@ -28,3 +28,11 @@ test('reduce: builds an object', async ({ bench }) => {
 		.add('Functions', () => Functions.reduce(records, {}, countByGroup))
 		.run();
 });
+
+test('reduce: without a seed', async ({ bench }) => {
+	await cases(bench, 'reduce/no-seed')
+		.add('native', () => numbers.reduce((acc, v) => acc + v))
+		.add('chain', () => from(numbers).reduce((acc, v) => acc + v))
+		.add('Functions', () => Functions.reduce(numbers, (acc, v) => acc + v))
+		.run();
+});
