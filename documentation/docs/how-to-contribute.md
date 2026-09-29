@@ -40,8 +40,8 @@ The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/itera
     - An [Action](api-reference/actions.md) runs the chain. When it stops before the end, it must close the source: a `for…of` loop does that for you.
 2. **Export it** from `src/functions/index.ts`.
 3. **Add it to the chain**: declare the method on `IIterableLinqBase` in `src/types/iterableLinq.ts` and implement it in `src/linqIterable.ts`. A transformation returns `toChain(<name>(this.iterable, …))`, an action returns `<name>(this.iterable, …)`.
-4. **Document it with JSDoc**, on the raw function and on the chain method: a summary, `@operation`, `@param`, `@returns`, `@throws`, `@example` and `@since next`. The release replaces `next` with the version; `pnpm check:since` rejects a version that is not released yet. The linter checks the syntax (`tsdoc/syntax`).
-5. **Test it** in `test/functions/<name>.spec.ts`.
+4. **Document it with JSDoc**, on the raw function and on the chain method: a summary, `@operation`, `@param`, `@returns`, `@throws`, `@example` and `@since next`. The release replaces `next` with the version; `pnpm check:since` rejects a version that is not released yet. `pnpm check:structure` checks that these tags are there (`@throws` excepted), and that the operation has its specs, its bench, its export and its chain method. The linter checks the syntax (`tsdoc/syntax`).
+5. **Test it** in `test/functions/<name>.spec.ts`, and the chain method in `test/linqIterableWrapper/<name>.spec.ts`.
     - `expectTransformation` or `expectAction` (from `test/_helpers/operationKind.ts`) checks that the operation is lazy, or that it runs the chain.
     - `withoutInputIterableThrowsException` (from `test/functions/functionsTestUtility.ts`) checks the input validation.
     - `closableSource` (from `test/_helpers/closableSource.ts`) checks that the source is closed on an early stop or an error.
@@ -65,6 +65,7 @@ Run the same checks as the CI:
 pnpm lint
 pnpm typecheck
 pnpm check:since
+pnpm check:structure
 pnpm check:changeset
 pnpm build
 pnpm check:package
