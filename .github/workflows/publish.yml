@@ -1,23 +1,53 @@
 name: Npm Publish
 
+# Publishes when package.json has a version without a tag, that is after the merge of the release pull request.
+# The file name is bound to the npm trusted publisher: do not rename it.
+
 on:
-  release:
-    types: [created]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.version.outputs.release }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ -z "$(git ls-remote --tags origin "refs/tags/$version")" ]; then
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: check-version
+    if: needs.check-version.outputs.release == 'true'
     uses: ./.github/workflows/build-test.yml
 
   publish-package:
-    needs: build
+    needs: [check-version, build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
       # required by npm trusted publishing (OIDC)
       id-token: write
+    env:
+      VERSION: ${{ needs.check-version.outputs.version }}
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -26,12 +56,42 @@ jobs:
           node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org/
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
-      - run: npm publish
+      - id: published
+        # a re-run after a failed tag or release must not publish twice
+        run: |
+          if npm view "iterable-linq-utility@$VERSION" version > /dev/null 2>&1; then
+            echo "done=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "done=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.published.outputs.done == 'false'
+        run: pnpm install --frozen-lockfile
+      - if: steps.published.outputs.done == 'false'
+        run: pnpm run build
+      - if: steps.published.outputs.done == 'false'
+        run: npm publish
+
+  github-release:
+    needs: [check-version, publish-package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.check-version.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/release-notes.ts "$VERSION" > notes.md
+      # creates the tag X.Y.Z too
+      - run: gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --notes-file notes.md
 
   deploy-doc:
-    needs: publish-package
+    needs: github-release
     permissions:
       contents: write
     uses: ./.github/workflows/publish_doc.yml
+    with:
+      mode: release
