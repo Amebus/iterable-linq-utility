@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../ai-agents/">
+        <link rel="prev" href="../how-to-contribute/">
       
       
-        <link rel="next" href="interoperability-with-other-libraries/">
+        <link rel="next" href="../advanced-concepts/">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>Advanced Concepts - Iterable Linq Utility</title>
+        <title>Working with AI agents - Iterable Linq Utility</title>
       
     
     
@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#advanced-concepts" class="md-skip">
+        <a href="#working-with-ai-agents" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Advanced Concepts
+              Working with AI agents
             
           </span>
         </div>
@@ -230,10 +230,12 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
+      <li class="md-tabs__item md-tabs__item--active">
         <a href=".." class="md-tabs__link">
           
   
@@ -252,13 +254,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../advanced-concepts/" class="md-tabs__link">
           
   
   
@@ -362,6 +362,8 @@
       
   
   
+    
+  
   
   
     
@@ -387,14 +389,17 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -416,13 +421,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -579,10 +584,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../ai-agents/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working with AI agents
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -598,6 +630,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-each-agent-reads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What each agent reads
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-ci-checks-anyway" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the CI checks anyway
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tips
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changing-the-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changing the rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -614,8 +710,6 @@
       
   
   
-    
-  
   
   
     
@@ -633,21 +727,18 @@
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../advanced-concepts/" class="md-nav__link ">
               
   
   
@@ -665,13 +756,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_2" id="__nav_2_label" tabindex="">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -691,7 +782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="interoperability-with-other-libraries/" class="md-nav__link">
+      <a href="../advanced-concepts/interoperability-with-other-libraries/" class="md-nav__link">
         
   
   
@@ -719,7 +810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="extending/" class="md-nav__link">
+      <a href="../advanced-concepts/extending/" class="md-nav__link">
         
   
   
@@ -963,99 +1054,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#deferred-execution" class="md-nav__link">
+  <a href="#what-each-agent-reads" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Deferred Execution
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Deferred Execution">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#input-iterable-mutability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Input iterable mutability
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fully-deferred-execution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fully Deferred Execution
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#partially-deferred-execution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Partially Deferred Execution
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#eager-evaluation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Eager Evaluation
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#repeatable-execution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Repeatable Execution
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Repeatable Execution">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#repeatable-execution-caveats" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Repeatable Execution Caveats
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#memoize-in-depth" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Memoize in-depth
+        What each agent reads
       
     </span>
   </a>
@@ -1063,10 +1065,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#materialize-in-depth" class="md-nav__link">
+  <a href="#what-the-ci-checks-anyway" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Materialize in-depth
+        What the CI checks anyway
       
     </span>
   </a>
@@ -1074,10 +1076,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#memoize-vs-materialize" class="md-nav__link">
+  <a href="#tips" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Memoize vs Materialize
+        Tips
       
     </span>
   </a>
@@ -1085,10 +1087,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#extending-the-api" class="md-nav__link">
+  <a href="#changing-the-rules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Extending the API
+        Changing the rules
       
     </span>
   </a>
@@ -1115,49 +1117,69 @@
   
 
 
-<h1 id="advanced-concepts">Advanced Concepts<a class="headerlink" href="#advanced-concepts" title="Permanent link">⚓︎</a></h1>
-<div class="admonition danger">
-<p class="admonition-title">WIP</p>
-<p>Most sections of this page are still to be written. For the basics see <a href="../basic-concepts/#deferred-execution">Deferred Execution</a> and the <a href="../glossary/">Glossary</a>.</p>
-</div>
-<h2 id="deferred-execution">Deferred Execution<a class="headerlink" href="#deferred-execution" title="Permanent link">⚓︎</a></h2>
-<h3 id="input-iterable-mutability">Input iterable mutability<a class="headerlink" href="#input-iterable-mutability" title="Permanent link">⚓︎</a></h3>
-<h3 id="fully-deferred-execution">Fully Deferred Execution<a class="headerlink" href="#fully-deferred-execution" title="Permanent link">⚓︎</a></h3>
-<h3 id="partially-deferred-execution">Partially Deferred Execution<a class="headerlink" href="#partially-deferred-execution" title="Permanent link">⚓︎</a></h3>
-<h3 id="eager-evaluation">Eager Evaluation<a class="headerlink" href="#eager-evaluation" title="Permanent link">⚓︎</a></h3>
-<h2 id="repeatable-execution">Repeatable Execution<a class="headerlink" href="#repeatable-execution" title="Permanent link">⚓︎</a></h2>
-<p>Every <a href="../api-reference/actions/">Action</a> runs the chain again, from the source. A chain is re-runnable only if its source is.</p>
-<h3 id="repeatable-execution-caveats">Repeatable Execution Caveats<a class="headerlink" href="#repeatable-execution-caveats" title="Permanent link">⚓︎</a></h3>
+<h1 id="working-with-ai-agents">Working with AI agents<a class="headerlink" href="#working-with-ai-agents" title="Permanent link">⚓︎</a></h1>
+<p>The repository has instructions for AI coding agents, so that an agent follows the same conventions as a human contributor. The reasons are in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0014-instructions-for-ai-coding-agents.md">ADR 0014</a>.</p>
+<h2 id="what-each-agent-reads">What each agent reads<a class="headerlink" href="#what-each-agent-reads" title="Permanent link">⚓︎</a></h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Content</th>
+<th>Read by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AGENTS.md</code></td>
+<td>Commands, rules with their ADR, what never to do</td>
+<td>Copilot, Cursor, Codex and most agents, in every session</td>
+</tr>
+<tr>
+<td><code>CLAUDE.md</code></td>
+<td><code>@AGENTS.md</code>: imports it</td>
+<td>Claude Code, in every session</td>
+</tr>
+<tr>
+<td><code>.agents/skills/</code></td>
+<td>Procedures with templates</td>
+<td>Codex, Copilot, Cursor, when the task matches</td>
+</tr>
+<tr>
+<td><code>.claude/skills/</code></td>
+<td>A symlink to <code>.agents/skills/</code></td>
+<td>Claude Code, when the task matches</td>
+</tr>
+</tbody>
+</table>
+<p>The skills:</p>
 <ul>
-<li>
-<p><strong>Single-use sources.</strong> A generator object, or any iterator that returns itself from <code>[Symbol.iterator]()</code>, can be read only once. A chain over it gives the values on the first run and nothing on the next ones:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
-<span class="normal"><a href="#__codelineno-0-2">2</a></span>
-<span class="normal"><a href="#__codelineno-0-3">3</a></span>
-<span class="normal"><a href="#__codelineno-0-4">4</a></span>
-<span class="normal"><a href="#__codelineno-0-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">function</span><span class="o">*</span><span class="w"> </span><span class="nx">numbers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">numbers</span><span class="p">());</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1, 2]</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// []</span>
-</code></pre></div></td></tr></table></div>
-<p>Add <a href="../api-reference/transformations/#memoize">memoize</a> to cache the values on the first run, or pass a re-runnable source, for example an object whose <code>[Symbol.iterator]</code> calls the generator function:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">numbers</span><span class="p">()).</span><span class="nx">memoize</span><span class="p">();</span><span class="w">                   </span><span class="c1">// re-runnable, from the cache</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">({</span><span class="w"> </span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="nx">numbers</span><span class="w"> </span><span class="p">});</span><span class="w">        </span><span class="c1">// re-runnable, calls numbers() on every run</span>
-</code></pre></div></td></tr></table></div>
-</li>
-<li>
-<p><strong>Mutable sources.</strong> The chain does not copy its source. If the source changes between two runs, the second run sees the new values.</p>
-</li>
-<li><strong>Side effects run again.</strong> Callbacks passed to transformations and taps run on every run of the chain. Use <a href="../api-reference/actions/#materialize">materialize</a> or <a href="../api-reference/transformations/#memoize">memoize</a> when a callback is expensive or must run once.</li>
-<li><strong>Closing the source.</strong> Actions that stop early, like <a href="../api-reference/actions/#some">some</a>, close the source (they call its <code>return()</code> method), as a <code>for…of</code> loop does. When the callback of <code>map</code>, <code>filter</code>, <code>flatMap</code> or <code>tap</code> throws, the chain closes the source too, and every later read of that iteration is done. An error thrown by the source itself does not close it: the source has already failed.</li>
+<li><code>operation</code>: add or change an operation, with the templates of the JSDoc, the specs, the bench and the documentation page.</li>
+<li><code>adr</code>: record an architecture decision.</li>
+<li><code>pull-request</code>: prepare a branch for a pull request: changeset, checks, commits.</li>
 </ul>
-<h2 id="memoize-in-depth">Memoize in-depth<a class="headerlink" href="#memoize-in-depth" title="Permanent link">⚓︎</a></h2>
-<h2 id="materialize-in-depth">Materialize in-depth<a class="headerlink" href="#materialize-in-depth" title="Permanent link">⚓︎</a></h2>
-<h2 id="memoize-vs-materialize">Memoize vs Materialize<a class="headerlink" href="#memoize-vs-materialize" title="Permanent link">⚓︎</a></h2>
-<h2 id="extending-the-api">Extending the API<a class="headerlink" href="#extending-the-api" title="Permanent link">⚓︎</a></h2>
-<p>Add or replace operations on every chain with <code>extend</code> and <code>override</code>, and recognise chains with <code>isIterableLinq</code>: see <a href="extending/">Extending the API</a>.</p>
+<p>An agent loads a skill by itself when the task matches its description. You can also ask for it: "use the operation skill", or <code>/operation</code> in Claude Code.</p>
+<p>On Windows, clone with symlinks enabled (<code>git config --global core.symlinks true</code>, with Developer Mode or administrator rights), or Claude Code does not find the skills.</p>
+<h2 id="what-the-ci-checks-anyway">What the CI checks anyway<a class="headerlink" href="#what-the-ci-checks-anyway" title="Permanent link">⚓︎</a></h2>
+<p>The instructions help the agent; the checks hold whoever writes the code:</p>
+<ul>
+<li><code>pnpm check:structure</code>: every operation has its specs, its bench, its export and its chain method, and a complete JSDoc;</li>
+<li><code>pnpm check:since</code>: <code>@since</code> is <code>next</code> or a released version;</li>
+<li><code>pnpm check:changeset</code>: a pull request that changes <code>src/</code> has a changeset.</li>
+</ul>
+<p>The documentation site and the quality of the changelog note are not checked: look at them in the review.</p>
+<h2 id="tips">Tips<a class="headerlink" href="#tips" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>Ask the agent to run the <a href="../how-to-contribute/#checks-before-a-pull-request">checks before a pull request</a> and to show you their output.</li>
+<li>Review the changeset and the <code>@since</code> tags: the agent must not write a version in them.</li>
+<li>Point the agent to the issue: the signatures agreed there are its specification.</li>
+</ul>
+<h2 id="changing-the-rules">Changing the rules<a class="headerlink" href="#changing-the-rules" title="Permanent link">⚓︎</a></h2>
+<p>When an ADR adds or changes a convention:</p>
+<ol>
+<li>update the rule in <code>AGENTS.md</code>, with the number of the ADR;</li>
+<li>update the skill that covers it, if any: skills hold checklists and templates, the reasons stay in the ADR;</li>
+<li>add a check in <code>scripts/</code> when the rule can be verified, and run it in <code>.github/workflows/build-test.yml</code>.</li>
+</ol>
 
 
 
@@ -1180,7 +1202,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 28, 2026 19:32:07 UTC">September 28, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 29, 2026 15:59:33 UTC">September 29, 2026</span>
   </span>
 
     
@@ -1190,7 +1212,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 7, 2023 16:21:43 UTC">January 7, 2023</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 29, 2026 15:59:33 UTC">September 29, 2026</span>
   </span>
 
     
