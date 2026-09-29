@@ -18,13 +18,13 @@
 	},
   "forwardPorts": [3000],
   "postCreateCommand": "pnpm install",
-  "remoteUser": "vscode",
+  "remoteUser": "node",
   "containerEnv": {
-    "pnpm_config_store_dir": "/home/vscode/.pnpm-store"
+    "pnpm_config_store_dir": "/home/node/.pnpm-store"
   },
 	"mounts": [
-    "source=node24-npm-cache,target=/home/vscode/.npm,type=volume",
-    "source=node24-pnpm-store,target=/home/vscode/.pnpm-store,type=volume"
+    "source=node24-npm-cache,target=/home/node/.npm,type=volume",
+    "source=node24-pnpm-store,target=/home/node/.pnpm-store,type=volume"
   ],
 	"runArgs": ["--name", "iterable-linq-utility_devcontainer"]
 }

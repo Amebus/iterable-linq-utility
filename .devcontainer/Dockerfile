@@ -17,13 +17,10 @@ RUN npm install -g pnpm npm-check-updates
 # Create a working directory
 WORKDIR /workspace
 
-# Set up a non-root user
-
-ARG USERNAME=vscode
-RUN adduser --disabled-password --gecos "" $USERNAME
-USER $USERNAME
+# the non-root user of the base image (uid 1000)
+USER node
 # the cache volumes of devcontainer.json take the owner of these folders when Docker creates them
-RUN mkdir -p /home/$USERNAME/.npm /home/$USERNAME/.pnpm-store
+RUN mkdir -p /home/node/.npm /home/node/.pnpm-store
 
 # Default port for Node.js
 EXPOSE 3000
