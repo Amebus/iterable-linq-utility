@@ -108,11 +108,18 @@ mike serve
 
 ## Releases
 
-The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md)).
+The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md), [ADR 0015](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0015-checks-on-the-release-pull-request.md)).
 
 1. Run the **Prepare release** workflow from the Actions tab. It runs the checks and opens, or updates, the `chore: release` pull request: the new version in `package.json`, the entries of `CHANGELOG.md`, the changesets deleted, `@since next` replaced with the version.
-2. Review the version and the changelog in that pull request. The CI does not run on it, because it is opened with `GITHUB_TOKEN`: the workflow already ran the checks. If `main` ever requires status checks, close and reopen the pull request to run the CI (`check:changeset` is skipped for `changeset-release/*` branches), or merge it as an administrator.
-3. Merge it. The **Npm Publish** workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as `latest`.
+2. Review the version and the changelog in that pull request. The workflow already ran the checks, so its CI run, created by `github-actions`, waits for an approval ("Approve and run workflows") and can be left pending. If `main` ever requires status checks, approve it, or close and reopen the pull request to run the CI (`check:changeset` is skipped for `changeset-release/*` branches), or merge it as an administrator.
+3. **Before merging, check that nothing changed `src/` on `main` since the workflow ran.** The pull request is computed when the workflow runs: a pull request merged later keeps its changeset pending for the next release, and its `@since next` is not replaced, so an API published in this version would get the next version at the next release. If that happened, run **Prepare release** again: it recomputes the release from `main` and updates the same pull request. A change outside `src/` (documentation, CI) needs nothing. To check, an empty output means nothing to do:
+
+    ```bash
+    git fetch origin
+    git diff --stat origin/changeset-release/main...origin/main -- src .changeset
+    ```
+
+4. Merge it. The **Npm Publish** workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as `latest`.
 
 ### Documentation between releases
 

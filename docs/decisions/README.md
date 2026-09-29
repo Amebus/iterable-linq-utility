@@ -15,13 +15,14 @@ Each file records one decision: its context, the options considered and the cons
 | [0009](0009-transition-tables-instead-of-switch-statements.md) | Transition tables instead of switch statements | accepted |
 | [0010](0010-package-formats-and-type-declarations.md) | Package formats and type declarations | accepted |
 | [0011](0011-local-benchmarks-with-a-saved-baseline.md) | Local benchmarks with a saved baseline | accepted |
-| [0012](0012-trunk-based-releases-with-changesets.md) | Trunk-based releases with changesets | accepted |
+| [0012](0012-trunk-based-releases-with-changesets.md) | Trunk-based releases with changesets | accepted, amended by [0015](0015-checks-on-the-release-pull-request.md) |
 | [0013](0013-documentation-versions-between-releases.md) | Documentation versions between releases | accepted |
 | [0014](0014-instructions-for-ai-coding-agents.md) | Instructions for AI coding agents | accepted |
+| [0015](0015-checks-on-the-release-pull-request.md) | Checks on the release pull request | accepted |
 
 ## Adding a decision
 
 1. Copy the structure of an existing ADR: Context and Problem Statement, Decision Drivers, Considered Options, Decision Outcome (with the positive and negative consequences), Pros and Cons of the Options.
 2. Name the file with the next number and a short title in kebab case, for example `0012-my-decision.md`.
 3. Link the issue or the pull request in `Technical Story`, and add the ADR to the table above.
-4. A decision that replaces an older one does not edit it: set the old one to `superseded by [ADR NNNN](…)`.
+4. A decision that replaces an older one does not edit it: set the old one to `superseded by [ADR NNNN](…)`. A decision that corrects or completes part of an older one sets it to `accepted, amended by [ADR NNNN](…)`, and links it with `Amends:`.

@@ -1,6 +1,6 @@
 # Trunk-based releases with changesets
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0015](0015-checks-on-the-release-pull-request.md)
 * Deciders: Amebus
 * Date: 2026-09-29
 
