@@ -39,8 +39,11 @@ The documentation site and the quality of the changelog note are not checked: lo
 
 ## Changing the rules
 
-When an ADR adds or changes a convention:
+The rules live in three places: `AGENTS.md`, the skills (with their `references/`) and [How to contribute](how-to-contribute.md). When an ADR adds, changes, supersedes or amends a convention, the same pull request:
 
-1. update the rule in `AGENTS.md`, with the number of the ADR;
-2. update the skill that covers it, if any: skills hold checklists and templates, the reasons stay in the ADR;
-3. add a check in `scripts/` when the rule can be verified, and run it in `.github/workflows/build-test.yml`.
+1. updates the rule in `AGENTS.md`, with the number of the ADR, and removes the rules that no longer hold;
+2. updates every skill that covers it, templates in `references/` included: skills hold checklists and templates, the reasons stay in the ADR;
+3. updates How to contribute;
+4. adds a check in `scripts/` when the rule can be verified, and runs it in `.github/workflows/build-test.yml`.
+
+A change to the code the templates are taken from (`map`, `some`, the test and bench helpers) updates the templates too. `AGENTS.md` and the `adr` skill tell agents the same.
