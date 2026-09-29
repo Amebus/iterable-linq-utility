@@ -108,7 +108,7 @@ mike serve
 
 ## Releases
 
-The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md)).
+The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md), [ADR 0015](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0015-checks-on-the-release-pull-request.md)).
 
 1. Run the **Prepare release** workflow from the Actions tab. It runs the checks and opens, or updates, the `chore: release` pull request: the new version in `package.json`, the entries of `CHANGELOG.md`, the changesets deleted, `@since next` replaced with the version.
 2. Review the version and the changelog in that pull request. The workflow already ran the checks, so its CI run, created by `github-actions`, waits for an approval ("Approve and run workflows") and can be left pending. If `main` ever requires status checks, approve it, or close and reopen the pull request to run the CI (`check:changeset` is skipped for `changeset-release/*` branches), or merge it as an administrator.

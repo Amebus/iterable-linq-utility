@@ -39,7 +39,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - Change `version` in `package.json`, edit `CHANGELOG.md` by hand, or create tags and GitHub Releases: the release workflow does it.
 - Write a version in `@since` for a new API: use `next`.
 - Upgrade Node, pnpm, the devcontainer image or dependencies unless asked.
-- Edit an accepted ADR: supersede it with a new one.
+- Edit an accepted ADR: supersede or amend it with a new one (only its status changes).
 - Commit, push or open pull requests unless asked.
 
 ## Skills
