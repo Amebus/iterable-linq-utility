@@ -22,6 +22,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
@@ -270,6 +271,65 @@ Starts a chain that yields the same value *count* times.
     ```
 
 Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.
+
+## skip
+
+Skips the first *count* values and yields the rest, preserving their order. This Transformation is lazy and re-runnable when the source is re-runnable.
+
+*count* must be a non-negative integer. Negative values, fractions, `NaN` and `Infinity` throw when `skip` is called. Zero keeps all values; a count at least as large as a finite source leaves an empty result.
+
+=== "Wrapper"
+
+    ```ts
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 3, 4, 5])
+        .skip(2)
+        .collectToArray();
+    // [3, 4, 5]
+    ```
+
+=== "Raw Function"
+
+    ```ts
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.skip([1, 2, 3, 4, 5], 2));
+    // [3, 4, 5]
+    ```
+
+The skipped values are read only when consumption starts. Each consumer reads only as far as it needs. `skip` works with infinite sources but does not end them: combine it with `take` to consume a finite part. Stopping consumption early closes the source iterator.
+
+=== "Wrapper"
+
+    ```ts
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    function* integers() {
+        let value = 0;
+        while (true) yield value++;
+    }
+
+    IterableLinq.from({ [Symbol.iterator]: integers })
+        .skip(3)
+        .take(2)
+        .collectToArray();
+    // [3, 4], after reading exactly five source values
+    ```
+
+=== "Raw Function"
+
+    ```ts
+    import { Functions } from 'iterable-linq-utility';
+
+    function* integers() {
+        let value = 0;
+        while (true) yield value++;
+    }
+
+    Array.from(Functions.take(Functions.skip({ [Symbol.iterator]: integers }, 3), 2));
+    // [3, 4], after reading exactly five source values
+    ```
 
 ## take
 

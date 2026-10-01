@@ -216,6 +216,20 @@ export interface IIterableLinqBase<T> {
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
+	 * Lazily skips the first `count` values and yields the rest.
+	 * @operation `Transformation`
+	 * @param count - how many values to skip; must be a non-negative integer
+	 * @returns a lazy, re-runnable chain of the remaining values
+	 * @throws Error if `count` is negative, not an integer, `NaN` or `Infinity`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).skip(2).collectToArray(); // [3, 4, 5]
+	 * ```
+	 * @since next
+	 */
+	skip(count: number): IIterableLinq<T>;
+
+	/**
 	 * Runs the chain until its first value, then stops and closes the source.
 	 * @operation `Action`
 	 * @returns `true` if the chain contains a value; `false` when it is empty
