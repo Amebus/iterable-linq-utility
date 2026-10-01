@@ -24,6 +24,7 @@ import {
 	memoize,
 	min,
 	reduce,
+	skip,
 	some,
 	take,
 	tap,
@@ -100,6 +101,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return args.length === 1
 			? reduce(this.iterable, args[0])
 			: reduce(this.iterable, args[0], args[1]);
+	}
+
+	skip(count: number): IIterableLinq<T> {
+		return toChain(skip(this.iterable, count));
 	}
 
 	some(predicate?: Predicate<T>): boolean {
