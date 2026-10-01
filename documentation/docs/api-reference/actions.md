@@ -316,7 +316,7 @@ The number of arguments, not their type, tells the two forms apart: `reduce(unde
 
 ## some
 
-Tells whether at least one value satisfies the predicate. It stops at the first match and closes the source, so it also works on infinite sources that contain a match. It returns `false` when the chain is empty.
+Tells whether at least one value satisfies the predicate; without a predicate, whether the chain has any values. It stops at the first match (without a predicate, at the first value) and closes the source, so it also works on infinite sources that contain a match. It returns `false` when the chain is empty.
 
 === "Wrapper"
 
@@ -327,6 +327,9 @@ Tells whether at least one value satisfies the predicate. It stops at the first 
         .from([1, 2, 3])
         .some(v => v > 2);
     // true
+
+    IterableLinq.from([1, 2, 3]).some();
+    // true
     ```
 === "Raw Function"
 
@@ -335,6 +338,9 @@ Tells whether at least one value satisfies the predicate. It stops at the first 
 
     Functions.some([1, 2, 3], v => v > 2);
     // true
+
+    Functions.some([1, 2, 3]);
+    // true
     ```
 
-Throws an `Error` if the predicate is not a function.
+Throws an `Error` if a provided predicate is not a function. Passing `undefined` is the same as omitting it.

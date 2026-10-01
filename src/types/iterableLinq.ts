@@ -216,18 +216,30 @@ export interface IIterableLinqBase<T> {
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
+	 * Runs the chain until its first value, then stops and closes the source.
+	 * @operation `Action`
+	 * @returns `true` if the chain contains a value; `false` when it is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).some(); // true
+	 * ```
+	 * @since next
+	 */
+	some(): boolean;
+
+	/**
 	 * Runs the chain until a value satisfies `predicate`, then stops and closes the source.
 	 * @operation `Action`
-	 * @param predicate - called with each value and its index
-	 * @returns `true` if at least one value satisfies `predicate`; `false` when the chain is empty
-	 * @throws Error if `predicate` is not a function
+	 * @param predicate - called with each value and its index; `undefined` checks only whether a value exists
+	 * @returns `true` if at least one value satisfies `predicate`; `false` otherwise
+	 * @throws Error if a provided `predicate` is not a function
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).some(v => v > 2); // true
 	 * ```
 	 * @since 0.0.1
 	 */
-	some(predicate: Predicate<T>): boolean;
+	some(predicate: Predicate<T> | undefined): boolean;
 
 	/**
 	 * Yields the first `count` values, then closes the source.
