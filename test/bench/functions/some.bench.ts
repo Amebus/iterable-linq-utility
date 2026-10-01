@@ -17,6 +17,14 @@ test('some: match at the start', async ({ bench }) => {
 		.run();
 });
 
+test('some: without predicate', async ({ bench }) => {
+	await cases(bench, 'some/without-predicate')
+		.add('native', () => !numbers.values().next().done)
+		.add('chain', () => from(numbers).some())
+		.add('Functions', () => Functions.some(numbers))
+		.run();
+});
+
 test('some: match in the middle', async ({ bench }) => {
 	await cases(bench, 'some/middle')
 		.add('native', () => numbers.some(v => v === middle))

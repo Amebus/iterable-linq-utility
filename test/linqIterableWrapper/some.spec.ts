@@ -1,16 +1,35 @@
 import { describe, expect, test, vi } from 'vitest';
+import { closableSource } from '../_helpers/closableSource';
+import { infiniteSource } from '../_helpers/generators/infiniteSource';
 import { expectAction } from '../_helpers/operationKind';
 
 import * as IterableLinq from '@/index';
-import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 describe('some', () => {
 
 	test.each([
-		{ start: 0, end: 20 },
-		{ start: -10, end: 10 }
-	])('IterableLinq.some without predicate -> throw exception', ({ start, end }) => {
-		withoutInputFunctionThrowsException(IterableLinq.fromRange(start, end), 'some');
+		{ values: [], expected: false },
+		{ values: [0], expected: true },
+		{ values: [0, 1], expected: true }
+	])('some($values) returns $expected without a predicate', ({ values, expected }) => {
+		expect(IterableLinq.from(values).some()).toBe(expected);
+		expect(IterableLinq.from(values).some(undefined)).toBe(expected);
+	});
+
+	test.each([null, 0, {}])('some rejects invalid predicate %s', predicate => {
+		expect(() => IterableLinq.from([1]).some(predicate as never)).toThrow();
+	});
+
+	test('some without a predicate closes the source', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(IterableLinq.from(iterable).some()).toBe(true);
+		expect(state.closed).toBe(true);
+	});
+
+	test('some without a predicate terminates on an infinite source', () => {
+		const { stats, iterable } = infiniteSource();
+		expect(IterableLinq.from(iterable).some()).toBe(true);
+		expect(stats.reads).toBe(1);
 	});
 
 	test.each([
@@ -110,6 +129,7 @@ describe('some', () => {
 
 	test('IterableLinq.some is action', () => {
 		expectAction(source => IterableLinq.from(source).some(v => v > 2));
+		expectAction(source => IterableLinq.from(source).some());
 	});
 
 });

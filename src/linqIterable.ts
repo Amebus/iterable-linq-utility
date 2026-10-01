@@ -102,7 +102,7 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 			: reduce(this.iterable, args[0], args[1]);
 	}
 
-	some(predicate: Predicate<T>): boolean {
+	some(predicate?: Predicate<T>): boolean {
 		return some(this.iterable, predicate);
 	}
 

@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { closableSource } from '../_helpers/closableSource';
+import { infiniteSource } from '../_helpers/generators/infiniteSource';
 import { expectAction } from '../_helpers/operationKind';
 
 import {
@@ -15,15 +16,40 @@ describe('some', () => {
 	});
 
 	test.each([
-		{ start: 0, end: 20 },
-		{ start: -10, end: 10 },
-		{ start: 0, end: 20, reducer: undefined },
-		{ start: 0, end: 20, reducer: null },
-		{ start: 0, end: 20, reducer: {} }
-	])('some without mapper -> throw exception', ({ start, end, reducer }) => {
-		const someJs = some as any;
-		expect(() => someJs(range(start, end))).toThrow();
-		expect(() => someJs(range(start, end), reducer)).toThrow();
+		{ values: [], expected: false },
+		{ values: [0], expected: true },
+		{ values: [0, 1], expected: true }
+	])('some($values) returns $expected without a predicate', ({ values, expected }) => {
+		expect(some(values)).toBe(expected);
+		expect(some(values, undefined)).toBe(expected);
+	});
+
+	test.each([null, 0, {}])('some rejects invalid predicate %s', predicate => {
+		expect(() => some([1], predicate as never)).toThrow();
+	});
+
+	test('some without a predicate closes the source after one value', () => {
+		const { state, iterable } = closableSource([1, 2, 3]);
+		expect(some(iterable)).toBe(true);
+		expect(state.closed).toBe(true);
+	});
+
+	test('some without a predicate reads only one value', () => {
+		let produced = 0;
+		function* source() {
+			for (const value of [1, 2, 3]) {
+				produced++;
+				yield value;
+			}
+		}
+		expect(some(source())).toBe(true);
+		expect(produced).toBe(1);
+	});
+
+	test('some without a predicate terminates on an infinite source', () => {
+		const { stats, iterable } = infiniteSource();
+		expect(some(iterable)).toBe(true);
+		expect(stats.reads).toBe(1);
 	});
 
 	test.each([
@@ -111,6 +137,7 @@ describe('some', () => {
 
 	test('some is action', () => {
 		expectAction(source => some(source, v => v > 2));
+		expectAction(source => some(source));
 	});
 
 	test('stopping early closes the source', () => {
