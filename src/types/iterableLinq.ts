@@ -225,7 +225,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4, 5]).skip(2).collectToArray(); // [3, 4, 5]
 	 * ```
-	 * @since next
+	 * @since 0.3.0
 	 */
 	skip(count: number): IIterableLinq<T>;
 
@@ -237,7 +237,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).some(); // true
 	 * ```
-	 * @since next
+	 * @since 0.3.0
 	 */
 	some(): boolean;
 
@@ -266,7 +266,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4, 5]).take(3).collectToArray(); // [1, 2, 3]
 	 * ```
-	 * @since next
+	 * @since 0.3.0
 	 */
 	take(count: number): IIterableLinq<T>;
 
