@@ -45,6 +45,7 @@ Cover, as they apply:
 - Transformation or Action (`expectTransformation` / `expectAction` from `test/_helpers/operationKind.ts`);
 - a Transformation runs again on every consumption (re-run);
 - the source is closed on `return()`, on an early stop and when a callback throws (`closableSource`), and the callback error propagates unchanged;
+- an operation that can stop early stops on an infinite source and reads only what it needs (`infiniteSource` from `test/_helpers/generators/infiniteSource.ts`, `stats.reads`);
 - the results, with `test.each` tables, including the empty source.
 
 ## Chain method: `test/linqIterableWrapper/<name>.spec.ts`

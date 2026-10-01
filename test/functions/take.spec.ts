@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { closableSource } from '../_helpers/closableSource';
+import { infiniteSource } from '../_helpers/generators/infiniteSource';
 import { expectTransformation, spyIterable } from '../_helpers/operationKind';
 
 import {
@@ -51,14 +52,9 @@ describe('take', () => {
 	});
 
 	test('take reads an infinite source only up to count', () => {
-		const naturals: Iterable<number> = {
-			*[Symbol.iterator]() {
-				let i = 0;
-				while (true)
-					yield i++;
-			}
-		};
-		expect(collectToArray(take(naturals, 4))).toEqual([0, 1, 2, 3]);
+		const { stats, iterable } = infiniteSource();
+		expect(collectToArray(take(iterable, 4))).toEqual([0, 1, 2, 3]);
+		expect(stats.reads).toBe(4);
 	});
 
 	test('take does not read past count', () => {
