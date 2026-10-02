@@ -12,7 +12,10 @@ export default defineConfig({
 	test: {
 		coverage: {
 			provider: 'istanbul',
-			reporter: ['text', 'json', 'html'],
+			// the library only: the scripts of the repository are tested, but they are not published
+			include: ['src/**'],
+			// lcov is the report uploaded to Codecov by the CI
+			reporter: ['text', 'json', 'html', 'lcov'],
 			clean: true
 		}
 	},
