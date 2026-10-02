@@ -39,6 +39,17 @@ For a change that can affect performance, compare the benchmarks with `main` (`p
 
 [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `build` or `ci`, an optional scope, `!` for a breaking change. For example `fix(range): empty range for NaN arguments`. Small commits, each one passing the checks.
 
+The message has a body when the subject alone does not explain the commit, and always for `feat`, `fix`, `perf` and `refactor`: what changes for the users, or why, not how (the diff shows that). The commit that solves an issue has `Closes #<number>` in its body, as well as in the pull request description, so the history stays linked to the issue outside GitHub too. A trivial commit (a typo, a small documentation fix) can have no body.
+
+```text
+feat(take): add take() Transformation
+
+Yields the first `count` values, then closes the source without reading
+past the `count`-th value. Available as `Functions.take` and on the chain.
+
+Closes #26
+```
+
 ## 5. Pull request
 
 Against `main`. The description says what changes and why, lists what was verified, and links the issues it solves with `Closes #<number>`.
