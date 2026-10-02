@@ -1,6 +1,6 @@
 # Documentation versions between releases
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0017](0017-state-of-the-next-documentation.md)
 * Deciders: Amebus
 * Date: 2026-09-29
 
