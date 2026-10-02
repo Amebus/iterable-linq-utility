@@ -803,6 +803,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lodash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lodash
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1106,6 +1117,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#lodash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lodash
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1324,6 +1346,41 @@
 <a id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="nx">rerun</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
 <a id="__codelineno-10-13" name="__codelineno-10-13"></a><span class="c1">// [10, 20, 30], and the same on every run</span>
 </code></pre></div></td></tr></table></div>
+<h2 id="lodash">lodash<a class="headerlink" href="#lodash" title="Permanent link">⚓︎</a></h2>
+<p>The array functions of <a href="https://lodash.com/">lodash</a> (<code>_.chunk</code>, <code>_.uniq</code>, <code>_.groupBy</code>…) work only on arrays and array-like objects.</p>
+<div class="admonition warning">
+<p class="admonition-title">A chain gives an empty result, without an error</p>
+<p>A chain is not an array: lodash reads no values from it and returns an empty result, with no error to warn you.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<span class="normal"><a href="#__codelineno-11-2">2</a></span>
+<span class="normal"><a href="#__codelineno-11-3">3</a></span>
+<span class="normal"><a href="#__codelineno-11-4">4</a></span>
+<span class="normal"><a href="#__codelineno-11-5">5</a></span>
+<span class="normal"><a href="#__codelineno-11-6">6</a></span>
+<span class="normal"><a href="#__codelineno-11-7">7</a></span>
+<span class="normal"><a href="#__codelineno-11-8">8</a></span>
+<span class="normal"><a href="#__codelineno-11-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="k">import</span><span class="w"> </span><span class="nx">_</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'lodash'</span><span class="p">;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">evens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="nx">fromRange</span><span class="p">(</span><span class="mf">10</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">);</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="nx">_</span><span class="p">.</span><span class="nx">chunk</span><span class="p">(</span><span class="nx">evens</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7"></a><span class="c1">// []</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8"></a><span class="nx">_</span><span class="p">.</span><span class="nx">uniq</span><span class="p">(</span><span class="nx">evens</span><span class="p">);</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9"></a><span class="c1">// []</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<p>Collect the chain into an array first, with <a href="../../api-reference/actions/#collecttoarray">collectToArray</a>:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
+<span class="normal"><a href="#__codelineno-12-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="nx">_</span><span class="p">.</span><span class="nx">chunk</span><span class="p">(</span><span class="nx">evens</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">(),</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="c1">// [[0, 2], [4, 6], [8]]</span>
+</code></pre></div></td></tr></table></div>
+<p><code>_.toArray</code> reads an <code>Iterable</code> too: <code>_.toArray(evens)</code> gives <code>[0, 2, 4, 6, 8]</code>.</p>
+<p>The arrays returned by lodash can be the source of a chain:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span>
+<span class="normal"><a href="#__codelineno-13-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mf">3</span><span class="p">)).</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="c1">// [0, 10, 20]</span>
+</code></pre></div></td></tr></table></div>
 
 
 
@@ -1346,7 +1403,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 2, 2026 16:24:36 UTC">October 2, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 2, 2026 16:27:50 UTC">October 2, 2026</span>
   </span>
 
     
