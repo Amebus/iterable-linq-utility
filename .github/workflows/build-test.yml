@@ -40,6 +40,8 @@ jobs:
       - run: pnpm run check:instructions
       - if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'changeset-release/')
         run: pnpm run check:changeset
+      - if: github.event_name == 'pull_request' && !startsWith(github.head_ref, 'changeset-release/')
+        run: pnpm run check:commits
       - run: pnpm run build
       - run: pnpm run check:package
       - run: pnpm run test

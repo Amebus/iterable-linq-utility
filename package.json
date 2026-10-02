@@ -25,6 +25,7 @@
     "build": "tsc -p tsconfig.build.json && vite build && cp dist/index.d.ts dist/index.d.cts",
     "check:package": "attw --pack .",
     "check:changeset": "changeset status --since=origin/main",
+    "check:commits": "node scripts/check-commits.ts",
     "check:since": "node scripts/check-since.ts",
     "check:instructions": "node scripts/check-instructions.ts",
     "check:structure": "node scripts/check-structure.ts",
