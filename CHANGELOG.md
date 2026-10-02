@@ -1,5 +1,11 @@
 # iterable-linq-utility
 
+## 0.4.0
+
+### Minor Changes
+
+- [#123](https://github.com/Amebus/iterable-linq-utility/pull/123) [`7407890`](https://github.com/Amebus/iterable-linq-utility/commit/74078900aed6c62ce3ec07db41c7a601c95b973d) Thanks [@Amebus](https://github.com/Amebus)! - `filter(predicate)` accepts a type guard and narrows the element type of the result, like `Array.prototype.filter` ([#65](https://github.com/Amebus/iterable-linq-utility/issues/65)).
+
 ## 0.3.0
 
 ### Minor Changes

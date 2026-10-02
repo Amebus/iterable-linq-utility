@@ -50,7 +50,7 @@ export interface IIterableLinqBase<T> {
 	 * const values: (number | string)[] = [1, 'two', 3];
 	 * IterableLinq.from(values).filter((v): v is string => typeof v === 'string').collectToArray(); // string[], ['two']
 	 * ```
-	 * @since next
+	 * @since 0.4.0
 	 */
 	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
 
