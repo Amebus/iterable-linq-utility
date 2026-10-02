@@ -21,8 +21,8 @@ Do every step, in this order. For a change to an existing operation, do the step
     - Transformation: return `new DeferredIterable(() => new <Name>Iterator(…))`, with a `SourceIterator` subclass that implements `advance()`. Copy `src/functions/map.ts`.
     - Callbacks: `try`/`catch` only around the callback call; in the `catch`, `this.closeAfterCallbackError()` then rethrow.
     - Action: a `for…of` over the iterable closes the source on an early stop. Copy `src/functions/some.ts`.
-2. **Export** it from `src/functions/index.ts`.
-3. **Chain**: declare the method on `IIterableLinqBase` (`src/types/iterableLinq.ts`) and implement it in `IterableLinqWrapper` (`src/linqIterable.ts`): `return toChain(<name>(this.iterable, …));` for a Transformation, `return <name>(this.iterable, …);` for an Action.
+2. **Export** it from `src/functions/index.ts`, in alphabetical order.
+3. **Chain**: declare the method on `IIterableLinqBase` (`src/types/iterableLinq.ts`) and implement it in `IterableLinqWrapper` (`src/linqIterable.ts`): `return toChain(<name>(this.iterable, …));` for a Transformation, `return <name>(this.iterable, …);` for an Action. The import from `./functions`, the class methods and the members of `IIterableLinqBase` are in alphabetical order, and the overloads of an operation stay next to each other.
 4. **JSDoc** on both, with `@since next`: [references/jsdoc.md](references/jsdoc.md).
 5. **Tests**: `test/functions/<name>.spec.ts` and `test/linqIterableWrapper/<name>.spec.ts`: [references/tests.md](references/tests.md). Write them first and watch them fail.
 6. **Documentation site**: a row in the TLDR table and a section in `documentation/docs/api-reference/`: [references/docs-page.md](references/docs-page.md).
@@ -36,4 +36,4 @@ pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm 
 pnpm bench functions/<name>
 ```
 
-`check:structure` fails when a spec, the bench, the export, the chain method or a JSDoc tag is missing. It cannot check the documentation site or the changeset: check those yourself.
+`check:structure` fails when a spec, the bench, the export, the chain method or a JSDoc tag is missing, or when an operation is out of alphabetical order in the exports, the chain or the API reference. `lint` fails when the imports of a spec or a bench are out of order; `pnpm lint-fix` sorts them. Nothing checks the content of the documentation site or the changeset: check those yourself.

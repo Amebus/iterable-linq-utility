@@ -30,7 +30,7 @@ pnpm changeset --empty  # a change to src/ that releases nothing, e.g. an intern
 The same as the CI, in the devcontainer:
 
 ```bash
-pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm check:instructions && pnpm check:changeset && pnpm build && pnpm check:package && pnpm test
+pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm check:instructions && pnpm check:changeset && pnpm check:commits && pnpm build && pnpm check:package && pnpm test
 ```
 
 For a change that can affect performance, compare the benchmarks with `main` (`pnpm bench:baseline` on `main`, then `pnpm bench`).
@@ -39,7 +39,7 @@ For a change that can affect performance, compare the benchmarks with `main` (`p
 
 [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `build` or `ci`, an optional scope, `!` for a breaking change. For example `fix(range): empty range for NaN arguments`. Small commits, each one passing the checks.
 
-The message has a body when the subject alone does not explain the commit, and always for `feat`, `fix`, `perf` and `refactor`: what changes for the users, or why, not how (the diff shows that). The commit that solves an issue has `Closes #<number>` in its body, as well as in the pull request description, so the history stays linked to the issue outside GitHub too. A trivial commit (a typo, a small documentation fix) can have no body.
+The message has a body when the subject alone does not explain the commit, and always for `feat`, `fix`, `perf` and `refactor`: what changes for the users, or why, not how (the diff shows that). The commit that solves an issue has `Closes #<number>` in its body, as well as in the pull request description, so the history stays linked to the issue outside GitHub too. A trivial commit (a typo, a small documentation fix) can have no body. `pnpm check:commits` fails on a `feat`, `fix`, `perf` or `refactor` commit whose body has only trailers and issue links.
 
 ```text
 feat(take): add take() Transformation

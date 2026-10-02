@@ -2,6 +2,8 @@
 
 Write the tests before the code, run them and watch them fail. Look at `test/functions/map.spec.ts` (Transformation) and `test/functions/some.spec.ts` (Action) for complete examples.
 
+The imports: `vitest`, the test helpers (`../_helpers/…`), a blank line, the code under test (`@/…`), the local utilities (`./…`), each group in alphabetical order. `pnpm lint` checks it and `pnpm lint-fix` sorts them.
+
 ## Raw function: `test/functions/<name>.spec.ts`
 
 ```ts
