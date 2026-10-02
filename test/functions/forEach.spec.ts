@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
+import { infiniteSource } from '../_helpers/generators/infiniteSource';
 import { expectAction } from '../_helpers/operationKind';
 
 import {
@@ -162,13 +163,12 @@ describe('forEachAsync', () => {
 
 	test('forEachAsync works on an infinite source and closes it on rejection', async () => {
 		const err = new Error('stop');
-		const state = { closed: false };
-		const infinite = { *[Symbol.iterator]() { try { for (let i = 0; ; i++) yield i; } finally { state.closed = true; } } };
-		await expect(forEachAsync(infinite, async v => {
+		const { stats, iterable } = infiniteSource();
+		await expect(forEachAsync(iterable, async v => {
 			if (v === 2) throw err;
 			return unit();
 		})).rejects.toThrow(err);
-		expect(state.closed).toBe(true);
+		expect(stats).toEqual({ reads: 3, closed: true });
 	});
 
 });

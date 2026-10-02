@@ -1,7 +1,9 @@
 import { describe, expect, test, vi } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
 import { infiniteSource } from '../_helpers/generators/infiniteSource';
-import { expectTransformation, spyIterable } from '../_helpers/operationKind';
+import { spyIterable } from '../_helpers/generators/spyIterable';
+import { throwingSource } from '../_helpers/generators/throwingSource';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import { collectToArray, skip, take } from '@/functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
@@ -98,18 +100,9 @@ describe('skip', () => {
 
 	test.each([1, 3])('propagates a source error at read %s without closing it', failAt => {
 		const error = new Error('source error');
-		let reads = 0;
-		const close = vi.fn();
-		const iterable = { [Symbol.iterator]: () => ({
-			next() {
-				if (++reads === failAt)
-					throw error;
-				return { done: false as const, value: reads };
-			},
-			return: close
-		}) };
+		const { returnSpy, iterable } = throwingSource(failAt, error);
 		expect(() => skip(iterable, 2)[Symbol.iterator]().next()).toThrow(error);
-		expect(close).not.toHaveBeenCalled();
+		expect(returnSpy).not.toHaveBeenCalled();
 	});
 
 });

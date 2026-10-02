@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
 import { infiniteSource } from '../_helpers/generators/infiniteSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
