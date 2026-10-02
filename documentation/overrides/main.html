@@ -1,0 +1,13 @@
+{#- The banner of the `next` version: scripts/next-doc.ts sets its state, only when publish_doc.yml deploys `next`. -#}
+{% extends "base.html" %}
+
+{% block announce %}
+  {%- set next = config.extra.next -%}
+  {%- if next and next.state == "released" -%}
+    This is the <strong>next</strong> version: it matches the latest release, {{ next.version }}.
+    <a href="{{ base_url }}/../latest/">Go to the latest version</a>
+  {%- elif next and next.state == "unreleased" -%}
+    This is the <strong>next</strong> version:
+    <a href="{{ base_url }}/upcoming/">{{ next.changes }} unreleased change{{ "" if next.changes | string == "1" else "s" }} since {{ next.version }}</a>
+  {%- endif -%}
+{% endblock %}

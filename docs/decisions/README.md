@@ -16,10 +16,11 @@ Each file records one decision: its context, the options considered and the cons
 | [0010](0010-package-formats-and-type-declarations.md) | Package formats and type declarations | accepted |
 | [0011](0011-local-benchmarks-with-a-saved-baseline.md) | Local benchmarks with a saved baseline | accepted |
 | [0012](0012-trunk-based-releases-with-changesets.md) | Trunk-based releases with changesets | accepted, amended by [0015](0015-checks-on-the-release-pull-request.md) |
-| [0013](0013-documentation-versions-between-releases.md) | Documentation versions between releases | accepted |
+| [0013](0013-documentation-versions-between-releases.md) | Documentation versions between releases | accepted, amended by [0017](0017-state-of-the-next-documentation.md) |
 | [0014](0014-instructions-for-ai-coding-agents.md) | Instructions for AI coding agents | accepted |
 | [0015](0015-checks-on-the-release-pull-request.md) | Checks on the release pull request | accepted, amended by [0016](0016-protection-rules-for-main-and-release-tags.md) |
 | [0016](0016-protection-rules-for-main-and-release-tags.md) | Protection rules for main and the release tags | accepted |
+| [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted |
 
 ## Adding a decision
 

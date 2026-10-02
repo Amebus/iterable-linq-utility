@@ -163,7 +163,15 @@ On a new repository, create them with `gh api -X POST repos/<owner>/<repo>/rules
 
 ### Documentation between releases
 
-The site has a `next` version, deployed on every push to `main` that changes `documentation/` or `src/`: a fix is visible there at once, and in `latest` at the next release ([ADR 0013](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0013-documentation-versions-between-releases.md)).
+The site has a `next` version, deployed on every push to `main` that changes `documentation/`, `src/` or `.changeset/`: a fix is visible there at once, and in `latest` at the next release ([ADR 0013](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0013-documentation-versions-between-releases.md)).
+
+`next` shows a banner computed from the pending changesets ([ADR 0017](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0017-state-of-the-next-documentation.md)): without changesets it matches the latest release, the version in `package.json`; with changesets it links to an Upcoming page generated from their notes. The note of a changeset is therefore visible on the site as soon as the pull request is merged. To preview the banner and the page, from the root of the repository:
+
+```bash
+env $(node scripts/next-doc.ts) mkdocs serve -f documentation/mkdocs.yml
+```
+
+`scripts/next-doc.ts` writes `documentation/docs/upcoming.md`, which git ignores. A release or a plain `mkdocs serve` builds the site without the banner.
 
 For an urgent fix to a released version:
 
