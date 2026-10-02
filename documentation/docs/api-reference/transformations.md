@@ -76,6 +76,34 @@ Keeps only the values that satisfy the predicate. The predicate is called with e
 
 Throws an `Error` if the predicate is not a function.
 
+With a type guard, `filter` narrows the element type. Later operations receive that type without a cast.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 'two', 3, 'four'];
+    const strings = IterableLinq.from(values)
+        .filter((value): value is string => typeof value === 'string');
+    // IIterableLinq<string>
+    strings.map(value => value.toUpperCase()).collectToArray();
+    // ['TWO', 'FOUR']
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 'two', 3, 'four'];
+    const strings = Functions.filter(values, (value): value is string => typeof value === 'string');
+    // Iterable<string>
+    Array.from(Functions.map(strings, value => value.toUpperCase()));
+    // ['TWO', 'FOUR']
+    ```
+
+A predicate whose return type is `boolean` preserves the source element type. A type guard still receives the source value and its index; filtering remains lazy and re-runnable.
+
 ## flatMap
 
 Maps each value to an `Iterable` and flattens the results into one chain. Each inner `Iterable` is read completely before the next value is mapped. The mapper is called with each value and its index.
