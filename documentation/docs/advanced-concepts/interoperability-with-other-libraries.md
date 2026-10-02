@@ -156,3 +156,38 @@ const rerun = IterableLinq.from({ [Symbol.iterator]: () => [1, 2, 3].values().ma
 rerun.collectToArray();
 // [10, 20, 30], and the same on every run
 ```
+
+## lodash
+
+The array functions of [lodash](https://lodash.com/) (`_.chunk`, `_.uniq`, `_.groupBy`…) work only on arrays and array-like objects.
+
+!!! warning "A chain gives an empty result, without an error"
+    A chain is not an array: lodash reads no values from it and returns an empty result, with no error to warn you.
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+    import _ from 'lodash';
+
+    const evens = IterableLinq.fromRange(10).filter(v => v % 2 === 0);
+
+    _.chunk(evens, 2);
+    // []
+    _.uniq(evens);
+    // []
+    ```
+
+Collect the chain into an array first, with [collectToArray](../api-reference/actions.md#collecttoarray):
+
+```typescript
+_.chunk(evens.collectToArray(), 2);
+// [[0, 2], [4, 6], [8]]
+```
+
+`_.toArray` reads an `Iterable` too: `_.toArray(evens)` gives `[0, 2, 4, 6, 8]`.
+
+The arrays returned by lodash can be the source of a chain:
+
+```typescript
+IterableLinq.from(_.range(3)).map(v => v * 10).collectToArray();
+// [0, 10, 20]
+```
