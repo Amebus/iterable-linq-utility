@@ -191,3 +191,132 @@ The arrays returned by lodash can be the source of a chain:
 IterableLinq.from(_.range(3)).map(v => v * 10).collectToArray();
 // [0, 10, 20]
 ```
+
+## Composing the raw functions
+
+The raw functions of `Functions` take the iterable first, `Functions.map(iterable, fn)`, while the `pipe` and `flow` helpers of the functional libraries pass one argument to every step. Wrap each step in a function of one argument, or use an adapter of the library. Either way the composition stays lazy: it reads the source only when its result is consumed.
+
+The examples below use:
+
+```typescript
+import { Functions } from 'iterable-linq-utility';
+
+const isEven = (v: number) => v % 2 === 0;
+const double = (v: number) => v * 2;
+```
+
+and every composition gives `[0, 4, 8]`:
+
+=== "lodash"
+
+    ```typescript
+    import _ from 'lodash';
+    import fp from 'lodash/fp';
+
+    // A wrapper per step
+    const evensDoubled = _.flow(
+    	(xs: Iterable<number>) => Functions.filter(xs, isEven),
+    	xs => Functions.map(xs, double)
+    );
+    [...evensDoubled(Functions.range(6))];
+    // [0, 4, 8]
+
+    // An adapter: partialRight, or curryRight with an explicit arity in lodash/fp
+    [..._.flow(_.partialRight(Functions.filter, isEven), _.partialRight(Functions.map, double))(Functions.range(6))];
+    // [0, 4, 8]
+    [...fp.flow(fp.curryRight(Functions.filter, 2)(isEven), fp.curryRight(Functions.map, 2)(double))(Functions.range(6))];
+    // [0, 4, 8]
+    ```
+
+=== "Ramda"
+
+    ```typescript
+    import * as R from 'ramda';
+
+    // A wrapper per step
+    const evensDoubled = R.pipe(
+    	(xs: Iterable<number>) => Functions.filter(xs, isEven),
+    	xs => Functions.map(xs, double)
+    );
+    [...evensDoubled(Functions.range(6))];
+    // [0, 4, 8]
+
+    // An adapter: partialRight
+    [...R.pipe(R.partialRight(Functions.filter, [isEven]), R.partialRight(Functions.map, [double]))(Functions.range(6))];
+    // [0, 4, 8]
+    ```
+
+=== "Remeda"
+
+    ```typescript
+    import { pipe } from 'remeda';
+
+    // A wrapper per step: Remeda has no adapter for a data-first function
+    [...pipe(
+    	Functions.range(6),
+    	xs => Functions.filter(xs, isEven),
+    	xs => Functions.map(xs, double)
+    )];
+    // [0, 4, 8]
+    ```
+
+=== "fp-ts"
+
+    ```typescript
+    import { pipe } from 'fp-ts/function';
+
+    // A wrapper per step: fp-ts has no adapter for a data-first function
+    [...pipe(
+    	Functions.range(6),
+    	xs => Functions.filter(xs, isEven),
+    	xs => Functions.map(xs, double)
+    )];
+    // [0, 4, 8]
+    ```
+
+=== "Effect"
+
+    ```typescript
+    import { pipe } from 'effect';
+    import { dual } from 'effect/Function';
+
+    // A wrapper per step
+    [...pipe(
+    	Functions.range(6),
+    	xs => Functions.filter(xs, isEven),
+    	xs => Functions.map(xs, double)
+    )];
+    // [0, 4, 8]
+
+    // An adapter: dual, with the arity of the data-first call
+    const filter = dual(2, Functions.filter);
+    const map = dual(2, Functions.map);
+    [...pipe(Functions.range(6), filter(isEven), map(double))];
+    // [0, 4, 8]
+    ```
+
+!!! note "With TypeScript, prefer the wrapper"
+    The wrapper keeps the element type: the compositions above give a `number[]`. The adapters lose it, because the raw functions are generic and overloaded: `_.partialRight` gives an `any[]`, Effect `dual` a `never[]`, and the types of `R.partialRight` and `fp.curryRight` do not accept the raw functions. The adapters are for JavaScript code.
+
+!!! warning "Give the arity explicitly"
+    The adapters that read the arity from `function.length`, like `R.flip`, `R.curry` and `_.curry`, are not reliable with the raw functions: an optional or rest parameter is not counted, so `Functions.reduce.length` is `1`.
+
+    ```typescript
+    import * as R from 'ramda';
+
+    const sum = (total: number, v: number) => total + v;
+
+    R.flip(Functions.reduce)(sum)([1, 2, 3]);
+    // throws: The "sourceIterable" must be provided
+    R.curry(Functions.reduce)([1, 2, 3])(sum);
+    // throws: The "reducer" function must be provided
+
+    R.curryN(2, Functions.reduce)([1, 2, 3])(sum);
+    // 6
+    R.partialRight(Functions.reduce, [sum])([1, 2, 3]);
+    // 6
+    ```
+
+    Give the arity explicitly (`R.curryN`, `fp.curryRight(fn, arity)`, Effect `dual(arity, fn)`), or use `partialRight` or a wrapper.
+
+Raw functions that take the iterable last, which would compose without wrappers, are discussed in [#114](https://github.com/Amebus/iterable-linq-utility/issues/114).
