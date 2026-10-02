@@ -41,3 +41,34 @@ const values = await lastValueFrom(from([1, 2, 3]).pipe(toArray()));
 IterableLinq.from(values).map(v => v * 10).collectToArray();
 // [10, 20, 30]
 ```
+
+## Immutable.js
+
+The [Immutable.js](https://immutable-js.com/) constructors accept any `Iterable`: `List` and `Set` read the whole chain, `Seq` stays lazy.
+
+```typescript
+import * as IterableLinq from 'iterable-linq-utility';
+import { List, Seq, Set } from 'immutable';
+
+const evens = IterableLinq.fromRange(10).filter(v => v % 2 === 0);
+
+List(evens).toArray();
+// [0, 2, 4, 6, 8]
+Set(evens).has(4);
+// true
+
+let reads = 0;
+const numbers = IterableLinq.fromRange(1000).map(v => { reads++; return v; });
+
+Seq(numbers).take(2).toArray();
+// [0, 1]
+reads;
+// 2
+```
+
+The Immutable.js collections are `Iterable` too, so they can be the source of a chain:
+
+```typescript
+IterableLinq.from(List([1, 2, 3])).map(v => v * 10).collectToArray();
+// [10, 20, 30]
+```
