@@ -8,7 +8,7 @@ The imports: `vitest`, the test helpers (`../_helpers/…`), a blank line, the c
 
 ```ts
 import { describe, expect, test } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
 import { expectTransformation } from '../_helpers/operationKind'; // or expectAction
 
 import { collectToArray, map, range } from '@/functions';
@@ -41,13 +41,16 @@ describe('map', () => {
 });
 ```
 
+The test sources are in `test/_helpers/generators/` ([ADR 0018](../../../../docs/decisions/0018-shared-test-sources.md)): `closableSource` (`state.closed`), `spyIterable` (`stats.iterations`, `stats.reads`), `infiniteSource` (`stats.reads`, `stats.closed`, throws past a limit instead of hanging) and `throwingSource` (`next()` throws at the n-th call, `returnSpy`). Use them instead of writing a source by hand; a source that a second spec needs moves there, with its own spec.
+
 Cover, as they apply:
 
 - input validation: a missing iterable, a callback that is not a function;
 - Transformation or Action (`expectTransformation` / `expectAction` from `test/_helpers/operationKind.ts`);
 - a Transformation runs again on every consumption (re-run);
 - the source is closed on `return()`, on an early stop and when a callback throws (`closableSource`), and the callback error propagates unchanged;
-- an operation that can stop early stops on an infinite source and reads only what it needs (`infiniteSource` from `test/_helpers/generators/infiniteSource.ts`, `stats.reads`);
+- an operation that can stop early stops on an infinite source and reads only what it needs (`infiniteSource`, `stats.reads` and `stats.closed`);
+- a source error propagates unchanged, and the source is not closed (`throwingSource`, `returnSpy`);
 - the results, with `test.each` tables, including the empty source.
 
 ## Chain method: `test/linqIterableWrapper/<name>.spec.ts`

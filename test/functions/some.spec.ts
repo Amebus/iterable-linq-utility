@@ -1,6 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
 import { infiniteSource } from '../_helpers/generators/infiniteSource';
+import { spyIterable } from '../_helpers/generators/spyIterable';
 import { expectAction } from '../_helpers/operationKind';
 
 import {
@@ -35,15 +36,9 @@ describe('some', () => {
 	});
 
 	test('some without a predicate reads only one value', () => {
-		let produced = 0;
-		function* source() {
-			for (const value of [1, 2, 3]) {
-				produced++;
-				yield value;
-			}
-		}
-		expect(some(source())).toBe(true);
-		expect(produced).toBe(1);
+		const source = spyIterable([1, 2, 3]);
+		expect(some(source)).toBe(true);
+		expect(source.stats.reads).toBe(1);
 	});
 
 	test('some without a predicate terminates on an infinite source', () => {

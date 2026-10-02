@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
+import { throwingSource } from '../_helpers/generators/throwingSource';
 
 import { filter, flatMap, map, tap } from '@/functions';
 import { unit } from '@/types';
@@ -17,23 +18,6 @@ const operations = [
 	{ name: 'tap', apply: (it: Iterable<number>) => tap(it, v => (throwOn2(v), unit())) },
 	{ name: 'flatMap', apply: (it: Iterable<number>) => flatMap(it, v => (throwOn2(v), [v])) }
 ];
-
-/**
- * A source whose `next()` throws on the second call, and records the `return()` calls.
- */
-function throwingSource(): { returnSpy: ReturnType<typeof vi.fn>; iterable: Iterable<number> } {
-	const returnSpy = vi.fn(() => ({ done: true as const, value: undefined }));
-	let calls = 0;
-	const iterator: Iterator<number> = {
-		next: () => {
-			if (++calls === 2)
-				throw boom;
-			return { done: false, value: calls };
-		},
-		return: returnSpy
-	};
-	return { returnSpy, iterable: { [Symbol.iterator]: () => iterator } };
-}
 
 describe('errors thrown while iterating', () => {
 
@@ -56,7 +40,7 @@ describe('errors thrown while iterating', () => {
 	});
 
 	test.each(operations)('$name: a throwing source is not closed', ({ apply }) => {
-		const { returnSpy, iterable } = throwingSource();
+		const { returnSpy, iterable } = throwingSource(2, boom);
 		const iterator = apply(iterable)[Symbol.iterator]();
 
 		iterator.next();
@@ -67,7 +51,7 @@ describe('errors thrown while iterating', () => {
 	// Unlike the ECMAScript Iterator Helpers, the chain leaves the state after a source error to the source:
 	// marking the chain as done would need a try/catch around every read of the source.
 	test.each(operations)('$name: after a source error, next() asks the source again', ({ apply }) => {
-		const { iterable } = throwingSource();
+		const { iterable } = throwingSource(2, boom);
 		const iterator = apply(iterable)[Symbol.iterator]();
 
 		iterator.next();

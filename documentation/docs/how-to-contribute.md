@@ -52,8 +52,11 @@ The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/itera
 5. **Test it** in `test/functions/<name>.spec.ts`, and the chain method in `test/linqIterableWrapper/<name>.spec.ts`.
     - `expectTransformation` or `expectAction` (from `test/_helpers/operationKind.ts`) checks that the operation is lazy, or that it runs the chain.
     - `withoutInputIterableThrowsException` (from `test/functions/functionsTestUtility.ts`) checks the input validation.
-    - `closableSource` (from `test/_helpers/closableSource.ts`) checks that the source is closed on an early stop or an error.
-    - `infiniteSource` (from `test/_helpers/generators/infiniteSource.ts`) checks that the operation stops on an infinite source; `stats.reads` counts the values read.
+    - The test sources in `test/_helpers/generators/` record how the operation reads its source; a source that a second spec needs moves to this folder, with its own spec ([ADR 0018](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0018-shared-test-sources.md)):
+        - `closableSource` checks that the source is closed on an early stop or an error;
+        - `spyIterable` counts the iterations and the values read;
+        - `infiniteSource` checks that the operation stops on an infinite source; `stats.reads` counts the values read, `stats.closed` tells whether it was closed;
+        - `throwingSource` throws at the n-th read, to check how the operation handles a source error.
 6. **Document it on this site**, in the right page of the [API Reference](api-reference/index.md). Add a row to the TLDR table, then a section with a "Wrapper" and a "Raw Function" tab, like the existing ones.
 7. **Benchmark it** in `test/bench/functions/<name>.bench.ts`, next to a native reference. The [Benchmarks section of the README](https://github.com/Amebus/iterable-linq-utility#benchmarks) explains how.
 8. **Add a changeset** with `pnpm changeset`: a `minor` bump and a note for the changelog. See [Commits and pull requests](#commits-and-pull-requests).

@@ -1,5 +1,5 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
 import { expectAction } from '../_helpers/operationKind';
 
 import {

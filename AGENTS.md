@@ -30,6 +30,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - A Transformation is lazy and re-runnable: a `DeferredIterable` that creates a `SourceIterator` subclass (ADR 0004, 0007). An iterator with several states keeps them in a `state` field with a transition table, not a `switch` (ADR 0009).
 - Only the callback call goes in a `try`/`catch`, which calls `closeAfterCallbackError()` and rethrows; an Action that stops early closes the source (ADR 0008).
 - Every operation has `test/functions/<name>.spec.ts`, `test/linqIterableWrapper/<name>.spec.ts` and `test/bench/functions/<name>.bench.ts` against a native reference (ADR 0011).
+- The specs use the shared test sources of `test/_helpers/generators/`. A source needed by a second spec moves there, with its own `<name>.spec.ts` (ADR 0018).
 - JSDoc on the raw function and on the chain method: summary, `@operation`, `@param`, `@returns`, `@throws`, `@example`, `@since next` (ADR 0012).
 - A pull request that changes `src/` adds a changeset (`pnpm changeset`); before 1.0 a breaking change is a `minor` (ADR 0012).
 - A new or changed operation is documented in `documentation/docs/api-reference/` (ADR 0013).

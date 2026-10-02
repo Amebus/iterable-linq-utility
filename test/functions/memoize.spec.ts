@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
+import { throwingSource } from '../_helpers/generators/throwingSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import {
@@ -227,8 +228,8 @@ describe('memoize', () => {
 
 	test.each([true, false])('memoize(partial: %s) re-throws a source error to later consumers', allowPartialMemoization => {
 		const err = new Error('boom');
-		const source = { *[Symbol.iterator]() { yield 1; yield 2; throw err; } };
-		const m = memoize(source, { allowPartialMemoization });
+		const { iterable } = throwingSource(3, err);
+		const m = memoize(iterable, { allowPartialMemoization });
 		expect(() => collectToArray(m)).toThrow(err);
 		expect(() => collectToArray(m)).toThrow(err);
 	});

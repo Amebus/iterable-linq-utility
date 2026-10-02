@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'vitest';
-import { closableSource } from '../_helpers/closableSource';
+import { closableSource } from '../_helpers/generators/closableSource';
 import { infiniteSource } from '../_helpers/generators/infiniteSource';
-import { expectTransformation, spyIterable } from '../_helpers/operationKind';
+import { spyIterable } from '../_helpers/generators/spyIterable';
+import { expectTransformation } from '../_helpers/operationKind';
 
 import {
 	collectToArray,

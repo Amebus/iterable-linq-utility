@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { expectAction, expectTransformation, spyIterable } from './operationKind';
+import { expectAction, expectTransformation } from './operationKind';
 
 function* lazyDouble(source: Iterable<number>) {
 	for (const v of source) yield v * 2;
@@ -9,21 +9,6 @@ function* lazyDouble(source: Iterable<number>) {
 const lazyOperation = (source: Iterable<number>) => ({ [Symbol.iterator]: () => lazyDouble(source) });
 const eagerOperation = (source: Iterable<number>) => Array.from(source);
 const oneShotOperation = (source: Iterable<number>) => lazyDouble(source);
-
-describe('spyIterable', () => {
-
-	test('counts iterations and reads', () => {
-		const spy = spyIterable([1, 2, 3]);
-		expect(spy.stats).toEqual({ iterations: 0, reads: 0 });
-
-		expect(Array.from(spy)).toEqual([1, 2, 3]);
-		expect(spy.stats).toEqual({ iterations: 1, reads: 3 });
-
-		Array.from(spy);
-		expect(spy.stats).toEqual({ iterations: 2, reads: 6 });
-	});
-
-});
 
 describe('expectTransformation', () => {
 

@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import { expectAction, spyIterable } from '../_helpers/operationKind';
+import { spyIterable } from '../_helpers/generators/spyIterable';
+import { expectAction } from '../_helpers/operationKind';
 
 import { LinkedListCollection } from '@/collections';
 import {
