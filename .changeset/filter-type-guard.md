@@ -2,4 +2,4 @@
 "iterable-linq-utility": minor
 ---
 
-Allow type guards in `filter` to narrow the element type in both the fluent chain and raw functions.
+`filter(predicate)` accepts a type guard and narrows the element type of the result, like `Array.prototype.filter` (#65).
