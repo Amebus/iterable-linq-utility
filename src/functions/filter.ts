@@ -16,7 +16,7 @@ import { Validations } from '../utils';
  * const strings = Functions.filter(values, (v): v is string => typeof v === 'string');
  * Array.from(strings); // string[], ['two']
  * ```
- * @since next
+ * @since 0.4.0
  */
 export function filter<T, S extends T>(iterable: Iterable<T>, predicate: (value: T, index: number) => value is S): Iterable<S>;
 
