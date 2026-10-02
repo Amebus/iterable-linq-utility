@@ -4,7 +4,6 @@ import {
 	collectToArray,
 	empty
 } from '@/functions';
-
 import { returnClosesTheIterator } from './functionsTestUtility';
 
 describe('empty', () => {

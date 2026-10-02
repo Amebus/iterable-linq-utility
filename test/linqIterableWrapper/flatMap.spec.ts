@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { Mapper } from '@/types';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import * as IterableLinq from '@/index';
+import type { Mapper } from '@/types';
 import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 const loremIpsum = 'Lorem ipsum dolor sit amte';

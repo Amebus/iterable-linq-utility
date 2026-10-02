@@ -1,9 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectAction } from '../_helpers/operationKind';
 
-import * as IterableLinq from '@/index';
-
 import { LinkedListCollection } from '@/collections';
+import * as IterableLinq from '@/index';
 
 describe('IterableLinq.materialize', () => {
 

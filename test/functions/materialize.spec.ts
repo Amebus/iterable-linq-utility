@@ -1,15 +1,14 @@
 import { describe, expect, test, vi } from 'vitest';
-import { spyIterable } from '../_helpers/operationKind';
-import { expectAction } from '../_helpers/operationKind';
-import { withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectAction, spyIterable } from '../_helpers/operationKind';
 
+import { LinkedListCollection } from '@/collections';
 import {
 	collectToArray,
 	filter,
 	materialize,
 	range
 } from '@/functions';
-import { LinkedListCollection } from '@/collections';
+import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('materialize', () => {
 

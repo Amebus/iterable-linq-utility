@@ -1,8 +1,8 @@
+import { test } from 'vitest';
+import * as Helpers from '../helpers';
+
 import * as IterableLinq from 'iterable-linq-utility';
 import type { IIterableLinq } from 'iterable-linq-utility';
-import { test } from 'vitest';
-
-import * as Helpers from '../helpers';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
 const { from } = IterableLinq;

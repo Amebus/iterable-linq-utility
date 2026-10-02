@@ -10,9 +10,8 @@ import {
 	some,
 	tap
 } from '@/functions';
-
-import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 import { unit } from '@/types';
+import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 const tapper = () => unit();
 

@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 
 import * as IterableLinq from '@/index';
-import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 import { unit } from '@/types';
+import { withoutInputFunctionThrowsException } from './linqIterableWrapperTestUtility';
 
 describe('IterableLinq.tapChainCreation', () => {
 
