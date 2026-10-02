@@ -314,11 +314,12 @@ export interface IIterableLinqBase<T> {
 	 * @example
 	 * ```ts
 	 * let evens: IIterableLinq<number> | undefined;
-	 * IterableLinq.fromRange(10)
+	 * const evensByTen = IterableLinq.fromRange(10)
 	 * 	.filter(v => v % 2 === 0)
 	 * 	.tapChainCreation(chain => { evens = chain; return unit(); })
 	 * 	.map(v => v * 10);
 	 * evens?.collectToArray(); // [0, 2, 4, 6, 8]
+	 * evensByTen.collectToArray(); // [0, 20, 40, 60, 80]
 	 * ```
 	 * @since 0.0.10
 	 */
