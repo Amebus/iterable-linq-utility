@@ -72,3 +72,42 @@ The Immutable.js collections are `Iterable` too, so they can be the source of a 
 IterableLinq.from(List([1, 2, 3])).map(v => v * 10).collectToArray();
 // [10, 20, 30]
 ```
+
+## Node.js streams
+
+`Readable.from` of [`node:stream`](https://nodejs.org/api/stream.html#streamreadablefromiterable-options) accepts any `Iterable`, so a chain becomes a readable stream without adapters:
+
+```typescript
+import * as IterableLinq from 'iterable-linq-utility';
+import { Readable } from 'node:stream';
+
+const evens = IterableLinq.fromRange(10).filter(v => v % 2 === 0);
+
+for await (const v of Readable.from(evens))
+	console.log(v);
+// 0, 2, 4, 6, 8
+```
+
+The stream reads the chain only when its values are consumed, and a loop that stops early stops the chain and closes its source:
+
+```typescript
+let reads = 0;
+const numbers = IterableLinq.fromRange(1000).map(v => { reads++; return v; });
+
+for await (const v of Readable.from(numbers)) {
+	console.log(v);
+	if (v === 1)
+		break;
+}
+// 0, 1
+reads;
+// 2
+```
+
+A readable stream is async iterable, not `Iterable`: to go the other way, collect its values first, for example with `toArray`, then pass the array to `IterableLinq.from`:
+
+```typescript
+const values = await Readable.from([1, 2, 3]).toArray();
+IterableLinq.from(values).map(v => v * 10).collectToArray();
+// [10, 20, 30]
+```
