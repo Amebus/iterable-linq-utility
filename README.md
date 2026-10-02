@@ -1,6 +1,13 @@
-[![](https://data.jsdelivr.com/v1/package/npm/iterable-linq-utility/badge)](https://www.jsdelivr.com/package/npm/iterable-linq-utility)
-[![](https://img.shields.io/npm/v/iterable-linq-utility.svg)](https://npmjs.org/package/iterable-linq-utility)
-[![](https://img.shields.io/npm/dm/iterable-linq-utility.svg)](https://npmjs.org/package/iterable-linq-utility)
+[![jsDelivr hits](https://data.jsdelivr.com/v1/package/npm/iterable-linq-utility/badge)](https://www.jsdelivr.com/package/npm/iterable-linq-utility)
+[![npm version](https://img.shields.io/npm/v/iterable-linq-utility.svg)](https://npmjs.org/package/iterable-linq-utility)
+[![npm downloads](https://img.shields.io/npm/dm/iterable-linq-utility.svg)](https://npmjs.org/package/iterable-linq-utility)
+[![CI status](https://github.com/Amebus/iterable-linq-utility/actions/workflows/build-test.yml/badge.svg?branch=main&event=push)](https://github.com/Amebus/iterable-linq-utility/actions/workflows/build-test.yml?query=branch%3Amain+event%3Apush)
+[![Commits since the latest release](https://img.shields.io/github/commits-since/Amebus/iterable-linq-utility/latest)](https://amebus.github.io/iterable-linq-utility/next/)
+[![GitHub stars](https://img.shields.io/github/stars/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/stargazers)
+[![Latest release date](https://img.shields.io/github/release-date/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/releases/latest)
+[![Open issues](https://img.shields.io/github/issues/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/issues)
+[![Open pull requests](https://img.shields.io/github/issues-pr/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/pulls)
+[![Forks](https://img.shields.io/github/forks/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/forks)
 
 A [.NET Linq to Objects](https://learn.microsoft.com/it-it/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects) porting with javacript naming conventions (e.g.: `Select` as been ranamed to `map`) and some new features (e.g.: [memoize](https://amebus.github.io/iterable-linq-utility/api-reference/transformations.md#memoize) and [materialize](https://amebus.github.io/iterable-linq-utility/api-reference/actions.md#materialize)).
 
