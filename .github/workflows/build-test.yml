@@ -44,4 +44,12 @@ jobs:
         run: pnpm run check:commits
       - run: pnpm run build
       - run: pnpm run check:package
-      - run: pnpm run test
+      - run: pnpm run test:coverage
+      # the coverage of main is the badge of the README; an upload error does not fail the build
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          disable_search: true
+          fail_ci_if_error: false

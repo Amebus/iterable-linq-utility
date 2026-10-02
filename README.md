@@ -2,6 +2,7 @@
 [![npm version](https://img.shields.io/npm/v/iterable-linq-utility.svg)](https://npmjs.org/package/iterable-linq-utility)
 [![npm downloads](https://img.shields.io/npm/dm/iterable-linq-utility.svg)](https://npmjs.org/package/iterable-linq-utility)
 [![CI status](https://github.com/Amebus/iterable-linq-utility/actions/workflows/build-test.yml/badge.svg?branch=main&event=push)](https://github.com/Amebus/iterable-linq-utility/actions/workflows/build-test.yml?query=branch%3Amain+event%3Apush)
+[![Coverage](https://codecov.io/gh/Amebus/iterable-linq-utility/branch/main/graph/badge.svg)](https://codecov.io/gh/Amebus/iterable-linq-utility)
 [![Commits since the latest release](https://img.shields.io/github/commits-since/Amebus/iterable-linq-utility/latest)](https://amebus.github.io/iterable-linq-utility/next/)
 [![GitHub stars](https://img.shields.io/github/stars/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/stargazers)
 [![Latest release date](https://img.shields.io/github/release-date/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/releases/latest)
