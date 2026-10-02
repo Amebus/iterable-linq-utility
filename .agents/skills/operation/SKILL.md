@@ -27,7 +27,7 @@ Do every step, in this order. For a change to an existing operation, do the step
 5. **Tests**: `test/functions/<name>.spec.ts` and `test/linqIterableWrapper/<name>.spec.ts`: [references/tests.md](references/tests.md). Write them first and watch them fail.
 6. **Documentation site**: a row in the TLDR table and a section in `documentation/docs/api-reference/`: [references/docs-page.md](references/docs-page.md).
 7. **Bench**: `test/bench/functions/<name>.bench.ts` against a native reference: [references/bench.md](references/bench.md).
-8. **Changeset**: `pnpm changeset`, `minor` for a new operation, with a note for the users. Before 1.0 a breaking change is a `minor` too, and goes in the migration guide.
+8. **Changeset**: `pnpm changeset`, `minor` for a new operation, with a note for the users in the format of the [`pull-request` skill](../pull-request/SKILL.md#2-changeset). Before 1.0 a breaking change is a `minor` too, and goes in the migration guide.
 
 ## Check
 

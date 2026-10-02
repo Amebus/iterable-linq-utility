@@ -129,7 +129,7 @@ mike serve
     ```
 
 - Open the pull request against `main` and link the issues it solves with `Closes #<number>`.
-- A pull request that changes `src/` adds a changeset: run `pnpm changeset`, choose the bump and write a note for the users of the library. The CI fails without it. Before 1.0 a breaking change is a `minor`. A change to `src/` that releases nothing (an internal refactor) adds an empty one with `pnpm changeset --empty`. The check also accepts a changeset that the pull request modifies: extending the note of a pending changeset is fine when it describes the new change too.
+- A pull request that changes `src/` adds a changeset: run `pnpm changeset`, choose the bump and write a note for the users of the library. The CI fails without it. The note is one sentence: the operation with its signature in backticks, what changes, the native API it matches when there is one, and the issue in parentheses, like the notes in `CHANGELOG.md`: "New `skip(count)` Transformation: lazily skips the first `count` values and yields the rest (#27)." Before 1.0 a breaking change is a `minor`. A change to `src/` that releases nothing (an internal refactor) adds an empty one with `pnpm changeset --empty`. The check also accepts a changeset that the pull request modifies: extending the note of a pending changeset is fine when it describes the new change too.
 - Describe every breaking change in the migration guide of the next version, like [Migrating to 0.1.0](migrating-to-0.1.0.md).
 - `main` accepts changes only through a pull request whose `build` check passed: a direct push or a force-push is rejected. No review is required, and the branch does not have to be up to date with `main`. See [Protection rules](#protection-rules).
 

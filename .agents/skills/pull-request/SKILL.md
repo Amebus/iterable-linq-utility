@@ -21,7 +21,13 @@ pnpm changeset --empty  # a change to src/ that releases nothing, e.g. an intern
 ```
 
 - `minor` for a new operation or a new overload, `patch` for a fix. Before 1.0 a breaking change is a `minor`, and it gets a section in the migration guide of the next version (see `documentation/docs/migrating-to-0.1.0.md`).
-- The note is for the users of the library: what changes for them, with the API names in backticks. Once merged, it is on the Upcoming page of the `next` documentation until the release (ADR 0017).
+- The note is for the users of the library, in one sentence: the operation with its signature in backticks, what changes for them, the native API it matches when there is one, and the issue in parentheses at the end. Once merged, it is on the Upcoming page of the `next` documentation until the release (ADR 0017). The notes of the released versions, in `CHANGELOG.md`, are the model:
+
+    ```markdown
+    New `skip(count)` Transformation: lazily skips the first `count` values and yields the rest (#27).
+
+    `reduce()` accepts a call without a seed: the first value is the initial accumulator, like `Array.prototype.reduce` without `initialValue` (#67).
+    ```
 - Never change `version` in `package.json` or edit `CHANGELOG.md`: the release does it.
 - New APIs have `@since next`.
 
