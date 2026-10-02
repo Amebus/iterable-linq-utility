@@ -173,6 +173,8 @@ env $(node scripts/next-doc.ts) mkdocs serve -f documentation/mkdocs.yml
 
 `scripts/next-doc.ts` writes `documentation/docs/upcoming.md`, which git ignores. A release or a plain `mkdocs serve` builds the site without the banner.
 
+After a deployment, the version selector can show the old title for up to 10 minutes: it reads `versions.json`, which GitHub Pages serves with `cache-control: max-age=600`, while the banner is in the page itself. A hard refresh shows the new title. For the same reason, right after a release is merged the banner can say that `next` matches the new version while `latest` still shows the previous one, until **Npm Publish** deploys it.
+
 For an urgent fix to a released version:
 
 ```bash
