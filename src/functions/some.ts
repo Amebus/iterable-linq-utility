@@ -11,7 +11,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.some([1, 2, 3]); // true
  * ```
- * @since next
+ * @since 0.3.0
  */
 export function some<T>(iterable: Iterable<T>): boolean;
 /**

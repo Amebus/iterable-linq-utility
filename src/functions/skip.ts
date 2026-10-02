@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Array.from(Functions.skip([1, 2, 3, 4, 5], 2)); // [3, 4, 5]
  * ```
- * @since next
+ * @since 0.3.0
  */
 export function skip<T>(iterable: Iterable<T>, count: number): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

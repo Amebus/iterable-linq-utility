@@ -13,7 +13,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * ```ts
  * Array.from(Functions.take([1, 2, 3, 4, 5], 3)); // [1, 2, 3]
  * ```
- * @since next
+ * @since 0.3.0
  */
 export function take<T>(iterable: Iterable<T>, count: number): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);
