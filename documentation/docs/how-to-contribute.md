@@ -60,7 +60,9 @@ The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/itera
 
 ## Code style
 
-ESLint enforces the style: tabs, single quotes, semicolons and ordered class members. `.editorconfig` sets 2 spaces for YAML, JSON and Markdown. To fix what can be fixed automatically:
+ESLint enforces the style: tabs, single quotes, semicolons, ordered class members, and the order of the imports in the specs and the benches: `vitest`, the test helpers, a blank line, the code under test, then the local utilities, each group in alphabetical order.
+
+The operations are listed in alphabetical order, with the overloads of an operation next to each other: the exports of `src/functions/index.ts`, the imports and the methods of `src/linqIterable.ts`, the members of `IIterableLinqBase`, and the sections and the TLDR rows of the API reference. `pnpm check:structure` checks it. `.editorconfig` sets 2 spaces for YAML, JSON and Markdown. To fix what can be fixed automatically:
 
 ```bash
 pnpm lint-fix
@@ -77,6 +79,7 @@ pnpm check:since
 pnpm check:structure
 pnpm check:instructions
 pnpm check:changeset
+pnpm check:commits
 pnpm build
 pnpm check:package
 pnpm test
@@ -111,7 +114,7 @@ mike serve
 ## Commits and pull requests
 
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `build` or `ci`, an optional scope, and `!` for a breaking change. For example: `fix(range): empty range for NaN arguments`.
-- A commit has a body when its subject alone does not explain it, and always for `feat`, `fix`, `perf` and `refactor`: what changes for the users, or why, not how. The commit that solves an issue has `Closes #<number>` in its body. A trivial commit, like a typo, can have no body. For example:
+- A commit has a body when its subject alone does not explain it, and always for `feat`, `fix`, `perf` and `refactor`: what changes for the users, or why, not how. The commit that solves an issue has `Closes #<number>` in its body. A trivial commit, like a typo, can have no body. `pnpm check:commits` checks the body of the `feat`, `fix`, `perf` and `refactor` commits. For example:
 
     ```text
     feat(take): add take() Transformation

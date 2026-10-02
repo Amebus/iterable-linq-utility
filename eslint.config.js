@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
+import perfectionist from 'eslint-plugin-perfectionist';
 import tsdoc from 'eslint-plugin-tsdoc';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -38,6 +39,26 @@ export default tseslint.config(
 			'@typescript-eslint/no-inferrable-types': 'off',
 			'@typescript-eslint/no-non-null-assertion': 'off',
 			'@typescript-eslint/no-this-alias': 'off'
+		}
+	},
+	{
+		// Imports of specs and benches: vitest, the test helpers, a blank line, the code under test, the local utilities.
+		files: ['test/**/*.ts'],
+		plugins: {
+			perfectionist
+		},
+		rules: {
+			'perfectionist/sort-imports': ['error', {
+				type: 'alphabetical',
+				newlinesBetween: 0,
+				customGroups: [
+					{ groupName: 'vitest', elementNamePattern: '^vitest$' },
+					{ groupName: 'test-helpers', elementNamePattern: '/_?helpers(/|$)' },
+					{ groupName: 'tested-code', elementNamePattern: ['^@/', '^iterable-linq-utility$', '/scripts/'] },
+					{ groupName: 'local', elementNamePattern: '^\\./' }
+				],
+				groups: ['builtin', 'vitest', 'test-helpers', { newlinesBetween: 1 }, 'tested-code', 'local', 'unknown']
+			}]
 		}
 	},
 	{

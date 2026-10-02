@@ -66,7 +66,7 @@ describe('findStructureProblems', () => {
 	test('a chain starter needs no chain method, and its wrapper spec is test/<name>.spec.ts', () => {
 		expect(messages({
 			'src/functions/empty.ts': `${doc([])}\nexport function empty(): Iterable<number> {\n\treturn [];\n}\n`,
-			'src/functions/index.ts': 'export { map } from \'./map\';\nexport { empty } from \'./empty\';\n',
+			'src/functions/index.ts': 'export { empty } from \'./empty\';\nexport { map } from \'./map\';\n',
 			'test/functions/empty.spec.ts': '',
 			'test/empty.spec.ts': '',
 			'test/bench/functions/empty.bench.ts': ''
@@ -126,6 +126,87 @@ describe('findStructureProblems', () => {
 	test('a helper listed as such needs no @operation and no @example', () => {
 		const helper = `${doc([], ['@returns the options', '@since 0.0.16'])}\nexport function getMemoizeDefaultOptions(): object {\n\treturn {};\n}\n`;
 		expect(messages({ 'src/functions/map.ts': `${COMPLETE['src/functions/map.ts']}${helper}` })).toEqual([]);
+	});
+
+	describe('alphabetical order', () => {
+
+		const operation = (name: string) => ({
+			[`src/functions/${name}.ts`]: `${doc(['iterable'])}\nexport function ${name}(iterable: Iterable<number>): Iterable<number> {\n\treturn iterable;\n}\n`,
+			[`test/functions/${name}.spec.ts`]: '',
+			[`test/linqIterableWrapper/${name}.spec.ts`]: '',
+			[`test/bench/functions/${name}.bench.ts`]: ''
+		});
+		const chainInterface = (names: string[]) =>
+			`export interface IIterableLinqBase<T> {\n${names.map(name => `${doc([])}\n\t${name}(): IIterableLinqBase<T>;`).join('\n')}\n}\n`;
+		const chainClass = (names: string[]) =>
+			`import {\n${names.map(name => `\t${name}`).join(',\n')}\n} from './functions';\n\nexport class IterableLinqWrapper {\n${names.map(name => `\t${name}() {\n\t\treturn 0;\n\t}`).join('\n')}\n}\n`;
+		const ordered = {
+			...operation('filter'),
+			'src/functions/index.ts': 'export { filter } from \'./filter\';\nexport { map } from \'./map\';\n',
+			'src/types/iterableLinq.ts': chainInterface(['filter', 'map']),
+			'src/linqIterable.ts': chainClass(['filter', 'map'])
+		};
+
+		test('operations in alphabetical order have no problems', () => {
+			expect(messages(ordered)).toEqual([]);
+		});
+
+		test('an export out of order is reported with the place where it belongs', () => {
+			expect(findStructureProblems(files({ ...ordered, 'src/functions/index.ts': 'export { map } from \'./map\';\nexport { filter } from \'./filter\';\n' })))
+				.toEqual([{ path: 'src/functions/index.ts', line: 2, message: 'the exports: "filter" should come before "map" (alphabetical order)' }]);
+		});
+
+		test('the imports and the methods of the chain class out of order are reported', () => {
+			expect(messages({ ...ordered, 'src/linqIterable.ts': chainClass(['map', 'filter']) })).toEqual([
+				'the imports from ./functions: "filter" should come before "map" (alphabetical order)',
+				'the methods of the chain: "filter" should come before "map" (alphabetical order)'
+			]);
+		});
+
+		test('a member of IIterableLinqBase out of order is reported', () => {
+			expect(messages({ ...ordered, 'src/types/iterableLinq.ts': chainInterface(['map', 'filter']) }))
+				.toEqual(['the members of IIterableLinqBase: "filter" should come before "map" (alphabetical order)']);
+		});
+
+		test('overloads next to each other are fine, apart are reported', () => {
+			expect(messages({ ...ordered, 'src/types/iterableLinq.ts': chainInterface(['filter', 'filter', 'map']) })).toEqual([]);
+			expect(messages({ ...ordered, 'src/types/iterableLinq.ts': chainInterface(['filter', 'map', 'filter']) }))
+				.toEqual(['the members of IIterableLinqBase: keep the overloads of "filter" next to each other']);
+		});
+
+		test('the order is case-insensitive', () => {
+			expect(messages({
+				...ordered,
+				...operation('flatMap'),
+				...operation('forEach'),
+				'src/functions/index.ts': 'export { filter } from \'./filter\';\nexport { flatMap } from \'./flatMap\';\nexport { forEach } from \'./forEach\';\nexport { map } from \'./map\';\n',
+				'src/types/iterableLinq.ts': chainInterface(['filter', 'flatMap', 'forEach', 'map']),
+				'src/linqIterable.ts': chainClass(['filter', 'flatMap', 'forEach', 'map'])
+			})).toEqual([]);
+		});
+
+		test('the sections and the TLDR rows of an API reference page out of order are reported', () => {
+			const page = [
+				'# Transformations',
+				'',
+				'    | [map](#map) | Maps |',
+				'    | [filter](#filter) | Filters |',
+				'',
+				'## map',
+				'',
+				'## filter',
+				''
+			].join('\n');
+			expect(findStructureProblems(files({ ...ordered, 'documentation/docs/api-reference/transformations.md': page }))).toEqual([
+				{ path: 'documentation/docs/api-reference/transformations.md', line: 8, message: 'the sections: "filter" should come before "map" (alphabetical order)' },
+				{ path: 'documentation/docs/api-reference/transformations.md', line: 4, message: 'the TLDR table: "filter" should come before "map" (alphabetical order)' }
+			]);
+		});
+
+		test('the index of the API reference is not checked', () => {
+			expect(messages({ ...ordered, 'documentation/docs/api-reference/index.md': '## Starting a chain\n\n## Extending the chain\n' })).toEqual([]);
+		});
+
 	});
 
 });

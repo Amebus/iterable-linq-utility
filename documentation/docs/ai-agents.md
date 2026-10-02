@@ -25,10 +25,12 @@ On Windows, clone with symlinks enabled (`git config --global core.symlinks true
 
 The instructions help the agent; the checks hold whoever writes the code:
 
-- `pnpm check:structure`: every operation has its specs, its bench, its export and its chain method, and a complete JSDoc;
+- `pnpm lint`: the style, and the order of the imports in the specs and the benches;
+- `pnpm check:structure`: every operation has its specs, its bench, its export and its chain method, and a complete JSDoc, and the operations are in alphabetical order in the exports, in the chain and in the API reference;
 - `pnpm check:since`: `@since` is `next` or a released version;
 - `pnpm check:instructions`: the links of `AGENTS.md` and of the skills point to existing files, and the ADRs they cite exist; it cannot tell whether a rule still matches its ADR;
-- `pnpm check:changeset`: a pull request that changes `src/` has a changeset.
+- `pnpm check:changeset`: a pull request that changes `src/` has a changeset;
+- `pnpm check:commits`: the `feat`, `fix`, `perf` and `refactor` commits of a pull request have a body.
 
 GitHub also protects `main` and the release tags ([ADR 0016](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0016-protection-rules-for-main-and-release-tags.md)): a push to `main`, a force-push or a merge with the CI red is rejected, even when the agent uses your credentials.
 

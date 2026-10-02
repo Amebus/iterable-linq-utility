@@ -1,5 +1,4 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { Mapper } from '@/types';
 import { closableSource } from '../_helpers/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
@@ -8,7 +7,7 @@ import {
 	flatMap,
 	range
 } from '@/functions';
-
+import type { Mapper } from '@/types';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 const loremIpsum = 'Lorem ipsum dolor sit amte';

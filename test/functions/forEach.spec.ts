@@ -6,8 +6,8 @@ import {
 	forEach, forEachAsync,
 	range
 } from '@/functions';
-import { withoutInputIterableThrowsException, withoutInputIterableThrowsExceptionAsync } from './functionsTestUtility';
 import { Unit, unit } from '@/types';
+import { withoutInputIterableThrowsException, withoutInputIterableThrowsExceptionAsync } from './functionsTestUtility';
 
 describe('forEach', () => {
 

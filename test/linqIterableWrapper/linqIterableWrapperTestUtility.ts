@@ -1,5 +1,6 @@
-import { IIterableLinq } from '@/types';
 import { expect } from 'vitest';
+
+import { IIterableLinq } from '@/types';
 
 export function withoutInputFunctionThrowsException<T>(iterable: IIterableLinq<T>, fnName: keyof IIterableLinq<T>) {
 	const iter = iterable as any;

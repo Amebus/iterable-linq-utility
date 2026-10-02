@@ -4,11 +4,11 @@ import { join } from 'node:path';
 import type { ISourceFile } from './since.ts';
 
 /**
- * Every `.ts` file under `dir`, recursively.
+ * Every file with the extension `extension` under `dir`, recursively.
  */
-export function readSourceFiles(dir: string): ISourceFile[] {
+export function readSourceFiles(dir: string, extension = '.ts'): ISourceFile[] {
 	return readdirSync(dir, { recursive: true, encoding: 'utf8' })
-		.filter(name => name.endsWith('.ts'))
+		.filter(name => name.endsWith(extension))
 		.map(name => join(dir, name))
 		.map(path => ({ path, content: readFileSync(path, 'utf8') }));
 }

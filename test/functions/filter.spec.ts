@@ -7,7 +7,6 @@ import {
 	filter,
 	range
 } from '@/functions';
-
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('filter', () => {

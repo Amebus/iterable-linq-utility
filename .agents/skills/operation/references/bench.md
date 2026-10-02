@@ -3,10 +3,10 @@
 `test/bench/functions/<name>.bench.ts`. Every case compares a native reference (an array method or a hand-written loop), the chain and the raw function. See [ADR 0011](../../../../docs/decisions/0011-local-benchmarks-with-a-saved-baseline.md) and the Benchmarks section of the README.
 
 ```ts
-import * as IterableLinq from 'iterable-linq-utility';
 import { test } from 'vitest';
-
 import * as Helpers from '../helpers';
+
+import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
 const { from, Functions } = IterableLinq;

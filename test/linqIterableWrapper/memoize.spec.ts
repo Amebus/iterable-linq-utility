@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
-import { unit } from '@/types';
 
 import * as IterableLinq from '@/index';
+import { unit } from '@/types';
 
 const tapper = () => unit();
 
