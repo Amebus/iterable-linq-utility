@@ -21,6 +21,7 @@ Each file records one decision: its context, the options considered and the cons
 | [0015](0015-checks-on-the-release-pull-request.md) | Checks on the release pull request | accepted, amended by [0016](0016-protection-rules-for-main-and-release-tags.md) |
 | [0016](0016-protection-rules-for-main-and-release-tags.md) | Protection rules for main and the release tags | accepted |
 | [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted |
+| [0018](0018-shared-test-sources.md) | Shared test sources | accepted |
 
 ## Adding a decision
 
