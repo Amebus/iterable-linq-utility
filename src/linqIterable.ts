@@ -58,6 +58,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return collectToArray(this.iterable);
 	}
 
+	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
+	filter(predicate: Predicate<T>): IIterableLinq<T>;
 	filter(predicate: Predicate<T>): IIterableLinq<T> {
 		return toChain(filter(this.iterable, predicate));
 	}

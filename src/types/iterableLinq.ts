@@ -39,6 +39,22 @@ export interface IIterableLinqBase<T> {
 	collectToArray(): T[];
 
 	/**
+	 * Keeps the values accepted by a type guard and narrows their type.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param predicate - a type guard called with each value and its index; return `true` to keep the value
+	 * @returns a new chain with the narrowed values
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * const values: (number | string)[] = [1, 'two', 3];
+	 * IterableLinq.from(values).filter((v): v is string => typeof v === 'string').collectToArray(); // string[], ['two']
+	 * ```
+	 * @since next
+	 */
+	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
+
+	/**
 	 * Keeps only the values that satisfy `predicate`.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`

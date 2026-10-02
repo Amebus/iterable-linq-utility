@@ -1,15 +1,62 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { closableSource } from '../_helpers/generators/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import {
 	collectToArray,
 	filter,
+	map,
 	range
 } from '@/functions';
 import { returnClosesTheIterator, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('filter', () => {
+
+	test('a type guard narrows mixed values', () => {
+		const values: (number | string)[] = [1, 'two', 3, 'four'];
+		const result = filter(values, (value): value is string => typeof value === 'string');
+		expectTypeOf(result).toEqualTypeOf<Iterable<string>>();
+		expect(Array.from(result)).toEqual(['two', 'four']);
+	});
+
+	test('a type guard narrows a discriminated union for map', () => {
+		type Item = { kind: 'text'; text: string } | { kind: 'number'; number: number };
+		const values: Item[] = [{ kind: 'text', text: 'hello' }, { kind: 'number', number: 1 }];
+		const result = filter(values, (value): value is Extract<Item, { kind: 'text' }> => value.kind === 'text');
+		expectTypeOf(result).toEqualTypeOf<Iterable<Extract<Item, { kind: 'text' }>>>();
+		const texts = Array.from(map(result, value => value.text));
+		expectTypeOf(texts).toEqualTypeOf<string[]>();
+		expect(texts).toEqual(['hello']);
+	});
+
+	test('a type guard removes null and undefined', () => {
+		const values: (string | null | undefined)[] = ['one', null, undefined];
+		const result = filter(values, (value): value is string => value != null);
+		expectTypeOf(result).toEqualTypeOf<Iterable<string>>();
+		expect(Array.from(result)).toEqual(['one']);
+	});
+
+	test('a boolean predicate preserves the source type', () => {
+		const values: (number | string)[] = [1, 'two'];
+		const result = filter(values, (value): boolean => typeof value === 'string');
+		expectTypeOf(result).toEqualTypeOf<Iterable<number | string>>();
+		expect(Array.from(result)).toEqual(['two']);
+	});
+
+	test('a type guard receives source indexes lazily on every run', () => {
+		const values: (number | string)[] = [1, 'two', 3, 'four'];
+		const indexes: number[] = [];
+		const result = filter(values, (value, index): value is string => {
+			expectTypeOf(value).toEqualTypeOf<number | string>();
+			expectTypeOf(index).toEqualTypeOf<number>();
+			indexes.push(index);
+			return typeof value === 'string' && index > 1;
+		});
+		expect(indexes).toEqual([]);
+		expect(Array.from(result)).toEqual(['four']);
+		expect(Array.from(result)).toEqual(['four']);
+		expect(indexes).toEqual([0, 1, 2, 3, 0, 1, 2, 3]);
+	});
 
 	test('filter without input iterable -> throw exception', () => {
 		withoutInputIterableThrowsException(filter);
