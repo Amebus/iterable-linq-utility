@@ -798,6 +798,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Adding an operation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-custom-transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A custom Transformation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-custom-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A custom Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a name
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1073,6 +1112,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Adding an operation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-custom-transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A custom Transformation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-custom-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A custom Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a name
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1136,6 +1214,16 @@
 <li>Declare it by augmenting the <code>IIterableLinq</code> interface. Declare it on <code>IIterableLinq</code>, not on <code>IIterableLinqBase</code>, which holds the library's own operations.</li>
 <li>Register it once, at application start-up, with <code>extend</code>.</li>
 </ol>
+<p>The method is available on every chain, including chains created before the call to <code>extend</code>.</p>
+<p><code>extend</code> throws if:</p>
+<ul>
+<li>the name already exists: a library operation (<code>map</code>, <code>filter</code>, …), an operation you added before, or a member of <code>Object.prototype</code> (<code>toString</code>, <code>hasOwnProperty</code>, …);</li>
+<li>the name is empty;</li>
+<li>the implementation is not a function.</li>
+</ul>
+<p>The examples below use only the public API: the building blocks of the library's own operations are internal.</p>
+<h3 id="a-custom-transformation">A custom Transformation<a class="headerlink" href="#a-custom-transformation" title="Permanent link">⚓︎</a></h3>
+<p>A <a href="../../api-reference/transformations/">Transformation</a> returns a new chain. <code>pairwise</code> yields every value together with the next one:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
@@ -1160,52 +1248,101 @@
 <span class="normal"><a href="#__codelineno-1-22">22</a></span>
 <span class="normal"><a href="#__codelineno-1-23">23</a></span>
 <span class="normal"><a href="#__codelineno-1-24">24</a></span>
-<span class="normal"><a href="#__codelineno-1-25">25</a></span>
-<span class="normal"><a href="#__codelineno-1-26">26</a></span>
-<span class="normal"><a href="#__codelineno-1-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">extend</span><span class="p">,</span><span class="w"> </span><span class="kr">from</span><span class="p">,</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">IIterableLinq</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-1-25">25</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">extend</span><span class="p">,</span><span class="w"> </span><span class="kr">from</span><span class="p">,</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">IIterableLinq</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kr">declare</span><span class="w"> </span><span class="nx">module</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">    </span><span class="kd">interface</span><span class="w"> </span><span class="nx">IIterableLinq</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">        </span><span class="nx">chunk</span><span class="p">(</span><span class="nx">size</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">IIterableLinq</span><span class="o">&lt;</span><span class="nx">T</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">        </span><span class="nx">pairwise</span><span class="p">()</span><span class="o">:</span><span class="w"> </span><span class="nx">IIterableLinq</span><span class="o">&lt;</span><span class="p">[</span><span class="nx">T</span><span class="p">,</span><span class="w"> </span><span class="nx">T</span><span class="p">]</span><span class="o">&gt;</span><span class="p">;</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="p">}</span>
 <a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="p">}</span>
 <a id="__codelineno-1-8" name="__codelineno-1-8"></a>
-<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="nx">extend</span><span class="p">(</span><span class="s1">'chunk'</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">size</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="nx">extend</span><span class="p">(</span><span class="s1">'pairwise'</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
 <a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kr">from</span><span class="p">({</span>
 <a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="w">        </span><span class="o">*</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nx">chunk</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">source</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">                </span><span class="nx">chunk</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">chunk</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">                    </span><span class="k">yield</span><span class="w"> </span><span class="nx">chunk</span><span class="p">;</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">                    </span><span class="nx">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">                </span><span class="p">}</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nx">previous</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">;</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nx">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">source</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">first</span><span class="p">)</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="w">                    </span><span class="k">yield</span><span class="w"> </span><span class="p">[</span><span class="nx">previous</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="p">];</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="w">                </span><span class="nx">previous</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">value</span><span class="p">;</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="w">                </span><span class="nx">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
 <a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="w">            </span><span class="p">}</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">chunk</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">                </span><span class="k">yield</span><span class="w"> </span><span class="nx">chunk</span><span class="p">;</span>
-<a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="w">    </span><span class="p">});</span>
-<a id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="p">});</span>
-<a id="__codelineno-1-26" name="__codelineno-1-26"></a>
-<a id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">]).</span><span class="nx">chunk</span><span class="p">(</span><span class="mf">2</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [[1, 2], [3, 4], [5]]</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="w">    </span><span class="p">});</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="p">});</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24"></a>
+<a id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]).</span><span class="nx">pairwise</span><span class="p">().</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [[1, 2], [2, 3]]</span>
 </code></pre></div></td></tr></table></div>
-<p>The method is available on every chain, including chains created before the call to <code>extend</code>.</p>
-<p><code>extend</code> throws if:</p>
+<p>Written this way, it behaves like the library's own Transformations:</p>
 <ul>
-<li>the name already exists: a library operation (<code>map</code>, <code>filter</code>, …), an operation you added before, or a member of <code>Object.prototype</code> (<code>toString</code>, <code>hasOwnProperty</code>, …);</li>
-<li>the name is empty;</li>
-<li>the implementation is not a function.</li>
-</ul>
-<h2 id="replacing-an-operation">Replacing an operation<a class="headerlink" href="#replacing-an-operation" title="Permanent link">⚓︎</a></h2>
-<p><code>override</code> replaces an operation that already exists: a library operation or one added with <code>extend</code>.</p>
+<li><strong>Lazy.</strong> Calling <code>pairwise()</code> reads nothing: the generator runs when an <a href="../../api-reference/actions/">Action</a> reads the chain.</li>
+<li>
+<p><strong>Re-runnable.</strong> <code>from</code> gets an object whose <code>[Symbol.iterator]</code> calls the generator, so every run of the chain starts a new generator over the source:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
 <span class="normal"><a href="#__codelineno-2-2">2</a></span>
-<span class="normal"><a href="#__codelineno-2-3">3</a></span>
-<span class="normal"><a href="#__codelineno-2-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">from</span><span class="p">,</span><span class="w"> </span><span class="kd">override</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="c1">// a later release of the library added its own `chunk`: keep your version</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="kd">override</span><span class="p">(</span><span class="s1">'chunk'</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">size</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* your implementation */</span><span class="w"> </span><span class="p">});</span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">pairs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]).</span><span class="nx">pairwise</span><span class="p">();</span><span class="w"> </span><span class="c1">// nothing runs yet</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="nx">pairs</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [[1, 2], [2, 3]]</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="nx">pairs</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [[1, 2], [2, 3]], read again from the source</span>
+</code></pre></div></td></tr></table></div>
+<p>Passing <code>from</code> a generator object instead, <code>from((function* () { … })())</code>, gives the values on the first run and nothing on the next ones: see <a href="../#repeatable-execution-caveats">Repeatable Execution Caveats</a>.</p>
+</li>
+<li>
+<p><strong>Closes the source.</strong> When the consumer stops early, or a callback further down the chain throws, the consumer closes the generator, and the <code>for…of</code> inside it closes the source:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">]).</span><span class="nx">pairwise</span><span class="p">().</span><span class="nx">take</span><span class="p">(</span><span class="mf">1</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [[1, 2]], the source is closed after 2</span>
+</code></pre></div></td></tr></table></div>
+</li>
+</ul>
+<h3 id="a-custom-action">A custom Action<a class="headerlink" href="#a-custom-action" title="Permanent link">⚓︎</a></h3>
+<p>An <a href="../../api-reference/actions/">Action</a> runs the chain when it is called and returns a value, not a chain. <code>partition</code> splits the values in two arrays, the ones that satisfy the predicate and the others:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span>
+<span class="normal"><a href="#__codelineno-4-14">14</a></span>
+<span class="normal"><a href="#__codelineno-4-15">15</a></span>
+<span class="normal"><a href="#__codelineno-4-16">16</a></span>
+<span class="normal"><a href="#__codelineno-4-17">17</a></span>
+<span class="normal"><a href="#__codelineno-4-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">extend</span><span class="p">,</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="kr">declare</span><span class="w"> </span><span class="nx">module</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">    </span><span class="kd">interface</span><span class="w"> </span><span class="nx">IIterableLinq</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">        </span><span class="nx">partition</span><span class="p">(</span><span class="nx">predicate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">boolean</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="nx">T</span><span class="p">[],</span><span class="w"> </span><span class="nx">T</span><span class="p">[]];</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="p">}</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="nx">extend</span><span class="p">(</span><span class="s1">'partition'</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">predicate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="kt">boolean</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">matching</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">others</span><span class="o">:</span><span class="w"> </span><span class="kt">unknown</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">value</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="k">this</span><span class="p">)</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="w">        </span><span class="p">(</span><span class="nx">predicate</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">matching</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">others</span><span class="p">).</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="nx">matching</span><span class="p">,</span><span class="w"> </span><span class="nx">others</span><span class="p">];</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="p">});</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17"></a>
+<a id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">]).</span><span class="nx">partition</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// [[2, 4], [1, 3, 5]]</span>
+</code></pre></div></td></tr></table></div>
+<p>Iterate the chain with <code>for…of</code> over <code>this</code>. When the Action stops early, with a <code>return</code> or a <code>break</code> inside the loop, or when the predicate throws, <code>for…of</code> closes the source, like the library's own Actions do.</p>
+<h3 id="choosing-a-name">Choosing a name<a class="headerlink" href="#choosing-a-name" title="Permanent link">⚓︎</a></h3>
+<p>Choose a name that the library does not plan to add: the planned operations are the open <a href="https://github.com/Amebus/iterable-linq-utility/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement"><code>enhancement</code> issues</a>. If a later release adds an operation with the same name, your <code>extend</code> call throws at start-up: see <a href="#replacing-an-operation">Replacing an operation</a>.</p>
+<h2 id="replacing-an-operation">Replacing an operation<a class="headerlink" href="#replacing-an-operation" title="Permanent link">⚓︎</a></h2>
+<p><code>override</code> replaces an operation that already exists: a library operation or one added with <code>extend</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span>
+<span class="normal"><a href="#__codelineno-5-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kr">from</span><span class="p">,</span><span class="w"> </span><span class="kd">override</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="c1">// a later release of the library added its own `chunk`: keep your version</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="kd">override</span><span class="p">(</span><span class="s1">'chunk'</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="p">(</span><span class="nx">size</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* your implementation */</span><span class="w"> </span><span class="p">});</span>
 </code></pre></div></td></tr></table></div>
 <p>The main use of <code>override</code> is upgrading the library. If a new release adds an operation with the same name as one of your extensions, your <code>extend</code> call throws at start-up. Switch that call to <code>override</code>, or rename your operation. In the first case, keep the library's signature in your <code>declare module</code> block, because the two declarations merge into overloads of the same method.</p>
 <p>Overriding changes only the fluent operation. The raw functions in <code>Functions</code> (for example <code>Functions.map</code>) and the library internals keep the original behaviour, so you can still call the original implementation through <code>Functions</code>.</p>
@@ -1219,7 +1356,7 @@
 <ul>
 <li><strong>Register once, at start-up.</strong> Registering the same name twice with <code>extend</code> throws. This includes modules that run twice, for example with hot module replacement or test runners that re-import modules.</li>
 <li><strong>Extensions are global.</strong> Every chain in the process gets them, and an <code>override</code> lasts for the whole process.</li>
-<li><strong><code>this</code> has no element type.</strong> Inside the implementation <code>this</code> is <code>IIterableLinq&lt;unknown&gt;</code>. Callers still get full typing from your <code>declare module</code> block (in the example, <code>from([1, 2]).chunk(2)</code> is <code>IIterableLinq&lt;number[]&gt;</code>).</li>
+<li><strong><code>this</code> has no element type.</strong> Inside the implementation <code>this</code> is <code>IIterableLinq&lt;unknown&gt;</code>. Callers still get full typing from your <code>declare module</code> block (in the example, <code>from([1, 2]).pairwise()</code> is <code>IIterableLinq&lt;[number, number]&gt;</code>).</li>
 <li><strong>The compiler does not match the implementation with the declaration.</strong> Keeping the implementation consistent with the declared signature is up to you.</li>
 <li><strong>Only string names.</strong> <code>extend</code> and <code>override</code> accept string names only; symbols (for example <code>Symbol.iterator</code>) are rejected by the compiler.</li>
 <li><strong>Assignment.</strong> Operations added with <code>extend</code> cannot be replaced by a plain assignment: use <code>override</code>. The library's own operations keep their original behaviour here too: <code>override</code> never changes whether an operation can be reassigned.</li>
@@ -1246,7 +1383,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 27, 2026 12:43:18 UTC">September 27, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 2, 2026 11:12:20 UTC">October 2, 2026</span>
   </span>
 
     
