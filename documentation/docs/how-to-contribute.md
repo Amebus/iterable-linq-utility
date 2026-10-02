@@ -111,6 +111,17 @@ mike serve
 ## Commits and pull requests
 
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, `build` or `ci`, an optional scope, and `!` for a breaking change. For example: `fix(range): empty range for NaN arguments`.
+- A commit has a body when its subject alone does not explain it, and always for `feat`, `fix`, `perf` and `refactor`: what changes for the users, or why, not how. The commit that solves an issue has `Closes #<number>` in its body. A trivial commit, like a typo, can have no body. For example:
+
+    ```text
+    feat(take): add take() Transformation
+
+    Yields the first `count` values, then closes the source without reading
+    past the `count`-th value. Available as `Functions.take` and on the chain.
+
+    Closes #26
+    ```
+
 - Open the pull request against `main` and link the issues it solves with `Closes #<number>`.
 - A pull request that changes `src/` adds a changeset: run `pnpm changeset`, choose the bump and write a note for the users of the library. The CI fails without it. Before 1.0 a breaking change is a `minor`. A change to `src/` that releases nothing (an internal refactor) adds an empty one with `pnpm changeset --empty`. The check also accepts a changeset that the pull request modifies: extending the note of a pending changeset is fine when it describes the new change too.
 - Describe every breaking change in the migration guide of the next version, like [Migrating to 0.1.0](migrating-to-0.1.0.md).

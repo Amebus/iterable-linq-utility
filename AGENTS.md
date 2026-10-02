@@ -33,7 +33,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - A pull request that changes `src/` adds a changeset (`pnpm changeset`); before 1.0 a breaking change is a `minor` (ADR 0012).
 - A new or changed operation is documented in `documentation/docs/api-reference/` (ADR 0013).
 - An architecture decision is recorded as a new ADR.
-- Commits follow Conventional Commits; branch from `main`, one pull request per topic. `main` changes only through a pull request with the `build` check passed, and the release tags cannot be deleted or moved: GitHub rejects anything else (ADR 0016).
+- Commits follow Conventional Commits, with a body that says what changes or why (always for `feat`, `fix`, `perf`, `refactor`) and `Closes #<number>` in the commit that solves an issue; branch from `main`, one pull request per topic. `main` changes only through a pull request with the `build` check passed, and the release tags cannot be deleted or moved: GitHub rejects anything else (ADR 0016).
 
 ## Never
 
