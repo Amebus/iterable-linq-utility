@@ -9,8 +9,8 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [forEach](#foreach)               | Calls a callback on each value                                                        | `Unit`                      |
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
-    | [max](#max)                       | Returns the greatest value                                                            | `T \| undefined`            |
-    | [min](#min)                       | Returns the smallest value                                                            | `T \| undefined`            |
+    | [max](#max)                       | Returns the greatest value                                                            | `T | undefined`             |
+    | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
     | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`, or `T` without a seed  |
     | [some](#some)                     | Tells whether at least one value satisfies a predicate                                | `boolean`                   |
 
