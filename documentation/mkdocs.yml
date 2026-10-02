@@ -63,7 +63,10 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.smartsymbols
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      # the workflow runs mkdocs from documentation/, the preview from the root: CHANGELOG.md is found from both
+      base_path: ['.', '..']
+      check_paths: true
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
@@ -89,6 +92,7 @@ nav:
     - Basic Concepts: basic-concepts.md
     - Alternative Projects: alternative-projects.md
     - Migrating to 0.1.0: migrating-to-0.1.0.md
+    - Changelog: changelog.md
     - How to contribute: how-to-contribute.md
     - Working with AI agents: ai-agents.md
   - Advanced Concepts: 
