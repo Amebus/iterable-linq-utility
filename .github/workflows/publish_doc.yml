@@ -1,7 +1,8 @@
 name: Publish Doc
 
 # release:  called by publish.yml with the release commit as `ref`, deploys the released minor and moves `latest`
-# next:     every push to main that changes the docs or the sources, deploys `next`
+# next:     every push to main that changes the docs, the sources or the changesets, deploys `next`, with a banner
+#           that says whether it matches the latest release, and the Upcoming page (scripts/next-doc.ts)
 # redeploy: manual, deploys the minor of `ref` (default: the last tag); moves `latest` only for the latest minor
 
 on:
@@ -25,6 +26,8 @@ on:
     paths:
       - documentation/**
       - src/**
+      # a release deletes the changesets, and may not change src/: next must show that it matches the release
+      - .changeset/**
 
 permissions:
   contents: write
@@ -75,6 +78,15 @@ jobs:
             echo "doc_version=$(node -p "require('./package.json').version.split('.').slice(0, 2).join('.')")"
             echo "latest_version=$(echo "$last_tag" | cut -d. -f1-2)"
           } >> "$GITHUB_ENV"
+      - if: env.mode == 'next'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: State of next
+        if: env.mode == 'next'
+        run: |
+          # the version comes from package.json, not from the tag: the tag of a release is created later, by Npm Publish
+          node scripts/next-doc.ts >> "$GITHUB_ENV"
       - uses: actions/setup-python@v7
         with:
           python-version: 3.x
@@ -104,7 +116,12 @@ jobs:
               deploy mike set-default --push latest
               ;;
             next)
-              deploy mike deploy --push --title "next (unreleased)" next
+              if [ "$NEXT_STATE" = released ]; then
+                title="next (= ${NEXT_VERSION%.*})"
+              else
+                title="next (unreleased)"
+              fi
+              deploy mike deploy --push --title "$title" next
               ;;
             redeploy)
               if [ "$doc_version" = "$latest_version" ]; then
