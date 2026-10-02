@@ -111,3 +111,48 @@ const values = await Readable.from([1, 2, 3]).toArray();
 IterableLinq.from(values).map(v => v * 10).collectToArray();
 // [10, 20, 30]
 ```
+
+## Iterator helpers
+
+The [iterator helpers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helper_methods) (`map`, `filter`, `take`, `toArray`…) are methods of `Iterator.prototype`. The iterator of a chain does not inherit from it, so it has no helper methods: wrap the chain with `Iterator.from` first. Why the library does not build on them: [ADR 0006](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0006-position-against-the-native-iterator-helpers.md).
+
+```typescript
+import * as IterableLinq from 'iterable-linq-utility';
+
+const evens = IterableLinq.fromRange(10).filter(v => v % 2 === 0);
+
+evens[Symbol.iterator]().map;
+// undefined
+Iterator.from(evens).map(v => v * 10).take(2).toArray();
+// [0, 20]
+```
+
+The chain stays lazy: `take` stops it and closes its source.
+
+```typescript
+let reads = 0;
+const numbers = IterableLinq.fromRange(1000).map(v => { reads++; return v; });
+
+Iterator.from(numbers).take(2).toArray();
+// [0, 1]
+reads;
+// 2
+```
+
+An iterator helper is `Iterable`, so it can be the source of a chain, but it is single-use, like a generator object: the chain gives its values on the first run and nothing on the next ones (see [Repeatable Execution Caveats](index.md#repeatable-execution-caveats)). Add [memoize](../api-reference/transformations.md#memoize), or pass an object whose `[Symbol.iterator]` creates the helper on every run:
+
+```typescript
+const once = IterableLinq.from([1, 2, 3].values().map(v => v * 10));
+once.collectToArray();
+// [10, 20, 30]
+once.collectToArray();
+// []
+
+const cached = IterableLinq.from([1, 2, 3].values().map(v => v * 10)).memoize();
+cached.collectToArray();
+// [10, 20, 30], and the same on every run
+
+const rerun = IterableLinq.from({ [Symbol.iterator]: () => [1, 2, 3].values().map(v => v * 10) });
+rerun.collectToArray();
+// [10, 20, 30], and the same on every run
+```
