@@ -1,4 +1,5 @@
-// Checks that every operation in src/functions has its specs, its bench, its export, its chain method and a complete JSDoc.
+// Checks that every operation in src/functions has its specs, its bench, its export, its chain method and a complete JSDoc,
+// and that the operations are listed in alphabetical order.
 import ts from 'typescript';
 
 import type { ISourceFile } from './since.ts';
@@ -22,6 +23,15 @@ const OPERATION_FILE = /^src\/functions\/(\w+)\.ts$/;
 const INDEX = 'src/functions/index.ts';
 const CHAIN_INTERFACE = 'src/types/iterableLinq.ts';
 const CHAIN_CLASS = 'src/linqIterable.ts';
+/** The pages of the API reference that list operations: every page but the index. */
+const API_REFERENCE_PAGE = /^documentation\/docs\/api-reference\/(?!index\.md$)[\w-]+\.md$/;
+const SECTION = /^## (\w+)\s*$/;
+const TLDR_ROW = /^\s*\| \[(\w+)\]\(#/;
+
+interface INamedItem {
+	name: string;
+	line: number;
+}
 
 function parse(path: string, content: string): ts.SourceFile {
 	return ts.createSourceFile(path, content, ts.ScriptTarget.Latest, true);
@@ -50,6 +60,77 @@ function exportedNames(source: ts.SourceFile | undefined): Set<string> {
 function chainInterfaceMethods(source: ts.SourceFile | undefined): ts.MethodSignature[] {
 	const chain = source?.statements.filter(ts.isInterfaceDeclaration).find(i => i.name.text === 'IIterableLinqBase');
 	return chain?.members.filter(ts.isMethodSignature).filter(m => ts.isIdentifier(m.name)) ?? [];
+}
+
+/** The named methods of the chain class, in the order of the file: not the constructor, not `[Symbol.iterator]`. */
+function chainClassMethodItems(source: ts.SourceFile | undefined): INamedItem[] {
+	return source?.statements.filter(ts.isClassDeclaration).flatMap(declaration =>
+		declaration.members.filter(ts.isMethodDeclaration).filter(m => ts.isIdentifier(m.name))
+			.map(method => ({ name: method.name.getText(source), line: lineOf(method) }))) ?? [];
+}
+
+/** The modules exported by `src/functions/index.ts`, without `./`. */
+function exportedModules(source: ts.SourceFile | undefined): INamedItem[] {
+	return source?.statements.filter(ts.isExportDeclaration)
+		.filter(declaration => declaration.moduleSpecifier && ts.isStringLiteral(declaration.moduleSpecifier))
+		.map(declaration => ({ name: (declaration.moduleSpecifier as ts.StringLiteral).text.replace(/^\.\//, ''), line: lineOf(declaration) })) ?? [];
+}
+
+/** The names imported from `./functions`. */
+function importedOperations(source: ts.SourceFile | undefined): INamedItem[] {
+	const declaration = source?.statements.filter(ts.isImportDeclaration)
+		.find(d => ts.isStringLiteral(d.moduleSpecifier) && d.moduleSpecifier.text === './functions');
+	const bindings = declaration?.importClause?.namedBindings;
+	return bindings && ts.isNamedImports(bindings)
+		? bindings.elements.map(element => ({ name: element.name.text, line: lineOf(element) }))
+		: [];
+}
+
+function markdownItems(content: string, pattern: RegExp): INamedItem[] {
+	return content.split('\n').flatMap((text, index) => {
+		const name = pattern.exec(text)?.[1];
+		return name === undefined ? [] : [{ name, line: index + 1 }];
+	});
+}
+
+function compareNames(a: string, b: string): number {
+	const [x, y] = [a.toLowerCase(), b.toLowerCase()];
+	return x < y ? -1 : x > y ? 1 : 0;
+}
+
+/**
+ * The items out of alphabetical order. The same name may repeat (the overloads of an operation), but only next to itself.
+ */
+function checkOrder(path: string, items: INamedItem[], list: string): IStructureProblem[] {
+	const problems: IStructureProblem[] = [];
+	items.forEach((item, index) => {
+		const previous = items[index - 1];
+		if (previous === undefined || previous.name === item.name)
+			return;
+		if (items.slice(0, index - 1).some(other => other.name === item.name))
+			problems.push({ path, line: item.line, message: `${list}: keep the overloads of "${item.name}" next to each other` });
+		else if (compareNames(previous.name, item.name) > 0) {
+			const next = items.find(other => compareNames(other.name, item.name) > 0)!;
+			problems.push({ path, line: item.line, message: `${list}: "${item.name}" should come before "${next.name}" (alphabetical order)` });
+		}
+	});
+	return problems;
+}
+
+function findOrderProblems(files: ISourceFile[], sources: Map<string, ts.SourceFile>): IStructureProblem[] {
+	const chainClass = sources.get(CHAIN_CLASS);
+	const problems = [
+		...checkOrder(INDEX, exportedModules(sources.get(INDEX)), 'the exports'),
+		...checkOrder(CHAIN_CLASS, importedOperations(chainClass), 'the imports from ./functions'),
+		...checkOrder(CHAIN_CLASS, chainClassMethodItems(chainClass), 'the methods of the chain'),
+		...checkOrder(CHAIN_INTERFACE, chainInterfaceMethods(sources.get(CHAIN_INTERFACE))
+			.map(method => ({ name: method.name.getText(), line: lineOf(method) })), 'the members of IIterableLinqBase')
+	];
+	for (const { path, content } of files.filter(f => API_REFERENCE_PAGE.test(f.path))) {
+		problems.push(...checkOrder(path, markdownItems(content, SECTION), 'the sections'));
+		problems.push(...checkOrder(path, markdownItems(content, TLDR_ROW), 'the TLDR table'));
+	}
+	return problems;
 }
 
 function chainClassMethods(source: ts.SourceFile | undefined): Set<string> {
@@ -88,7 +169,8 @@ function checkJsDoc(node: ts.SignatureDeclaration, label: string, tags: string[]
 
 /**
  * Every operation of `src/functions` without its spec, wrapper spec, bench, export or chain method,
- * and every exported function or chain method without a complete JSDoc.
+ * every exported function or chain method without a complete JSDoc,
+ * and every operation out of alphabetical order in the exports, the chain and the API reference.
  */
 export function findStructureProblems(files: ISourceFile[]): IStructureProblem[] {
 	const paths = new Set(files.map(f => f.path));
@@ -131,5 +213,5 @@ export function findStructureProblems(files: ISourceFile[]): IStructureProblem[]
 		checkJsDoc(method, `IIterableLinqBase.${method.name.getText()}`, OPERATION_TAGS)
 			.forEach(message => problems.push({ path: CHAIN_INTERFACE, line: lineOf(method), message }));
 	}
-	return problems;
+	return [...problems, ...findOrderProblems(files, sources)];
 }
