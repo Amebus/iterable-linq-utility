@@ -8,6 +8,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
     | [find](#find)                     | Returns the first value that satisfies a predicate                                    | `T | undefined`             |
+    | [findIndex](#findindex)           | Returns the index of the first value that satisfies a predicate                       | `number`                    |
     | [forEach](#foreach)               | Calls a callback on each value                                                        | `Unit`                      |
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
@@ -109,6 +110,31 @@ With a type guard, `find` narrows the type of the result, as `filter` does.
     Functions.find(values, (v): v is string => typeof v === 'string');
     // string | undefined, 'two'
     ```
+
+## findIndex
+
+Returns the index of the first value that satisfies the predicate, or `-1` if there is none, like `Array.prototype.findIndex`. The predicate is called with each value and its index. The index counts the values of the chain, from 0. It stops at the first match and closes the source, so it also works on infinite sources that contain a match.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 5, 6])
+        .findIndex(v => v > 4);
+    // 1
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.findIndex([1, 5, 6], v => v > 4);
+    // 1
+    ```
+
+Throws an `Error` if the predicate is not a function.
 
 ## forEach
 
