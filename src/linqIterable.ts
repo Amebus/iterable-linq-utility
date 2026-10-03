@@ -14,6 +14,7 @@ import type {
 
 import {
 	collectToArray,
+	distinct,
 	filter,
 	flatMap,
 	forEach,
@@ -56,6 +57,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	collectToArray(): T[] {
 		return collectToArray(this.iterable);
+	}
+
+	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T> {
+		return toChain(distinct(this.iterable, keySelector));
 	}
 
 	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;

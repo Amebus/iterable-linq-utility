@@ -14,6 +14,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
 
     | Transformation                               | Brief Description                                                                | Execution                                   | Availability                                        |
     | -------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
+    | [distinct](#distinct)                        | Keeps the first value for each distinct value or selected key                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [filter](#filter)                            | Keeps only the values that satisfy a predicate                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [flatMap](#flatmap)                          | Maps each value to an `Iterable` and flattens the results                        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -26,6 +27,68 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
+
+## distinct
+
+Lazily yields the first value for each distinct value or selected key, in source order. Values are returned unchanged.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([3, 1, 3, 2, 1]).distinct().collectToArray();
+    // [3, 1, 2]
+
+    IterableLinq.from([{ id: 1 }, { id: 1 }, { id: 2 }])
+        .distinct(v => v.id)
+        .collectToArray();
+    // [{ id: 1 }, { id: 2 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.distinct([3, 1, 3, 2, 1]));
+    // [3, 1, 2]
+
+    Array.from(Functions.distinct([{ id: 1 }, { id: 1 }, { id: 2 }], v => v.id));
+    // [{ id: 1 }, { id: 2 }]
+    ```
+
+Keys use `SameValueZero`, like `Set`: `NaN` equals `NaN`, and `+0` and `-0` are equal. The first original value is retained, including its signed zero. Objects are compared by reference unless a selector supplies another key.
+
+The optional `keySelector` receives every source value and its source index, starting from 0, including duplicates. Omitting it or passing `undefined` compares the values directly. Throws an `Error` if the source is not iterable or a provided selector is not a function. If the selector throws, the source is closed and that error propagates; source errors propagate without closing the source.
+
+Every iteration has an independent `Set` of seen keys. Memory grows with the number of distinct keys encountered. As with other Transformations, a single-use source can only be consumed once unless it is memoized or materialized.
+
+An infinite source can be consumed with a downstream limit:
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    function* repeated() {
+        for (let value = 0; ; value++) yield Math.floor(value / 2);
+    }
+    IterableLinq.from(repeated()).distinct().take(3).collectToArray();
+    // [0, 1, 2]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    function* repeated() {
+        for (let value = 0; ; value++) yield Math.floor(value / 2);
+    }
+    Array.from(Functions.take(Functions.distinct(repeated()), 3));
+    // [0, 1, 2]
+    ```
+
+Stopping early closes the source. Asking for another distinct value keeps reading until a new key or the end is found: an infinite source containing only already-seen keys cannot produce another result.
 
 ## empty
 

@@ -1,4 +1,5 @@
 export { collectToArray } from './collectToArray';
+export { distinct } from './distinct';
 export { empty } from './empty';
 export { filter } from './filter';
 export { flatMap } from './flatMap';
