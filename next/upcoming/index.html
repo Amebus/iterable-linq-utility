@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">4 unreleased changes since 0.6.0</a>
+    <a href="../upcoming/">5 unreleased changes since 0.6.0</a>
           </div>
           
         </aside>
@@ -1029,6 +1029,7 @@
 <li>New <code>average(selector?)</code> Action: returns the average of the values, or of the numbers returned by <code>selector</code>, and <code>undefined</code> for an empty chain; without <code>selector</code>, the chain must contain numbers (<a href="https://github.com/Amebus/iterable-linq-utility/issues/51">#51</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/149">#149</a>)</li>
 <li>New <code>single(predicate?)</code> Action: returns the only value, or the only value that satisfies <code>predicate</code>, <code>undefined</code> if there is none, and throws if there is more than one (<a href="https://github.com/Amebus/iterable-linq-utility/issues/59">#59</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/150">#150</a>)</li>
 <li>New <code>sequenceEqual(other, equals?)</code> Action: tells whether the chain and <code>other</code> have the same values in the same order, compared with <code>===</code> or with <code>equals</code>; it stops and closes both sources at the first difference (<a href="https://github.com/Amebus/iterable-linq-utility/issues/60">#60</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/151">#151</a>)</li>
+<li>New <code>join(separator?)</code> Action: joins the values in a string, like <code>Array.prototype.join</code>, with <code>,</code> as the default separator (<a href="https://github.com/Amebus/iterable-linq-utility/issues/61">#61</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/153">#153</a>)</li>
 </ul>
 
 
