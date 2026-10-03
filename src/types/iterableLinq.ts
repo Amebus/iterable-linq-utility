@@ -202,6 +202,21 @@ export interface IIterableLinqBase<T> {
 	findLast(predicate: Predicate<T>): T | undefined;
 
 	/**
+	 * Returns the index of the last value that satisfies `predicate`; runs the whole chain.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index
+	 * @returns the index of the last value that satisfies `predicate`, or `-1` if there is none
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 5, 6, 2]).findLastIndex(v => v > 4); // 2
+	 * ```
+	 * @since next
+	 */
+	findLastIndex(predicate: Predicate<T>): number;
+
+	/**
 	 * Maps each value to an `Iterable` and flattens the results into one chain.
 	 * Each inner `Iterable` is read completely before the next value of the chain is mapped.
 	 * Inner arrays are read by index, as in `Array.prototype.flatMap`: their `[Symbol.iterator]` is not called.
