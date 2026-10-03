@@ -14,6 +14,7 @@ export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
 export { includes } from './includes';
 export { indexOf } from './indexOf';
+export { join } from './join';
 export { lastIndexOf } from './lastIndexOf';
 export { map } from './map';
 export { materialize } from './materialize';

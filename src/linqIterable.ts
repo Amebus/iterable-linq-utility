@@ -29,6 +29,7 @@ import {
 	forEachAsync,
 	includes,
 	indexOf,
+	join,
 	lastIndexOf,
 	map,
 	materialize,
@@ -139,6 +140,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	indexOf(value: T): number {
 		return indexOf(this.iterable, value);
+	}
+
+	join(separator?: string): string {
+		return join(this.iterable, separator);
 	}
 
 	lastIndexOf(value: T): number {

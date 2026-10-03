@@ -344,6 +344,21 @@ export interface IIterableLinqBase<T> {
 	indexOf(value: T): number;
 
 	/**
+	 * Joins the values of the chain in a string, like `Array.prototype.join`; runs the whole chain.
+	 * `null` and `undefined` become empty strings, every other value is converted with its `toString`.
+	 * @operation `Action`
+	 * @param separator - the string between two values; defaults to `,`
+	 * @returns the joined values, `''` when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).join(); // '1,2,3'
+	 * IterableLinq.from(['a', 'b']).join(' - '); // 'a - b'
+	 * ```
+	 * @since next
+	 */
+	join(separator?: string): string;
+
+	/**
 	 * Returns the index of the last value strictly equal (`===`) to `value`, like `Array.prototype.lastIndexOf`;
 	 * runs the whole chain.
 	 * @operation `Action`
