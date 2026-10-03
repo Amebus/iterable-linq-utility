@@ -161,7 +161,8 @@ function checkJsDoc(node: ts.SignatureDeclaration, label: string, tags: string[]
 	}
 	const documented = new Set(doc.tags?.filter(ts.isJSDocParameterTag).map(tag => tag.name.getText()));
 	for (const parameter of node.parameters) {
-		if (ts.isIdentifier(parameter.name) && !documented.has(parameter.name.text))
+		// `this` types the receiver of a chain method, it is not an argument
+		if (ts.isIdentifier(parameter.name) && parameter.name.text !== 'this' && !documented.has(parameter.name.text))
 			problems.push(`${label}: the JSDoc has no @param for "${parameter.name.text}"`);
 	}
 	return problems;

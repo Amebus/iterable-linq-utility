@@ -23,6 +23,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
     | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`, or `T` without a seed  |
     | [some](#some)                     | Tells whether at least one value satisfies a predicate                                | `boolean`                   |
+    | [sum](#sum)                       | Returns the sum of the values, or of the numbers returned by a selector               | `number`                    |
 
 ## at
 
@@ -656,3 +657,34 @@ Tells whether at least one value satisfies the predicate; without a predicate, w
     ```
 
 Throws an `Error` if a provided predicate is not a function. Passing `undefined` is the same as omitting it.
+
+## sum
+
+Returns the sum of the values, added with `+`; with a selector, the sum of the numbers it returns. The selector is called with each value and its index. It returns `0` when the chain is empty. The values are not checked: a `NaN` makes the result `NaN`. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 3]).sum();
+    // 6
+
+    IterableLinq
+        .from(['a', 'bb', 'ccc'])
+        .sum(v => v.length);
+    // 6
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.sum([1, 2, 3]);
+    // 6
+
+    Functions.sum(['a', 'bb', 'ccc'], v => v.length);
+    // 6
+    ```
+
+Without a selector, the chain must contain numbers: TypeScript rejects `sum()` on a chain of other values. Throws an `Error` if a provided selector is not a function. Passing `undefined` is the same as omitting it.

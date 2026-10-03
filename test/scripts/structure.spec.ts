@@ -100,6 +100,11 @@ describe('findStructureProblems', () => {
 		expect(messages({ 'src/functions/map.ts': content })).toEqual(['map: the JSDoc has no @param for "mapper"']);
 	});
 
+	test('the this parameter of a chain method needs no @param', () => {
+		const chain = `export interface IIterableLinqBase<T> {\n${doc([])}\n\tmap(this: IIterableLinqBase<number>): number;\n}\n`;
+		expect(messages({ 'src/types/iterableLinq.ts': chain })).toEqual([]);
+	});
+
 	test('a chain method without JSDoc is reported', () => {
 		expect(messages({ 'src/types/iterableLinq.ts': 'export interface IIterableLinqBase<T> {\n\tmap(mapper: (v: T) => T): IIterableLinqBase<T>;\n}\n' }))
 			.toEqual(['IIterableLinqBase.map: no JSDoc']);
