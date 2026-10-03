@@ -7,6 +7,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | --------------------------------- | ------------------------------------------------------------------------------------- | --------------------------- |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
+    | [find](#find)                     | Returns the first value that satisfies a predicate                                    | `T | undefined`             |
     | [forEach](#foreach)               | Calls a callback on each value                                                        | `Unit`                      |
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
@@ -62,6 +63,52 @@ Tells whether every value satisfies the predicate. The predicate is called with 
     ```
 
 Throws an `Error` if the predicate is not a function.
+
+## find
+
+Returns the first value that satisfies the predicate, or `undefined` if there is none. The predicate is called with each value and its index. It stops at the first match and closes the source, so it also works on infinite sources that contain a match. As with `Array.prototype.find`, an accepted `undefined` value and no match both return `undefined`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 5, 6])
+        .find(v => v > 4);
+    // 5
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.find([1, 5, 6], v => v > 4);
+    // 5
+    ```
+
+Throws an `Error` if the predicate is not a function.
+
+With a type guard, `find` narrows the type of the result, as `filter` does.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 'two', 3];
+    IterableLinq.from(values).find((v): v is string => typeof v === 'string');
+    // string | undefined, 'two'
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 'two', 3];
+    Functions.find(values, (v): v is string => typeof v === 'string');
+    // string | undefined, 'two'
+    ```
 
 ## forEach
 
