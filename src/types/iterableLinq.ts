@@ -39,6 +39,33 @@ export interface IIterableLinqBase<T> {
 	collectToArray(): T[];
 
 	/**
+	 * Counts the values of the chain; runs the whole chain.
+	 * @operation `Action`
+	 * @returns the number of values in the chain
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).count(); // 3
+	 * ```
+	 * @since next
+	 */
+	count(): number;
+
+	/**
+	 * Counts the values that satisfy `predicate`; runs the whole chain.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index; `undefined` counts every value
+	 * @returns the number of values that satisfy `predicate`
+	 * @throws Error if a provided `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 5, 2, 6]).count(v => v > 4); // 2
+	 * ```
+	 * @since next
+	 */
+	count(predicate: Predicate<T> | undefined): number;
+
+	/**
 	 * Yields the first value for each distinct value or selected key, in source order.
 	 * Keys use `SameValueZero`, like `Set`; original values are preserved.
 	 * Each iteration stores its own seen keys. If `keySelector` throws, the source is closed and the error propagates.

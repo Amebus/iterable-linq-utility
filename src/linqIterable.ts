@@ -14,6 +14,7 @@ import type {
 
 import {
 	collectToArray,
+	count,
 	distinct,
 	every,
 	filter,
@@ -62,6 +63,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	collectToArray(): T[] {
 		return collectToArray(this.iterable);
+	}
+
+	count(predicate?: Predicate<T>): number {
+		return count(this.iterable, predicate);
 	}
 
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T> {

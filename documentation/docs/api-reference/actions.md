@@ -6,6 +6,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | Action                            | Brief Description                                                                     | Returns                     |
     | --------------------------------- | ------------------------------------------------------------------------------------- | --------------------------- |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
+    | [count](#count)                   | Counts the values, or the values that satisfy a predicate                             | `number`                    |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
     | [find](#find)                     | Returns the first value that satisfies a predicate                                    | `T | undefined`             |
     | [findIndex](#findindex)           | Returns the index of the first value that satisfies a predicate                       | `number`                    |
@@ -39,6 +40,37 @@ Collects the values of the chain into an `Array`, in order.
     Functions.collectToArray(new Set([1, 2, 3, 4]));
     // [1, 2, 3, 4]
     ```
+
+## count
+
+Counts the values of the chain; with a predicate, only the values that satisfy it. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 5, 2, 6]).count();
+    // 4
+
+    IterableLinq
+        .from([1, 5, 2, 6])
+        .count(v => v > 4);
+    // 2
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.count([1, 5, 2, 6]);
+    // 4
+
+    Functions.count([1, 5, 2, 6], v => v > 4);
+    // 2
+    ```
+
+Throws an `Error` if a provided predicate is not a function. Passing `undefined` is the same as omitting it.
 
 ## every
 
