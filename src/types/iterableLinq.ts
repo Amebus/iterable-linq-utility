@@ -36,7 +36,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).append(4).collectToArray(); // [1, 2, 3, 4]
 	 * ```
-	 * @since next
+	 * @since 0.8.0
 	 */
 	append(value: T): IIterableLinq<T>;
 
@@ -109,7 +109,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2]).concat([3], new Set([4, 5])).collectToArray(); // [1, 2, 3, 4, 5]
 	 * ```
-	 * @since next
+	 * @since 0.8.0
 	 */
 	concat(...others: Iterable<T>[]): IIterableLinq<T>;
 
@@ -491,7 +491,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).prepend(0).collectToArray(); // [0, 1, 2, 3]
 	 * ```
-	 * @since next
+	 * @since 0.8.0
 	 */
 	prepend(value: T): IIterableLinq<T>;
 
@@ -633,7 +633,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 3, 4, 5]).slice(1, 3).collectToArray(); // [2, 3]
 	 * IterableLinq.from([1, 2, 3, 4, 5]).slice(-2).collectToArray(); // [4, 5]
 	 * ```
-	 * @since next
+	 * @since 0.8.0
 	 */
 	slice(start?: number, end?: number): IIterableLinq<T>;
 

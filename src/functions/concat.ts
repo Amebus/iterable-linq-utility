@@ -14,7 +14,7 @@ import { Validations } from '../utils';
  * ```ts
  * Array.from(Functions.concat([1, 2], [3], new Set([4, 5]))); // [1, 2, 3, 4, 5]
  * ```
- * @since next
+ * @since 0.8.0
  */
 export function concat<T>(iterable: Iterable<T>, ...others: Iterable<T>[]): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'concat');

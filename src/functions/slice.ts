@@ -17,7 +17,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * Array.from(Functions.slice([1, 2, 3, 4, 5], 1, 3)); // [2, 3]
  * Array.from(Functions.slice([1, 2, 3, 4, 5], -2)); // [4, 5]
  * ```
- * @since next
+ * @since 0.8.0
  */
 export function slice<T>(iterable: Iterable<T>, start?: number, end?: number): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'slice');
