@@ -14,6 +14,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
     | [includes](#includes)             | Tells whether the chain contains a value                                              | `boolean`                   |
     | [indexOf](#indexof)               | Returns the index of the first value equal to a value                                 | `number`                    |
+    | [lastIndexOf](#lastindexof)       | Returns the index of the last value equal to a value                                  | `number`                    |
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
     | [max](#max)                       | Returns the greatest value                                                            | `T | undefined`             |
     | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
@@ -293,6 +294,31 @@ Returns the index of the first value strictly equal (`===`) to the given value, 
     ```
 
 With `===`, `NaN` is never found and `+0` equals `-0`. To look for `NaN`, use [includes](#includes) or [findIndex](#findindex) with `Number.isNaN`.
+
+## lastIndexOf
+
+Returns the index of the last value strictly equal (`===`) to the given value, or `-1` if there is none, like `Array.prototype.lastIndexOf`. The index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 2])
+        .lastIndexOf(2);
+    // 3
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.lastIndexOf([1, 2, 3, 2], 2);
+    // 3
+    ```
+
+As with [indexOf](#indexof), `NaN` is never found and `+0` equals `-0`.
 
 ## materialize
 
