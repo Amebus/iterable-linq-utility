@@ -24,6 +24,7 @@ import {
 	forEach,
 	forEachAsync,
 	includes,
+	indexOf,
 	map,
 	materialize,
 	max,
@@ -108,6 +109,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	includes(value: T): boolean {
 		return includes(this.iterable, value);
+	}
+
+	indexOf(value: T): number {
+		return indexOf(this.iterable, value);
 	}
 
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {

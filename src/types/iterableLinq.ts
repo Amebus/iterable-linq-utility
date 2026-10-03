@@ -239,6 +239,20 @@ export interface IIterableLinqBase<T> {
 	includes(value: T): boolean;
 
 	/**
+	 * Returns the index of the first value strictly equal (`===`) to `value`, like `Array.prototype.indexOf`;
+	 * stops and closes the source at the first match.
+	 * @operation `Action`
+	 * @param value - the value to look for; `NaN` is never found, use `includes` or `findIndex` for it
+	 * @returns the index of the first value equal to `value`, or `-1` if there is none
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 2]).indexOf(2); // 1
+	 * ```
+	 * @since next
+	 */
+	indexOf(value: T): number;
+
+	/**
 	 * Transforms each value with `mapper`.
 	 * If `mapper` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
