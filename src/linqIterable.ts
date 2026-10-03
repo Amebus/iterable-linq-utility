@@ -18,6 +18,7 @@ import {
 	every,
 	filter,
 	find,
+	findIndex,
 	flatMap,
 	forEach,
 	forEachAsync,
@@ -81,6 +82,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 	find(predicate: Predicate<T>): T | undefined;
 	find(predicate: Predicate<T>): T | undefined {
 		return find(this.iterable, predicate);
+	}
+
+	findIndex(predicate: Predicate<T>): number {
+		return findIndex(this.iterable, predicate);
 	}
 
 	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R> {

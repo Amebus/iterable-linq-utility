@@ -4,6 +4,7 @@ export { empty } from './empty';
 export { every } from './every';
 export { filter } from './filter';
 export { find } from './find';
+export { findIndex } from './findIndex';
 export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
 export { map } from './map';

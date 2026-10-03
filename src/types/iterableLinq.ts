@@ -130,6 +130,20 @@ export interface IIterableLinqBase<T> {
 	find(predicate: Predicate<T>): T | undefined;
 
 	/**
+	 * Returns the index of the first value that satisfies `predicate`; stops and closes the source at the first match.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index
+	 * @returns the index of the first value that satisfies `predicate`, or `-1` if there is none
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 5, 6]).findIndex(v => v > 4); // 1
+	 * ```
+	 * @since next
+	 */
+	findIndex(predicate: Predicate<T>): number;
+
+	/**
 	 * Maps each value to an `Iterable` and flattens the results into one chain.
 	 * Each inner `Iterable` is read completely before the next value of the chain is mapped.
 	 * Inner arrays are read by index, as in `Array.prototype.flatMap`: their `[Symbol.iterator]` is not called.
