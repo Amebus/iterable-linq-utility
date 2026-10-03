@@ -56,6 +56,20 @@ export interface IIterableLinqBase<T> {
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T>;
 
 	/**
+	 * Tells whether every value satisfies `predicate`; stops and closes the source at the first rejected value.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index
+	 * @returns `true` if every value satisfies `predicate`, or if the chain is empty; `false` otherwise
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).every(v => v > 0); // true
+	 * ```
+	 * @since next
+	 */
+	every(predicate: Predicate<T>): boolean;
+
+	/**
 	 * Keeps the values accepted by a type guard and narrows their type.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`

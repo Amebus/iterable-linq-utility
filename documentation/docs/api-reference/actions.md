@@ -6,6 +6,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | Action                            | Brief Description                                                                     | Returns                     |
     | --------------------------------- | ------------------------------------------------------------------------------------- | --------------------------- |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
+    | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
     | [forEach](#foreach)               | Calls a callback on each value                                                        | `Unit`                      |
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
@@ -36,6 +37,31 @@ Collects the values of the chain into an `Array`, in order.
     Functions.collectToArray(new Set([1, 2, 3, 4]));
     // [1, 2, 3, 4]
     ```
+
+## every
+
+Tells whether every value satisfies the predicate. The predicate is called with each value and its index. It stops at the first rejected value and closes the source, so it also works on infinite sources that contain a rejected value. It returns `true` when the chain is empty, like `Array.prototype.every`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .every(v => v > 0);
+    // true
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.every([1, 2, 3], v => v > 0);
+    // true
+    ```
+
+Throws an `Error` if the predicate is not a function.
 
 ## forEach
 
