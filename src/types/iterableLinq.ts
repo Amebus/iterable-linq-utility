@@ -171,6 +171,37 @@ export interface IIterableLinqBase<T> {
 	findIndex(predicate: Predicate<T>): number;
 
 	/**
+	 * Returns the last value accepted by a type guard, narrowing its type; runs the whole chain.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param predicate - a type guard called with each value and its index
+	 * @returns the last value accepted by `predicate`, or `undefined` if there is none
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * const values: (number | string)[] = [1, 'two', 3, 'four'];
+	 * IterableLinq.from(values).findLast((v): v is string => typeof v === 'string'); // string | undefined, 'four'
+	 * ```
+	 * @since next
+	 */
+	findLast<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;
+
+	/**
+	 * Returns the last value that satisfies `predicate`; runs the whole chain.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index
+	 * @returns the last value that satisfies `predicate`, or `undefined` if there is none
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 5, 6, 2]).findLast(v => v > 4); // 6
+	 * ```
+	 * @since next
+	 */
+	findLast(predicate: Predicate<T>): T | undefined;
+
+	/**
 	 * Maps each value to an `Iterable` and flattens the results into one chain.
 	 * Each inner `Iterable` is read completely before the next value of the chain is mapped.
 	 * Inner arrays are read by index, as in `Array.prototype.flatMap`: their `[Symbol.iterator]` is not called.

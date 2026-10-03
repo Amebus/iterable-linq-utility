@@ -10,6 +10,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
     | [find](#find)                     | Returns the first value that satisfies a predicate                                    | `T | undefined`             |
     | [findIndex](#findindex)           | Returns the index of the first value that satisfies a predicate                       | `number`                    |
+    | [findLast](#findlast)             | Returns the last value that satisfies a predicate                                     | `T | undefined`             |
     | [forEach](#foreach)               | Calls a callback on each value                                                        | `Unit`                      |
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
     | [includes](#includes)             | Tells whether the chain contains a value                                              | `boolean`                   |
@@ -170,6 +171,52 @@ Returns the index of the first value that satisfies the predicate, or `-1` if th
     ```
 
 Throws an `Error` if the predicate is not a function.
+
+## findLast
+
+Returns the last value that satisfies the predicate, or `undefined` if there is none, like `Array.prototype.findLast`. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. An accepted `undefined` value and no match both return `undefined`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 5, 6, 2])
+        .findLast(v => v > 4);
+    // 6
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.findLast([1, 5, 6, 2], v => v > 4);
+    // 6
+    ```
+
+Throws an `Error` if the predicate is not a function.
+
+With a type guard, `findLast` narrows the type of the result, as [find](#find) does.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 'two', 3, 'four'];
+    IterableLinq.from(values).findLast((v): v is string => typeof v === 'string');
+    // string | undefined, 'four'
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 'two', 3, 'four'];
+    Functions.findLast(values, (v): v is string => typeof v === 'string');
+    // string | undefined, 'four'
+    ```
 
 ## forEach
 
