@@ -619,6 +619,25 @@ export interface IIterableLinqBase<T> {
 	skipWhile(predicate: Predicate<T>): IIterableLinq<T>;
 
 	/**
+	 * Yields the values from `start` to `end` (excluded), like `Array.prototype.slice`; a negative index counts from the end.
+	 * With non-negative indexes the values are yielded as they are read, and the source is closed at `end`, so `slice` also ends an infinite chain.
+	 * A negative `end` yields each value once `-end` more values have been read, keeping only those `-end` values.
+	 * A negative `start` runs the whole chain before yielding, keeping only the last `-start` values.
+	 * @operation `Transformation`
+	 * @param start - an integer, `0` by default; `-1` is the last value
+	 * @param end - an integer; the values are yielded up to the end of the chain by default
+	 * @returns a new chain with the values from `start` to `end`
+	 * @throws Error if `start` or `end` is given and is not an integer (fractions, `NaN` and `Infinity` included)
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).slice(1, 3).collectToArray(); // [2, 3]
+	 * IterableLinq.from([1, 2, 3, 4, 5]).slice(-2).collectToArray(); // [4, 5]
+	 * ```
+	 * @since next
+	 */
+	slice(start?: number, end?: number): IIterableLinq<T>;
+
+	/**
 	 * Runs the chain until its first value, then stops and closes the source.
 	 * @operation `Action`
 	 * @returns `true` if the chain contains a value; `false` when it is empty

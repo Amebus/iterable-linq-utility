@@ -28,6 +28,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [slice](#slice)                              | Yields the values from *start* to *end*, like `Array.prototype.slice`            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
@@ -526,6 +527,45 @@ Skips the values while the predicate returns `true`, then yields the first rejec
     ```
 
 Throws an `Error` if the predicate is not a function.
+
+## slice
+
+Yields the values from *start* to *end* (excluded), like `Array.prototype.slice`; a negative index counts from the end. *start* is `0` by default, and without *end* the values are yielded up to the end of the chain.
+
+- With non-negative indexes, the values are yielded as they are read and the source is closed at *end*, so `slice` also ends an infinite chain.
+- A negative *end* yields each value once `-end` more values have been read, keeping only those `-end` values.
+- A negative *start* runs the whole chain before yielding, keeping only the last `-start` values.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .slice(1, 3)
+        .collectToArray();
+    // [2, 3]
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .slice(-2)
+        .collectToArray();
+    // [4, 5]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.slice([1, 2, 3, 4, 5], 1, 3));
+    // [2, 3]
+
+    Array.from(Functions.slice([1, 2, 3, 4, 5], -2));
+    // [4, 5]
+    ```
+
+Throws an `Error` if *start* or *end* is given and is not an integer (fractions, `NaN` and `Infinity` included). Unlike `Array.prototype.slice`, they are not converted to integers.
 
 ## take
 

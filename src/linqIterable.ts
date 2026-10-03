@@ -44,6 +44,7 @@ import {
 	single,
 	skip,
 	skipWhile,
+	slice,
 	some,
 	sum,
 	take,
@@ -210,6 +211,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	skipWhile(predicate: Predicate<T>): IIterableLinq<T> {
 		return toChain(skipWhile(this.iterable, predicate));
+	}
+
+	slice(start?: number, end?: number): IIterableLinq<T> {
+		return toChain(slice(this.iterable, start, end));
 	}
 
 	some(predicate?: Predicate<T>): boolean {

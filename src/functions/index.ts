@@ -31,6 +31,7 @@ export { sequenceEqual } from './sequenceEqual';
 export { single } from './single';
 export { skip } from './skip';
 export { skipWhile } from './skipWhile';
+export { slice } from './slice';
 export { some } from './some';
 export { sum } from './sum';
 export { take } from './take';
