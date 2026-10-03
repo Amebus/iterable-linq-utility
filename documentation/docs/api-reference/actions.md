@@ -5,6 +5,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
 ???+ summary "TLDR list of Actions"
     | Action                            | Brief Description                                                                     | Returns                     |
     | --------------------------------- | ------------------------------------------------------------------------------------- | --------------------------- |
+    | [at](#at)                         | Returns the value at an index; a negative index counts from the end                   | `T | undefined`             |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
     | [count](#count)                   | Counts the values, or the values that satisfy a predicate                             | `number`                    |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
@@ -22,6 +23,37 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
     | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`, or `T` without a seed  |
     | [some](#some)                     | Tells whether at least one value satisfies a predicate                                | `boolean`                   |
+
+## at
+
+Returns the value at the index, or `undefined` if the chain has no value there, like `Array.prototype.at`. A negative index counts from the end: `-1` is the last value.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([10, 20, 30]).at(1);
+    // 20
+
+    IterableLinq.from([10, 20, 30]).at(-1);
+    // 30
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.at([10, 20, 30], 1);
+    // 20
+
+    Functions.at([10, 20, 30], -1);
+    // 30
+    ```
+
+Throws an `Error` if the index is not an integer: unlike `Array.prototype.at`, fractions, `NaN` and `Infinity` are rejected instead of truncated, as with [take](transformations.md#take) and [skip](transformations.md#skip).
+
+A non-negative index reads the chain up to the value, then closes the source, so it also works on infinite sources. A negative index reads the whole chain, keeping only the last `-index` values in memory: it does not terminate on an infinite source.
 
 ## collectToArray
 

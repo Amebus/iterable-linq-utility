@@ -13,6 +13,7 @@ import type {
 } from './types';
 
 import {
+	at,
 	collectToArray,
 	count,
 	distinct,
@@ -64,6 +65,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	[Symbol.iterator](): Iterator<T, any, undefined> {
 		return this.iterable[Symbol.iterator]();
+	}
+
+	at(index: number): T | undefined {
+		return at(this.iterable, index);
 	}
 
 	collectToArray(): T[] {
