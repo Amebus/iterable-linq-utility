@@ -87,7 +87,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../../upcoming/">3 unreleased changes since 0.7.0</a>
+    <a href="../../upcoming/">4 unreleased changes since 0.7.0</a>
           </div>
           
         </aside>
@@ -1106,6 +1106,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#slice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#take" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1379,6 +1390,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#slice" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        slice
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#take" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1523,6 +1545,12 @@
 <tr>
 <td><a href="#skipwhile">skipWhile</a></td>
 <td>Skips the values while a predicate is satisfied and yields the rest</td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 1 1 2 12 10 10 0 0 1 12 2"/></svg></span></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 21H5V3h2zM19 3h-2v18h2zm-6 5H9v2h3.97c.17 0 1.03.16 1.03 2s-.86 2-1 2h-2v-2l-3 3 3 3v-2h2c1.04 0 3-.84 3-4s-1.96-4-3-4"/></svg></span> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 9c.8 0 1.5.7 1.5 1.5v1c0 .6-.4 1.1-.9 1.4L8 15H6.5l-.9-2H4.5v2H3V9zm0 2.5v-1h-2v1zM10.25 9h2.5l1.5 6h-1.5l-.37-1.5h-1.75l-.38 1.5h-1.5zm.75 3h1l-.25-1h-.5zm9-3h1.5L20 15h-1.5l-.76-3.04L17 15h-1.5L14 9h1.5l.74 3L17 9h1.5l.74 3z"/></svg></span></td>
+</tr>
+<tr>
+<td><a href="#slice">slice</a></td>
+<td>Yields the values from <em>start</em> to <em>end</em>, like <code>Array.prototype.slice</code></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 1 1 2 12 10 10 0 0 1 12 2"/></svg></span></td>
 <td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 21H5V3h2zM19 3h-2v18h2zm-6 5H9v2h3.97c.17 0 1.03.16 1.03 2s-.86 2-1 2h-2v-2l-3 3 3 3v-2h2c1.04 0 3-.84 3-4s-1.96-4-3-4"/></svg></span> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.5 9c.8 0 1.5.7 1.5 1.5v1c0 .6-.4 1.1-.9 1.4L8 15H6.5l-.9-2H4.5v2H3V9zm0 2.5v-1h-2v1zM10.25 9h2.5l1.5 6h-1.5l-.37-1.5h-1.75l-.38 1.5h-1.5zm.75 3h1l-.25-1h-.5zm9-3h1.5L20 15h-1.5l-.76-3.04L17 15h-1.5L14 9h1.5l.74 3L17 9h1.5l.74 3z"/></svg></span></td>
 </tr>
@@ -2202,41 +2230,64 @@
 </div>
 </div>
 <p>Throws an <code>Error</code> if the predicate is not a function.</p>
-<h2 id="take">take<a class="headerlink" href="#take" title="Permanent link">⚓︎</a></h2>
-<p>Yields the first <em>count</em> values, then closes the source. The source is never read past the <em>count</em>-th value, so <code>take</code> also ends an infinite chain.</p>
+<h2 id="slice">slice<a class="headerlink" href="#slice" title="Permanent link">⚓︎</a></h2>
+<p>Yields the values from <em>start</em> to <em>end</em> (excluded), like <code>Array.prototype.slice</code>; a negative index counts from the end. <em>start</em> is <code>0</code> by default, and without <em>end</em> the values are yielded up to the end of the chain.</p>
+<ul>
+<li>With non-negative indexes, the values are yielded as they are read and the source is closed at <em>end</em>, so <code>slice</code> also ends an infinite chain.</li>
+<li>A negative <em>end</em> yields each value once <code>-end</code> more values have been read, keeping only those <code>-end</code> values.</li>
+<li>A negative <em>start</em> runs the whole chain before yielding, keeping only the last <code>-start</code> values.</li>
+</ul>
 <div class="tabbed-set tabbed-alternate" data-tabs="17:2"><input checked="checked" id="__tabbed_17_1" name="__tabbed_17" type="radio" /><input id="__tabbed_17_2" name="__tabbed_17" type="radio" /><div class="tabbed-labels"><label for="__tabbed_17_1">Wrapper</label><label for="__tabbed_17_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-34-1">1</a></span>
-<span class="normal"><a href="#__codelineno-34-2">2</a></span>
-<span class="normal"><a href="#__codelineno-34-3">3</a></span>
-<span class="normal"><a href="#__codelineno-34-4">4</a></span>
-<span class="normal"><a href="#__codelineno-34-5">5</a></span>
-<span class="normal"><a href="#__codelineno-34-6">6</a></span>
-<span class="normal"><a href="#__codelineno-34-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-34-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-34-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-34-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-34-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-34-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-34-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-34-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-34-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-34-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-34-10">10</a></span>
+<span class="normal"><a href="#__codelineno-34-11">11</a></span>
+<span class="normal"><a href="#__codelineno-34-12">12</a></span>
+<span class="normal"><a href="#__codelineno-34-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-34-2" name="__codelineno-34-2"></a>
 <a id="__codelineno-34-3" name="__codelineno-34-3"></a><span class="nx">IterableLinq</span>
 <a id="__codelineno-34-4" name="__codelineno-34-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">])</span>
-<a id="__codelineno-34-5" name="__codelineno-34-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span>
 <a id="__codelineno-34-6" name="__codelineno-34-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
-<a id="__codelineno-34-7" name="__codelineno-34-7"></a><span class="c1">// [1, 2, 3]</span>
+<a id="__codelineno-34-7" name="__codelineno-34-7"></a><span class="c1">// [2, 3]</span>
+<a id="__codelineno-34-8" name="__codelineno-34-8"></a>
+<a id="__codelineno-34-9" name="__codelineno-34-9"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-34-10" name="__codelineno-34-10"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">])</span>
+<a id="__codelineno-34-11" name="__codelineno-34-11"></a><span class="w">    </span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="o">-</span><span class="mf">2</span><span class="p">)</span>
+<a id="__codelineno-34-12" name="__codelineno-34-12"></a><span class="w">    </span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-34-13" name="__codelineno-34-13"></a><span class="c1">// [4, 5]</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-35-1">1</a></span>
 <span class="normal"><a href="#__codelineno-35-2">2</a></span>
 <span class="normal"><a href="#__codelineno-35-3">3</a></span>
-<span class="normal"><a href="#__codelineno-35-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-35-4">4</a></span>
+<span class="normal"><a href="#__codelineno-35-5">5</a></span>
+<span class="normal"><a href="#__codelineno-35-6">6</a></span>
+<span class="normal"><a href="#__codelineno-35-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-35-2" name="__codelineno-35-2"></a>
-<a id="__codelineno-35-3" name="__codelineno-35-3"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">take</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">],</span><span class="w"> </span><span class="mf">3</span><span class="p">));</span>
-<a id="__codelineno-35-4" name="__codelineno-35-4"></a><span class="c1">// [1, 2, 3]</span>
+<a id="__codelineno-35-3" name="__codelineno-35-3"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">slice</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">],</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">));</span>
+<a id="__codelineno-35-4" name="__codelineno-35-4"></a><span class="c1">// [2, 3]</span>
+<a id="__codelineno-35-5" name="__codelineno-35-5"></a>
+<a id="__codelineno-35-6" name="__codelineno-35-6"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">slice</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">],</span><span class="w"> </span><span class="o">-</span><span class="mf">2</span><span class="p">));</span>
+<a id="__codelineno-35-7" name="__codelineno-35-7"></a><span class="c1">// [4, 5]</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
-<p>Throws an <code>Error</code> if <em>count</em> is negative, not an integer, <code>NaN</code> or <code>Infinity</code>.</p>
-<h2 id="takewhile">takeWhile<a class="headerlink" href="#takewhile" title="Permanent link">⚓︎</a></h2>
-<p>Yields the values while the predicate returns <code>true</code>, then closes the source. The predicate is called with each value and its index. The first rejected value is not yielded and the source is never read past it, so <code>takeWhile</code> can end an infinite chain.</p>
+<p>Throws an <code>Error</code> if <em>start</em> or <em>end</em> is given and is not an integer (fractions, <code>NaN</code> and <code>Infinity</code> included). Unlike <code>Array.prototype.slice</code>, they are not converted to integers.</p>
+<h2 id="take">take<a class="headerlink" href="#take" title="Permanent link">⚓︎</a></h2>
+<p>Yields the first <em>count</em> values, then closes the source. The source is never read past the <em>count</em>-th value, so <code>take</code> also ends an infinite chain.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="18:2"><input checked="checked" id="__tabbed_18_1" name="__tabbed_18" type="radio" /><input id="__tabbed_18_2" name="__tabbed_18" type="radio" /><div class="tabbed-labels"><label for="__tabbed_18_1">Wrapper</label><label for="__tabbed_18_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2249,10 +2300,10 @@
 <span class="normal"><a href="#__codelineno-36-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-36-2" name="__codelineno-36-2"></a>
 <a id="__codelineno-36-3" name="__codelineno-36-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-36-4" name="__codelineno-36-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
-<a id="__codelineno-36-5" name="__codelineno-36-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">4</span><span class="p">)</span>
+<a id="__codelineno-36-4" name="__codelineno-36-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">])</span>
+<a id="__codelineno-36-5" name="__codelineno-36-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span>
 <a id="__codelineno-36-6" name="__codelineno-36-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
-<a id="__codelineno-36-7" name="__codelineno-36-7"></a><span class="c1">// [1, 2]</span>
+<a id="__codelineno-36-7" name="__codelineno-36-7"></a><span class="c1">// [1, 2, 3]</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
@@ -2261,14 +2312,15 @@
 <span class="normal"><a href="#__codelineno-37-3">3</a></span>
 <span class="normal"><a href="#__codelineno-37-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-37-2" name="__codelineno-37-2"></a>
-<a id="__codelineno-37-3" name="__codelineno-37-3"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">4</span><span class="p">));</span>
-<a id="__codelineno-37-4" name="__codelineno-37-4"></a><span class="c1">// [1, 2]</span>
+<a id="__codelineno-37-3" name="__codelineno-37-3"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">take</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">],</span><span class="w"> </span><span class="mf">3</span><span class="p">));</span>
+<a id="__codelineno-37-4" name="__codelineno-37-4"></a><span class="c1">// [1, 2, 3]</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
-<p>Throws an <code>Error</code> if the predicate is not a function.</p>
-<p>With a type guard, <code>takeWhile</code> narrows the element type, as <code>filter</code> does.</p>
+<p>Throws an <code>Error</code> if <em>count</em> is negative, not an integer, <code>NaN</code> or <code>Infinity</code>.</p>
+<h2 id="takewhile">takeWhile<a class="headerlink" href="#takewhile" title="Permanent link">⚓︎</a></h2>
+<p>Yields the values while the predicate returns <code>true</code>, then closes the source. The predicate is called with each value and its index. The first rejected value is not yielded and the source is never read past it, so <code>takeWhile</code> can end an infinite chain.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="19:2"><input checked="checked" id="__tabbed_19_1" name="__tabbed_19" type="radio" /><input id="__tabbed_19_2" name="__tabbed_19" type="radio" /><div class="tabbed-labels"><label for="__tabbed_19_1">Wrapper</label><label for="__tabbed_19_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2278,27 +2330,59 @@
 <span class="normal"><a href="#__codelineno-38-4">4</a></span>
 <span class="normal"><a href="#__codelineno-38-5">5</a></span>
 <span class="normal"><a href="#__codelineno-38-6">6</a></span>
-<span class="normal"><a href="#__codelineno-38-7">7</a></span>
-<span class="normal"><a href="#__codelineno-38-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-38-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-38-2" name="__codelineno-38-2"></a>
-<a id="__codelineno-38-3" name="__codelineno-38-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">string</span><span class="p">)[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="s1">'three'</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">];</span>
-<a id="__codelineno-38-4" name="__codelineno-38-4"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">)</span>
-<a id="__codelineno-38-5" name="__codelineno-38-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">((</span><span class="nx">v</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">typeof</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">'number'</span><span class="p">)</span>
-<a id="__codelineno-38-6" name="__codelineno-38-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">)</span>
-<a id="__codelineno-38-7" name="__codelineno-38-7"></a><span class="w">    </span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
-<a id="__codelineno-38-8" name="__codelineno-38-8"></a><span class="c1">// [10, 20]</span>
+<a id="__codelineno-38-3" name="__codelineno-38-3"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-38-4" name="__codelineno-38-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
+<a id="__codelineno-38-5" name="__codelineno-38-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">4</span><span class="p">)</span>
+<a id="__codelineno-38-6" name="__codelineno-38-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-38-7" name="__codelineno-38-7"></a><span class="c1">// [1, 2]</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-39-1">1</a></span>
 <span class="normal"><a href="#__codelineno-39-2">2</a></span>
 <span class="normal"><a href="#__codelineno-39-3">3</a></span>
-<span class="normal"><a href="#__codelineno-39-4">4</a></span>
-<span class="normal"><a href="#__codelineno-39-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-39-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-39-2" name="__codelineno-39-2"></a>
-<a id="__codelineno-39-3" name="__codelineno-39-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">string</span><span class="p">)[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="s1">'three'</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">];</span>
-<a id="__codelineno-39-4" name="__codelineno-39-4"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">(</span><span class="nx">values</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">typeof</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">'number'</span><span class="p">));</span>
-<a id="__codelineno-39-5" name="__codelineno-39-5"></a><span class="c1">// number[], [1, 2]</span>
+<a id="__codelineno-39-3" name="__codelineno-39-3"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">4</span><span class="p">));</span>
+<a id="__codelineno-39-4" name="__codelineno-39-4"></a><span class="c1">// [1, 2]</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<p>Throws an <code>Error</code> if the predicate is not a function.</p>
+<p>With a type guard, <code>takeWhile</code> narrows the element type, as <code>filter</code> does.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="20:2"><input checked="checked" id="__tabbed_20_1" name="__tabbed_20" type="radio" /><input id="__tabbed_20_2" name="__tabbed_20" type="radio" /><div class="tabbed-labels"><label for="__tabbed_20_1">Wrapper</label><label for="__tabbed_20_2">Raw Function</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-40-1">1</a></span>
+<span class="normal"><a href="#__codelineno-40-2">2</a></span>
+<span class="normal"><a href="#__codelineno-40-3">3</a></span>
+<span class="normal"><a href="#__codelineno-40-4">4</a></span>
+<span class="normal"><a href="#__codelineno-40-5">5</a></span>
+<span class="normal"><a href="#__codelineno-40-6">6</a></span>
+<span class="normal"><a href="#__codelineno-40-7">7</a></span>
+<span class="normal"><a href="#__codelineno-40-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-40-2" name="__codelineno-40-2"></a>
+<a id="__codelineno-40-3" name="__codelineno-40-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">string</span><span class="p">)[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="s1">'three'</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">];</span>
+<a id="__codelineno-40-4" name="__codelineno-40-4"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">)</span>
+<a id="__codelineno-40-5" name="__codelineno-40-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">((</span><span class="nx">v</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">typeof</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">'number'</span><span class="p">)</span>
+<a id="__codelineno-40-6" name="__codelineno-40-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">)</span>
+<a id="__codelineno-40-7" name="__codelineno-40-7"></a><span class="w">    </span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-40-8" name="__codelineno-40-8"></a><span class="c1">// [10, 20]</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-41-1">1</a></span>
+<span class="normal"><a href="#__codelineno-41-2">2</a></span>
+<span class="normal"><a href="#__codelineno-41-3">3</a></span>
+<span class="normal"><a href="#__codelineno-41-4">4</a></span>
+<span class="normal"><a href="#__codelineno-41-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-41-2" name="__codelineno-41-2"></a>
+<a id="__codelineno-41-3" name="__codelineno-41-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="kt">number</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">string</span><span class="p">)[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="s1">'three'</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">];</span>
+<a id="__codelineno-41-4" name="__codelineno-41-4"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">takeWhile</span><span class="p">(</span><span class="nx">values</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="kt">number</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="ow">typeof</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">'number'</span><span class="p">));</span>
+<a id="__codelineno-41-5" name="__codelineno-41-5"></a><span class="c1">// number[], [1, 2]</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -2325,7 +2409,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 3, 2026 22:11:32 UTC">October 3, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 3, 2026 22:40:31 UTC">October 3, 2026</span>
   </span>
 
     
