@@ -101,6 +101,35 @@ export interface IIterableLinqBase<T> {
 	filter(predicate: Predicate<T>): IIterableLinq<T>;
 
 	/**
+	 * Returns the first value accepted by a type guard, narrowing its type; stops and closes the source at the first match.
+	 * @operation `Action`
+	 * @param predicate - a type guard called with each value and its index
+	 * @returns the first value accepted by `predicate`, or `undefined` if there is none
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * const values: (number | string)[] = [1, 'two', 3];
+	 * IterableLinq.from(values).find((v): v is string => typeof v === 'string'); // string | undefined, 'two'
+	 * ```
+	 * @since next
+	 */
+	find<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;
+
+	/**
+	 * Returns the first value that satisfies `predicate`; stops and closes the source at the first match.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index
+	 * @returns the first value that satisfies `predicate`, or `undefined` if there is none
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 5, 6]).find(v => v > 4); // 5
+	 * ```
+	 * @since next
+	 */
+	find(predicate: Predicate<T>): T | undefined;
+
+	/**
 	 * Maps each value to an `Iterable` and flattens the results into one chain.
 	 * Each inner `Iterable` is read completely before the next value of the chain is mapped.
 	 * Inner arrays are read by index, as in `Array.prototype.flatMap`: their `[Symbol.iterator]` is not called.
