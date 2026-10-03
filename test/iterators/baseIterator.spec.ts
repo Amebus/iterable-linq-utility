@@ -19,6 +19,30 @@ class CountTo3 extends BaseIterator<number> {
 	}
 }
 
+/** Calls `callback` on each value, closing like the operations do when it throws. */
+class WithCallback extends CountTo3 {
+	constructor(private readonly callback: (it: WithCallback) => void, private readonly onReturnError?: Error) {
+		super();
+	}
+
+	protected override advance(): IteratorResult<number> {
+		const result = super.advance();
+		try {
+			this.callback(this);
+		} catch (error) {
+			this.closeAfterCallbackError();
+			throw error;
+		}
+		return result;
+	}
+
+	protected override onReturn(value?: unknown): void {
+		super.onReturn(value);
+		if (this.onReturnError)
+			throw this.onReturnError;
+	}
+}
+
 describe('BaseIterator', () => {
 
 	test('done is sticky', () => {
@@ -59,6 +83,37 @@ describe('BaseIterator', () => {
 
 	test('has no throw method', () => {
 		expect('throw' in new CountTo3()).toBe(false);
+	});
+
+	describe('closeAfterCallbackError', () => {
+
+		test('ends the iterator and calls onReturn once', () => {
+			const error = new Error('callback');
+			const it = new WithCallback(() => { throw error; });
+			expect(() => it.next()).toThrow(error);
+			expect(it.returnCalls).toBe(1);
+			expect(it.next().done).toBe(true);
+			it.return();
+			expect(it.returnCalls).toBe(1);
+		});
+
+		test('does not call onReturn again when the callback already called return()', () => {
+			const error = new Error('callback');
+			const it = new WithCallback(self => {
+				self.return();
+				throw error;
+			});
+			expect(() => it.next()).toThrow(error);
+			expect(it.returnCalls).toBe(1);
+		});
+
+		test('the callback error wins over an error of onReturn', () => {
+			const error = new Error('callback');
+			const it = new WithCallback(() => { throw error; }, new Error('onReturn'));
+			expect(() => it.next()).toThrow(error);
+			expect(it.returnCalls).toBe(1);
+		});
+
 	});
 
 });
