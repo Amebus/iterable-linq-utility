@@ -466,6 +466,52 @@ export interface IIterableLinqBase<T> {
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
+	 * Returns the only value of the chain, `undefined` if it is empty; throws if it has more than one.
+	 * It stops and closes the source at the second value, so it also ends an infinite chain.
+	 * @operation `Action`
+	 * @returns the only value, or `undefined` when the chain is empty
+	 * @throws Error if the chain contains more than one value
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([5]).single(); // 5
+	 * IterableLinq.from([1, 2]).single(); // throws
+	 * ```
+	 * @since next
+	 */
+	single(): T | undefined;
+
+	/**
+	 * Returns the only value accepted by a type guard, narrowing its type, `undefined` if there is none; throws if there is more than one.
+	 * It stops and closes the source at the second match. If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param predicate - a type guard called with each value and its index
+	 * @returns the only value accepted by `predicate`, or `undefined` if there is none
+	 * @throws Error if `predicate` is not a function, or if more than one value satisfies it
+	 * @example
+	 * ```ts
+	 * const values: (number | string)[] = [1, 'two', 3];
+	 * IterableLinq.from(values).single((v): v is string => typeof v === 'string'); // string | undefined, 'two'
+	 * ```
+	 * @since next
+	 */
+	single<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;
+
+	/**
+	 * Returns the only value that satisfies `predicate`, `undefined` if there is none; throws if there is more than one.
+	 * It stops and closes the source at the second match. If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param predicate - called with each value and its index; `undefined` looks for the only value of the chain
+	 * @returns the only value that satisfies `predicate`, or `undefined` if there is none
+	 * @throws Error if a provided `predicate` is not a function, or if more than one value satisfies it
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 5, 2]).single(v => v > 4); // 5
+	 * ```
+	 * @since next
+	 */
+	single(predicate: Predicate<T> | undefined): T | undefined;
+
+	/**
 	 * Lazily skips the first `count` values and yields the rest.
 	 * @operation `Transformation`
 	 * @param count - how many values to skip; must be a non-negative integer
