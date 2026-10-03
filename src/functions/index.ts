@@ -2,6 +2,7 @@ export { append } from './append';
 export { at } from './at';
 export { average } from './average';
 export { collectToArray } from './collectToArray';
+export { concat } from './concat';
 export { count } from './count';
 export { distinct } from './distinct';
 export { empty } from './empty';

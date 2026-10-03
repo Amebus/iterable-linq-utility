@@ -98,6 +98,22 @@ export interface IIterableLinqBase<T> {
 	collectToArray(): T[];
 
 	/**
+	 * Yields the values of the chain, then the values of each iterable in `others`, in order.
+	 * Each iterable is opened only when the previous one ends, so the iterables after an infinite chain are never read.
+	 * Stopping early closes only the iterable being read.
+	 * @operation `Transformation`
+	 * @param others - the iterables read after the chain; other chains are iterables too
+	 * @returns a new chain with the values of this chain followed by the values of `others`
+	 * @throws Error if a value of `others` is missing or does not implement `[Symbol.iterator]`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2]).concat([3], new Set([4, 5])).collectToArray(); // [1, 2, 3, 4, 5]
+	 * ```
+	 * @since next
+	 */
+	concat(...others: Iterable<T>[]): IIterableLinq<T>;
+
+	/**
 	 * Counts the values of the chain; runs the whole chain.
 	 * @operation `Action`
 	 * @returns the number of values in the chain

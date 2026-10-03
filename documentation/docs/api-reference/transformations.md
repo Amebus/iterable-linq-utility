@@ -15,6 +15,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | Transformation                               | Brief Description                                                                | Execution                                   | Availability                                        |
     | -------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
     | [append](#append)                            | Yields the values, then one more value                                           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [concat](#concat)                            | Yields the values, then the values of other iterables                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [distinct](#distinct)                        | Keeps the first value for each distinct value or selected key                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [filter](#filter)                            | Keeps only the values that satisfy a predicate                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -55,6 +56,32 @@ Yields the values of the chain, then *value*. *value* is yielded only when the s
     Array.from(Functions.append([1, 2, 3], 4));
     // [1, 2, 3, 4]
     ```
+
+## concat
+
+Yields the values of the chain, then the values of each iterable in *others*, in order. Each iterable is opened only when the previous one ends, so the iterables after an infinite chain are never read. Stopping early closes only the iterable being read.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2])
+        .concat([3], new Set([4, 5]))
+        .collectToArray();
+    // [1, 2, 3, 4, 5]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.concat([1, 2], [3], new Set([4, 5])));
+    // [1, 2, 3, 4, 5]
+    ```
+
+Throws an `Error` if a value of *others* is missing or is not an `Iterable`.
 
 ## distinct
 
