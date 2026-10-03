@@ -59,9 +59,9 @@ Lazily yields the first value for each distinct value or selected key, in source
 
 Keys use `SameValueZero`, like `Set`: `NaN` equals `NaN`, and `+0` and `-0` are equal. The first original value is retained, including its signed zero. Objects are compared by reference unless a selector supplies another key.
 
-The optional `keySelector` receives every source value and its source index, starting from 0, including duplicates. Omitting it or passing `undefined` compares the values directly. Throws an `Error` if the source is not iterable or a provided selector is not a function. If the selector throws, the source is closed and that error propagates; source errors propagate without closing the source.
+The optional `keySelector` is called with every value and its index, duplicates included; without it the values are compared directly. Throws an `Error` if the selector is not a function.
 
-Every iteration has an independent `Set` of seen keys. Memory grows with the number of distinct keys encountered. As with other Transformations, a single-use source can only be consumed once unless it is memoized or materialized.
+Memory grows with the number of distinct keys.
 
 An infinite source can be consumed with a downstream limit:
 
@@ -88,7 +88,7 @@ An infinite source can be consumed with a downstream limit:
     // [0, 1, 2]
     ```
 
-Stopping early closes the source. Asking for another distinct value keeps reading until a new key or the end is found: an infinite source containing only already-seen keys cannot produce another result.
+Asking for another distinct value keeps reading until a new key or the end is found: an infinite source with only already-seen keys never yields again.
 
 ## empty
 
