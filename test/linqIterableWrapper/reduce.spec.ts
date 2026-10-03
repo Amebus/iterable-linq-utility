@@ -59,7 +59,7 @@ describe('reduce', () => {
 		});
 
 		test('an empty chain throws', () => {
-			expect(() => IterableLinq.empty<number>().reduce((acc, v) => acc + v)).toThrow('must not be empty');
+			expect(() => IterableLinq.empty<number>().reduce((acc, v) => acc + v)).toThrow(new Error('[iterable-linq-utility/reduce] The "sourceIterable" must not be empty when "reduce" has no seed'));
 		});
 
 		test('an undefined seed is a seed', () => {

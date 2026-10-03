@@ -43,7 +43,7 @@ The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/itera
 ## Adding an operation
 
 1. **Write the raw function** in `src/functions/<name>.ts`.
-    - Validate every input with `Validations` (`throwIfNotIterable`, `throwIfNotFunction`, …).
+    - Validate every input with `Validations` (`throwIfNotIterable`, `throwIfNotFunction`, …), passing the name of the operation as the last argument: `Validations.throwIfNotFunction(predicate, 'predicate', 'filter')`. Any other error is created with `libraryError('<name>', message)`. The message then starts with `[iterable-linq-utility/<name>]` ([ADR 0020](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0020-error-messages-of-the-library.md)).
     - A [Transformation](api-reference/transformations.md) is lazy: return a `DeferredIterable` that creates a `SourceIterator` subclass, so every run of the chain starts again from the source. A callback error must close the source: see `closeAfterCallbackError` in `map.ts`.
     - An [Action](api-reference/actions.md) runs the chain. When it stops before the end, it must close the source: a `for…of` loop does that for you.
 2. **Export it** from `src/functions/index.ts`.
@@ -51,7 +51,7 @@ The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/itera
 4. **Document it with JSDoc**, on the raw function and on the chain method: a summary, `@operation`, `@param`, `@returns`, `@throws`, `@example` and `@since next`. The release replaces `next` with the version; `pnpm check:since` rejects a version that is not released yet. `pnpm check:structure` checks that these tags are there (`@throws` excepted), and that the operation has its specs, its bench, its export and its chain method. The linter checks the syntax (`tsdoc/syntax`).
 5. **Test it** in `test/functions/<name>.spec.ts`, and the chain method in `test/linqIterableWrapper/<name>.spec.ts`.
     - `expectTransformation` or `expectAction` (from `test/_helpers/operationKind.ts`) checks that the operation is lazy, or that it runs the chain.
-    - `withoutInputIterableThrowsException` (from `test/functions/functionsTestUtility.ts`) checks the input validation.
+    - `withoutInputIterableThrowsException` (from `test/functions/functionsTestUtility.ts`) checks the input validation, and that the message starts with `[iterable-linq-utility/<name>]`.
     - The test sources in `test/_helpers/generators/` record how the operation reads its source; a source that a second spec needs moves to this folder, with its own spec ([ADR 0018](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0018-shared-test-sources.md)):
         - `closableSource` checks that the source is closed on an early stop or an error;
         - `spyIterable` counts the iterations and the values read;

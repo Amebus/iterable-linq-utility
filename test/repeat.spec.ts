@@ -24,7 +24,7 @@ describe('IterableLinq.repeat', () => {
 		{ value: 10, count: -50 },
 		{ value: '10', count: -50 },
 	])('IterableLinq.repeat($value, $count) -> throw exception', ({ value, count }) => {
-		expect(() => IterableLinq.repeat(value, count)).toThrow();
+		expect(() => IterableLinq.repeat(value, count)).toThrow(new Error('[iterable-linq-utility/repeat] The "count" parameter must be a non-negative integer'));
 	});
 
 });

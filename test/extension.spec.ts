@@ -109,12 +109,12 @@ describe('extend', () => {
 	});
 
 	test('throws for a library method', () => {
-		expect(() => extend('map', function () { return this; })).toThrow(Error);
+		expect(() => extend('map', function () { return this; })).toThrow(new Error('[iterable-linq-utility/extend] "map" already exists on IIterableLinq: use override() to replace it'));
 	});
 
 	test('throws for a second registration', () => {
 		extend('double', double);
-		expect(() => extend('double', double)).toThrow(Error);
+		expect(() => extend('double', double)).toThrow(new Error('[iterable-linq-utility/extend] "double" already exists on IIterableLinq: use override() to replace it'));
 	});
 
 	test('throws for Object.prototype members', () => {
@@ -126,13 +126,13 @@ describe('extend', () => {
 	});
 
 	test('throws for a name used by the chain instances', () => {
-		expect(() => extend('iterable' as any, double)).toThrow(Error);
+		expect(() => extend('iterable' as any, double)).toThrow(new Error('[iterable-linq-utility/extend] "iterable" already exists on IIterableLinq: use override() to replace it'));
 		expect(hasOwn('iterable')).toBe(false);
 	});
 
 	test('throws for invalid input', () => {
-		expect(() => extend('' as any, double)).toThrow(Error);
-		expect(() => extend('double', 42 as any)).toThrow(Error);
+		expect(() => extend('' as any, double)).toThrow(new Error('[iterable-linq-utility/extend] The "name" parameter must be a non-empty string'));
+		expect(() => extend('double', 42 as any)).toThrow(new Error('[iterable-linq-utility/extend] The "implementation" function must be provided'));
 		expect(hasOwn('double')).toBe(false);
 	});
 
@@ -195,7 +195,7 @@ describe('override', () => {
 	});
 
 	test('throws for a name that does not exist, suggesting extend', () => {
-		expect(() => override('chunk', overridden)).toThrow(/extend/);
+		expect(() => override('chunk', overridden)).toThrow(new Error('[iterable-linq-utility/override] "chunk" is not a method of IIterableLinq: use extend() to add it'));
 	});
 
 	test('throws for Object.prototype members', () => {
@@ -205,8 +205,8 @@ describe('override', () => {
 	});
 
 	test('throws for invalid input', () => {
-		expect(() => override('' as any, overridden)).toThrow(Error);
-		expect(() => override('map', 42 as any)).toThrow(Error);
+		expect(() => override('' as any, overridden)).toThrow(new Error('[iterable-linq-utility/override] The "name" parameter must be a non-empty string'));
+		expect(() => override('map', 42 as any)).toThrow(new Error('[iterable-linq-utility/override] The "implementation" function must be provided'));
 	});
 
 	test('the name must be declared on IIterableLinq', () => {

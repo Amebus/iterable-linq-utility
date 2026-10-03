@@ -20,7 +20,7 @@ describe('findLastIndex', () => {
 
 	test.each([undefined, null, false, 0, 'predicate', {}])('findLastIndex(iterable, %j) -> throw exception without reading the source', predicate => {
 		const source = spyIterable([1, 2]);
-		expect(() => findLastIndex(source, predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => findLastIndex(source, predicate as never)).toThrow(new Error('[iterable-linq-utility/findLastIndex] The "predicate" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

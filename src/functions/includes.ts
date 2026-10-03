@@ -15,7 +15,7 @@ import { Validations } from '../utils';
  * @since 0.5.0
  */
 export function includes<T>(iterable: Iterable<T>, value: T): boolean {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'includes');
 	// SameValueZero: === except that NaN equals NaN
 	const isNaNValue = value !== value;
 	// for…of closes the source when we return early

@@ -1,4 +1,4 @@
-import { Validations } from './utils';
+import { libraryError, Validations } from './utils';
 import { toChain } from './linqIterable';
 
 import * as Functions from './functions';
@@ -30,7 +30,7 @@ export function empty<T>(): IIterableLinq<T> {
  * @since 0.0.1
  */
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'from');
 	return toChain(iterable);
 }
 
@@ -77,7 +77,7 @@ export function fromRange(startOrEnd: number, endOrOptions?: number | IRangeOpti
 	if (typeof endOrOptions === 'number')
 		return from(Functions.range(startOrEnd, endOrOptions, options));
 	if (options !== undefined)
-		throw new Error('The "options" parameter must be the second argument when "start" is omitted');
+		throw libraryError('fromRange', 'The "options" parameter must be the second argument when "start" is omitted');
 	return from(Functions.range(startOrEnd, endOrOptions));
 }
 

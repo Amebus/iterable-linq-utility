@@ -18,8 +18,8 @@ import { Validations } from '../utils';
  * @since 0.5.0
  */
 export function skipWhile<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(predicate, 'predicate');
+	Validations.throwIfNotIterable(iterable, 'skipWhile');
+	Validations.throwIfNotFunction(predicate, 'predicate', 'skipWhile');
 	return new DeferredIterable(() => new SkipWhileIterator(iterable, predicate));
 }
 

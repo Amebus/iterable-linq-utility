@@ -19,7 +19,7 @@ describe('count', () => {
 
 	test.each([null, false, 0, 'predicate', {}])('count(iterable, %j) -> throw exception without reading the source', predicate => {
 		const source = spyIterable([1, 2]);
-		expect(() => count(source, predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => count(source, predicate as never)).toThrow(new Error('[iterable-linq-utility/count] The "predicate" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

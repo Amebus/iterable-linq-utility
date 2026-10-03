@@ -25,14 +25,17 @@ export function returnClosesTheIterator<T>(iterable: Iterable<T>, returnValue: a
 	expect(next3.done).toBe(true);
 }
 
+// the error names the operation: the name of the raw function
 export function withoutInputIterableThrowsException(fn: any) {
-	expect(() => fn()).toThrow();
-	expect(() => fn(undefined)).toThrow();
-	expect(() => fn(null)).toThrow();
+	const prefix = `[iterable-linq-utility/${fn.name}] `;
+	expect(() => fn()).toThrow(prefix);
+	expect(() => fn(undefined)).toThrow(prefix);
+	expect(() => fn(null)).toThrow(prefix);
 }
 
 export async function withoutInputIterableThrowsExceptionAsync(fn: any) {
-	await expect(() => fn()).rejects.toThrow();
-	await expect(() => fn(undefined)).rejects.toThrow();
-	await expect(() => fn(null)).rejects.toThrow();
+	const prefix = `[iterable-linq-utility/${fn.name}] `;
+	await expect(() => fn()).rejects.toThrow(prefix);
+	await expect(() => fn(undefined)).rejects.toThrow(prefix);
+	await expect(() => fn(null)).rejects.toThrow(prefix);
 }

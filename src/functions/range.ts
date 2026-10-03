@@ -1,5 +1,5 @@
 import { BaseIterator, DeferredIterable } from '../iterators';
-import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, libraryError, Validations } from '../utils';
 import type { IRangeOptions } from '../types';
 import { empty } from './empty';
 
@@ -41,12 +41,12 @@ export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions,
 	const start = hasStart ? startOrEnd : 0;
 	const end = hasStart ? endOrOptions : startOrEnd;
 	if (!hasStart && options !== undefined)
-		throw new Error('The "options" parameter must be the second argument when "start" is omitted');
+		throw libraryError('range', 'The "options" parameter must be the second argument when "start" is omitted');
 	const rangeOptions = hasStart ? options : endOrOptions;
 	if (rangeOptions !== undefined)
-		Validations.throwIfNotObject(rangeOptions, 'options');
+		Validations.throwIfNotObject(rangeOptions, 'options', 'range');
 	const { step = 1, reverse = false } = rangeOptions ?? {};
-	Validations.throwIfNotFiniteNonZero(step, 'step');
+	Validations.throwIfNotFiniteNonZero(step, 'step', 'range');
 
 	const normalized = normalizeRange(start, end, Math.abs(step), reverse);
 	// a NaN bound gives a NaN length: treat it as an empty range

@@ -96,7 +96,7 @@ describe('reduce', () => {
 		});
 
 		test('an empty source throws', () => {
-			expect(() => reduce([] as number[], (acc, v) => acc + v)).toThrow('must not be empty');
+			expect(() => reduce([] as number[], (acc, v) => acc + v)).toThrow(new Error('[iterable-linq-utility/reduce] The "sourceIterable" must not be empty when "reduce" has no seed'));
 		});
 
 		test.each([
@@ -105,8 +105,8 @@ describe('reduce', () => {
 			{ reducer: {} }
 		])('reducer $reducer -> throw exception, also on an empty source', ({ reducer }) => {
 			const reduceJs = reduce as any;
-			expect(() => reduceJs([1, 2], reducer)).toThrow('"reducer"');
-			expect(() => reduceJs([], reducer)).toThrow('"reducer"');
+			expect(() => reduceJs([1, 2], reducer)).toThrow(new Error('[iterable-linq-utility/reduce] The "reducer" function must be provided'));
+			expect(() => reduceJs([], reducer)).toThrow(new Error('[iterable-linq-utility/reduce] The "reducer" function must be provided'));
 		});
 
 		test('is action', () => {

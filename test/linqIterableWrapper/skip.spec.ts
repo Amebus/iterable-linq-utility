@@ -8,7 +8,7 @@ import * as IterableLinq from '@/index';
 describe('IterableLinq.skip', () => {
 
 	test.each([-1, 2.5, NaN, Infinity, -Infinity, undefined, null, '2', {}, true])('rejects count %s', count => {
-		expect(() => IterableLinq.fromRange(5).skip(count as any)).toThrow('The "count" parameter must be a non-negative integer');
+		expect(() => IterableLinq.fromRange(5).skip(count as any)).toThrow(new Error('[iterable-linq-utility/skip] The "count" parameter must be a non-negative integer'));
 	});
 
 	test.each([

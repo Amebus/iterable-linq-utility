@@ -19,7 +19,7 @@ describe('every', () => {
 
 	test.each([undefined, null, false, 0, 'predicate', {}])('every(iterable, %j) -> throw exception without reading the source', predicate => {
 		const source = spyIterable([1, 2]);
-		expect(() => every(source, predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => every(source, predicate as never)).toThrow(new Error('[iterable-linq-utility/every] The "predicate" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

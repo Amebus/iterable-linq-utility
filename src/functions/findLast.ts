@@ -34,8 +34,8 @@ export function findLast<T, S extends T>(iterable: Iterable<T>, predicate: (valu
  */
 export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined;
 export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(predicate, 'predicate');
+	Validations.throwIfNotIterable(iterable, 'findLast');
+	Validations.throwIfNotFunction(predicate, 'predicate', 'findLast');
 	let result: T | undefined;
 	let index = 0;
 	// for…of closes the source when the predicate throws

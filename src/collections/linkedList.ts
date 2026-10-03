@@ -2,7 +2,7 @@ import { BaseIterator } from '../iterators';
 import { getDoneIteratorResult, getContinueIteratorResult, Validations } from '../utils';
 
 export function from<T>(iterable: Iterable<T>): LinkedList<T> {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'LinkedList.from');
 	const linkedList = new LinkedList<T>();
 	for (const value of iterable)
 		linkedList.addLast(value);

@@ -15,6 +15,6 @@ import { Validations } from '../utils';
  * @since 0.0.10
  */
 export function repeat<T>(value: T, count: number): Iterable<T> {
-	Validations.throwIfNotNonNegativeInteger(count, 'count');
+	Validations.throwIfNotNonNegativeInteger(count, 'count', 'repeat');
 	return unfold(count, left => left > 0 ? [value, left - 1] as const : undefined);
 }

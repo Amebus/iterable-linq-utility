@@ -15,7 +15,7 @@ describe('distinct', () => {
 
 	test.each([null, false, 0, 'key', {}])('rejects invalid keySelector %j immediately', keySelector => {
 		const source = spyIterable([1, 2]);
-		expect(() => distinct(source, keySelector as never)).toThrow('The "keySelector" function must be provided');
+		expect(() => distinct(source, keySelector as never)).toThrow(new Error('[iterable-linq-utility/distinct] The "keySelector" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

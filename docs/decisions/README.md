@@ -23,6 +23,7 @@ Each file records one decision: its context, the options considered and the cons
 | [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted |
 | [0018](0018-shared-test-sources.md) | Shared test sources | accepted |
 | [0019](0019-full-test-coverage-of-the-library.md) | Full test coverage of the library | accepted |
+| [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted |
 
 ## Adding a decision
 
