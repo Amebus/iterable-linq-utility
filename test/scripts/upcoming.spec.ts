@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { findPullRequest, getNextState, type IChangeset, parseChangeset, renderUpcomingPage } from '../../scripts/upcoming.ts';
+import { findPullRequest, getNextState, type IChangeset, linkifyIssueRefs, parseChangeset, renderUpcomingPage } from '../../scripts/upcoming.ts';
 
 const REPOSITORY = 'Amebus/iterable-linq-utility';
 
@@ -74,7 +74,35 @@ describe('getNextState', () => {
 
 });
 
+describe('linkifyIssueRefs', () => {
+
+	const issue = (n: number) => `[#${n}](https://github.com/Amebus/iterable-linq-utility/issues/${n})`;
+
+	test('links an issue reference, as @changesets/changelog-github does in the changelog', () => {
+		expect(linkifyIssueRefs('New `includes(value)` Action (#48).', REPOSITORY)).toBe(`New \`includes(value)\` Action (${issue(48)}).`);
+	});
+
+	test('links every reference of the line', () => {
+		expect(linkifyIssueRefs('Fixes #1 and #23.', REPOSITORY)).toBe(`Fixes ${issue(1)} and ${issue(23)}.`);
+	});
+
+	test.each([
+		['an existing Markdown link', 'See [#5](https://example.com/5).'],
+		['#0', 'Not an issue: #0.'],
+		['a reference inside a word', 'a#1 and #1b'],
+		['a line without references', 'Nothing to link.']
+	])('leaves %s unchanged', (_, line) => {
+		expect(linkifyIssueRefs(line, REPOSITORY)).toBe(line);
+	});
+
+});
+
 describe('renderUpcomingPage', () => {
+
+	test('links the issue references of the notes, on every line', () => {
+		const page = renderUpcomingPage('0.3.0', [changeset('a', 'minor', 'First (#48).\n\nSee #49.', 7)], REPOSITORY);
+		expect(page).toContain('- First ([#48](https://github.com/Amebus/iterable-linq-utility/issues/48)).\n\n    See [#49](https://github.com/Amebus/iterable-linq-utility/issues/49).\n\n    ([#7](https://github.com/Amebus/iterable-linq-utility/pull/7))\n');
+	});
 
 	test('groups the notes by bump, minor before patch, by pull request', () => {
 		expect(renderUpcomingPage('0.3.0', [

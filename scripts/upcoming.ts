@@ -24,6 +24,8 @@ const BUMPS: Bump[] = ['major', 'minor', 'patch'];
 const FRONT_MATTER = /^---\r?\n([\s\S]*?)\r?\n?---\r?\n?([\s\S]*)$/;
 const RELEASE_LINE = /^\s*["']?[^"':]+["']?\s*:\s*(major|minor|patch)\s*$/;
 const MERGE_SUBJECT = /^Merge pull request #(\d+)\b/;
+// The regex of @changesets/changelog-github: an existing Markdown link is kept, a bare #N becomes a link
+const ISSUE_REF = /\[.*?\]\(.*?\)|\B#([1-9]\d*)\b/g;
 
 /**
  * Reads a changeset; `undefined` for an empty one (`pnpm changeset --empty`), which releases nothing,
@@ -50,6 +52,14 @@ export function findPullRequest(mergeSubjects: string[]): number | undefined {
 	return undefined;
 }
 
+/**
+ * Links the `#N` references of a line to the issues, as `@changesets/changelog-github` does in `CHANGELOG.md`,
+ * so the Upcoming page has the same links as the changelog. GitHub redirects `/issues/N` to `/pull/N` for a pull request.
+ */
+export function linkifyIssueRefs(line: string, repository: string): string {
+	return line.replace(ISSUE_REF, (match, issue: string | undefined) => (issue ? `[#${issue}](https://github.com/${repository}/issues/${issue})` : match));
+}
+
 export function getNextState(version: string, changesets: IChangeset[]): INextState {
 	return { state: changesets.length === 0 ? 'released' : 'unreleased', version, changes: changesets.length };
 }
@@ -70,7 +80,7 @@ export function renderUpcomingPage(version: string, changesets: IChangeset[], re
 		lines.push('', `## ${bump[0].toUpperCase()}${bump.slice(1)} changes`, '');
 		for (const { note, pullRequest } of group) {
 			const link = pullRequest === undefined ? '' : ` ([#${pullRequest}](https://github.com/${repository}/pull/${pullRequest}))`;
-			const [first, ...rest] = note.split('\n');
+			const [first, ...rest] = note.split('\n').map(line => linkifyIssueRefs(line, repository));
 			lines.push(`- ${first}${rest.length === 0 ? link : ''}`, ...rest.map(line => (line.trim() ? `    ${line}` : '')));
 			if (rest.length > 0 && link)
 				lines.push('', `    ${link.trim()}`);
