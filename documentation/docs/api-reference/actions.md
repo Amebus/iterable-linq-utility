@@ -18,6 +18,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
     | [includes](#includes)             | Tells whether the chain contains a value                                              | `boolean`                   |
     | [indexOf](#indexof)               | Returns the index of the first value equal to a value                                 | `number`                    |
+    | [join](#join)                     | Joins the values in a string, like `Array.prototype.join`                             | `string`                    |
     | [lastIndexOf](#lastindexof)       | Returns the index of the last value equal to a value                                  | `number`                    |
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
     | [max](#max)                       | Returns the greatest value                                                            | `T | undefined`             |
@@ -434,6 +435,37 @@ Returns the index of the first value strictly equal (`===`) to the given value, 
     ```
 
 With `===`, `NaN` is never found and `+0` equals `-0`. To look for `NaN`, use [includes](#includes) or [findIndex](#findindex) with `Number.isNaN`.
+
+## join
+
+Joins the values of the chain in a string, like `Array.prototype.join`: the separator goes between two values and defaults to `,`. `null` and `undefined` become empty strings, every other value is converted with its `toString`. It returns `''` when the chain is empty. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`.
+
+The relational join of LINQ is a different operation, planned as `innerJoin`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 3]).join();
+    // '1,2,3'
+
+    IterableLinq
+        .from(['a', 'b'])
+        .join(' - ');
+    // 'a - b'
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.join([1, 2, 3]);
+    // '1,2,3'
+
+    Functions.join(['a', 'b'], ' - ');
+    // 'a - b'
+    ```
 
 ## lastIndexOf
 
