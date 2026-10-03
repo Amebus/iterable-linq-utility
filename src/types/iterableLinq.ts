@@ -253,6 +253,20 @@ export interface IIterableLinqBase<T> {
 	indexOf(value: T): number;
 
 	/**
+	 * Returns the index of the last value strictly equal (`===`) to `value`, like `Array.prototype.lastIndexOf`;
+	 * runs the whole chain.
+	 * @operation `Action`
+	 * @param value - the value to look for; `NaN` is never found, use `findLastIndex` for it
+	 * @returns the index of the last value equal to `value`, or `-1` if there is none
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 2]).lastIndexOf(2); // 3
+	 * ```
+	 * @since next
+	 */
+	lastIndexOf(value: T): number;
+
+	/**
 	 * Transforms each value with `mapper`.
 	 * If `mapper` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
