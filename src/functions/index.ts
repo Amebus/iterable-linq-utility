@@ -22,6 +22,7 @@ export { materialize } from './materialize';
 export { max } from './max';
 export { memoize, getMemoizeDefaultOptions } from './memoize';
 export { min } from './min';
+export { prepend } from './prepend';
 export { range } from './range';
 export { reduce } from './reduce';
 export { repeat } from './repeat';

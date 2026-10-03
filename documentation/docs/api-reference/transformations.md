@@ -23,6 +23,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [fromRange](#fromrange) :material-ray-start: | Starts a chain of numbers from *start* up to, but not including, *end*           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
+    | [prepend](#prepend)                          | Yields one value, then the values                                                | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -364,6 +365,30 @@ With partial memoization, a consumer that stops early (for example [some](action
 If the source throws, every later read past the cached values throws the same error.
 
 Unlike [materialize](actions.md#materialize), `memoize` does not run anything when it is called.
+
+## prepend
+
+Yields *value*, then the values of the chain. *value* is yielded before the source is read.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .prepend(0)
+        .collectToArray();
+    // [0, 1, 2, 3]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.prepend([1, 2, 3], 0));
+    // [0, 1, 2, 3]
+    ```
 
 ## repeat
 

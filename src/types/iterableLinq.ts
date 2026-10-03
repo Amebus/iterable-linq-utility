@@ -466,6 +466,20 @@ export interface IIterableLinqBase<T> {
 	min(comparer?: Comparer<T>): T | undefined;
 
 	/**
+	 * Yields `value`, then the values of the chain.
+	 * `value` is yielded before the source is read.
+	 * @operation `Transformation`
+	 * @param value - the value yielded before the first value of the chain
+	 * @returns a new chain with `value` followed by the values of this chain
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).prepend(0).collectToArray(); // [0, 1, 2, 3]
+	 * ```
+	 * @since next
+	 */
+	prepend(value: T): IIterableLinq<T>;
+
+	/**
 	 * Runs the chain and accumulates its values into a single result, starting from the first value.
 	 * @operation `Action`
 	 * @param reducer - called with the accumulator, each value from the second one and its index (starting at 1); returns the new accumulator
