@@ -1,5 +1,17 @@
 # iterable-linq-utility
 
+## 0.8.0
+
+### Minor Changes
+
+- [#155](https://github.com/Amebus/iterable-linq-utility/pull/155) [`0b3b074`](https://github.com/Amebus/iterable-linq-utility/commit/0b3b0747730c272c1841e4ae9f602b7d6c4d4e0e) Thanks [@Amebus](https://github.com/Amebus)! - New `append(value)` Transformation: yields the values of the chain, then `value` ([#23](https://github.com/Amebus/iterable-linq-utility/issues/23)).
+
+- [#158](https://github.com/Amebus/iterable-linq-utility/pull/158) [`dc4ec7f`](https://github.com/Amebus/iterable-linq-utility/commit/dc4ec7ff194247e0575980275c62c0b4c94928ed) Thanks [@Amebus](https://github.com/Amebus)! - New `concat(...others)` Transformation: yields the values of the chain, then the values of each iterable in `others`, opening each one only when it is reached ([#22](https://github.com/Amebus/iterable-linq-utility/issues/22)).
+
+- [#157](https://github.com/Amebus/iterable-linq-utility/pull/157) [`66526a9`](https://github.com/Amebus/iterable-linq-utility/commit/66526a98d06d17d94f940ec107206ae64ad97f28) Thanks [@Amebus](https://github.com/Amebus)! - New `prepend(value)` Transformation: yields `value`, then the values of the chain ([#24](https://github.com/Amebus/iterable-linq-utility/issues/24)).
+
+- [#159](https://github.com/Amebus/iterable-linq-utility/pull/159) [`26847ae`](https://github.com/Amebus/iterable-linq-utility/commit/26847ae11fdb40d75ce85bb33ac8ec6503dea2d6) Thanks [@Amebus](https://github.com/Amebus)! - New `slice(start?, end?)` Transformation: yields the values from `start` to `end` (excluded), like `Array.prototype.slice`, with negative indexes counting from the end. Non-negative indexes stream the values and close the source at `end`; a negative index keeps only a buffer of `-start` or `-end` values ([#25](https://github.com/Amebus/iterable-linq-utility/issues/25)).
+
 ## 0.7.0
 
 ### Minor Changes

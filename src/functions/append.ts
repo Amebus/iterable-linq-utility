@@ -13,7 +13,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * ```ts
  * Array.from(Functions.append([1, 2, 3], 4)); // [1, 2, 3, 4]
  * ```
- * @since next
+ * @since 0.8.0
  */
 export function append<T>(iterable: Iterable<T>, value: T): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'append');

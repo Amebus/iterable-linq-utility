@@ -13,7 +13,7 @@ import { getContinueIteratorResult, Validations } from '../utils';
  * ```ts
  * Array.from(Functions.prepend([1, 2, 3], 0)); // [0, 1, 2, 3]
  * ```
- * @since next
+ * @since 0.8.0
  */
 export function prepend<T>(iterable: Iterable<T>, value: T): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'prepend');
