@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.includes([1, 2, NaN], NaN); // true
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function includes<T>(iterable: Iterable<T>, value: T): boolean {
 	Validations.throwIfNotIterable(iterable);

@@ -15,7 +15,7 @@ import { Validations } from '../utils';
  * ```ts
  * Array.from(Functions.skipWhile([1, 2, 5, 3], v => v < 4)); // [5, 3]
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function skipWhile<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

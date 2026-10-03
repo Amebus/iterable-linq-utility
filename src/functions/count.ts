@@ -11,7 +11,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.count([1, 2, 3]); // 3
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function count<T>(iterable: Iterable<T>): number;
 /**
@@ -26,7 +26,7 @@ export function count<T>(iterable: Iterable<T>): number;
  * ```ts
  * Functions.count([1, 5, 2, 6], v => v > 4); // 2
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function count<T>(iterable: Iterable<T>, predicate: Predicate<T> | undefined): number;
 export function count<T>(iterable: Iterable<T>, predicate?: Predicate<T>): number {

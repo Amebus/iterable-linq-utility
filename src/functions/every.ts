@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.every([1, 2, 3], v => v > 0); // true
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function every<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
 	Validations.throwIfNotIterable(iterable);

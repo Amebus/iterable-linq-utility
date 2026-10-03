@@ -13,7 +13,7 @@ import { Validations } from '../utils';
  * const values: (number | string)[] = [1, 'two', 3];
  * Functions.find(values, (v): v is string => typeof v === 'string'); // string | undefined, 'two'
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function find<T, S extends T>(iterable: Iterable<T>, predicate: (value: T, index: number) => value is S): S | undefined;
 
@@ -28,7 +28,7 @@ export function find<T, S extends T>(iterable: Iterable<T>, predicate: (value: T
  * ```ts
  * Functions.find([1, 5, 6], v => v > 4); // 5
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function find<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined;
 export function find<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined {
