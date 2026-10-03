@@ -7,6 +7,7 @@ export { filter } from './filter';
 export { find } from './find';
 export { findIndex } from './findIndex';
 export { findLast } from './findLast';
+export { findLastIndex } from './findLastIndex';
 export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
 export { includes } from './includes';
