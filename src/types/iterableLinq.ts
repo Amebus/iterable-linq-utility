@@ -39,6 +39,23 @@ export interface IIterableLinqBase<T> {
 	collectToArray(): T[];
 
 	/**
+	 * Yields the first value for each distinct value or selected key, in source order.
+	 * Keys use `SameValueZero`, like `Set`; original values are preserved.
+	 * Each iteration stores its own seen keys. If `keySelector` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param keySelector - called with every source value and its index; omitted or `undefined` compares values directly
+	 * @returns a new lazy, re-runnable chain of the first values for each key
+	 * @throws Error if a provided `keySelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([3, 1, 3, 2, 1]).distinct().collectToArray(); // [3, 1, 2]
+	 * IterableLinq.from([{ id: 1 }, { id: 1 }, { id: 2 }]).distinct(v => v.id).collectToArray(); // [{ id: 1 }, { id: 2 }]
+	 * ```
+	 * @since next
+	 */
+	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T>;
+
+	/**
 	 * Keeps the values accepted by a type guard and narrows their type.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
