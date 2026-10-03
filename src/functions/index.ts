@@ -25,6 +25,7 @@ export { repeat } from './repeat';
 export { skip } from './skip';
 export { skipWhile } from './skipWhile';
 export { some } from './some';
+export { sum } from './sum';
 export { take } from './take';
 export { takeWhile } from './takeWhile';
 export { tap } from './tap';

@@ -38,6 +38,7 @@ import {
 	skip,
 	skipWhile,
 	some,
+	sum,
 	take,
 	takeWhile,
 	tap,
@@ -176,6 +177,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	some(predicate?: Predicate<T>): boolean {
 		return some(this.iterable, predicate);
+	}
+
+	sum(selector?: Mapper<T, number>): number {
+		return sum(this.iterable, selector);
 	}
 
 	take(count: number): IIterableLinq<T> {

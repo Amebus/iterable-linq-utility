@@ -494,6 +494,34 @@ export interface IIterableLinqBase<T> {
 	some(predicate: Predicate<T> | undefined): boolean;
 
 	/**
+	 * Sums the values of a chain of numbers with `+`; runs the whole chain.
+	 * The values are not checked: `NaN` makes the result `NaN`.
+	 * @operation `Action`
+	 * @returns the sum of the values, `0` when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).sum(); // 6
+	 * ```
+	 * @since next
+	 */
+	sum(this: IIterableLinqBase<number>): number;
+
+	/**
+	 * Sums the numbers returned by `selector` for each value; runs the whole chain.
+	 * If `selector` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param selector - called with each value and its index, returns the number to add; `undefined` sums the values themselves
+	 * @returns the sum of the selected numbers, `0` when the chain is empty
+	 * @throws Error if a provided `selector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(['a', 'bb', 'ccc']).sum(v => v.length); // 6
+	 * ```
+	 * @since next
+	 */
+	sum(selector: Mapper<T, number> | undefined): number;
+
+	/**
 	 * Yields the first `count` values, then closes the source.
 	 * The source is never read past the `count`-th value, so `take` also ends an infinite chain.
 	 * @operation `Transformation`
