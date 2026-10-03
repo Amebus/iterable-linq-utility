@@ -37,6 +37,7 @@ import {
 	max,
 	memoize,
 	min,
+	prepend,
 	reduce,
 	sequenceEqual,
 	single,
@@ -173,6 +174,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	min(comparer?: Comparer<T>): T | undefined {
 		return min(this.iterable, comparer);
+	}
+
+	prepend(value: T): IIterableLinq<T> {
+		return toChain(prepend(this.iterable, value));
 	}
 
 	reduce(reducer: Reducer<T, T>): T;
