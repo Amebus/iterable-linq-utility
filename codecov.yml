@@ -1,0 +1,11 @@
+# The build check fails below 100% coverage of src/ (vitest.config.ts, ADR 0019):
+# Codecov comments the pull request with the uncovered lines, but does not decide the merge.
+coverage:
+  status:
+    patch:
+      default:
+        target: 100%
+        informational: true
+    project:
+      default:
+        informational: true

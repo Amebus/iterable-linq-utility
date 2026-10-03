@@ -18,7 +18,7 @@ pnpm check:changeset      # the branch adds a changeset when it changes src/
 pnpm check:commits        # the feat, fix, perf and refactor commits of the branch have a body
 pnpm build
 pnpm check:package
-pnpm test
+pnpm test:coverage        # the tests, with 100% coverage of src/
 pnpm bench                # benchmarks, see the README
 ```
 
@@ -35,6 +35,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - A pull request that changes `src/` adds a changeset (`pnpm changeset`); before 1.0 a breaking change is a `minor` (ADR 0012).
 - A new or changed operation is documented in `documentation/docs/api-reference/` (ADR 0013).
 - The operations are in alphabetical order in `src/functions/index.ts`, `src/linqIterable.ts`, `IIterableLinqBase` and the API reference pages, with the overloads next to each other. The imports of specs and benches: `vitest`, the test helpers, a blank line, the code under test, the local utilities (`pnpm lint-fix` sorts them).
+- The tests cover every line and branch of `src/`: `pnpm test:coverage` fails below 100%. Code that no test can reach gets `/* istanbul ignore next -- <reason> */` (ADR 0019).
 - An architecture decision is recorded as a new ADR.
 - Commits follow Conventional Commits, with a body that says what changes or why (always for `feat`, `fix`, `perf`, `refactor`) and `Closes #<number>` in the commit that solves an issue; branch from `main`, one pull request per topic. `main` changes only through a pull request with the `build` check passed, and the release tags cannot be deleted or moved: GitHub rejects anything else (ADR 0016).
 

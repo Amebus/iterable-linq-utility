@@ -36,8 +36,10 @@ pnpm changeset --empty  # a change to src/ that releases nothing, e.g. an intern
 The same as the CI, in the devcontainer:
 
 ```bash
-pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm check:instructions && pnpm check:changeset && pnpm check:commits && pnpm build && pnpm check:package && pnpm test
+pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm check:instructions && pnpm check:changeset && pnpm check:commits && pnpm build && pnpm check:package && pnpm test:coverage
 ```
+
+`test:coverage` fails below 100% of `src/` ([ADR 0019](../../../docs/decisions/0019-full-test-coverage-of-the-library.md)): the report in `coverage/` shows the uncovered lines.
 
 For a change that can affect performance, compare the benchmarks with `main` (`pnpm bench:baseline` on `main`, then `pnpm bench`).
 

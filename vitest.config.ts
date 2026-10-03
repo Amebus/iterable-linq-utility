@@ -16,6 +16,8 @@ export default defineConfig({
 			include: ['src/**'],
 			// lcov is the report uploaded to Codecov by the CI
 			reporter: ['text', 'json', 'html', 'lcov'],
+			// every line and branch of the library is tested: test:coverage, and so the build check, fails below (ADR 0019)
+			thresholds: { 100: true },
 			clean: true
 		}
 	},
