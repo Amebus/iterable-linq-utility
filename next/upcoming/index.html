@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">1 unreleased change since 0.4.0</a>
+    <a href="../upcoming/">2 unreleased changes since 0.4.0</a>
           </div>
           
         </aside>
@@ -1026,6 +1026,7 @@
 <h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>New <code>distinct(keySelector?)</code> Transformation: lazily keeps the first value for each distinct value or selected key in source order, using <code>SameValueZero</code> like <code>Set</code> (#32). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/129">#129</a>)</li>
+<li>New <code>takeWhile(predicate)</code> Transformation: lazily yields values while <code>predicate</code> returns <code>true</code>, then closes the source without reading further; a type guard narrows the element type (#28). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/130">#130</a>)</li>
 </ul>
 
 
