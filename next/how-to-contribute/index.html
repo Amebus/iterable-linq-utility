@@ -87,7 +87,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">5 unreleased changes since 0.5.0</a>
+    <a href="../upcoming/">6 unreleased changes since 0.5.0</a>
           </div>
           
         </aside>
@@ -1387,7 +1387,7 @@
 <h2 id="adding-an-operation">Adding an operation<a class="headerlink" href="#adding-an-operation" title="Permanent link">⚓︎</a></h2>
 <ol>
 <li><strong>Write the raw function</strong> in <code>src/functions/&lt;name&gt;.ts</code>.<ul>
-<li>Validate every input with <code>Validations</code> (<code>throwIfNotIterable</code>, <code>throwIfNotFunction</code>, …).</li>
+<li>Validate every input with <code>Validations</code> (<code>throwIfNotIterable</code>, <code>throwIfNotFunction</code>, …), passing the name of the operation as the last argument: <code>Validations.throwIfNotFunction(predicate, 'predicate', 'filter')</code>. Any other error is created with <code>libraryError('&lt;name&gt;', message)</code>. The message then starts with <code>[iterable-linq-utility/&lt;name&gt;]</code> (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0020-error-messages-of-the-library.md">ADR 0020</a>).</li>
 <li>A <a href="../api-reference/transformations/">Transformation</a> is lazy: return a <code>DeferredIterable</code> that creates a <code>SourceIterator</code> subclass, so every run of the chain starts again from the source. A callback error must close the source: see <code>closeAfterCallbackError</code> in <code>map.ts</code>.</li>
 <li>An <a href="../api-reference/actions/">Action</a> runs the chain. When it stops before the end, it must close the source: a <code>for…of</code> loop does that for you.</li>
 </ul>
@@ -1397,7 +1397,7 @@
 <li><strong>Document it with JSDoc</strong>, on the raw function and on the chain method: a summary, <code>@operation</code>, <code>@param</code>, <code>@returns</code>, <code>@throws</code>, <code>@example</code> and <code>@since next</code>. The release replaces <code>next</code> with the version; <code>pnpm check:since</code> rejects a version that is not released yet. <code>pnpm check:structure</code> checks that these tags are there (<code>@throws</code> excepted), and that the operation has its specs, its bench, its export and its chain method. The linter checks the syntax (<code>tsdoc/syntax</code>).</li>
 <li><strong>Test it</strong> in <code>test/functions/&lt;name&gt;.spec.ts</code>, and the chain method in <code>test/linqIterableWrapper/&lt;name&gt;.spec.ts</code>.<ul>
 <li><code>expectTransformation</code> or <code>expectAction</code> (from <code>test/_helpers/operationKind.ts</code>) checks that the operation is lazy, or that it runs the chain.</li>
-<li><code>withoutInputIterableThrowsException</code> (from <code>test/functions/functionsTestUtility.ts</code>) checks the input validation.</li>
+<li><code>withoutInputIterableThrowsException</code> (from <code>test/functions/functionsTestUtility.ts</code>) checks the input validation, and that the message starts with <code>[iterable-linq-utility/&lt;name&gt;]</code>.</li>
 <li>The test sources in <code>test/_helpers/generators/</code> record how the operation reads its source; a source that a second spec needs moves to this folder, with its own spec (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0018-shared-test-sources.md">ADR 0018</a>):<ul>
 <li><code>closableSource</code> checks that the source is closed on an early stop or an error;</li>
 <li><code>spyIterable</code> counts the iterations and the values read;</li>
@@ -1549,7 +1549,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 3, 2026 10:50:02 UTC">October 3, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 3, 2026 19:55:56 UTC">October 3, 2026</span>
   </span>
 
     

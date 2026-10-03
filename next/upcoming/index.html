@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">5 unreleased changes since 0.5.0</a>
+    <a href="../upcoming/">6 unreleased changes since 0.5.0</a>
           </div>
           
         </aside>
@@ -1030,6 +1030,7 @@
 <li>New <code>findLast(predicate)</code> Action: returns the last value that satisfies <code>predicate</code>, or <code>undefined</code>, reading the whole source; a type guard narrows the result, like <code>Array.prototype.findLast</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/55">#55</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/142">#142</a>)</li>
 <li>New <code>findLastIndex(predicate)</code> Action: returns the index of the last value that satisfies <code>predicate</code>, or <code>-1</code>, reading the whole source, like <code>Array.prototype.findLastIndex</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/56">#56</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/143">#143</a>)</li>
 <li>New <code>at(index)</code> Action: returns the value at <code>index</code>, or <code>undefined</code>, with a negative index counting from the end, like <code>Array.prototype.at</code>; a non-integer <code>index</code> throws (<a href="https://github.com/Amebus/iterable-linq-utility/issues/58">#58</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/144">#144</a>)</li>
+<li>The error messages created by the library now start with <code>[iterable-linq-utility/&lt;operation&gt;]</code>, the name of the function that rejected the input, e.g. <code>[iterable-linq-utility/filter] The "predicate" function must be provided</code>; the errors of the source and of the callbacks are unchanged (<a href="https://github.com/Amebus/iterable-linq-utility/issues/145">#145</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/146">#146</a>)</li>
 </ul>
 
 
