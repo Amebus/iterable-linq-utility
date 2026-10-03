@@ -24,6 +24,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
@@ -422,6 +423,32 @@ The skipped values are read only when consumption starts. Each consumer reads on
     Array.from(Functions.take(Functions.skip({ [Symbol.iterator]: integers }, 3), 2));
     // [3, 4], after reading exactly five source values
     ```
+
+## skipWhile
+
+Skips the values while the predicate returns `true`, then yields the first rejected value and all the rest. The predicate is called with each value and its index, and is not called again after the first rejected value.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 5, 3])
+        .skipWhile(v => v < 4)
+        .collectToArray();
+    // [5, 3]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.skipWhile([1, 2, 5, 3], v => v < 4));
+    // [5, 3]
+    ```
+
+Throws an `Error` if the predicate is not a function.
 
 ## take
 

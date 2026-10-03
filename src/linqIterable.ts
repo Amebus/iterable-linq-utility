@@ -26,6 +26,7 @@ import {
 	min,
 	reduce,
 	skip,
+	skipWhile,
 	some,
 	take,
 	takeWhile,
@@ -113,6 +114,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	skip(count: number): IIterableLinq<T> {
 		return toChain(skip(this.iterable, count));
+	}
+
+	skipWhile(predicate: Predicate<T>): IIterableLinq<T> {
+		return toChain(skipWhile(this.iterable, predicate));
 	}
 
 	some(predicate?: Predicate<T>): boolean {

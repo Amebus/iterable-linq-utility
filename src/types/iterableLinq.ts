@@ -263,6 +263,22 @@ export interface IIterableLinqBase<T> {
 	skip(count: number): IIterableLinq<T>;
 
 	/**
+	 * Skips the values while `predicate` returns `true`, then yields the first rejected value and all the rest.
+	 * After the first rejected value, `predicate` is not called again.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param predicate - called with each value and its index until it returns `false`
+	 * @returns a new chain of the values from the first rejected one
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 5, 3]).skipWhile(v => v < 4).collectToArray(); // [5, 3]
+	 * ```
+	 * @since next
+	 */
+	skipWhile(predicate: Predicate<T>): IIterableLinq<T>;
+
+	/**
 	 * Runs the chain until its first value, then stops and closes the source.
 	 * @operation `Action`
 	 * @returns `true` if the chain contains a value; `false` when it is empty
