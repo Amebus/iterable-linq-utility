@@ -12,6 +12,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [findIndex](#findindex)           | Returns the index of the first value that satisfies a predicate                       | `number`                    |
     | [forEach](#foreach)               | Calls a callback on each value                                                        | `Unit`                      |
     | [forEachAsync](#foreachasync)     | Calls an async callback on each value, one after the other                            | `Promise<Unit>`             |
+    | [includes](#includes)             | Tells whether the chain contains a value                                              | `boolean`                   |
     | [materialize](#materialize)       | Runs the chain now and stores its values in a new chain                               | `IIterableLinq<T>`          |
     | [max](#max)                       | Returns the greatest value                                                            | `T | undefined`             |
     | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
@@ -243,6 +244,29 @@ The callbacks run **sequentially**: `forEachAsync` waits for the callback on the
     ```
 
 If the callback is not a function, the returned promise is rejected with an `Error`.
+
+## includes
+
+Tells whether the chain contains the value. Values are compared with `SameValueZero`, like `Array.prototype.includes`: `NaN` matches `NaN`, `+0` matches `-0`, and objects are compared by reference. It stops at the first match and closes the source, so it also works on infinite sources that contain the value.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, NaN])
+        .includes(NaN);
+    // true
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.includes([1, 2, NaN], NaN);
+    // true
+    ```
 
 ## materialize
 

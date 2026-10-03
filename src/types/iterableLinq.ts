@@ -225,6 +225,20 @@ export interface IIterableLinqBase<T> {
 	forEachAsync(action: AsyncAction<T>): Promise<Unit>;
 
 	/**
+	 * Tells whether the chain contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
+	 * stops and closes the source at the first match.
+	 * @operation `Action`
+	 * @param value - the value to look for; `NaN` matches `NaN`, and `+0` matches `-0`
+	 * @returns `true` if the chain contains `value`; `false` otherwise
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, NaN]).includes(NaN); // true
+	 * ```
+	 * @since next
+	 */
+	includes(value: T): boolean;
+
+	/**
 	 * Transforms each value with `mapper`.
 	 * If `mapper` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`

@@ -23,6 +23,7 @@ import {
 	flatMap,
 	forEach,
 	forEachAsync,
+	includes,
 	map,
 	materialize,
 	max,
@@ -103,6 +104,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	forEachAsync(action: AsyncAction<T>): Promise<Unit> {
 		return forEachAsync(this.iterable, action);
+	}
+
+	includes(value: T): boolean {
+		return includes(this.iterable, value);
 	}
 
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {
