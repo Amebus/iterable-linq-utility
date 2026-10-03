@@ -13,7 +13,7 @@ import { Validations } from '../utils';
  * Functions.join([1, 2, 3]); // '1,2,3'
  * Functions.join(['a', 'b'], ' - '); // 'a - b'
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function join<T>(iterable: Iterable<T>, separator?: string): string {
 	Validations.throwIfNotIterable(iterable, 'join');

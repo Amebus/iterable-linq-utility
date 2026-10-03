@@ -20,7 +20,7 @@ function strictEquals<T>(a: T, b: T): boolean {
  * Functions.sequenceEqual([1, 2], [1, 2, 3]); // false
  * Functions.sequenceEqual([{ id: 1 }], [{ id: 1 }], (a, b) => a.id === b.id); // true
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function sequenceEqual<T>(iterable: Iterable<T>, other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean {
 	Validations.throwIfNotIterable(iterable, 'sequenceEqual');

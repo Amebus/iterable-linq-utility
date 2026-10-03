@@ -52,7 +52,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4]).average(); // 2.5
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	average(this: IIterableLinqBase<number>): number | undefined;
 
@@ -67,7 +67,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from(['a', 'bb', 'ccc']).average(v => v.length); // 2
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	average(selector: Mapper<T, number> | undefined): number | undefined;
 
@@ -354,7 +354,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 3]).join(); // '1,2,3'
 	 * IterableLinq.from(['a', 'b']).join(' - '); // 'a - b'
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	join(separator?: string): string;
 
@@ -494,7 +494,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 3]).sequenceEqual([1, 2, 3]); // true
 	 * IterableLinq.from(['a', 'bb']).sequenceEqual(['x', 'yy'], (a, b) => a.length === b.length); // true
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	sequenceEqual(other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean;
 
@@ -509,7 +509,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([5]).single(); // 5
 	 * IterableLinq.from([1, 2]).single(); // throws
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	single(): T | undefined;
 
@@ -525,7 +525,7 @@ export interface IIterableLinqBase<T> {
 	 * const values: (number | string)[] = [1, 'two', 3];
 	 * IterableLinq.from(values).single((v): v is string => typeof v === 'string'); // string | undefined, 'two'
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	single<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;
 
@@ -540,7 +540,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 5, 2]).single(v => v > 4); // 5
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	single(predicate: Predicate<T> | undefined): T | undefined;
 
@@ -609,7 +609,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).sum(); // 6
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	sum(this: IIterableLinqBase<number>): number;
 
@@ -624,7 +624,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from(['a', 'bb', 'ccc']).sum(v => v.length); // 6
 	 * ```
-	 * @since next
+	 * @since 0.7.0
 	 */
 	sum(selector: Mapper<T, number> | undefined): number;
 

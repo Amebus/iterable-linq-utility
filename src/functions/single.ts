@@ -14,7 +14,7 @@ import { libraryError, Validations } from '../utils';
  * Functions.single([]); // undefined
  * Functions.single([1, 2]); // throws
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function single<T>(iterable: Iterable<T>): T | undefined;
 
@@ -31,7 +31,7 @@ export function single<T>(iterable: Iterable<T>): T | undefined;
  * const values: (number | string)[] = [1, 'two', 3];
  * Functions.single(values, (v): v is string => typeof v === 'string'); // string | undefined, 'two'
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function single<T, S extends T>(iterable: Iterable<T>, predicate: (value: T, index: number) => value is S): S | undefined;
 
@@ -48,7 +48,7 @@ export function single<T, S extends T>(iterable: Iterable<T>, predicate: (value:
  * Functions.single([1, 5, 2], v => v > 4); // 5
  * Functions.single([5, 6], v => v > 4); // throws
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function single<T>(iterable: Iterable<T>, predicate: Predicate<T> | undefined): T | undefined;
 export function single<T>(iterable: Iterable<T>, predicate?: Predicate<T>): T | undefined {
