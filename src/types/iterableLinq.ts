@@ -304,6 +304,39 @@ export interface IIterableLinqBase<T> {
 	take(count: number): IIterableLinq<T>;
 
 	/**
+	 * Yields the values while a type guard accepts them, narrowing their type, then closes the source.
+	 * The source is never read past the first rejected value, which is not yielded.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param predicate - a type guard called with each value and its index; the first `false` ends the chain
+	 * @returns a new chain of the narrowed values before the first rejected one
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * const values: (number | string)[] = [1, 2, 'three', 4];
+	 * IterableLinq.from(values).takeWhile((v): v is number => typeof v === 'number').collectToArray(); // number[], [1, 2]
+	 * ```
+	 * @since next
+	 */
+	takeWhile<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
+
+	/**
+	 * Yields the values while `predicate` returns `true`, then closes the source.
+	 * The source is never read past the first rejected value, which is not yielded, so `takeWhile` can end an infinite chain.
+	 * If `predicate` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param predicate - called with each value and its index; the first `false` ends the chain
+	 * @returns a new chain of the values before the first rejected one
+	 * @throws Error if `predicate` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 5, 3]).takeWhile(v => v < 4).collectToArray(); // [1, 2]
+	 * ```
+	 * @since next
+	 */
+	takeWhile(predicate: Predicate<T>): IIterableLinq<T>;
+
+	/**
 	 * Calls `tapper` on each value as it flows through the chain, without changing it.
 	 * If `tapper` throws, the source is closed and the error propagates.
 	 * `tapper` runs only when the chain runs, once per value and per run.

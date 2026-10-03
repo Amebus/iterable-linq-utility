@@ -28,6 +28,7 @@ import {
 	skip,
 	some,
 	take,
+	takeWhile,
 	tap,
 	tapChain
 } from './functions';
@@ -120,6 +121,12 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	take(count: number): IIterableLinq<T> {
 		return toChain(take(this.iterable, count));
+	}
+
+	takeWhile<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
+	takeWhile(predicate: Predicate<T>): IIterableLinq<T>;
+	takeWhile(predicate: Predicate<T>): IIterableLinq<T> {
+		return toChain(takeWhile(this.iterable, predicate));
 	}
 
 	tap(tapper: Tapper<T>): IIterableLinq<T> {

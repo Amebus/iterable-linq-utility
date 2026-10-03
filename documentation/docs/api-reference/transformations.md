@@ -25,6 +25,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
 
@@ -447,3 +448,53 @@ Yields the first *count* values, then closes the source. The source is never rea
     ```
 
 Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.
+
+## takeWhile
+
+Yields the values while the predicate returns `true`, then closes the source. The predicate is called with each value and its index. The first rejected value is not yielded and the source is never read past it, so `takeWhile` can end an infinite chain.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 5, 3])
+        .takeWhile(v => v < 4)
+        .collectToArray();
+    // [1, 2]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.takeWhile([1, 2, 5, 3], v => v < 4));
+    // [1, 2]
+    ```
+
+Throws an `Error` if the predicate is not a function.
+
+With a type guard, `takeWhile` narrows the element type, as `filter` does.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 2, 'three', 4];
+    IterableLinq.from(values)
+        .takeWhile((v): v is number => typeof v === 'number')
+        .map(v => v * 10)
+        .collectToArray();
+    // [10, 20]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const values: (number | string)[] = [1, 2, 'three', 4];
+    Array.from(Functions.takeWhile(values, (v): v is number => typeof v === 'number'));
+    // number[], [1, 2]
+    ```
