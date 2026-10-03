@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.indexOf([1, 2, 3, 2], 2); // 1
  * ```
- * @since next
+ * @since 0.6.0
  */
 export function indexOf<T>(iterable: Iterable<T>, value: T): number {
 	Validations.throwIfNotIterable(iterable, 'indexOf');

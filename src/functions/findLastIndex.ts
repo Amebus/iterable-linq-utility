@@ -13,7 +13,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.findLastIndex([1, 5, 6, 2], v => v > 4); // 2
  * ```
- * @since next
+ * @since 0.6.0
  */
 export function findLastIndex<T>(iterable: Iterable<T>, predicate: Predicate<T>): number {
 	Validations.throwIfNotIterable(iterable, 'findLastIndex');
