@@ -23,6 +23,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [max](#max)                       | Returns the greatest value                                                            | `T | undefined`             |
     | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
     | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`, or `T` without a seed  |
+    | [sequenceEqual](#sequenceequal)   | Tells whether the chain and another iterable have the same values in the same order   | `boolean`                   |
     | [single](#single)                 | Returns the only value, or the only value that satisfies a predicate                  | `T | undefined`             |
     | [some](#some)                     | Tells whether at least one value satisfies a predicate                                | `boolean`                   |
     | [sum](#sum)                       | Returns the sum of the values, or of the numbers returned by a selector               | `number`                    |
@@ -659,6 +660,42 @@ Without a seed, the first value is the initial accumulator, like `Array.prototyp
     ```
 
 The number of arguments, not their type, tells the two forms apart: `reduce(undefined, reducer)` has the seed `undefined`. Without a seed, `reduce` throws an `Error` if the chain is empty.
+
+## sequenceEqual
+
+Tells whether the chain and another iterable have the same values in the same order. The values are compared with `===`, or with the given `equals`, called with a value of the chain and the value of the other iterable at the same position. Two empty sources are equal; sources of different length are not.
+
+It reads the two sources side by side, and stops at the first difference or when one source ends before the other, closing the other source: so it terminates when at least one of the two sources is finite or they differ. If `equals` throws, both sources are closed and the error propagates; if one source throws, the other one is closed.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 3]).sequenceEqual([1, 2, 3]);
+    // true
+
+    IterableLinq.from([1, 2]).sequenceEqual([1, 2, 3]);
+    // false
+
+    IterableLinq
+        .from([{ id: 1 }, { id: 2 }])
+        .sequenceEqual([{ id: 1 }, { id: 2 }], (a, b) => a.id === b.id);
+    // true
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.sequenceEqual([1, 2, 3], [1, 2, 3]);
+    // true
+
+    Functions.sequenceEqual([{ id: 1 }], [{ id: 1 }], (a, b) => a.id === b.id);
+    // true
+    ```
+
+With `===`, `NaN` is not equal to itself: pass `Object.is` as `equals` to compare it. Throws an `Error` if the other iterable is missing or not iterable, or if a provided `equals` is not a function. Passing `undefined` as `equals` is the same as omitting it.
 
 ## single
 

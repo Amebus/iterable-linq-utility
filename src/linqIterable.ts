@@ -36,6 +36,7 @@ import {
 	memoize,
 	min,
 	reduce,
+	sequenceEqual,
 	single,
 	skip,
 	skipWhile,
@@ -171,6 +172,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return args.length === 1
 			? reduce(this.iterable, args[0])
 			: reduce(this.iterable, args[0], args[1]);
+	}
+
+	sequenceEqual(other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean {
+		return sequenceEqual(this.iterable, other, equals);
 	}
 
 	single<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;

@@ -466,6 +466,24 @@ export interface IIterableLinqBase<T> {
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
+	 * Tells whether the chain and `other` have the same values in the same order.
+	 * It reads the two sources side by side, and stops and closes both at the first difference or when one ends before the other.
+	 * If `equals` throws, both sources are closed and the error propagates; if a source throws, the other one is closed.
+	 * @operation `Action`
+	 * @param other - the `Iterable` to compare with, for example another chain
+	 * @param equals - called with a value of the chain and the value of `other` at the same position; defaults to `===`
+	 * @returns `true` if the two sources have the same number of values and every pair is equal
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `equals` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).sequenceEqual([1, 2, 3]); // true
+	 * IterableLinq.from(['a', 'bb']).sequenceEqual(['x', 'yy'], (a, b) => a.length === b.length); // true
+	 * ```
+	 * @since next
+	 */
+	sequenceEqual(other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean;
+
+	/**
 	 * Returns the only value of the chain, `undefined` if it is empty; throws if it has more than one.
 	 * It stops and closes the source at the second value, so it also ends an infinite chain.
 	 * @operation `Action`
