@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.average([1, 2, 3, 4]); // 2.5
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function average(iterable: Iterable<number>): number | undefined;
 /**
@@ -27,7 +27,7 @@ export function average(iterable: Iterable<number>): number | undefined;
  * ```ts
  * Functions.average(['a', 'bb', 'ccc'], v => v.length); // 2
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function average<T>(iterable: Iterable<T>, selector: Mapper<T, number> | undefined): number | undefined;
 export function average<T>(iterable: Iterable<T>, selector?: Mapper<T, number>): number | undefined {

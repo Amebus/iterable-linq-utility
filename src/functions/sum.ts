@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.sum([1, 2, 3]); // 6
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function sum(iterable: Iterable<number>): number;
 /**
@@ -27,7 +27,7 @@ export function sum(iterable: Iterable<number>): number;
  * ```ts
  * Functions.sum(['a', 'bb', 'ccc'], v => v.length); // 6
  * ```
- * @since next
+ * @since 0.7.0
  */
 export function sum<T>(iterable: Iterable<T>, selector: Mapper<T, number> | undefined): number;
 export function sum<T>(iterable: Iterable<T>, selector?: Mapper<T, number>): number {

@@ -1,5 +1,19 @@
 # iterable-linq-utility
 
+## 0.7.0
+
+### Minor Changes
+
+- [#149](https://github.com/Amebus/iterable-linq-utility/pull/149) [`99d3c79`](https://github.com/Amebus/iterable-linq-utility/commit/99d3c793f613a994a4a177887cd93b5fb198b9b4) Thanks [@Amebus](https://github.com/Amebus)! - New `average(selector?)` Action: returns the average of the values, or of the numbers returned by `selector`, and `undefined` for an empty chain; without `selector`, the chain must contain numbers ([#51](https://github.com/Amebus/iterable-linq-utility/issues/51)).
+
+- [#153](https://github.com/Amebus/iterable-linq-utility/pull/153) [`4b87319`](https://github.com/Amebus/iterable-linq-utility/commit/4b873199e3fcd9a917384918fd6120aebd6cb591) Thanks [@Amebus](https://github.com/Amebus)! - New `join(separator?)` Action: joins the values in a string, like `Array.prototype.join`, with `,` as the default separator ([#61](https://github.com/Amebus/iterable-linq-utility/issues/61)).
+
+- [#151](https://github.com/Amebus/iterable-linq-utility/pull/151) [`14f0df3`](https://github.com/Amebus/iterable-linq-utility/commit/14f0df37c8c8318884c1bd1c70ebd7cf846a3469) Thanks [@Amebus](https://github.com/Amebus)! - New `sequenceEqual(other, equals?)` Action: tells whether the chain and `other` have the same values in the same order, compared with `===` or with `equals`; it stops and closes both sources at the first difference ([#60](https://github.com/Amebus/iterable-linq-utility/issues/60)).
+
+- [#150](https://github.com/Amebus/iterable-linq-utility/pull/150) [`704c13b`](https://github.com/Amebus/iterable-linq-utility/commit/704c13bf81509923320fc48111d47d3eb3e5cb93) Thanks [@Amebus](https://github.com/Amebus)! - New `single(predicate?)` Action: returns the only value, or the only value that satisfies `predicate`, `undefined` if there is none, and throws if there is more than one ([#59](https://github.com/Amebus/iterable-linq-utility/issues/59)).
+
+- [#148](https://github.com/Amebus/iterable-linq-utility/pull/148) [`d3640bc`](https://github.com/Amebus/iterable-linq-utility/commit/d3640bcf0d040280be7df27a0c17ee94015af349) Thanks [@Amebus](https://github.com/Amebus)! - New `sum(selector?)` Action: returns the sum of the values, or of the numbers returned by `selector`, and `0` for an empty chain; without `selector`, the chain must contain numbers ([#50](https://github.com/Amebus/iterable-linq-utility/issues/50)).
+
 ## 0.6.0
 
 ### Minor Changes
