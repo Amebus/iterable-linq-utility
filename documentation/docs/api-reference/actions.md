@@ -23,6 +23,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [max](#max)                       | Returns the greatest value                                                            | `T | undefined`             |
     | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
     | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`, or `T` without a seed  |
+    | [single](#single)                 | Returns the only value, or the only value that satisfies a predicate                  | `T | undefined`             |
     | [some](#some)                     | Tells whether at least one value satisfies a predicate                                | `boolean`                   |
     | [sum](#sum)                       | Returns the sum of the values, or of the numbers returned by a selector               | `number`                    |
 
@@ -658,6 +659,43 @@ Without a seed, the first value is the initial accumulator, like `Array.prototyp
     ```
 
 The number of arguments, not their type, tells the two forms apart: `reduce(undefined, reducer)` has the seed `undefined`. Without a seed, `reduce` throws an `Error` if the chain is empty.
+
+## single
+
+Returns the only value of the chain; with a predicate, the only value that satisfies it. The predicate is called with each value and its index. It returns `undefined` when there is no such value, and throws an `Error` when there is more than one: it stops at the second one and closes the source, so it also ends on an infinite source. Like [find](#find), it returns `undefined` both when there is no value and when the only value is `undefined`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([5]).single();
+    // 5
+
+    IterableLinq
+        .from([1, 5, 2])
+        .single(v => v > 4);
+    // 5
+
+    IterableLinq.from([1, 2]).single();
+    // throws Error: [iterable-linq-utility/single] The iterable contains more than one value
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.single([5]);
+    // 5
+
+    Functions.single([1, 5, 2], v => v > 4);
+    // 5
+
+    Functions.single([5, 6], v => v > 4);
+    // throws Error: [iterable-linq-utility/single] More than one value satisfies the predicate
+    ```
+
+Throws an `Error` if a provided predicate is not a function. Passing `undefined` is the same as omitting it. A type guard narrows the type of the result, as with [find](#find).
 
 ## some
 

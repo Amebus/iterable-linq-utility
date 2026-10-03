@@ -36,6 +36,7 @@ import {
 	memoize,
 	min,
 	reduce,
+	single,
 	skip,
 	skipWhile,
 	some,
@@ -170,6 +171,12 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return args.length === 1
 			? reduce(this.iterable, args[0])
 			: reduce(this.iterable, args[0], args[1]);
+	}
+
+	single<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;
+	single(predicate?: Predicate<T>): T | undefined;
+	single(predicate?: Predicate<T>): T | undefined {
+		return single(this.iterable, predicate);
 	}
 
 	skip(count: number): IIterableLinq<T> {
