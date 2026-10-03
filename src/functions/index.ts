@@ -1,4 +1,5 @@
 export { collectToArray } from './collectToArray';
+export { count } from './count';
 export { distinct } from './distinct';
 export { empty } from './empty';
 export { every } from './every';
