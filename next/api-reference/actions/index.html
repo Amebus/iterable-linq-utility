@@ -87,7 +87,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../../upcoming/">3 unreleased changes since 0.4.0</a>
+    <a href="../../upcoming/">4 unreleased changes since 0.4.0</a>
           </div>
           
         </aside>
@@ -935,6 +935,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#every" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        every
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#foreach" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1148,6 +1159,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#every" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        every
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#foreach" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1263,6 +1285,11 @@
 <td><code>T[]</code></td>
 </tr>
 <tr>
+<td><a href="#every">every</a></td>
+<td>Tells whether every value satisfies a predicate</td>
+<td><code>boolean</code></td>
+</tr>
+<tr>
 <td><a href="#foreach">forEach</a></td>
 <td>Calls a callback on each value</td>
 <td><code>Unit</code></td>
@@ -1330,58 +1357,89 @@
 </div>
 </div>
 </div>
-<h2 id="foreach">forEach<a class="headerlink" href="#foreach" title="Permanent link">⚓︎</a></h2>
-<p>Calls the callback on each value, with the value and its index. The callback returns <a href="../../basic-concepts/#the-unit-type"><code>unit()</code></a>. If the callback throws, the source is closed and the error propagates.</p>
+<h2 id="every">every<a class="headerlink" href="#every" title="Permanent link">⚓︎</a></h2>
+<p>Tells whether every value satisfies the predicate. The predicate is called with each value and its index. It stops at the first rejected value and closes the source, so it also works on infinite sources that contain a rejected value. It returns <code>true</code> when the chain is empty, like <code>Array.prototype.every</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Wrapper</label><label for="__tabbed_2_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-2-10">10</a></span>
-<span class="normal"><a href="#__codelineno-2-11">11</a></span>
-<span class="normal"><a href="#__codelineno-2-12">12</a></span>
-<span class="normal"><a href="#__codelineno-2-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">    </span><span class="p">});</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="c1">// 1</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="c1">// 2</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="c1">// 3</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13"></a><span class="c1">// 4</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">4</a></span>
+<span class="normal"><a href="#__codelineno-2-5">5</a></span>
+<span class="normal"><a href="#__codelineno-2-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0</span><span class="p">);</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="c1">// true</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-3-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="p">,</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">forEach</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="p">});</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="c1">// 1</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="c1">// 2</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="c1">// 3</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="c1">// 4</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">every</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0</span><span class="p">);</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="c1">// true</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<p>Throws an <code>Error</code> if the predicate is not a function.</p>
+<h2 id="foreach">forEach<a class="headerlink" href="#foreach" title="Permanent link">⚓︎</a></h2>
+<p>Calls the callback on each value, with the value and its index. The callback returns <a href="../../basic-concepts/#the-unit-type"><code>unit()</code></a>. If the callback throws, the source is closed and the error propagates.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Wrapper</label><label for="__tabbed_3_2">Raw Function</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">    </span><span class="p">});</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="c1">// 1</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="c1">// 2</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="c1">// 3</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="c1">// 4</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="p">,</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">forEach</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="p">});</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="c1">// 1</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="c1">// 2</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="c1">// 3</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="c1">// 4</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -1390,40 +1448,40 @@
 <h2 id="foreachasync">forEachAsync<a class="headerlink" href="#foreachasync" title="Permanent link">⚓︎</a></h2>
 <p>Calls the async callback on each value, with the value and its index. The callback returns a promise of <a href="../../basic-concepts/#the-unit-type"><code>unit()</code></a>.</p>
 <p>The callbacks run <strong>sequentially</strong>: <code>forEachAsync</code> waits for the callback on the current value to settle before it starts the callback on the next value. The first rejection stops the iteration, closes the source and rejects the returned promise. It works on infinite sources.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Wrapper</label><label for="__tabbed_3_2">Raw Function</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Wrapper</label><label for="__tabbed_4_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
-<span class="normal"><a href="#__codelineno-4-2">2</a></span>
-<span class="normal"><a href="#__codelineno-4-3">3</a></span>
-<span class="normal"><a href="#__codelineno-4-4">4</a></span>
-<span class="normal"><a href="#__codelineno-4-5">5</a></span>
-<span class="normal"><a href="#__codelineno-4-6">6</a></span>
-<span class="normal"><a href="#__codelineno-4-7">7</a></span>
-<span class="normal"><a href="#__codelineno-4-8">8</a></span>
-<span class="normal"><a href="#__codelineno-4-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="k">await</span><span class="w"> </span><span class="nx">IterableLinq</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'a.txt'</span><span class="p">,</span><span class="w"> </span><span class="s1">'b.txt'</span><span class="p">])</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEachAsync</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="nx">file</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nx">upload</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span><span class="w"> </span><span class="c1">// 'b.txt' starts after 'a.txt' has finished</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">    </span><span class="p">});</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span>
+<span class="normal"><a href="#__codelineno-6-6">6</a></span>
+<span class="normal"><a href="#__codelineno-6-7">7</a></span>
+<span class="normal"><a href="#__codelineno-6-8">8</a></span>
+<span class="normal"><a href="#__codelineno-6-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="k">await</span><span class="w"> </span><span class="nx">IterableLinq</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'a.txt'</span><span class="p">,</span><span class="w"> </span><span class="s1">'b.txt'</span><span class="p">])</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEachAsync</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="nx">file</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7"></a><span class="w">        </span><span class="k">await</span><span class="w"> </span><span class="nx">upload</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span><span class="w"> </span><span class="c1">// 'b.txt' starts after 'a.txt' has finished</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="w">    </span><span class="p">});</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
-<span class="normal"><a href="#__codelineno-5-2">2</a></span>
-<span class="normal"><a href="#__codelineno-5-3">3</a></span>
-<span class="normal"><a href="#__codelineno-5-4">4</a></span>
-<span class="normal"><a href="#__codelineno-5-5">5</a></span>
-<span class="normal"><a href="#__codelineno-5-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="p">,</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
-<a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="k">await</span><span class="w"> </span><span class="nx">Functions</span><span class="p">.</span><span class="nx">forEachAsync</span><span class="p">([</span><span class="s1">'a.txt'</span><span class="p">,</span><span class="w"> </span><span class="s1">'b.txt'</span><span class="p">],</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="nx">file</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">upload</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="p">});</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">2</a></span>
+<span class="normal"><a href="#__codelineno-7-3">3</a></span>
+<span class="normal"><a href="#__codelineno-7-4">4</a></span>
+<span class="normal"><a href="#__codelineno-7-5">5</a></span>
+<span class="normal"><a href="#__codelineno-7-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="p">,</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="k">await</span><span class="w"> </span><span class="nx">Functions</span><span class="p">.</span><span class="nx">forEachAsync</span><span class="p">([</span><span class="s1">'a.txt'</span><span class="p">,</span><span class="w"> </span><span class="s1">'b.txt'</span><span class="p">],</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="nx">file</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">upload</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="p">});</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -1431,51 +1489,12 @@
 <div class="admonition tip">
 <p class="admonition-title">Running the callbacks in parallel</p>
 <p>To start every callback at once, map the values to promises and wait for all of them:
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="k">await</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">files</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">upload</span><span class="p">));</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="k">await</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">files</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">upload</span><span class="p">));</span>
 </code></pre></div></td></tr></table></div></p>
 </div>
 <p>If the callback is not a function, the returned promise is rejected with an <code>Error</code>.</p>
 <h2 id="materialize">materialize<a class="headerlink" href="#materialize" title="Permanent link">⚓︎</a></h2>
 <p>Runs the chain immediately and stores its values, so later chains start from the stored values instead of running the source again. It is an <strong>Action</strong> even if it returns an <code>IIterableLinq</code>: the returned chain starts a brand new <strong>O<sub>s</sub>C</strong> over the stored values.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Wrapper</label><label for="__tabbed_4_2">Raw Function</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
-<span class="normal"><a href="#__codelineno-7-2">2</a></span>
-<span class="normal"><a href="#__codelineno-7-3">3</a></span>
-<span class="normal"><a href="#__codelineno-7-4">4</a></span>
-<span class="normal"><a href="#__codelineno-7-5">5</a></span>
-<span class="normal"><a href="#__codelineno-7-6">6</a></span>
-<span class="normal"><a href="#__codelineno-7-7">7</a></span>
-<span class="normal"><a href="#__codelineno-7-8">8</a></span>
-<span class="normal"><a href="#__codelineno-7-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">)</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">materialize</span><span class="p">();</span><span class="w"> </span><span class="c1">// the map runs now</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7"></a>
-<a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="c1">// [10, 20, 30, 40], the map does not run again</span>
-</code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
-<span class="normal"><a href="#__codelineno-8-2">2</a></span>
-<span class="normal"><a href="#__codelineno-8-3">3</a></span>
-<span class="normal"><a href="#__codelineno-8-4">4</a></span>
-<span class="normal"><a href="#__codelineno-8-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a>
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Functions</span><span class="p">.</span><span class="nx">materialize</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">map</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">));</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">stored</span><span class="p">);</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="c1">// [10, 20, 30, 40]</span>
-</code></pre></div></td></tr></table></div>
-</div>
-</div>
-</div>
-<p>Materializing a materialized chain does not copy the values again. To store the values lazily, the first time they are read, use <a href="../transformations/#memoize">memoize</a>.</p>
-<h2 id="max">max<a class="headerlink" href="#max" title="Permanent link">⚓︎</a></h2>
-<p>Returns the greatest value, or <code>undefined</code> when the chain is empty. Among equal values the first one wins; <code>null</code> and <code>undefined</code> values never win against a defined one.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Wrapper</label><label for="__tabbed_5_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1484,30 +1503,37 @@
 <span class="normal"><a href="#__codelineno-9-3">3</a></span>
 <span class="normal"><a href="#__codelineno-9-4">4</a></span>
 <span class="normal"><a href="#__codelineno-9-5">5</a></span>
-<span class="normal"><a href="#__codelineno-9-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-9-6">6</a></span>
+<span class="normal"><a href="#__codelineno-9-7">7</a></span>
+<span class="normal"><a href="#__codelineno-9-8">8</a></span>
+<span class="normal"><a href="#__codelineno-9-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">max</span><span class="p">();</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="c1">// 4</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">)</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">materialize</span><span class="p">();</span><span class="w"> </span><span class="c1">// the map runs now</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="c1">// [10, 20, 30, 40], the map does not run again</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
 <span class="normal"><a href="#__codelineno-10-2">2</a></span>
 <span class="normal"><a href="#__codelineno-10-3">3</a></span>
-<span class="normal"><a href="#__codelineno-10-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-10-4">4</a></span>
+<span class="normal"><a href="#__codelineno-10-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2"></a>
-<a id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">max</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">]);</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="c1">// 4</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Functions</span><span class="p">.</span><span class="nx">materialize</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">map</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">));</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="nb">Array</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">stored</span><span class="p">);</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="c1">// [10, 20, 30, 40]</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
-<p>By default the values are compared with <code>&lt;</code>. A comparer changes how they are compared. It can be:</p>
-<ol>
-<li>
-<p>The name of a property, or a list of names. With a list, ties on the first property are broken by the next one, and so on. The result is the whole value, not the property.</p>
+<p>Materializing a materialized chain does not copy the values again. To store the values lazily, the first time they are read, use <a href="../transformations/#memoize">memoize</a>.</p>
+<h2 id="max">max<a class="headerlink" href="#max" title="Permanent link">⚓︎</a></h2>
+<p>Returns the greatest value, or <code>undefined</code> when the chain is empty. Among equal values the first one wins; <code>null</code> and <code>undefined</code> values never win against a defined one.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Wrapper</label><label for="__tabbed_6_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1519,9 +1545,9 @@
 <span class="normal"><a href="#__codelineno-11-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2"></a>
 <a id="__codelineno-11-3" name="__codelineno-11-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}])</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="s1">'value'</span><span class="p">);</span>
-<a id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="c1">// { value: 4 }</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">max</span><span class="p">();</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="c1">// 4</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
@@ -1530,8 +1556,40 @@
 <span class="normal"><a href="#__codelineno-12-3">3</a></span>
 <span class="normal"><a href="#__codelineno-12-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2"></a>
-<a id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">max</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}],</span><span class="w"> </span><span class="s1">'value'</span><span class="p">);</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="c1">// { value: 4 }</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">max</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">]);</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="c1">// 4</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<p>By default the values are compared with <code>&lt;</code>. A comparer changes how they are compared. It can be:</p>
+<ol>
+<li>
+<p>The name of a property, or a list of names. With a list, ties on the first property are broken by the next one, and so on. The result is the whole value, not the property.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Wrapper</label><label for="__tabbed_7_2">Raw Function</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span>
+<span class="normal"><a href="#__codelineno-13-2">2</a></span>
+<span class="normal"><a href="#__codelineno-13-3">3</a></span>
+<span class="normal"><a href="#__codelineno-13-4">4</a></span>
+<span class="normal"><a href="#__codelineno-13-5">5</a></span>
+<span class="normal"><a href="#__codelineno-13-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}])</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="s1">'value'</span><span class="p">);</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a><span class="c1">// { value: 4 }</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span>
+<span class="normal"><a href="#__codelineno-14-2">2</a></span>
+<span class="normal"><a href="#__codelineno-14-3">3</a></span>
+<span class="normal"><a href="#__codelineno-14-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">max</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}],</span><span class="w"> </span><span class="s1">'value'</span><span class="p">);</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="c1">// { value: 4 }</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -1544,38 +1602,6 @@
 <li><code>0</code> if <code>a</code> is equal to <code>b</code>;</li>
 <li>a positive number if <code>a</code> is greater than <code>b</code>.</li>
 </ul>
-<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Wrapper</label><label for="__tabbed_7_2">Raw Function</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span>
-<span class="normal"><a href="#__codelineno-13-2">2</a></span>
-<span class="normal"><a href="#__codelineno-13-3">3</a></span>
-<span class="normal"><a href="#__codelineno-13-4">4</a></span>
-<span class="normal"><a href="#__codelineno-13-5">5</a></span>
-<span class="normal"><a href="#__codelineno-13-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2"></a>
-<a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'kiwi'</span><span class="p">,</span><span class="w"> </span><span class="s1">'banana'</span><span class="p">,</span><span class="w"> </span><span class="s1">'fig'</span><span class="p">])</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">max</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6"></a><span class="c1">// 'banana'</span>
-</code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span>
-<span class="normal"><a href="#__codelineno-14-2">2</a></span>
-<span class="normal"><a href="#__codelineno-14-3">3</a></span>
-<span class="normal"><a href="#__codelineno-14-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2"></a>
-<a id="__codelineno-14-3" name="__codelineno-14-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">max</span><span class="p">([</span><span class="s1">'kiwi'</span><span class="p">,</span><span class="w"> </span><span class="s1">'banana'</span><span class="p">,</span><span class="w"> </span><span class="s1">'fig'</span><span class="p">],</span><span class="w"> </span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="c1">// 'banana'</span>
-</code></pre></div></td></tr></table></div>
-</div>
-</div>
-</div>
-</li>
-</ol>
-<h2 id="min">min<a class="headerlink" href="#min" title="Permanent link">⚓︎</a></h2>
-<p>Returns the smallest value, or <code>undefined</code> when the chain is empty. Among equal values the first one wins; <code>null</code> and <code>undefined</code> values never win against a defined one.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">Wrapper</label><label for="__tabbed_8_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1587,9 +1613,9 @@
 <span class="normal"><a href="#__codelineno-15-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-15-2" name="__codelineno-15-2"></a>
 <a id="__codelineno-15-3" name="__codelineno-15-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-15-4" name="__codelineno-15-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">min</span><span class="p">();</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6"></a><span class="c1">// 1</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'kiwi'</span><span class="p">,</span><span class="w"> </span><span class="s1">'banana'</span><span class="p">,</span><span class="w"> </span><span class="s1">'fig'</span><span class="p">])</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">max</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6"></a><span class="c1">// 'banana'</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
@@ -1598,37 +1624,30 @@
 <span class="normal"><a href="#__codelineno-16-3">3</a></span>
 <span class="normal"><a href="#__codelineno-16-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-16-2" name="__codelineno-16-2"></a>
-<a id="__codelineno-16-3" name="__codelineno-16-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">min</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">]);</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4"></a><span class="c1">// 1</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">max</span><span class="p">([</span><span class="s1">'kiwi'</span><span class="p">,</span><span class="w"> </span><span class="s1">'banana'</span><span class="p">,</span><span class="w"> </span><span class="s1">'fig'</span><span class="p">],</span><span class="w"> </span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4"></a><span class="c1">// 'banana'</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
-<p><code>min</code> accepts the same comparers as <a href="#max">max</a>:</p>
+</li>
+</ol>
+<h2 id="min">min<a class="headerlink" href="#min" title="Permanent link">⚓︎</a></h2>
+<p>Returns the smallest value, or <code>undefined</code> when the chain is empty. Among equal values the first one wins; <code>null</code> and <code>undefined</code> values never win against a defined one.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="9:2"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">Wrapper</label><label for="__tabbed_9_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-17-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-17-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-17-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-17-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-17-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-17-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-17-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-17-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-17-10">10</a></span>
-<span class="normal"><a href="#__codelineno-17-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1">1</a></span>
+<span class="normal"><a href="#__codelineno-17-2">2</a></span>
+<span class="normal"><a href="#__codelineno-17-3">3</a></span>
+<span class="normal"><a href="#__codelineno-17-4">4</a></span>
+<span class="normal"><a href="#__codelineno-17-5">5</a></span>
+<span class="normal"><a href="#__codelineno-17-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-17-2" name="__codelineno-17-2"></a>
 <a id="__codelineno-17-3" name="__codelineno-17-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-17-4" name="__codelineno-17-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}])</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="s1">'value'</span><span class="p">);</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6"></a><span class="c1">// { value: 1 }</span>
-<a id="__codelineno-17-7" name="__codelineno-17-7"></a>
-<a id="__codelineno-17-8" name="__codelineno-17-8"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-17-9" name="__codelineno-17-9"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'kiwi'</span><span class="p">,</span><span class="w"> </span><span class="s1">'banana'</span><span class="p">,</span><span class="w"> </span><span class="s1">'fig'</span><span class="p">])</span>
-<a id="__codelineno-17-10" name="__codelineno-17-10"></a><span class="w">    </span><span class="p">.</span><span class="nx">min</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
-<a id="__codelineno-17-11" name="__codelineno-17-11"></a><span class="c1">// 'fig'</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">min</span><span class="p">();</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6"></a><span class="c1">// 1</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
@@ -1637,14 +1656,13 @@
 <span class="normal"><a href="#__codelineno-18-3">3</a></span>
 <span class="normal"><a href="#__codelineno-18-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-18-2" name="__codelineno-18-2"></a>
-<a id="__codelineno-18-3" name="__codelineno-18-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">min</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}],</span><span class="w"> </span><span class="s1">'value'</span><span class="p">);</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="c1">// { value: 1 }</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">min</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">]);</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4"></a><span class="c1">// 1</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
-<h2 id="reduce">reduce<a class="headerlink" href="#reduce" title="Permanent link">⚓︎</a></h2>
-<p>Accumulates the values into a single result. The reducer is called with the accumulator, each value and its index, and returns the new accumulator. The first argument of <code>reduce</code> is the initial accumulator (the seed); it is also the result when the chain is empty.</p>
+<p><code>min</code> accepts the same comparers as <a href="#max">max</a>:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><div class="tabbed-labels"><label for="__tabbed_10_1">Wrapper</label><label for="__tabbed_10_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1661,14 +1679,14 @@
 <span class="normal"><a href="#__codelineno-19-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-19-2" name="__codelineno-19-2"></a>
 <a id="__codelineno-19-3" name="__codelineno-19-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-19-4" name="__codelineno-19-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
-<a id="__codelineno-19-5" name="__codelineno-19-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">v</span><span class="p">);</span>
-<a id="__codelineno-19-6" name="__codelineno-19-6"></a><span class="c1">// 6</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}])</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="s1">'value'</span><span class="p">);</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6"></a><span class="c1">// { value: 1 }</span>
 <a id="__codelineno-19-7" name="__codelineno-19-7"></a>
 <a id="__codelineno-19-8" name="__codelineno-19-8"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-19-9" name="__codelineno-19-9"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'a'</span><span class="p">,</span><span class="w"> </span><span class="s1">'b'</span><span class="p">])</span>
-<a id="__codelineno-19-10" name="__codelineno-19-10"></a><span class="w">    </span><span class="p">.</span><span class="nx">reduce</span><span class="p">({}</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">number</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="p">...</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="nx">v</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="p">}));</span>
-<a id="__codelineno-19-11" name="__codelineno-19-11"></a><span class="c1">// { a: 0, b: 1 }</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'kiwi'</span><span class="p">,</span><span class="w"> </span><span class="s1">'banana'</span><span class="p">,</span><span class="w"> </span><span class="s1">'fig'</span><span class="p">])</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10"></a><span class="w">    </span><span class="p">.</span><span class="nx">min</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span><span class="w"> </span><span class="nx">b</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">a</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11"></a><span class="c1">// 'fig'</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
@@ -1677,28 +1695,38 @@
 <span class="normal"><a href="#__codelineno-20-3">3</a></span>
 <span class="normal"><a href="#__codelineno-20-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-20-2" name="__codelineno-20-2"></a>
-<a id="__codelineno-20-3" name="__codelineno-20-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">],</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">v</span><span class="p">);</span>
-<a id="__codelineno-20-4" name="__codelineno-20-4"></a><span class="c1">// 6</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">min</span><span class="p">([{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="kt">4</span><span class="w"> </span><span class="p">}],</span><span class="w"> </span><span class="s1">'value'</span><span class="p">);</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4"></a><span class="c1">// { value: 1 }</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
-<p>Throws an <code>Error</code> if the reducer is not a function.</p>
-<p>Without a seed, the first value is the initial accumulator, like <code>Array.prototype.reduce</code> without <code>initialValue</code> and <code>Aggregate(func)</code> in LINQ. The reducer starts from the second value, with <code>index</code> 1; with one value, <code>reduce</code> returns it and does not call the reducer.</p>
+<h2 id="reduce">reduce<a class="headerlink" href="#reduce" title="Permanent link">⚓︎</a></h2>
+<p>Accumulates the values into a single result. The reducer is called with the accumulator, each value and its index, and returns the new accumulator. The first argument of <code>reduce</code> is the initial accumulator (the seed); it is also the result when the chain is empty.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="11:2"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><input id="__tabbed_11_2" name="__tabbed_11" type="radio" /><div class="tabbed-labels"><label for="__tabbed_11_1">Wrapper</label><label for="__tabbed_11_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-21-1">1</a></span>
-<span class="normal"><a href="#__codelineno-21-2">2</a></span>
-<span class="normal"><a href="#__codelineno-21-3">3</a></span>
-<span class="normal"><a href="#__codelineno-21-4">4</a></span>
-<span class="normal"><a href="#__codelineno-21-5">5</a></span>
-<span class="normal"><a href="#__codelineno-21-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-21-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-21-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-21-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-21-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-21-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-21-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-21-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-21-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-21-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-21-10">10</a></span>
+<span class="normal"><a href="#__codelineno-21-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-21-2" name="__codelineno-21-2"></a>
 <a id="__codelineno-21-3" name="__codelineno-21-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-21-4" name="__codelineno-21-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">7</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">])</span>
-<a id="__codelineno-21-5" name="__codelineno-21-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">acc</span><span class="p">));</span>
-<a id="__codelineno-21-6" name="__codelineno-21-6"></a><span class="c1">// 7</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6"></a><span class="c1">// 6</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7"></a>
+<a id="__codelineno-21-8" name="__codelineno-21-8"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-21-9" name="__codelineno-21-9"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="s1">'a'</span><span class="p">,</span><span class="w"> </span><span class="s1">'b'</span><span class="p">])</span>
+<a id="__codelineno-21-10" name="__codelineno-21-10"></a><span class="w">    </span><span class="p">.</span><span class="nx">reduce</span><span class="p">({}</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">Record</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">number</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">,</span><span class="w"> </span><span class="nx">index</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="p">...</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="nx">v</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="nx">index</span><span class="w"> </span><span class="p">}));</span>
+<a id="__codelineno-21-11" name="__codelineno-21-11"></a><span class="c1">// { a: 0, b: 1 }</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
@@ -1707,15 +1735,14 @@
 <span class="normal"><a href="#__codelineno-22-3">3</a></span>
 <span class="normal"><a href="#__codelineno-22-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-22-2" name="__codelineno-22-2"></a>
-<a id="__codelineno-22-3" name="__codelineno-22-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">7</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">],</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">acc</span><span class="p">));</span>
-<a id="__codelineno-22-4" name="__codelineno-22-4"></a><span class="c1">// 7</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">],</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4"></a><span class="c1">// 6</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
 </div>
-<p>The number of arguments, not their type, tells the two forms apart: <code>reduce(undefined, reducer)</code> has the seed <code>undefined</code>. Without a seed, <code>reduce</code> throws an <code>Error</code> if the chain is empty.</p>
-<h2 id="some">some<a class="headerlink" href="#some" title="Permanent link">⚓︎</a></h2>
-<p>Tells whether at least one value satisfies the predicate; without a predicate, whether the chain has any values. It stops at the first match (without a predicate, at the first value) and closes the source, so it also works on infinite sources that contain a match. It returns <code>false</code> when the chain is empty.</p>
+<p>Throws an <code>Error</code> if the reducer is not a function.</p>
+<p>Without a seed, the first value is the initial accumulator, like <code>Array.prototype.reduce</code> without <code>initialValue</code> and <code>Aggregate(func)</code> in LINQ. The reducer starts from the second value, with <code>index</code> 1; with one value, <code>reduce</code> returns it and does not call the reducer.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="12:2"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><input id="__tabbed_12_2" name="__tabbed_12" type="radio" /><div class="tabbed-labels"><label for="__tabbed_12_1">Wrapper</label><label for="__tabbed_12_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -1724,34 +1751,65 @@
 <span class="normal"><a href="#__codelineno-23-3">3</a></span>
 <span class="normal"><a href="#__codelineno-23-4">4</a></span>
 <span class="normal"><a href="#__codelineno-23-5">5</a></span>
-<span class="normal"><a href="#__codelineno-23-6">6</a></span>
-<span class="normal"><a href="#__codelineno-23-7">7</a></span>
-<span class="normal"><a href="#__codelineno-23-8">8</a></span>
-<span class="normal"><a href="#__codelineno-23-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-23-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-23-2" name="__codelineno-23-2"></a>
 <a id="__codelineno-23-3" name="__codelineno-23-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-23-4" name="__codelineno-23-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
-<a id="__codelineno-23-5" name="__codelineno-23-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
-<a id="__codelineno-23-6" name="__codelineno-23-6"></a><span class="c1">// true</span>
-<a id="__codelineno-23-7" name="__codelineno-23-7"></a>
-<a id="__codelineno-23-8" name="__codelineno-23-8"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]).</span><span class="nx">some</span><span class="p">();</span>
-<a id="__codelineno-23-9" name="__codelineno-23-9"></a><span class="c1">// true</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">7</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">])</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">acc</span><span class="p">));</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6"></a><span class="c1">// 7</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-24-1">1</a></span>
 <span class="normal"><a href="#__codelineno-24-2">2</a></span>
 <span class="normal"><a href="#__codelineno-24-3">3</a></span>
-<span class="normal"><a href="#__codelineno-24-4">4</a></span>
-<span class="normal"><a href="#__codelineno-24-5">5</a></span>
-<span class="normal"><a href="#__codelineno-24-6">6</a></span>
-<span class="normal"><a href="#__codelineno-24-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<span class="normal"><a href="#__codelineno-24-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
 <a id="__codelineno-24-2" name="__codelineno-24-2"></a>
-<a id="__codelineno-24-3" name="__codelineno-24-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">some</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
-<a id="__codelineno-24-4" name="__codelineno-24-4"></a><span class="c1">// true</span>
-<a id="__codelineno-24-5" name="__codelineno-24-5"></a>
-<a id="__codelineno-24-6" name="__codelineno-24-6"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">some</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]);</span>
-<a id="__codelineno-24-7" name="__codelineno-24-7"></a><span class="c1">// true</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">7</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">],</span><span class="w"> </span><span class="p">(</span><span class="nx">acc</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nx">acc</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">acc</span><span class="p">));</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4"></a><span class="c1">// 7</span>
+</code></pre></div></td></tr></table></div>
+</div>
+</div>
+</div>
+<p>The number of arguments, not their type, tells the two forms apart: <code>reduce(undefined, reducer)</code> has the seed <code>undefined</code>. Without a seed, <code>reduce</code> throws an <code>Error</code> if the chain is empty.</p>
+<h2 id="some">some<a class="headerlink" href="#some" title="Permanent link">⚓︎</a></h2>
+<p>Tells whether at least one value satisfies the predicate; without a predicate, whether the chain has any values. It stops at the first match (without a predicate, at the first value) and closes the source, so it also works on infinite sources that contain a match. It returns <code>false</code> when the chain is empty.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="13:2"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><input id="__tabbed_13_2" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">Wrapper</label><label for="__tabbed_13_2">Raw Function</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-25-1">1</a></span>
+<span class="normal"><a href="#__codelineno-25-2">2</a></span>
+<span class="normal"><a href="#__codelineno-25-3">3</a></span>
+<span class="normal"><a href="#__codelineno-25-4">4</a></span>
+<span class="normal"><a href="#__codelineno-25-5">5</a></span>
+<span class="normal"><a href="#__codelineno-25-6">6</a></span>
+<span class="normal"><a href="#__codelineno-25-7">7</a></span>
+<span class="normal"><a href="#__codelineno-25-8">8</a></span>
+<span class="normal"><a href="#__codelineno-25-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2"></a>
+<a id="__codelineno-25-3" name="__codelineno-25-3"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6"></a><span class="c1">// true</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7"></a>
+<a id="__codelineno-25-8" name="__codelineno-25-8"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]).</span><span class="nx">some</span><span class="p">();</span>
+<a id="__codelineno-25-9" name="__codelineno-25-9"></a><span class="c1">// true</span>
+</code></pre></div></td></tr></table></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-26-1">1</a></span>
+<span class="normal"><a href="#__codelineno-26-2">2</a></span>
+<span class="normal"><a href="#__codelineno-26-3">3</a></span>
+<span class="normal"><a href="#__codelineno-26-4">4</a></span>
+<span class="normal"><a href="#__codelineno-26-5">5</a></span>
+<span class="normal"><a href="#__codelineno-26-6">6</a></span>
+<span class="normal"><a href="#__codelineno-26-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2"></a>
+<a id="__codelineno-26-3" name="__codelineno-26-3"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">some</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4"></a><span class="c1">// true</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5"></a>
+<a id="__codelineno-26-6" name="__codelineno-26-6"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">some</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]);</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7"></a><span class="c1">// true</span>
 </code></pre></div></td></tr></table></div>
 </div>
 </div>
@@ -1779,7 +1837,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 2, 2026 10:37:54 UTC">October 2, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 3, 2026 15:11:01 UTC">October 3, 2026</span>
   </span>
 
     

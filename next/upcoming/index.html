@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">3 unreleased changes since 0.4.0</a>
+    <a href="../upcoming/">4 unreleased changes since 0.4.0</a>
           </div>
           
         </aside>
@@ -1028,6 +1028,7 @@
 <li>New <code>distinct(keySelector?)</code> Transformation: lazily keeps the first value for each distinct value or selected key in source order, using <code>SameValueZero</code> like <code>Set</code> (#32). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/129">#129</a>)</li>
 <li>New <code>takeWhile(predicate)</code> Transformation: lazily yields values while <code>predicate</code> returns <code>true</code>, then closes the source without reading further; a type guard narrows the element type (#28). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/130">#130</a>)</li>
 <li>New <code>skipWhile(predicate)</code> Transformation: lazily skips values while <code>predicate</code> returns <code>true</code> and yields the rest, without calling <code>predicate</code> again after the first rejected value (#29). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/131">#131</a>)</li>
+<li>New <code>every(predicate)</code> Action: tells whether every value satisfies <code>predicate</code>, stopping and closing the source at the first rejected value, like <code>Array.prototype.every</code> (#47). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/133">#133</a>)</li>
 </ul>
 
 
