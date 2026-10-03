@@ -27,6 +27,23 @@ export interface IIterableLinqBase<T> {
 	[Symbol.iterator](): Iterator<T, any, undefined>;
 
 	/**
+	 * Returns the value at `index`, like `Array.prototype.at`; a negative index counts from the end.
+	 * A non-negative index runs the chain up to the value, then closes the source; a negative index runs the whole chain,
+	 * keeping only the last `-index` values.
+	 * @operation `Action`
+	 * @param index - an integer; `-1` is the last value
+	 * @returns the value at `index`, or `undefined` if the chain has no value there
+	 * @throws Error if `index` is not an integer (fractions, `NaN` and `Infinity` included)
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([10, 20, 30]).at(1); // 20
+	 * IterableLinq.from([10, 20, 30]).at(-1); // 30
+	 * ```
+	 * @since next
+	 */
+	at(index: number): T | undefined;
+
+	/**
 	 * Runs the chain and collects its values into an `Array`.
 	 * @operation `Action`
 	 * @returns the values of the chain, in order; an empty array when the chain is empty

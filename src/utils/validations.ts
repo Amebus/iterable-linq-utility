@@ -12,6 +12,11 @@ export function throwIfNotFunction(value: unknown, name: string) {
 		throw new Error(`The "${name}" function must be provided`);
 }
 
+export function throwIfNotInteger(value: number, name: string) {
+	if (!Number.isInteger(value))
+		throw new Error(`The "${name}" parameter must be an integer`);
+}
+
 export function throwIfNotNonNegativeInteger(value: number, name: string) {
 	if (!Number.isInteger(value) || value < 0)
 		throw new Error(`The "${name}" parameter must be a non-negative integer`);
