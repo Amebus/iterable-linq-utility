@@ -14,6 +14,7 @@ import type {
 
 import {
 	at,
+	average,
 	collectToArray,
 	count,
 	distinct,
@@ -70,6 +71,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	at(index: number): T | undefined {
 		return at(this.iterable, index);
+	}
+
+	average(selector?: Mapper<T, number>): number | undefined {
+		return average(this.iterable, selector);
 	}
 
 	collectToArray(): T[] {

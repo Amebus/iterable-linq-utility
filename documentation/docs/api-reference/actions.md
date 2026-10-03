@@ -6,6 +6,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | Action                            | Brief Description                                                                     | Returns                     |
     | --------------------------------- | ------------------------------------------------------------------------------------- | --------------------------- |
     | [at](#at)                         | Returns the value at an index; a negative index counts from the end                   | `T | undefined`             |
+    | [average](#average)               | Returns the average of the values, or of the numbers returned by a selector           | `number | undefined`        |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
     | [count](#count)                   | Counts the values, or the values that satisfy a predicate                             | `number`                    |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
@@ -55,6 +56,37 @@ Returns the value at the index, or `undefined` if the chain has no value there, 
 Throws an `Error` if the index is not an integer: unlike `Array.prototype.at`, fractions, `NaN` and `Infinity` are rejected instead of truncated, as with [take](transformations.md#take) and [skip](transformations.md#skip).
 
 A non-negative index reads the chain up to the value, then closes the source, so it also works on infinite sources. A negative index reads the whole chain, keeping only the last `-index` values in memory: it does not terminate on an infinite source.
+
+## average
+
+Returns the average of the values: their sum, added with `+`, divided by their number; with a selector, the average of the numbers it returns. The selector is called with each value and its index. It returns `undefined` when the chain is empty. The values are not checked: a `NaN` makes the result `NaN`. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 3, 4]).average();
+    // 2.5
+
+    IterableLinq
+        .from(['a', 'bb', 'ccc'])
+        .average(v => v.length);
+    // 2
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.average([1, 2, 3, 4]);
+    // 2.5
+
+    Functions.average(['a', 'bb', 'ccc'], v => v.length);
+    // 2
+    ```
+
+Without a selector, the chain must contain numbers: TypeScript rejects `average()` on a chain of other values. Throws an `Error` if a provided selector is not a function. Passing `undefined` is the same as omitting it.
 
 ## collectToArray
 

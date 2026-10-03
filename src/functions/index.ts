@@ -1,4 +1,5 @@
 export { at } from './at';
+export { average } from './average';
 export { collectToArray } from './collectToArray';
 export { count } from './count';
 export { distinct } from './distinct';

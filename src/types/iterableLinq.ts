@@ -44,6 +44,34 @@ export interface IIterableLinqBase<T> {
 	at(index: number): T | undefined;
 
 	/**
+	 * Returns the average of the values of a chain of numbers: their sum with `+` divided by their number; runs the whole chain.
+	 * The values are not checked: `NaN` makes the result `NaN`.
+	 * @operation `Action`
+	 * @returns the average of the values, `undefined` when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4]).average(); // 2.5
+	 * ```
+	 * @since next
+	 */
+	average(this: IIterableLinqBase<number>): number | undefined;
+
+	/**
+	 * Returns the average of the numbers returned by `selector` for each value; runs the whole chain.
+	 * If `selector` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param selector - called with each value and its index, returns the number to average; `undefined` averages the values themselves
+	 * @returns the average of the selected numbers, `undefined` when the chain is empty
+	 * @throws Error if a provided `selector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(['a', 'bb', 'ccc']).average(v => v.length); // 2
+	 * ```
+	 * @since next
+	 */
+	average(selector: Mapper<T, number> | undefined): number | undefined;
+
+	/**
 	 * Runs the chain and collects its values into an `Array`.
 	 * @operation `Action`
 	 * @returns the values of the chain, in order; an empty array when the chain is empty
