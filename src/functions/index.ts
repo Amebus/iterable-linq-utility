@@ -6,6 +6,7 @@ export { every } from './every';
 export { filter } from './filter';
 export { find } from './find';
 export { findIndex } from './findIndex';
+export { findLast } from './findLast';
 export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
 export { includes } from './includes';
