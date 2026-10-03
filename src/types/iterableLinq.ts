@@ -39,7 +39,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([10, 20, 30]).at(1); // 20
 	 * IterableLinq.from([10, 20, 30]).at(-1); // 30
 	 * ```
-	 * @since next
+	 * @since 0.6.0
 	 */
 	at(index: number): T | undefined;
 
@@ -199,7 +199,7 @@ export interface IIterableLinqBase<T> {
 	 * const values: (number | string)[] = [1, 'two', 3, 'four'];
 	 * IterableLinq.from(values).findLast((v): v is string => typeof v === 'string'); // string | undefined, 'four'
 	 * ```
-	 * @since next
+	 * @since 0.6.0
 	 */
 	findLast<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;
 
@@ -214,7 +214,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 5, 6, 2]).findLast(v => v > 4); // 6
 	 * ```
-	 * @since next
+	 * @since 0.6.0
 	 */
 	findLast(predicate: Predicate<T>): T | undefined;
 
@@ -229,7 +229,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 5, 6, 2]).findLastIndex(v => v > 4); // 2
 	 * ```
-	 * @since next
+	 * @since 0.6.0
 	 */
 	findLastIndex(predicate: Predicate<T>): number;
 
@@ -311,7 +311,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 2]).indexOf(2); // 1
 	 * ```
-	 * @since next
+	 * @since 0.6.0
 	 */
 	indexOf(value: T): number;
 
@@ -325,7 +325,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 2]).lastIndexOf(2); // 3
 	 * ```
-	 * @since next
+	 * @since 0.6.0
 	 */
 	lastIndexOf(value: T): number;
 

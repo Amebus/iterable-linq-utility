@@ -1,5 +1,21 @@
 # iterable-linq-utility
 
+## 0.6.0
+
+### Minor Changes
+
+- [#144](https://github.com/Amebus/iterable-linq-utility/pull/144) [`a309ecd`](https://github.com/Amebus/iterable-linq-utility/commit/a309ecd0da5cfec3a27e6cddd0b5d6724418aa6f) Thanks [@Amebus](https://github.com/Amebus)! - New `at(index)` Action: returns the value at `index`, or `undefined`, with a negative index counting from the end, like `Array.prototype.at`; a non-integer `index` throws ([#58](https://github.com/Amebus/iterable-linq-utility/issues/58)).
+
+- [#146](https://github.com/Amebus/iterable-linq-utility/pull/146) [`182ca7a`](https://github.com/Amebus/iterable-linq-utility/commit/182ca7a91cd41b50049c26d78229c48ea97200c9) Thanks [@Amebus](https://github.com/Amebus)! - The error messages created by the library now start with `[iterable-linq-utility/<operation>]`, the name of the function that rejected the input, e.g. `[iterable-linq-utility/filter] The "predicate" function must be provided`; the errors of the source and of the callbacks are unchanged ([#145](https://github.com/Amebus/iterable-linq-utility/issues/145)).
+
+- [#143](https://github.com/Amebus/iterable-linq-utility/pull/143) [`cd5076d`](https://github.com/Amebus/iterable-linq-utility/commit/cd5076d4961f88c8d4e9f1c2caab29b8af413cb9) Thanks [@Amebus](https://github.com/Amebus)! - New `findLastIndex(predicate)` Action: returns the index of the last value that satisfies `predicate`, or `-1`, reading the whole source, like `Array.prototype.findLastIndex` ([#56](https://github.com/Amebus/iterable-linq-utility/issues/56)).
+
+- [#142](https://github.com/Amebus/iterable-linq-utility/pull/142) [`c1ad0d1`](https://github.com/Amebus/iterable-linq-utility/commit/c1ad0d1fb239d4fa6ea41dc0440199a185581bb6) Thanks [@Amebus](https://github.com/Amebus)! - New `findLast(predicate)` Action: returns the last value that satisfies `predicate`, or `undefined`, reading the whole source; a type guard narrows the result, like `Array.prototype.findLast` ([#55](https://github.com/Amebus/iterable-linq-utility/issues/55)).
+
+- [#140](https://github.com/Amebus/iterable-linq-utility/pull/140) [`35db392`](https://github.com/Amebus/iterable-linq-utility/commit/35db392df776cb6361dc06278475cad5d891f308) Thanks [@Amebus](https://github.com/Amebus)! - New `indexOf(value)` Action: returns the index of the first value strictly equal to `value`, or `-1`, stopping and closing the source at the first match, like `Array.prototype.indexOf` ([#54](https://github.com/Amebus/iterable-linq-utility/issues/54)).
+
+- [#141](https://github.com/Amebus/iterable-linq-utility/pull/141) [`b338c3d`](https://github.com/Amebus/iterable-linq-utility/commit/b338c3dcbc45cbf0472d13b815642dc540e0682b) Thanks [@Amebus](https://github.com/Amebus)! - New `lastIndexOf(value)` Action: returns the index of the last value strictly equal to `value`, or `-1`, reading the whole source, like `Array.prototype.lastIndexOf` ([#57](https://github.com/Amebus/iterable-linq-utility/issues/57)).
+
 ## 0.5.0
 
 ### Minor Changes

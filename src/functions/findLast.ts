@@ -14,7 +14,7 @@ import { Validations } from '../utils';
  * const values: (number | string)[] = [1, 'two', 3, 'four'];
  * Functions.findLast(values, (v): v is string => typeof v === 'string'); // string | undefined, 'four'
  * ```
- * @since next
+ * @since 0.6.0
  */
 export function findLast<T, S extends T>(iterable: Iterable<T>, predicate: (value: T, index: number) => value is S): S | undefined;
 
@@ -30,7 +30,7 @@ export function findLast<T, S extends T>(iterable: Iterable<T>, predicate: (valu
  * ```ts
  * Functions.findLast([1, 5, 6, 2], v => v > 4); // 6
  * ```
- * @since next
+ * @since 0.6.0
  */
 export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined;
 export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined {

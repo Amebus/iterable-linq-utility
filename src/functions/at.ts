@@ -14,7 +14,7 @@ import { Validations } from '../utils';
  * Functions.at([10, 20, 30], 1); // 20
  * Functions.at([10, 20, 30], -1); // 30
  * ```
- * @since next
+ * @since 0.6.0
  */
 export function at<T>(iterable: Iterable<T>, index: number): T | undefined {
 	Validations.throwIfNotIterable(iterable, 'at');
