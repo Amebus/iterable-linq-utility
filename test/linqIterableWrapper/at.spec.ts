@@ -8,7 +8,7 @@ import * as IterableLinq from '@/index';
 describe('IterableLinq.at', () => {
 
 	test.each([1.5, NaN, Infinity, undefined, '1'])('IterableLinq.at(%s) -> throw exception', index => {
-		expect(() => IterableLinq.from([1]).at(index as never)).toThrow('The "index" parameter must be an integer');
+		expect(() => IterableLinq.from([1]).at(index as never)).toThrow(new Error('[iterable-linq-utility/at] The "index" parameter must be an integer'));
 	});
 
 	test.each([

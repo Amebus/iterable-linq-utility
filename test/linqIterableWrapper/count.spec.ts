@@ -7,7 +7,7 @@ import * as IterableLinq from '@/index';
 describe('IterableLinq.count', () => {
 
 	test.each([null, 0, {}])('IterableLinq.count rejects invalid predicate %s', predicate => {
-		expect(() => IterableLinq.from([1]).count(predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => IterableLinq.from([1]).count(predicate as never)).toThrow(new Error('[iterable-linq-utility/count] The "predicate" function must be provided'));
 	});
 
 	test.each([

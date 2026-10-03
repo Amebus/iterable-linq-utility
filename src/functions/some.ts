@@ -29,13 +29,13 @@ export function some<T>(iterable: Iterable<T>): boolean;
  */
 export function some<T>(iterable: Iterable<T>, predicate: Predicate<T> | undefined): boolean;
 export function some<T>(iterable: Iterable<T>, predicate?: Predicate<T>): boolean {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'some');
 	if (predicate === undefined) {
 		for (const _value of iterable)
 			return true;
 		return false;
 	}
-	Validations.throwIfNotFunction(predicate, 'predicate');
+	Validations.throwIfNotFunction(predicate, 'predicate', 'some');
 	let index = 0;
 	// for…of closes the source both when we return early and when the predicate throws
 	for (const value of iterable) {

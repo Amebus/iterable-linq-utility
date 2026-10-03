@@ -19,9 +19,9 @@ import { Validations } from '../utils';
  * @since 0.5.0
  */
 export function distinct<T, K>(iterable: Iterable<T>, keySelector?: Mapper<T, K>): Iterable<T> {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'distinct');
 	if (keySelector !== undefined)
-		Validations.throwIfNotFunction(keySelector, 'keySelector');
+		Validations.throwIfNotFunction(keySelector, 'keySelector', 'distinct');
 	return new DeferredIterable(() => new DistinctIterator(iterable, keySelector));
 }
 

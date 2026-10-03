@@ -19,8 +19,8 @@ import { getContinueIteratorResult, Validations } from '../utils';
  * @since 0.0.11
  */
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>>): Iterable<R> {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(mapper, 'mapper');
+	Validations.throwIfNotIterable(iterable, 'flatMap');
+	Validations.throwIfNotFunction(mapper, 'mapper', 'flatMap');
 	return new DeferredIterable(() => new FlatMapIterator(iterable, mapper));
 }
 

@@ -1,5 +1,5 @@
 import { Reducer } from '../types';
-import { Validations } from '../utils';
+import { libraryError, Validations } from '../utils';
 
 /**
  * Accumulates the values of `iterable` into a single result, starting from the first value.
@@ -31,12 +31,12 @@ export function reduce<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T;
  */
 export function reduce<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>): R;
 export function reduce<T, R>(iterable: Iterable<T>, ...args: [Reducer<T, T>] | [R, Reducer<T, R>]): T | R {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'reduce');
 	// the number of arguments, not their type, picks the form: undefined and functions are valid seeds
 	if (args.length === 1)
 		return reduceWithoutSeed(iterable, args[0]);
 	const [neutralElement, reducer] = args;
-	Validations.throwIfNotFunction(reducer, 'reducer');
+	Validations.throwIfNotFunction(reducer, 'reducer', 'reduce');
 
 	let result = neutralElement;
 	let index = 0;
@@ -47,7 +47,7 @@ export function reduce<T, R>(iterable: Iterable<T>, ...args: [Reducer<T, T>] | [
 }
 
 function reduceWithoutSeed<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T {
-	Validations.throwIfNotFunction(reducer, 'reducer');
+	Validations.throwIfNotFunction(reducer, 'reducer', 'reduce');
 
 	let result: T | undefined;
 	let index = 0;
@@ -57,6 +57,6 @@ function reduceWithoutSeed<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T 
 		index++;
 	}
 	if (index === 0)
-		throw new Error('The "sourceIterable" must not be empty when "reduce" has no seed');
+		throw libraryError('reduce', 'The "sourceIterable" must not be empty when "reduce" has no seed');
 	return result as T;
 }

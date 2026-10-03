@@ -15,7 +15,7 @@ import { Validations } from '../utils';
  * @since next
  */
 export function lastIndexOf<T>(iterable: Iterable<T>, value: T): number {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'lastIndexOf');
 	let result = -1;
 	let index = 0;
 	for (const v of iterable) {

@@ -7,7 +7,7 @@ import * as IterableLinq from '@/index';
 
 describe('IterableLinq.distinct', () => {
 	test.each([null, false, 0, 'key', {}])('rejects invalid keySelector %j', keySelector => {
-		expect(() => IterableLinq.from([1]).distinct(keySelector as never)).toThrow('The "keySelector" function must be provided');
+		expect(() => IterableLinq.from([1]).distinct(keySelector as never)).toThrow(new Error('[iterable-linq-utility/distinct] The "keySelector" function must be provided'));
 	});
 
 	test.each([

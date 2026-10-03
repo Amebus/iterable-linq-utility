@@ -31,7 +31,7 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
  * @since 0.0.10
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'memoize');
 
 	const opt = {
 		...getMemoizeDefaultOptions(),

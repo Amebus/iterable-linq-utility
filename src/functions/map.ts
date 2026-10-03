@@ -17,8 +17,8 @@ import { getContinueIteratorResult, Validations } from '../utils';
  * @since 0.0.10
  */
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable<R> {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(mapper, 'mapper');
+	Validations.throwIfNotIterable(iterable, 'map');
+	Validations.throwIfNotFunction(mapper, 'mapper', 'map');
 	return new DeferredIterable(() => new MapIterator(iterable, mapper));
 }
 

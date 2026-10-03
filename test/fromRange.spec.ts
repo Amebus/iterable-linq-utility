@@ -193,7 +193,8 @@ describe('IterableLinq.fromRange', () => {
 	});
 
 	test('options in third position without a numeric start throw', () => {
-		expect(() => (IterableLinq.fromRange as (...a: unknown[]) => unknown)(10, undefined, { step: 2 })).toThrow(Error);
+		expect(() => (IterableLinq.fromRange as (...a: unknown[]) => unknown)(10, undefined, { step: 2 }))
+			.toThrow(new Error('[iterable-linq-utility/fromRange] The "options" parameter must be the second argument when "start" is omitted'));
 	});
 
 });

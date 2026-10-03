@@ -18,8 +18,8 @@ import { Validations } from '../utils';
  * @since 0.0.11
  */
 export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(action, 'action');
+	Validations.throwIfNotIterable(iterable, 'forEach');
+	Validations.throwIfNotFunction(action, 'action', 'forEach');
 
 	let index = 0;
 	// for…of closes the source if the action throws
@@ -47,8 +47,8 @@ export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
  * @since 0.0.11
  */
 export async function forEachAsync<T>(iterable: Iterable<T>, action: AsyncAction<T>): Promise<Unit> {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(action, 'action');
+	Validations.throwIfNotIterable(iterable, 'forEachAsync');
+	Validations.throwIfNotFunction(action, 'action', 'forEachAsync');
 
 	let index = 0;
 	// sequential: each action starts after the previous one has settled; for…of closes the source on the first rejection

@@ -30,7 +30,7 @@ export function count<T>(iterable: Iterable<T>): number;
  */
 export function count<T>(iterable: Iterable<T>, predicate: Predicate<T> | undefined): number;
 export function count<T>(iterable: Iterable<T>, predicate?: Predicate<T>): number {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'count');
 	let result = 0;
 	if (predicate === undefined) {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -38,7 +38,7 @@ export function count<T>(iterable: Iterable<T>, predicate?: Predicate<T>): numbe
 			result++;
 		return result;
 	}
-	Validations.throwIfNotFunction(predicate, 'predicate');
+	Validations.throwIfNotFunction(predicate, 'predicate', 'count');
 	let index = 0;
 	// for…of closes the source when the predicate throws
 	for (const value of iterable) {

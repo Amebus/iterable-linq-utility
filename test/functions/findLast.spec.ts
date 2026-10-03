@@ -19,7 +19,7 @@ describe('findLast', () => {
 
 	test.each([undefined, null, false, 0, 'predicate', {}])('findLast(iterable, %j) -> throw exception without reading the source', predicate => {
 		const source = spyIterable([1, 2]);
-		expect(() => findLast(source, predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => findLast(source, predicate as never)).toThrow(new Error('[iterable-linq-utility/findLast] The "predicate" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

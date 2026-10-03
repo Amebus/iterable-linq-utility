@@ -21,7 +21,7 @@ describe('takeWhile', () => {
 
 	test.each([undefined, null, false, 0, 'predicate', {}])('takeWhile(iterable, %j) -> throw exception without reading the source', predicate => {
 		const source = spyIterable([1, 2]);
-		expect(() => takeWhile(source, predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => takeWhile(source, predicate as never)).toThrow(new Error('[iterable-linq-utility/takeWhile] The "predicate" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

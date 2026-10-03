@@ -32,8 +32,8 @@ export function find<T, S extends T>(iterable: Iterable<T>, predicate: (value: T
  */
 export function find<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined;
 export function find<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(predicate, 'predicate');
+	Validations.throwIfNotIterable(iterable, 'find');
+	Validations.throwIfNotFunction(predicate, 'predicate', 'find');
 	let index = 0;
 	// for…of closes the source both when we return early and when the predicate throws
 	for (const value of iterable) {

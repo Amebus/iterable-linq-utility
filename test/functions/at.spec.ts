@@ -20,7 +20,7 @@ describe('at', () => {
 
 	test.each([1.5, -0.5, NaN, Infinity, -Infinity, undefined, null, '1', BigInt(1)])('at(iterable, %s) -> throw exception without reading the source', index => {
 		const source = spyIterable([1, 2]);
-		expect(() => at(source, index as never)).toThrow('The "index" parameter must be an integer');
+		expect(() => at(source, index as never)).toThrow(new Error('[iterable-linq-utility/at] The "index" parameter must be an integer'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

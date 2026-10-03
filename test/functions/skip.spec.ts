@@ -16,7 +16,7 @@ describe('skip', () => {
 	});
 
 	test.each([-1, 2.5, NaN, Infinity, -Infinity, undefined, null, '2', {}, true])('rejects count %s', count => {
-		expect(() => skip([1, 2], count as any)).toThrow('The "count" parameter must be a non-negative integer');
+		expect(() => skip([1, 2], count as any)).toThrow(new Error('[iterable-linq-utility/skip] The "count" parameter must be a non-negative integer'));
 	});
 
 	test.each([

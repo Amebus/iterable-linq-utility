@@ -21,7 +21,7 @@ describe('skipWhile', () => {
 
 	test.each([undefined, null, false, 0, 'predicate', {}])('skipWhile(iterable, %j) -> throw exception without reading the source', predicate => {
 		const source = spyIterable([1, 2]);
-		expect(() => skipWhile(source, predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => skipWhile(source, predicate as never)).toThrow(new Error('[iterable-linq-utility/skipWhile] The "predicate" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

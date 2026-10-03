@@ -197,7 +197,7 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 	}
 
 	tapChainCreation(chainCreationTapper: (chain: IIterableLinq<T>) => Unit): IIterableLinq<T> {
-		Validations.throwIfNotFunction(chainCreationTapper, 'chainCreationTapper');
+		Validations.throwIfNotFunction(chainCreationTapper, 'chainCreationTapper', 'tapChainCreation');
 		const chain = this as unknown as IIterableLinq<T>;
 		chainCreationTapper(chain);
 		return chain;

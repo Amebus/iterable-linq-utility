@@ -13,7 +13,7 @@ import { Validations } from '../utils';
  * @since 0.0.10
  */
 export function collectToArray<T>(iterable: Iterable<T>): T[] {
-	Validations.throwIfNotIterable(iterable);
+	Validations.throwIfNotIterable(iterable, 'collectToArray');
 	// Array.from is fast only for built-in collections: on other iterators a for…of loop is about twice as fast
 	if (Array.isArray(iterable) || iterable instanceof Set)
 		return Array.from(iterable);

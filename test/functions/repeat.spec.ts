@@ -40,7 +40,7 @@ describe('repeat', () => {
 	});
 
 	test.each([2.5, NaN, Infinity, -1])('repeat(x, %s) throws', count => {
-		expect(() => repeat('x', count)).toThrow(Error);
+		expect(() => repeat('x', count)).toThrow(new Error('[iterable-linq-utility/repeat] The "count" parameter must be a non-negative integer'));
 	});
 
 	test('iterator stays done', () => {

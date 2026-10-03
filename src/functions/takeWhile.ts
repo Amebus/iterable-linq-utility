@@ -37,8 +37,8 @@ export function takeWhile<T, S extends T>(iterable: Iterable<T>, predicate: (val
  */
 export function takeWhile<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T>;
 export function takeWhile<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(predicate, 'predicate');
+	Validations.throwIfNotIterable(iterable, 'takeWhile');
+	Validations.throwIfNotFunction(predicate, 'predicate', 'takeWhile');
 	return new DeferredIterable(() => new TakeWhileIterator(iterable, predicate));
 }
 

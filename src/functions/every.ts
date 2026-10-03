@@ -15,8 +15,8 @@ import { Validations } from '../utils';
  * @since 0.5.0
  */
 export function every<T>(iterable: Iterable<T>, predicate: Predicate<T>): boolean {
-	Validations.throwIfNotIterable(iterable);
-	Validations.throwIfNotFunction(predicate, 'predicate');
+	Validations.throwIfNotIterable(iterable, 'every');
+	Validations.throwIfNotFunction(predicate, 'predicate', 'every');
 	let index = 0;
 	// for…of closes the source both when we return early and when the predicate throws
 	for (const value of iterable) {

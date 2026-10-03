@@ -1,7 +1,7 @@
 import { iterableLinqBrand } from './iterableLinqBrand';
 import { IterableLinqWrapper, toChain } from './linqIterable';
 import type { ChainMethod, IIterableLinq } from './types';
-import { Validations } from './utils';
+import { libraryError, Validations } from './utils';
 
 /**
  * The prototype shared by every chain.
@@ -40,9 +40,9 @@ function defineChainMethod(name: string, implementation: ChainMethod): void {
 	});
 }
 
-function validateMethod(name: unknown, implementation: unknown): void {
-	Validations.throwIfNotNonEmptyString(name, 'name');
-	Validations.throwIfNotFunction(implementation, 'implementation');
+function validateMethod(operation: string, name: unknown, implementation: unknown): void {
+	Validations.throwIfNotNonEmptyString(name, 'name', operation);
+	Validations.throwIfNotFunction(implementation, 'implementation', operation);
 }
 
 /**
@@ -65,10 +65,10 @@ function validateMethod(name: unknown, implementation: unknown): void {
  * @since 0.1.0
  */
 export function extend<K extends Extract<keyof IIterableLinq<unknown>, string>>(name: K, implementation: ChainMethod): void {
-	validateMethod(name, implementation);
+	validateMethod('extend', name, implementation);
 	// check an instance, not only the prototype: instance fields would shadow the new method
 	if (name in toChain([]))
-		throw new Error(`"${name}" already exists on IIterableLinq: use override() to replace it`);
+		throw libraryError('extend', `"${name}" already exists on IIterableLinq: use override() to replace it`);
 	defineChainMethod(name, implementation);
 }
 
@@ -90,10 +90,10 @@ export function extend<K extends Extract<keyof IIterableLinq<unknown>, string>>(
  * @since 0.1.0
  */
 export function override<K extends Extract<keyof IIterableLinq<unknown>, string>>(name: K, implementation: ChainMethod): void {
-	validateMethod(name, implementation);
+	validateMethod('override', name, implementation);
 	const key: string = name;
 	const isChainMethod = key !== 'constructor' && Object.prototype.hasOwnProperty.call(wrapperPrototype(), key);
 	if (!isChainMethod)
-		throw new Error(`"${key}" is not a method of IIterableLinq: use extend() to add it`);
+		throw libraryError('override', `"${key}" is not a method of IIterableLinq: use extend() to add it`);
 	defineChainMethod(key, implementation);
 }

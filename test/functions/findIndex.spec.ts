@@ -19,7 +19,7 @@ describe('findIndex', () => {
 
 	test.each([undefined, null, false, 0, 'predicate', {}])('findIndex(iterable, %j) -> throw exception without reading the source', predicate => {
 		const source = spyIterable([1, 2]);
-		expect(() => findIndex(source, predicate as never)).toThrow('The "predicate" function must be provided');
+		expect(() => findIndex(source, predicate as never)).toThrow(new Error('[iterable-linq-utility/findIndex] The "predicate" function must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

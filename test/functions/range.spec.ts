@@ -225,14 +225,15 @@ describe('range', () => {
 	});
 
 	test.each([0, NaN, Infinity, -Infinity])('range(0, 10, { step: %s }) throws', step => {
-		expect(() => range(0, 10, { step })).toThrow(Error);
+		expect(() => range(0, 10, { step })).toThrow(new Error('[iterable-linq-utility/range] The "step" parameter must be a finite number other than 0'));
 	});
 
 	test('the old positional signatures throw', () => {
 		const legacyRange = range as (...args: unknown[]) => Iterable<number>;
-		expect(() => legacyRange(10, true)).toThrow(Error);
-		expect(() => legacyRange(0, 10, 2)).toThrow(Error);
-		expect(() => legacyRange(0, 10, true)).toThrow(Error);
+		const notAnObject = new Error('[iterable-linq-utility/range] The "options" parameter must be an object');
+		expect(() => legacyRange(10, true)).toThrow(notAnObject);
+		expect(() => legacyRange(0, 10, 2)).toThrow(notAnObject);
+		expect(() => legacyRange(0, 10, true)).toThrow(notAnObject);
 	});
 
 	test('range(end, options)', () => {
@@ -241,7 +242,8 @@ describe('range', () => {
 	});
 
 	test('options in third position without a numeric start throw', () => {
-		expect(() => (range as (...a: unknown[]) => unknown)(10, undefined, { step: 2 })).toThrow(Error);
+		expect(() => (range as (...a: unknown[]) => unknown)(10, undefined, { step: 2 }))
+			.toThrow(new Error('[iterable-linq-utility/range] The "options" parameter must be the second argument when "start" is omitted'));
 	});
 
 });
