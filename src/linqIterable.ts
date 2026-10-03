@@ -17,6 +17,7 @@ import {
 	at,
 	average,
 	collectToArray,
+	concat,
 	count,
 	distinct,
 	every,
@@ -88,6 +89,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	collectToArray(): T[] {
 		return collectToArray(this.iterable);
+	}
+
+	concat(...others: Iterable<T>[]): IIterableLinq<T> {
+		return toChain(concat(this.iterable, ...others));
 	}
 
 	count(predicate?: Predicate<T>): number {
