@@ -14,6 +14,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
 
     | Transformation                               | Brief Description                                                                | Execution                                   | Availability                                        |
     | -------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
+    | [append](#append)                            | Yields the values, then one more value                                           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [distinct](#distinct)                        | Keeps the first value for each distinct value or selected key                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [filter](#filter)                            | Keeps only the values that satisfy a predicate                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -29,6 +30,30 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
+
+## append
+
+Yields the values of the chain, then *value*. *value* is yielded only when the source ends, so it is never reached on an infinite chain.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .append(4)
+        .collectToArray();
+    // [1, 2, 3, 4]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.append([1, 2, 3], 4));
+    // [1, 2, 3, 4]
+    ```
 
 ## distinct
 

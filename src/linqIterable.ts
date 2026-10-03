@@ -13,6 +13,7 @@ import type {
 } from './types';
 
 import {
+	append,
 	at,
 	average,
 	collectToArray,
@@ -70,6 +71,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	[Symbol.iterator](): Iterator<T, any, undefined> {
 		return this.iterable[Symbol.iterator]();
+	}
+
+	append(value: T): IIterableLinq<T> {
+		return toChain(append(this.iterable, value));
 	}
 
 	at(index: number): T | undefined {
