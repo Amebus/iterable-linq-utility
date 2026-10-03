@@ -27,6 +27,20 @@ export interface IIterableLinqBase<T> {
 	[Symbol.iterator](): Iterator<T, any, undefined>;
 
 	/**
+	 * Yields the values of the chain, then `value`.
+	 * `value` is yielded only when the source ends, so it is never reached on an infinite chain.
+	 * @operation `Transformation`
+	 * @param value - the value yielded after the last value of the chain
+	 * @returns a new chain with the values of this chain followed by `value`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).append(4).collectToArray(); // [1, 2, 3, 4]
+	 * ```
+	 * @since next
+	 */
+	append(value: T): IIterableLinq<T>;
+
+	/**
 	 * Returns the value at `index`, like `Array.prototype.at`; a negative index counts from the end.
 	 * A non-negative index runs the chain up to the value, then closes the source; a negative index runs the whole chain,
 	 * keeping only the last `-index` values.

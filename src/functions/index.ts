@@ -1,3 +1,4 @@
+export { append } from './append';
 export { at } from './at';
 export { average } from './average';
 export { collectToArray } from './collectToArray';
