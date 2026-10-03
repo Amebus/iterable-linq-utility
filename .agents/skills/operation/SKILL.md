@@ -32,8 +32,8 @@ Do every step, in this order. For a change to an existing operation, do the step
 ## Check
 
 ```bash
-pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm test
+pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm test:coverage
 pnpm bench functions/<name>
 ```
 
-`check:structure` fails when a spec, the bench, the export, the chain method or a JSDoc tag is missing, or when an operation is out of alphabetical order in the exports, the chain or the API reference. `lint` fails when the imports of a spec or a bench are out of order; `pnpm lint-fix` sorts them. Nothing checks the content of the documentation site or the changeset: check those yourself.
+`check:structure` fails when a spec, the bench, the export, the chain method or a JSDoc tag is missing, or when an operation is out of alphabetical order in the exports, the chain or the API reference. `lint` fails when the imports of a spec or a bench are out of order; `pnpm lint-fix` sorts them. `test:coverage` fails when a line or a branch of `src/` is not tested ([ADR 0019](../../../docs/decisions/0019-full-test-coverage-of-the-library.md)): add the missing test, or `/* istanbul ignore next -- <reason> */` on code that no test can reach. Nothing checks the content of the documentation site or the changeset: check those yourself.
