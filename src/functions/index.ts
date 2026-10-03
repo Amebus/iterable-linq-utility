@@ -1,6 +1,7 @@
 export { collectToArray } from './collectToArray';
 export { distinct } from './distinct';
 export { empty } from './empty';
+export { every } from './every';
 export { filter } from './filter';
 export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
