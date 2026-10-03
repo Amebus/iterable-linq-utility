@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.findIndex([1, 5, 6], v => v > 4); // 1
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function findIndex<T>(iterable: Iterable<T>, predicate: Predicate<T>): number {
 	Validations.throwIfNotIterable(iterable);

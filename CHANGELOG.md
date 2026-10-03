@@ -1,5 +1,25 @@
 # iterable-linq-utility
 
+## 0.5.0
+
+### Minor Changes
+
+- [#136](https://github.com/Amebus/iterable-linq-utility/pull/136) [`2bd0ec0`](https://github.com/Amebus/iterable-linq-utility/commit/2bd0ec0ad8fbdd61e9286bec448f7a729e8cd836) Thanks [@Amebus](https://github.com/Amebus)! - New `count(predicate?)` Action: counts the values, or the values that satisfy `predicate`, reading the whole source ([#49](https://github.com/Amebus/iterable-linq-utility/issues/49)).
+
+- [#129](https://github.com/Amebus/iterable-linq-utility/pull/129) [`6d2c91a`](https://github.com/Amebus/iterable-linq-utility/commit/6d2c91a43777947d1cac1e079dd0dc9742b13a96) Thanks [@Amebus](https://github.com/Amebus)! - New `distinct(keySelector?)` Transformation: lazily keeps the first value for each distinct value or selected key in source order, using `SameValueZero` like `Set` ([#32](https://github.com/Amebus/iterable-linq-utility/issues/32)).
+
+- [#133](https://github.com/Amebus/iterable-linq-utility/pull/133) [`78756f4`](https://github.com/Amebus/iterable-linq-utility/commit/78756f4110b8fa9cdabb3202c588262aba555b7b) Thanks [@Amebus](https://github.com/Amebus)! - New `every(predicate)` Action: tells whether every value satisfies `predicate`, stopping and closing the source at the first rejected value, like `Array.prototype.every` ([#47](https://github.com/Amebus/iterable-linq-utility/issues/47)).
+
+- [#135](https://github.com/Amebus/iterable-linq-utility/pull/135) [`ef7c025`](https://github.com/Amebus/iterable-linq-utility/commit/ef7c025ecfb3259ebe6db6154427a70ff1f6c21f) Thanks [@Amebus](https://github.com/Amebus)! - New `findIndex(predicate)` Action: returns the index of the first value that satisfies `predicate`, or `-1`, stopping and closing the source at the first match, like `Array.prototype.findIndex` ([#53](https://github.com/Amebus/iterable-linq-utility/issues/53)).
+
+- [#134](https://github.com/Amebus/iterable-linq-utility/pull/134) [`4556777`](https://github.com/Amebus/iterable-linq-utility/commit/4556777f7b94ad0d25011dd873f56a77bd606a8d) Thanks [@Amebus](https://github.com/Amebus)! - New `find(predicate)` Action: returns the first value that satisfies `predicate`, or `undefined`, stopping and closing the source at the first match; a type guard narrows the result, like `Array.prototype.find` ([#52](https://github.com/Amebus/iterable-linq-utility/issues/52)).
+
+- [#137](https://github.com/Amebus/iterable-linq-utility/pull/137) [`7dfdac6`](https://github.com/Amebus/iterable-linq-utility/commit/7dfdac6921715e8092bb2e3675867b4eb636f022) Thanks [@Amebus](https://github.com/Amebus)! - New `includes(value)` Action: tells whether the chain contains `value`, compared with `SameValueZero` and stopping and closing the source at the first match, like `Array.prototype.includes` ([#48](https://github.com/Amebus/iterable-linq-utility/issues/48)).
+
+- [#131](https://github.com/Amebus/iterable-linq-utility/pull/131) [`df630a5`](https://github.com/Amebus/iterable-linq-utility/commit/df630a53011242174e09f5ef5c239e225aa0c860) Thanks [@Amebus](https://github.com/Amebus)! - New `skipWhile(predicate)` Transformation: lazily skips values while `predicate` returns `true` and yields the rest, without calling `predicate` again after the first rejected value ([#29](https://github.com/Amebus/iterable-linq-utility/issues/29)).
+
+- [#130](https://github.com/Amebus/iterable-linq-utility/pull/130) [`603cf14`](https://github.com/Amebus/iterable-linq-utility/commit/603cf14fb3a8cbb9f587d66d4210910ba43fc30e) Thanks [@Amebus](https://github.com/Amebus)! - New `takeWhile(predicate)` Transformation: lazily yields values while `predicate` returns `true`, then closes the source without reading further; a type guard narrows the element type ([#28](https://github.com/Amebus/iterable-linq-utility/issues/28)).
+
 ## 0.4.0
 
 ### Minor Changes

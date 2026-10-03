@@ -16,7 +16,7 @@ import { getDoneIteratorResult, Validations } from '../utils';
  * const values: (number | string)[] = [1, 2, 'three', 4];
  * Array.from(Functions.takeWhile(values, (v): v is number => typeof v === 'number')); // number[], [1, 2]
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function takeWhile<T, S extends T>(iterable: Iterable<T>, predicate: (value: T, index: number) => value is S): Iterable<S>;
 
@@ -33,7 +33,7 @@ export function takeWhile<T, S extends T>(iterable: Iterable<T>, predicate: (val
  * ```ts
  * Array.from(Functions.takeWhile([1, 2, 5, 3], v => v < 4)); // [1, 2]
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function takeWhile<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T>;
 export function takeWhile<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {

@@ -16,7 +16,7 @@ import { Validations } from '../utils';
  * Array.from(Functions.distinct([3, 1, 3, 2, 1])); // [3, 1, 2]
  * Array.from(Functions.distinct([{ id: 1 }, { id: 1 }, { id: 2 }], v => v.id)); // [{ id: 1 }, { id: 2 }]
  * ```
- * @since next
+ * @since 0.5.0
  */
 export function distinct<T, K>(iterable: Iterable<T>, keySelector?: Mapper<T, K>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable);

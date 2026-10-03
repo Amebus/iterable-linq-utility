@@ -46,7 +46,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).count(); // 3
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	count(): number;
 
@@ -61,7 +61,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 5, 2, 6]).count(v => v > 4); // 2
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	count(predicate: Predicate<T> | undefined): number;
 
@@ -78,7 +78,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([3, 1, 3, 2, 1]).distinct().collectToArray(); // [3, 1, 2]
 	 * IterableLinq.from([{ id: 1 }, { id: 1 }, { id: 2 }]).distinct(v => v.id).collectToArray(); // [{ id: 1 }, { id: 2 }]
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T>;
 
@@ -92,7 +92,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).every(v => v > 0); // true
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	every(predicate: Predicate<T>): boolean;
 
@@ -138,7 +138,7 @@ export interface IIterableLinqBase<T> {
 	 * const values: (number | string)[] = [1, 'two', 3];
 	 * IterableLinq.from(values).find((v): v is string => typeof v === 'string'); // string | undefined, 'two'
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	find<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;
 
@@ -152,7 +152,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 5, 6]).find(v => v > 4); // 5
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	find(predicate: Predicate<T>): T | undefined;
 
@@ -166,7 +166,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 5, 6]).findIndex(v => v > 4); // 1
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	findIndex(predicate: Predicate<T>): number;
 
@@ -234,7 +234,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, NaN]).includes(NaN); // true
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	includes(value: T): boolean;
 
@@ -372,7 +372,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 5, 3]).skipWhile(v => v < 4).collectToArray(); // [5, 3]
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	skipWhile(predicate: Predicate<T>): IIterableLinq<T>;
 
@@ -430,7 +430,7 @@ export interface IIterableLinqBase<T> {
 	 * const values: (number | string)[] = [1, 2, 'three', 4];
 	 * IterableLinq.from(values).takeWhile((v): v is number => typeof v === 'number').collectToArray(); // number[], [1, 2]
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	takeWhile<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
 
@@ -446,7 +446,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 5, 3]).takeWhile(v => v < 4).collectToArray(); // [1, 2]
 	 * ```
-	 * @since next
+	 * @since 0.5.0
 	 */
 	takeWhile(predicate: Predicate<T>): IIterableLinq<T>;
 
