@@ -5,17 +5,23 @@ import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
 const { from, Functions } = IterableLinq;
-const { cases, numbers, sum } = Helpers;
+const { cases, numbers, scenarios, sum } = Helpers;
 
 const partial = { allowPartialMemoization: true };
 const full = { allowPartialMemoization: false };
 
-test('memoize: first run', async ({ bench }) => {
-	await cases(bench, 'memoize/first')
-		.add('without memoize', () => sum(from(numbers)))
-		.add('chain, partial', () => sum(from(numbers).memoize(partial)))
-		.add('chain, full', () => sum(from(numbers).memoize(full)))
-		.add('Functions, partial', () => sum(Functions.memoize(numbers, partial)))
+// An array needs no memoize: the native case reads it.
+scenarios('memoize', {
+	native: values => sum(values),
+	chain: chain => sum(chain.memoize()),
+	Functions: values => sum(Functions.memoize(values))
+});
+
+test('memoize: full memoization', async ({ bench }) => {
+	await cases(bench, 'memoize/full')
+		.add('native', () => sum(numbers))
+		.add('chain', () => sum(from(numbers).memoize(full)))
+		.add('Functions', () => sum(Functions.memoize(numbers, full)))
 		.run();
 });
 
@@ -26,7 +32,7 @@ test('memoize: cached run', async ({ bench }) => {
 	sum(cachedPartial);
 	sum(cachedFull);
 	await cases(bench, 'memoize/cached')
-		.add('from(array)', () => sum(from(numbers)))
+		.add('native', () => sum(numbers))
 		.add('materialized', () => sum(materialized))
 		.add('chain, partial', () => sum(cachedPartial))
 		.add('chain, full', () => sum(cachedFull))
@@ -35,7 +41,7 @@ test('memoize: cached run', async ({ bench }) => {
 
 test('memoize: partial read', async ({ bench }) => {
 	await cases(bench, 'memoize/partialRead')
-		.add('without memoize', () => from(numbers).some(v => v === 100))
+		.add('native', () => numbers.some(v => v === 100))
 		.add('chain, partial', () => from(numbers).memoize(partial).some(v => v === 100))
 		.add('chain, full', () => from(numbers).memoize(full).some(v => v === 100))
 		.run();

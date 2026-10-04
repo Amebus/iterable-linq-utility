@@ -1,5 +1,5 @@
-// Checks that every operation in src/functions has its specs, its bench, its export, its chain method and a complete JSDoc,
-// and that the operations are listed in alphabetical order.
+// Checks that every operation in src/functions has its specs, its bench with the standard groups, its export, its chain method
+// and a complete JSDoc, and that the operations are listed in alphabetical order.
 import ts from 'typescript';
 
 import type { ISourceFile } from './since.ts';
@@ -15,6 +15,15 @@ const CHAIN_STARTERS: Record<string, string> = { empty: 'empty', range: 'fromRan
 
 /** Exported functions of src/functions that are not operations: their JSDoc needs no `@operation` and no `@example`. */
 const HELPERS = new Set(['getMemoizeDefaultOptions']);
+
+/** The groups every bench of an operation has (ADR 0021): `<name>/direct` and `<name>/small`. */
+const REQUIRED_GROUPS = ['direct', 'small'];
+
+/** The groups `scenarios()` of test/bench/helpers.ts registers when it is not given a list. */
+const SCENARIOS = ['direct', 'small', 'map', 'filter'];
+
+/** Operations without a size, whose bench has no `small` group. */
+const WITHOUT_SIZE = new Set(['empty']);
 
 const OPERATION_TAGS = ['operation', 'returns', 'example', 'since'];
 const HELPER_TAGS = ['returns', 'since'];
@@ -93,6 +102,32 @@ function markdownItems(content: string, pattern: RegExp): INamedItem[] {
 	});
 }
 
+/**
+ * The groups of the bench of `name`: the `'<name>/<group>'` strings, and the groups registered by `scenarios('<name>', …)`,
+ * all of them or the ones listed in its third argument.
+ */
+function benchGroups(source: ts.SourceFile, name: string): Set<string> {
+	const groups = new Set<string>();
+	const visit = (node: ts.Node): void => {
+		if (ts.isStringLiteralLike(node)) {
+			const [operation, group] = node.text.split('/');
+			if (operation === name && group)
+				groups.add(group);
+		} else if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'scenarios') {
+			const [first, , only] = node.arguments;
+			if (first && ts.isStringLiteralLike(first) && first.text === name) {
+				const listed = only && ts.isArrayLiteralExpression(only)
+					? only.elements.filter(ts.isStringLiteralLike).map(element => element.text)
+					: SCENARIOS;
+				listed.forEach(group => groups.add(group));
+			}
+		}
+		ts.forEachChild(node, visit);
+	};
+	visit(source);
+	return groups;
+}
+
 function compareNames(a: string, b: string): number {
 	const [x, y] = [a.toLowerCase(), b.toLowerCase()];
 	return x < y ? -1 : x > y ? 1 : 0;
@@ -169,7 +204,7 @@ function checkJsDoc(node: ts.SignatureDeclaration, label: string, tags: string[]
 }
 
 /**
- * Every operation of `src/functions` without its spec, wrapper spec, bench, export or chain method,
+ * Every operation of `src/functions` without its spec, wrapper spec, bench, standard bench groups, export or chain method,
  * every exported function or chain method without a complete JSDoc,
  * and every operation out of alphabetical order in the exports, the chain and the API reference.
  */
@@ -196,6 +231,15 @@ export function findStructureProblems(files: ISourceFile[]): IStructureProblem[]
 			? [`test/functions/${name}.spec.ts`, `test/linqIterableWrapper/${name}.spec.ts`, `test/bench/functions/${name}.bench.ts`]
 			: [`test/functions/${name}.spec.ts`, `test/${publicName}.spec.ts`, `test/bench/functions/${publicName}.bench.ts`];
 		required.filter(file => !paths.has(file)).forEach(file => report(`"${name}" has no ${file}`));
+
+		const benchPath = required[2];
+		const bench = sources.get(benchPath);
+		if (bench) {
+			const benchName = publicName ?? name;
+			const groups = benchGroups(bench, benchName);
+			REQUIRED_GROUPS.filter(group => !groups.has(group) && !(group === 'small' && WITHOUT_SIZE.has(name)))
+				.forEach(group => report(`${benchPath} has no "${benchName}/${group}" group (ADR 0021)`));
+		}
 
 		if (!exported.has(name))
 			report(`"${name}" is not exported from ${INDEX}`);

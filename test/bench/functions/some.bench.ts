@@ -1,42 +1,26 @@
-import { test } from 'vitest';
 import * as Helpers from '../helpers';
 
 import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
-const { from, Functions } = IterableLinq;
-const { cases, numbers } = Helpers;
+const { Functions } = IterableLinq;
+const { first, group, middle, missing, scenarios } = Helpers;
 
-const middle = numbers.length / 2;
+function some(value: number): Helpers.IVariants {
+	return {
+		native: values => values.some(v => v === value),
+		chain: chain => chain.some(v => v === value),
+		Functions: values => Functions.some(values, v => v === value)
+	};
+}
 
-test('some: match at the start', async ({ bench }) => {
-	await cases(bench, 'some/start')
-		.add('native', () => numbers.some(v => v === 0))
-		.add('chain', () => from(numbers).some(v => v === 0))
-		.add('Functions', () => Functions.some(numbers, v => v === 0))
-		.run();
-});
+// Without a predicate, some reads one value: `direct` uses the predicate, which matches no value.
+scenarios('some', some(missing));
+group('some', 'start', some(first));
+group('some', 'middle', some(middle));
 
-test('some: without predicate', async ({ bench }) => {
-	await cases(bench, 'some/without-predicate')
-		.add('native', () => !numbers.values().next().done)
-		.add('chain', () => from(numbers).some())
-		.add('Functions', () => Functions.some(numbers))
-		.run();
-});
-
-test('some: match in the middle', async ({ bench }) => {
-	await cases(bench, 'some/middle')
-		.add('native', () => numbers.some(v => v === middle))
-		.add('chain', () => from(numbers).some(v => v === middle))
-		.add('Functions', () => Functions.some(numbers, v => v === middle))
-		.run();
-});
-
-test('some: no match', async ({ bench }) => {
-	await cases(bench, 'some/none')
-		.add('native', () => numbers.some(v => v < 0))
-		.add('chain', () => from(numbers).some(v => v < 0))
-		.add('Functions', () => Functions.some(numbers, v => v < 0))
-		.run();
+group('some', 'without-predicate', {
+	native: values => values.length > 0,
+	chain: chain => chain.some(),
+	Functions: values => Functions.some(values)
 });

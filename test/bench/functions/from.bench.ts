@@ -5,7 +5,7 @@ import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
 const { from } = IterableLinq;
-const { cases, numbers, sum } = Helpers;
+const { cases, numbers, small, sum } = Helpers;
 
 const n = numbers.length;
 const set = new Set(numbers);
@@ -25,37 +25,46 @@ function length(iterable: Iterable<string>): number {
 	return l;
 }
 
-test('from: array', async ({ bench }) => {
-	await cases(bench, 'from/array')
-		.add('native for…of', () => sum(numbers))
+// `from` creates a source: no map and filter groups. The native case reads the source with for…of.
+test('from: direct', async ({ bench }) => {
+	await cases(bench, 'from/direct')
+		.add('native', () => sum(numbers))
 		.add('chain', () => sum(from(numbers)))
+		.run();
+});
+
+test('from: small', async ({ bench }) => {
+	await cases(bench, 'from/small')
+		.add('native', () => sum(small))
+		.add('chain', () => sum(from(small)))
 		.run();
 });
 
 test('from: Set', async ({ bench }) => {
 	await cases(bench, 'from/set')
-		.add('native for…of', () => sum(set))
+		.add('native', () => sum(set))
 		.add('chain', () => sum(from(set)))
 		.run();
 });
 
 test('from: string', async ({ bench }) => {
 	await cases(bench, 'from/string')
-		.add('native for…of', () => length(text))
+		.add('native', () => length(text))
 		.add('chain', () => length(from(text)))
 		.run();
 });
 
 test('from: generator', async ({ bench }) => {
 	await cases(bench, 'from/generator')
-		.add('native for…of', () => sum(generate(n)))
+		.add('native', () => sum(generate(n)))
 		.add('chain', () => sum(from(generate(n))))
 		.run();
 });
 
 test('from: another chain', async ({ bench }) => {
 	await cases(bench, 'from/chain')
+		.add('native', () => sum(numbers))
 		.add('from(array)', () => sum(from(numbers)))
-		.add('from(from(array))', () => sum(from(from(numbers))))
+		.add('chain', () => sum(from(from(numbers))))
 		.run();
 });

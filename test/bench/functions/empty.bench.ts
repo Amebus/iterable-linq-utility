@@ -7,9 +7,10 @@ import * as IterableLinq from 'iterable-linq-utility';
 const { empty, from, Functions } = IterableLinq;
 const { cases, sum } = Helpers;
 
-test('empty: create and iterate', async ({ bench }) => {
-	await cases(bench, 'empty/iterate')
-		.add('native []', () => sum([]))
+// No size: `empty` has no `small` group.
+test('empty: direct', async ({ bench }) => {
+	await cases(bench, 'empty/direct')
+		.add('native', () => sum([]))
 		.add('from([])', () => sum(from<number>([])))
 		.add('chain', () => sum(empty<number>()))
 		.add('Functions', () => sum(Functions.empty<number>()))

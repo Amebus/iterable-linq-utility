@@ -1,56 +1,52 @@
-import { test } from 'vitest';
 import * as Helpers from '../helpers';
 
 import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
-const { from, Functions, unit } = IterableLinq;
-const { cases, numbers, small } = Helpers;
+const { Functions, unit } = IterableLinq;
+const { scenarios } = Helpers;
 
 const u = unit();
+// the actions write the values somewhere, so the engine cannot drop them
+const sink = { total: 0 };
 
-test('forEach', async ({ bench }) => {
-	let s = 0;
-	await cases(bench, 'forEach/sum')
-		.add('native for…of', () => {
-			for (const v of numbers) {
-				s += v;
-			}
-		})
-		.add('native Array.forEach', () => numbers.forEach(v => {
-			s += v;
-		}))
-		.add('chain', () => from(numbers).forEach(v => {
-			s += v;
-			return u;
-		}))
-		.add('Functions', () => Functions.forEach(numbers, v => {
-			s += v;
-			return u;
-		}))
-		.run();
-	return s;
+function add(v: number): void {
+	sink.total += v;
+}
+
+scenarios('forEach', {
+	native: values => values.forEach(add),
+	loop: values => {
+		for (const v of values) {
+			add(v);
+		}
+	},
+	chain: chain => chain.forEach(v => {
+		add(v);
+		return u;
+	}),
+	Functions: values => Functions.forEach(values, v => {
+		add(v);
+		return u;
+	})
 });
 
-test('forEachAsync', async ({ bench }) => {
-	let s = 0;
-	await cases(bench, 'forEachAsync/sum')
-		.add('native for…of + await', async () => {
-			for (const v of small) {
-				await Promise.resolve();
-				s += v;
-			}
-		})
-		.add('chain', () => from(small).forEachAsync(async v => {
+// No array method awaits: the native case is a loop.
+scenarios('forEachAsync', {
+	native: async values => {
+		for (const v of values) {
 			await Promise.resolve();
-			s += v;
-			return u;
-		}))
-		.add('Functions', () => Functions.forEachAsync(small, async v => {
-			await Promise.resolve();
-			s += v;
-			return u;
-		}))
-		.run();
-	return s;
+			add(v);
+		}
+	},
+	chain: chain => chain.forEachAsync(async v => {
+		await Promise.resolve();
+		add(v);
+		return u;
+	}),
+	Functions: values => Functions.forEachAsync(values, async v => {
+		await Promise.resolve();
+		add(v);
+		return u;
+	})
 });
