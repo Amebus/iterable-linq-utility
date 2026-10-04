@@ -1,6 +1,6 @@
 {
   "name": "iterable-linq-utility",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "An Iterable mutation utility inspired by .net Linq and Javascript Array interface",
   "type": "module",
   "main": "./dist/iterable-linq-utility.umd.cjs",

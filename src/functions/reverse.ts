@@ -14,7 +14,7 @@ import { Validations } from '../utils';
  * ```ts
  * Array.from(Functions.reverse([1, 2, 3])); // [3, 2, 1]
  * ```
- * @since next
+ * @since 0.9.0
  */
 export function reverse<T>(iterable: Iterable<T>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'reverse');
