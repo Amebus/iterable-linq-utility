@@ -41,7 +41,7 @@ pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm 
 
 `test:coverage` fails below 100% of `src/` ([ADR 0019](../../../docs/decisions/0019-full-test-coverage-of-the-library.md)): the report in `coverage/` shows the uncovered lines.
 
-For a change that can affect performance, compare the benchmarks with `main` (`pnpm bench:baseline` on `main`, then `pnpm bench`).
+For a change that can affect performance, compare the benchmarks with `main` (`pnpm bench:baseline` on `main`, then `pnpm bench:report <filter>` on the branch). A pull request that adds an operation or changes its performance pastes the output of `pnpm bench:report functions/<name>` in its description, as it is: the environment line and the table ([ADR 0021](../../../docs/decisions/0021-benchmark-standards.md)).
 
 ## 4. Commits
 

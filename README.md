@@ -59,6 +59,26 @@ pnpm bench chains                 # only the chains
 BENCH_TIME=1000 pnpm bench        # more time for each case (default 500 ms): more samples, less noise
 ```
 
+### Report
+
+A pull request that adds an operation or changes its performance pastes the report in its description, as it is:
+
+```sh
+pnpm bench:report functions/sum                       # the same filter as pnpm bench
+BENCH_HOST="MacBook Pro M3" pnpm bench:report functions/sum   # names the host, which a container cannot see
+```
+
+```text
+Environment: Alpine Linux v3.24 (Docker), arm64, 12 cores, CPU unknown · host MacBook Pro M3 · Node v24.20.0 · Vitest 5.0.2 · BENCH_TIME 500 ms · commit 2fba44d
+
+| case | variant | ops/s | mean (ms) | p75 (ms) | p99 (ms) | rme | vs native |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| sum/map | native | 567 | 1.79 | 1.76 | 3.64 | ±2.5% | — |
+| sum/map | chain | 855 | 1.2 | 1.26 | 1.76 | ±1.8% | +51% |
+```
+
+`vs native` compares the ops/s with the `native` case of the same group. When a baseline exists, a `vs baseline` column compares them with it. [ADR 0021](docs/decisions/0021-benchmark-standards.md) explains the format.
+
 ### Find regressions
 
 A baseline is a saved run. Each table shows it as extra rows, marked `(baseline)`, next to the new run.
@@ -68,6 +88,7 @@ git switch main
 pnpm bench:baseline               # saves every result in .bench/
 git switch my-branch
 pnpm bench                        # shows each case next to its "(baseline)" row
+pnpm bench:report functions/sum   # or the report, with a "vs baseline" column
 ```
 
 The timings depend on the machine, so `.bench/` is not committed and the benchmarks do not run in CI. Create the baseline and the new run on the same machine, with the same load.
@@ -76,7 +97,7 @@ The timings depend on the machine, so `.bench/` is not committed and the benchma
 
 | Column | Meaning |
 |---|---|
-| `hz` | runs per second: higher is faster |
+| `hz` | runs per second (ops/s in the report): higher is faster |
 | `mean`, `p75`, `p99` | time of one run, in ms |
 | `rme` | relative margin of error |
 | `samples` | how many runs were measured |
@@ -94,17 +115,20 @@ import * as Helpers from '../helpers';
 import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
-const { from } = IterableLinq;
-const { cases, numbers, sum } = Helpers;
+const { from, Functions } = IterableLinq;
+const { cases, double, numbers, sum } = Helpers;
 
-test('map: number', async ({ bench }) => {
-	await cases(bench, 'map/number')      // the baseline folder: <function>/<variant>
-		.add('native', () => sum(numbers.map(v => v * 2)))
-		.add('chain', () => sum(from(numbers).map(v => v * 2)))
+test('map: direct', async ({ bench }) => {
+	await cases(bench, 'map/direct')      // the baseline folder: <function>/<scenario>
+		.add('native', () => sum(numbers.map(double)))
+		.add('chain', () => sum(from(numbers).map(double)))
+		.add('Functions', () => sum(Functions.map(numbers, double)))
 		.run();
 });
 ```
 
+- The bench of a function has the standard groups of [ADR 0021](docs/decisions/0021-benchmark-standards.md), where they apply: `<name>/direct` and `<name>/small` always, `<name>/map` and `<name>/filter` (after `map(double)` and `filter(isEven)`), `<name>/start`, `/middle` and `/none` for an early exit, `<name>/<callback>` for an optional callback. `test/bench/functions/sum.bench.ts` is the example.
+
 - Every table needs at least two cases: add a native reference.
 - Import the library and the helpers as namespaces and copy the exports into local constants, as above. Vitest prints a `Benchmark Warning` when a benchmark reads an imported binding too many times.
-- The shared data is in `test/bench/helpers.ts`: `numbers` (100,000 integers), `records` (100,000 objects) and `small` (1,000 integers).
+- The shared data is in `test/bench/helpers.ts`: `numbers` (100,000 integers) for every scenario, `small` (1,000 integers) for `<name>/small`, `records` (100,000 objects) only for a key or a selector on objects. The callbacks and values of the scenarios are there too: `double`, `isEven`, `first`, `middle`, `missing`.

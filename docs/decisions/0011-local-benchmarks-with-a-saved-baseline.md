@@ -1,6 +1,6 @@
 # Local benchmarks with a saved baseline
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0021](0021-benchmark-standards.md)
 * Deciders: Amebus
 * Date: 2026-09-28
 
