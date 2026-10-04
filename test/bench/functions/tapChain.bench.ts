@@ -1,18 +1,16 @@
-import { test } from 'vitest';
 import * as Helpers from '../helpers';
 
 import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
-const { from, Functions, unit } = IterableLinq;
-const { cases, numbers, sum } = Helpers;
+const { Functions, unit } = IterableLinq;
+const { scenarios, sum } = Helpers;
 
 const u = unit();
 
-test('tapChain: no-op', async ({ bench }) => {
-	await cases(bench, 'tapChain/noop')
-		.add('without tapChain', () => sum(from(numbers)))
-		.add('chain', () => sum(from(numbers).tapChain(() => u)))
-		.add('Functions', () => sum(Functions.tapChain(numbers, () => u)))
-		.run();
+// The native case is the same source without tapChain.
+scenarios('tapChain', {
+	native: values => sum(values),
+	chain: chain => sum(chain.tapChain(() => u)),
+	Functions: values => sum(Functions.tapChain(values, () => u))
 });

@@ -5,23 +5,25 @@ import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
 const { from, Functions } = IterableLinq;
-const { cases, numbers, records, sum } = Helpers;
+const { cases, numbers, records, scenarios, sum } = Helpers;
+
+scenarios('distinct', {
+	native: values => sum(new Set(values)),
+	chain: chain => sum(chain.distinct()),
+	Functions: values => sum(Functions.distinct(values))
+});
+
 const repeated = numbers.map(value => value % 100);
 
-for (const { variant, values } of [
-	{ variant: 'unique', values: numbers },
-	{ variant: 'repeated', values: repeated }
-]) {
-	test(`distinct: ${variant}`, async ({ bench }) => {
-		await cases(bench, `distinct/${variant}`)
-			.add('native', () => sum(new Set(values)))
-			.add('chain', () => sum(from(values).distinct()))
-			.add('Functions', () => sum(Functions.distinct(values)))
-			.run();
-	});
-}
+test('distinct: repeated values', async ({ bench }) => {
+	await cases(bench, 'distinct/repeated')
+		.add('native', () => sum(new Set(repeated)))
+		.add('chain', () => sum(from(repeated).distinct()))
+		.add('Functions', () => sum(Functions.distinct(repeated)))
+		.run();
+});
 
-test('distinct: object key selector', async ({ bench }) => {
+test('distinct: key', async ({ bench }) => {
 	await cases(bench, 'distinct/key')
 		.add('native', () => {
 			const seen = new Set<string>();

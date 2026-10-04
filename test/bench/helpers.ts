@@ -1,8 +1,14 @@
 import { appendFileSync, existsSync, mkdirSync } from 'node:fs';
+import { test } from 'vitest';
 import type { TestContext } from 'vitest';
+
+import * as IterableLinq from 'iterable-linq-utility';
+import type { IIterableLinq } from 'iterable-linq-utility';
 
 // Bench files import this module and the library as namespaces and copy the exports into local consts:
 // an imported binding goes through a module runner getter on every read, which skews the timings.
+
+const { from, Functions } = IterableLinq;
 
 type Bench = TestContext['bench'];
 type Registration = ReturnType<Bench>;
@@ -88,4 +94,69 @@ export function cases(bench: Bench, group: string): ICases {
 		run: () => bench.compare(...registrations, { time })
 	};
 	return self;
+}
+
+// The variants of a standard group (ADR 0021, 0022), each given the source of the scenario:
+// `native` and `loop` an array, `chain` a chain, `Functions` an iterable.
+// The scenario is given too, for a variant that needs data matching the source (for example `sequenceEqual`).
+export interface IVariants {
+	native: (values: number[], scenario: Scenario) => unknown;
+	loop?: (values: number[], scenario: Scenario) => unknown;
+	chain: (chain: IIterableLinq<number>, scenario: Scenario) => unknown;
+	Functions?: (values: Iterable<number>, scenario: Scenario) => unknown;
+}
+
+export type Scenario = 'direct' | 'small' | 'map' | 'filter';
+
+interface ISources {
+	scenario: Scenario;
+	title: string;
+	array: () => number[];
+	chain: () => IIterableLinq<number>;
+	iterable: () => Iterable<number>;
+}
+
+// The sources are built inside the measured function: the cost of the upstream `map` or `filter` is part of the case.
+const SOURCES: Record<Scenario, ISources> = {
+	direct: { scenario: 'direct', title: 'direct', array: () => numbers, chain: () => from(numbers), iterable: () => numbers },
+	small: { scenario: 'small', title: 'small', array: () => small, chain: () => from(small), iterable: () => small },
+	map: {
+		scenario: 'map',
+		title: 'after a map',
+		array: () => numbers.map(double),
+		chain: () => from(numbers).map(double),
+		iterable: () => Functions.map(numbers, double)
+	},
+	filter: {
+		scenario: 'filter',
+		title: 'after a filter',
+		array: () => numbers.filter(isEven),
+		chain: () => from(numbers).filter(isEven),
+		iterable: () => Functions.filter(numbers, isEven)
+	}
+};
+
+function register(name: string, id: string, title: string, variants: IVariants, sources: ISources): void {
+	const { native, loop, chain, Functions: raw } = variants;
+	const { scenario, array, chain: chainOf, iterable } = sources;
+	test(`${name}: ${title}`, async ({ bench }) => {
+		const group = cases(bench, `${name}/${id}`).add('native', () => native(array(), scenario));
+		if (loop)
+			group.add('loop', () => loop(array(), scenario));
+		group.add('chain', () => chain(chainOf(), scenario));
+		if (raw)
+			group.add('Functions', () => raw(iterable(), scenario));
+		await group.run();
+	});
+}
+
+// Registers the standard groups `<name>/direct`, `<name>/small`, `<name>/map` and `<name>/filter`, or the ones in `only`.
+export function scenarios(name: string, variants: IVariants, only: Scenario[] = ['direct', 'small', 'map', 'filter']): void {
+	for (const scenario of only)
+		register(name, scenario, SOURCES[scenario].title, variants, SOURCES[scenario]);
+}
+
+// Registers one more group on `numbers`, `<name>/<id>`: an early exit (`start`, `middle`) or a callback (`selector`).
+export function group(name: string, id: string, variants: IVariants): void {
+	register(name, id, id, variants, SOURCES.direct);
 }

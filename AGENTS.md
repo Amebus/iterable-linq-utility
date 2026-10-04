@@ -12,7 +12,7 @@ Run Node and pnpm in the devcontainer (`.devcontainer/`) when it is available, n
 pnpm lint                 # ESLint (pnpm lint-fix to fix)
 pnpm typecheck
 pnpm check:since          # @since is `next` or a released version
-pnpm check:structure      # every operation has specs, bench, export, chain method and a complete JSDoc, in alphabetical order
+pnpm check:structure      # every operation has specs, bench (with the direct and small groups), export, chain method and a complete JSDoc, in alphabetical order
 pnpm check:instructions   # AGENTS.md and the skills link to existing files and ADRs
 pnpm check:changeset      # the branch adds a changeset when it changes src/
 pnpm check:commits        # the feat, fix, perf and refactor commits of the branch have a body
@@ -31,7 +31,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 - A Transformation is lazy and re-runnable: a `DeferredIterable` that creates a `SourceIterator` subclass (ADR 0004, 0007). An iterator with several states keeps them in a `state` field with a transition table, not a `switch` (ADR 0009).
 - An error the library creates goes through `libraryError(operation, message)` or a `Validations` helper, which take the name of the operation: its message starts with `[iterable-linq-utility/<operation>]`. The errors of the source and of the callbacks propagate unchanged (ADR 0020).
 - Only the callback call goes in a `try`/`catch`, which calls `closeAfterCallbackError()` and rethrows; an Action that stops early closes the source (ADR 0008).
-- Every operation has `test/functions/<name>.spec.ts`, `test/linqIterableWrapper/<name>.spec.ts` and `test/bench/functions/<name>.bench.ts` against a native reference, with the standard scenarios (ADR 0011, 0021).
+- Every operation has `test/functions/<name>.spec.ts`, `test/linqIterableWrapper/<name>.spec.ts` and `test/bench/functions/<name>.bench.ts` against a native reference, with the standard scenarios registered by `scenarios()` of `test/bench/helpers.ts` (ADR 0011, 0021, 0022).
 - The specs use the shared test sources of `test/_helpers/generators/`. A source needed by a second spec moves there, with its own `<name>.spec.ts` (ADR 0018).
 - JSDoc on the raw function and on the chain method: summary, `@operation`, `@param`, `@returns`, `@throws`, `@example`, `@since next` (ADR 0012).
 - A pull request that changes `src/` adds a changeset (`pnpm changeset`); before 1.0 a breaking change is a `minor` (ADR 0012).

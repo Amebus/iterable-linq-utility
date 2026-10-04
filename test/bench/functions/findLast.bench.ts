@@ -5,28 +5,25 @@ import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
 const { from, Functions } = IterableLinq;
-const { cases, numbers } = Helpers;
+const { cases, group, middle, missing, N, numbers, scenarios } = Helpers;
 
-const middle = numbers.length / 2;
-const last = numbers.length - 1;
+function findLast(value: number): Helpers.IVariants {
+	return {
+		native: values => values.findLast(v => v === value),
+		chain: chain => chain.findLast(v => v === value),
+		Functions: values => Functions.findLast(values, v => v === value)
+	};
+}
+
+// findLast reads the whole source; the native method reads the array from the end, so it stops early
+scenarios('findLast', findLast(missing));
+group('findLast', 'end', findLast(N - 1));
+group('findLast', 'middle', findLast(middle));
+
 const mixed: (number | string)[] = numbers.map(v => (v === middle ? 'found' : v));
 
 function isString(value: number | string): value is string {
 	return typeof value === 'string';
-}
-
-for (const { variant, value } of [
-	{ variant: 'end', value: last },
-	{ variant: 'middle', value: middle },
-	{ variant: 'none', value: -1 }
-]) {
-	test(`findLast: ${variant}`, async ({ bench }) => {
-		await cases(bench, `findLast/${variant}`)
-			.add('native', () => numbers.findLast(v => v === value))
-			.add('chain', () => from(numbers).findLast(v => v === value))
-			.add('Functions', () => Functions.findLast(numbers, v => v === value))
-			.run();
-	});
 }
 
 test('findLast: type guard', async ({ bench }) => {

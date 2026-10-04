@@ -1,29 +1,34 @@
-import { test } from 'vitest';
 import * as Helpers from '../helpers';
 
 import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
-const { from, Functions } = IterableLinq;
-const { cases, numbers, sum, N } = Helpers;
+const { Functions } = IterableLinq;
+const { group, middle, N, scenarios, sum } = Helpers;
 
-function skipWhileLoop(values: number[], predicate: (value: number) => boolean): number[] {
+function native(values: number[], predicate: (value: number) => boolean): number[] {
+	const index = values.findIndex(v => !predicate(v));
+	return index === -1 ? [] : values.slice(index);
+}
+
+function loop(values: number[], predicate: (value: number) => boolean): number[] {
 	let i = 0;
 	while (i < values.length && predicate(values[i]))
 		i++;
 	return values.slice(i);
 }
 
-for (const { variant, limit } of [
-	{ variant: 'none', limit: 0 },
-	{ variant: 'half', limit: N / 2 },
-	{ variant: 'all', limit: N * 2 }
-]) {
-	test(`skipWhile: ${variant}`, async ({ bench }) => {
-		await cases(bench, `skipWhile/${variant}`)
-			.add('native', () => sum(skipWhileLoop(numbers, v => v < limit)))
-			.add('chain', () => sum(from(numbers).skipWhile(v => v < limit)))
-			.add('Functions', () => sum(Functions.skipWhile(numbers, v => v < limit)))
-			.run();
-	});
+function skipWhile(limit: number): Helpers.IVariants {
+	const predicate = (v: number): boolean => v < limit;
+	return {
+		native: values => sum(native(values, predicate)),
+		loop: values => sum(loop(values, predicate)),
+		chain: chain => sum(chain.skipWhile(predicate)),
+		Functions: values => sum(Functions.skipWhile(values, predicate))
+	};
 }
+
+// skips the values below `middle`
+scenarios('skipWhile', skipWhile(middle));
+group('skipWhile', 'none', skipWhile(0));
+group('skipWhile', 'all', skipWhile(N * 2));

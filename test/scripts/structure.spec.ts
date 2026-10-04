@@ -20,7 +20,7 @@ const COMPLETE: Record<string, string> = {
 	'src/linqIterable.ts': 'export class IterableLinqWrapper {\n\tmap(mapper: unknown) {\n\t\treturn mapper;\n\t}\n}\n',
 	'test/functions/map.spec.ts': '',
 	'test/linqIterableWrapper/map.spec.ts': '',
-	'test/bench/functions/map.bench.ts': ''
+	'test/bench/functions/map.bench.ts': 'scenarios(\'map\', {});\n'
 };
 
 function files(overrides: Record<string, string | undefined> = {}): ISourceFile[] {
@@ -49,6 +49,41 @@ describe('findStructureProblems', () => {
 		]);
 	});
 
+	describe('the groups of the bench', () => {
+
+		const bench = (content: string) => messages({ 'test/bench/functions/map.bench.ts': content });
+
+		test('the direct and small groups can be written as strings', () => {
+			expect(bench('cases(bench, \'map/direct\');\ncases(bench, `map/small`);\n')).toEqual([]);
+		});
+
+		test('scenarios() with a list registers only the listed groups', () => {
+			expect(bench('scenarios(\'map\', {}, [\'direct\']);\n'))
+				.toEqual(['test/bench/functions/map.bench.ts has no "map/small" group (ADR 0021)']);
+		});
+
+		test('a bench without the standard groups is reported on the operation file', () => {
+			expect(findStructureProblems(files({ 'test/bench/functions/map.bench.ts': 'cases(bench, \'map/number\');\n' }))).toEqual([
+				{ path: 'src/functions/map.ts', line: 10, message: 'test/bench/functions/map.bench.ts has no "map/direct" group (ADR 0021)' },
+				{ path: 'src/functions/map.ts', line: 10, message: 'test/bench/functions/map.bench.ts has no "map/small" group (ADR 0021)' }
+			]);
+		});
+
+		test('the groups of another operation, or scenarios() of another operation, do not count', () => {
+			expect(bench('scenarios(\'filter\', {});\ncases(bench, \'filter/direct\');\n')).toHaveLength(2);
+		});
+
+		test('empty has no small group', () => {
+			expect(messages({
+				'src/functions/empty.ts': `${doc([])}\nexport function empty(): Iterable<number> {\n\treturn [];\n}\n`,
+				'src/functions/index.ts': 'export { empty } from \'./empty\';\nexport { map } from \'./map\';\n',
+				'test/functions/empty.spec.ts': '',
+				'test/empty.spec.ts': '',
+				'test/bench/functions/empty.bench.ts': ''
+			})).toEqual(['test/bench/functions/empty.bench.ts has no "empty/direct" group (ADR 0021)']);
+		});
+	});
+
 	test('an operation not exported from src/functions/index.ts is reported', () => {
 		expect(messages({ 'src/functions/index.ts': '' })).toEqual(['"map" is not exported from src/functions/index.ts']);
 	});
@@ -69,7 +104,7 @@ describe('findStructureProblems', () => {
 			'src/functions/index.ts': 'export { empty } from \'./empty\';\nexport { map } from \'./map\';\n',
 			'test/functions/empty.spec.ts': '',
 			'test/empty.spec.ts': '',
-			'test/bench/functions/empty.bench.ts': ''
+			'test/bench/functions/empty.bench.ts': 'cases(bench, \'empty/direct\');\n'
 		})).toEqual([]);
 	});
 
@@ -139,7 +174,7 @@ describe('findStructureProblems', () => {
 			[`src/functions/${name}.ts`]: `${doc(['iterable'])}\nexport function ${name}(iterable: Iterable<number>): Iterable<number> {\n\treturn iterable;\n}\n`,
 			[`test/functions/${name}.spec.ts`]: '',
 			[`test/linqIterableWrapper/${name}.spec.ts`]: '',
-			[`test/bench/functions/${name}.bench.ts`]: ''
+			[`test/bench/functions/${name}.bench.ts`]: `scenarios('${name}', {});\n`
 		});
 		const chainInterface = (names: string[]) =>
 			`export interface IIterableLinqBase<T> {\n${names.map(name => `${doc([])}\n\t${name}(): IIterableLinqBase<T>;`).join('\n')}\n}\n`;

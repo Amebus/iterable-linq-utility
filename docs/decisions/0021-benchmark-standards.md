@@ -1,6 +1,6 @@
 # Benchmark standards
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0022](0022-benchmark-scenarios-in-practice.md)
 * Deciders: Amebus
 * Date: 2026-10-04
 

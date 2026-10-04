@@ -24,7 +24,8 @@ Each file records one decision: its context, the options considered and the cons
 | [0018](0018-shared-test-sources.md) | Shared test sources | accepted |
 | [0019](0019-full-test-coverage-of-the-library.md) | Full test coverage of the library | accepted |
 | [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted |
-| [0021](0021-benchmark-standards.md) | Benchmark standards | accepted |
+| [0021](0021-benchmark-standards.md) | Benchmark standards | accepted, amended by [0022](0022-benchmark-scenarios-in-practice.md) |
+| [0022](0022-benchmark-scenarios-in-practice.md) | Benchmark scenarios in practice | accepted |
 
 ## Adding a decision
 

@@ -106,28 +106,27 @@ A difference smaller than the `rme` of the two rows is noise.
 
 ### Add a benchmark
 
-Create `test/bench/functions/<name>.bench.ts` or `test/bench/chains/<scenario>.bench.ts`:
+Create `test/bench/functions/<name>.bench.ts`. `scenarios()` registers the standard groups of [ADR 0021](docs/decisions/0021-benchmark-standards.md) and [ADR 0022](docs/decisions/0022-benchmark-scenarios-in-practice.md): `<name>/direct` on `numbers`, `<name>/small` on `small`, `<name>/map` and `<name>/filter` after `map(double)` and `filter(isEven)`. `group()` adds one more group on `numbers`: an early exit (`start`, `middle`) or an optional callback.
 
 ```ts
-import { test } from 'vitest';
 import * as Helpers from '../helpers';
 
 import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
-const { from, Functions } = IterableLinq;
-const { cases, double, numbers, sum } = Helpers;
+const { Functions } = IterableLinq;
+const { double, scenarios, sum } = Helpers;
 
-test('map: direct', async ({ bench }) => {
-	await cases(bench, 'map/direct')      // the baseline folder: <function>/<scenario>
-		.add('native', () => sum(numbers.map(double)))
-		.add('chain', () => sum(from(numbers).map(double)))
-		.add('Functions', () => sum(Functions.map(numbers, double)))
-		.run();
+scenarios('map', {
+	native: values => sum(values.map(double)),       // an array
+	chain: chain => sum(chain.map(double)),          // a chain
+	Functions: values => sum(Functions.map(values, double))   // an iterable
 });
 ```
 
-- The bench of a function has the standard groups of [ADR 0021](docs/decisions/0021-benchmark-standards.md), where they apply: `<name>/direct` and `<name>/small` always, `<name>/map` and `<name>/filter` (after `map(double)` and `filter(isEven)`), `<name>/start`, `/middle` and `/none` for an early exit, `<name>/<callback>` for an optional callback. `test/bench/functions/sum.bench.ts` is the example.
+- `native` is the array method a user would write. Add `loop`, a hand-written `for…of`, when the array method is a different algorithm (`reduce` for `sum`); when there is no array method, `native` is the loop.
+- `pnpm check:structure` fails when the bench of an operation has no `direct` or `small` group. `test/bench/functions/sum.bench.ts` is the example.
+- The benches of `test/bench/chains/<scenario>.bench.ts`, and the groups that need other data, use `cases(bench, '<function>/<group>')` directly: the id is also the baseline folder.
 
 - Every table needs at least two cases: add a native reference.
 - Import the library and the helpers as namespaces and copy the exports into local constants, as above. Vitest prints a `Benchmark Warning` when a benchmark reads an imported binding too many times.
