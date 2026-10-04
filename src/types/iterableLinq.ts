@@ -603,6 +603,21 @@ export interface IIterableLinqBase<T> {
 	skip(count: number): IIterableLinq<T>;
 
 	/**
+	 * Lazily yields every value except the last `count`.
+	 * A value is yielded once `count` more values have been read, keeping only those `count` values, so `skipLast` works with infinite chains.
+	 * @operation `Transformation`
+	 * @param count - how many values to leave out at the end; must be a non-negative integer
+	 * @returns a lazy, re-runnable chain of the values before the last `count`
+	 * @throws Error if `count` is negative, not an integer, `NaN` or `Infinity`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).skipLast(2).collectToArray(); // [1, 2, 3]
+	 * ```
+	 * @since next
+	 */
+	skipLast(count: number): IIterableLinq<T>;
+
+	/**
 	 * Skips the values while `predicate` returns `true`, then yields the first rejected value and all the rest.
 	 * After the first rejected value, `predicate` is not called again.
 	 * If `predicate` throws, the source is closed and the error propagates.

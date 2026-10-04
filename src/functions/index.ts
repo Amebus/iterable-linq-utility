@@ -30,6 +30,7 @@ export { repeat } from './repeat';
 export { sequenceEqual } from './sequenceEqual';
 export { single } from './single';
 export { skip } from './skip';
+export { skipLast } from './skipLast';
 export { skipWhile } from './skipWhile';
 export { slice } from './slice';
 export { some } from './some';

@@ -43,6 +43,7 @@ import {
 	sequenceEqual,
 	single,
 	skip,
+	skipLast,
 	skipWhile,
 	slice,
 	some,
@@ -208,6 +209,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	skip(count: number): IIterableLinq<T> {
 		return toChain(skip(this.iterable, count));
+	}
+
+	skipLast(count: number): IIterableLinq<T> {
+		return toChain(skipLast(this.iterable, count));
 	}
 
 	skipWhile(predicate: Predicate<T>): IIterableLinq<T> {
