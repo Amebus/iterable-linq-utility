@@ -35,6 +35,7 @@ export { slice } from './slice';
 export { some } from './some';
 export { sum } from './sum';
 export { take } from './take';
+export { takeLast } from './takeLast';
 export { takeWhile } from './takeWhile';
 export { tap } from './tap';
 export { tapChain } from './tapChain';

@@ -48,6 +48,7 @@ import {
 	some,
 	sum,
 	take,
+	takeLast,
 	takeWhile,
 	tap,
 	tapChain
@@ -227,6 +228,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	take(count: number): IIterableLinq<T> {
 		return toChain(take(this.iterable, count));
+	}
+
+	takeLast(count: number): IIterableLinq<T> {
+		return toChain(takeLast(this.iterable, count));
 	}
 
 	takeWhile<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;

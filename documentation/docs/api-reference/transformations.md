@@ -30,6 +30,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [slice](#slice)                              | Yields the values from *start* to *end*, like `Array.prototype.slice`            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [takeLast](#takelast)                        | Yields the last *count* values                                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
@@ -592,6 +593,32 @@ Yields the first *count* values, then closes the source. The source is never rea
     ```
 
 Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.
+
+## takeLast
+
+Yields the last *count* values. The whole chain runs before the first value is yielded, keeping only the last *count* values, so `takeLast` does not end on an infinite chain.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .takeLast(2)
+        .collectToArray();
+    // [4, 5]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.takeLast([1, 2, 3, 4, 5], 2));
+    // [4, 5]
+    ```
+
+Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`. Zero yields no value and closes the source without reading it.
 
 ## takeWhile
 

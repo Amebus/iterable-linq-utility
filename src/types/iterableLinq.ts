@@ -707,6 +707,21 @@ export interface IIterableLinqBase<T> {
 	take(count: number): IIterableLinq<T>;
 
 	/**
+	 * Lazily yields the last `count` values.
+	 * The whole chain runs before the first value is yielded, keeping only the last `count` values, so `takeLast` does not end on an infinite chain.
+	 * @operation `Transformation`
+	 * @param count - how many values to yield; must be a non-negative integer
+	 * @returns a lazy, re-runnable chain of at most `count` values
+	 * @throws Error if `count` is negative, not an integer, `NaN` or `Infinity`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).takeLast(2).collectToArray(); // [4, 5]
+	 * ```
+	 * @since next
+	 */
+	takeLast(count: number): IIterableLinq<T>;
+
+	/**
 	 * Yields the values while a type guard accepts them, narrowing their type, then closes the source.
 	 * The source is never read past the first rejected value, which is not yielded.
 	 * If `predicate` throws, the source is closed and the error propagates.
