@@ -40,14 +40,17 @@ import {
 	min,
 	prepend,
 	reduce,
+	reverse,
 	sequenceEqual,
 	single,
 	skip,
+	skipLast,
 	skipWhile,
 	slice,
 	some,
 	sum,
 	take,
+	takeLast,
 	takeWhile,
 	tap,
 	tapChain
@@ -195,6 +198,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 			: reduce(this.iterable, args[0], args[1]);
 	}
 
+	reverse(): IIterableLinq<T> {
+		return toChain(reverse(this.iterable));
+	}
+
 	sequenceEqual(other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean {
 		return sequenceEqual(this.iterable, other, equals);
 	}
@@ -207,6 +214,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	skip(count: number): IIterableLinq<T> {
 		return toChain(skip(this.iterable, count));
+	}
+
+	skipLast(count: number): IIterableLinq<T> {
+		return toChain(skipLast(this.iterable, count));
 	}
 
 	skipWhile(predicate: Predicate<T>): IIterableLinq<T> {
@@ -227,6 +238,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	take(count: number): IIterableLinq<T> {
 		return toChain(take(this.iterable, count));
+	}
+
+	takeLast(count: number): IIterableLinq<T> {
+		return toChain(takeLast(this.iterable, count));
 	}
 
 	takeWhile<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;

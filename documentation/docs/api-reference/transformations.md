@@ -26,10 +26,13 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
     | [prepend](#prepend)                          | Yields one value, then the values                                                | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [reverse](#reverse)                          | Yields the values in reverse order                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [skipLast](#skiplast)                        | Yields every value except the last *count*                                       | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [slice](#slice)                              | Yields the values from *start* to *end*, like `Array.prototype.slice`            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [takeLast](#takelast)                        | Yields the last *count* values                                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
@@ -443,6 +446,30 @@ Starts a chain that yields the same value *count* times.
 
 Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.
 
+## reverse
+
+Yields the values in reverse order. Unlike `Array.prototype.reverse`, the source is not changed. The whole chain runs before the first value is yielded, so `reverse` does not end on an infinite chain, and every run of the chain reads the source again.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .reverse()
+        .collectToArray();
+    // [3, 2, 1]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.reverse([1, 2, 3]));
+    // [3, 2, 1]
+    ```
+
 ## skip
 
 Skips the first *count* values and yields the rest, preserving their order. This Transformation is lazy and re-runnable when the source is re-runnable.
@@ -501,6 +528,32 @@ The skipped values are read only when consumption starts. Each consumer reads on
     Array.from(Functions.take(Functions.skip({ [Symbol.iterator]: integers }, 3), 2));
     // [3, 4], after reading exactly five source values
     ```
+
+## skipLast
+
+Yields every value except the last *count*. A value is yielded once *count* more values have been read, keeping only those *count* values, so `skipLast` works with infinite chains.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .skipLast(2)
+        .collectToArray();
+    // [1, 2, 3]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.skipLast([1, 2, 3, 4, 5], 2));
+    // [1, 2, 3]
+    ```
+
+Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`. Zero yields every value; a count at least as large as a finite source leaves an empty result.
 
 ## skipWhile
 
@@ -592,6 +645,32 @@ Yields the first *count* values, then closes the source. The source is never rea
     ```
 
 Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.
+
+## takeLast
+
+Yields the last *count* values. The whole chain runs before the first value is yielded, keeping only the last *count* values, so `takeLast` does not end on an infinite chain.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .takeLast(2)
+        .collectToArray();
+    // [4, 5]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.takeLast([1, 2, 3, 4, 5], 2));
+    // [4, 5]
+    ```
+
+Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`. Zero yields no value and closes the source without reading it.
 
 ## takeWhile
 

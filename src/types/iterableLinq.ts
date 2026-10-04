@@ -525,6 +525,20 @@ export interface IIterableLinqBase<T> {
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
+	 * Lazily yields the values in reverse order. Unlike `Array.prototype.reverse`, the source is not changed.
+	 * The whole chain runs before the first value is yielded, so `reverse` does not end on an infinite chain.
+	 * Every run of the chain reads the source again.
+	 * @operation `Transformation`
+	 * @returns a lazy, re-runnable chain of the values from the last to the first
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).reverse().collectToArray(); // [3, 2, 1]
+	 * ```
+	 * @since next
+	 */
+	reverse(): IIterableLinq<T>;
+
+	/**
 	 * Tells whether the chain and `other` have the same values in the same order.
 	 * It reads the two sources side by side, and stops and closes both at the first difference or when one ends before the other.
 	 * If `equals` throws, both sources are closed and the error propagates; if a source throws, the other one is closed.
@@ -601,6 +615,21 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.3.0
 	 */
 	skip(count: number): IIterableLinq<T>;
+
+	/**
+	 * Lazily yields every value except the last `count`.
+	 * A value is yielded once `count` more values have been read, keeping only those `count` values, so `skipLast` works with infinite chains.
+	 * @operation `Transformation`
+	 * @param count - how many values to leave out at the end; must be a non-negative integer
+	 * @returns a lazy, re-runnable chain of the values before the last `count`
+	 * @throws Error if `count` is negative, not an integer, `NaN` or `Infinity`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).skipLast(2).collectToArray(); // [1, 2, 3]
+	 * ```
+	 * @since next
+	 */
+	skipLast(count: number): IIterableLinq<T>;
 
 	/**
 	 * Skips the values while `predicate` returns `true`, then yields the first rejected value and all the rest.
@@ -705,6 +734,21 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.3.0
 	 */
 	take(count: number): IIterableLinq<T>;
+
+	/**
+	 * Lazily yields the last `count` values.
+	 * The whole chain runs before the first value is yielded, keeping only the last `count` values, so `takeLast` does not end on an infinite chain.
+	 * @operation `Transformation`
+	 * @param count - how many values to yield; must be a non-negative integer
+	 * @returns a lazy, re-runnable chain of at most `count` values
+	 * @throws Error if `count` is negative, not an integer, `NaN` or `Infinity`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).takeLast(2).collectToArray(); // [4, 5]
+	 * ```
+	 * @since next
+	 */
+	takeLast(count: number): IIterableLinq<T>;
 
 	/**
 	 * Yields the values while a type guard accepts them, narrowing their type, then closes the source.
