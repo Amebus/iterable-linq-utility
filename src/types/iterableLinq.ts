@@ -525,6 +525,20 @@ export interface IIterableLinqBase<T> {
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
+	 * Lazily yields the values in reverse order. Unlike `Array.prototype.reverse`, the source is not changed.
+	 * The whole chain runs before the first value is yielded, so `reverse` does not end on an infinite chain.
+	 * Every run of the chain reads the source again.
+	 * @operation `Transformation`
+	 * @returns a lazy, re-runnable chain of the values from the last to the first
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).reverse().collectToArray(); // [3, 2, 1]
+	 * ```
+	 * @since next
+	 */
+	reverse(): IIterableLinq<T>;
+
+	/**
 	 * Tells whether the chain and `other` have the same values in the same order.
 	 * It reads the two sources side by side, and stops and closes both at the first difference or when one ends before the other.
 	 * If `equals` throws, both sources are closed and the error propagates; if a source throws, the other one is closed.

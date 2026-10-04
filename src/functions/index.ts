@@ -27,6 +27,7 @@ export { prepend } from './prepend';
 export { range } from './range';
 export { reduce } from './reduce';
 export { repeat } from './repeat';
+export { reverse } from './reverse';
 export { sequenceEqual } from './sequenceEqual';
 export { single } from './single';
 export { skip } from './skip';

@@ -26,6 +26,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
     | [prepend](#prepend)                          | Yields one value, then the values                                                | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [reverse](#reverse)                          | Yields the values in reverse order                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipLast](#skiplast)                        | Yields every value except the last *count*                                       | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -444,6 +445,30 @@ Starts a chain that yields the same value *count* times.
     ```
 
 Throws an `Error` if *count* is negative, not an integer, `NaN` or `Infinity`.
+
+## reverse
+
+Yields the values in reverse order. Unlike `Array.prototype.reverse`, the source is not changed. The whole chain runs before the first value is yielded, so `reverse` does not end on an infinite chain, and every run of the chain reads the source again.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .reverse()
+        .collectToArray();
+    // [3, 2, 1]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.reverse([1, 2, 3]));
+    // [3, 2, 1]
+    ```
 
 ## skip
 

@@ -40,6 +40,7 @@ import {
 	min,
 	prepend,
 	reduce,
+	reverse,
 	sequenceEqual,
 	single,
 	skip,
@@ -195,6 +196,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return args.length === 1
 			? reduce(this.iterable, args[0])
 			: reduce(this.iterable, args[0], args[1]);
+	}
+
+	reverse(): IIterableLinq<T> {
+		return toChain(reverse(this.iterable));
 	}
 
 	sequenceEqual(other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean {
