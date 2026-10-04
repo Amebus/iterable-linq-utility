@@ -37,6 +37,7 @@
     "test": "vitest run",
     "bench": "vite build --logLevel error && vitest bench --run",
     "bench:baseline": "vite build --logLevel error && BENCH_SAVE=1 vitest bench --run",
+    "bench:report": "node scripts/bench-report.ts",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
   },

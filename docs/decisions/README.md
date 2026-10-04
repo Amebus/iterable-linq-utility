@@ -14,7 +14,7 @@ Each file records one decision: its context, the options considered and the cons
 | [0008](0008-error-handling-and-source-closing.md) | Error handling and source closing | accepted |
 | [0009](0009-transition-tables-instead-of-switch-statements.md) | Transition tables instead of switch statements | accepted |
 | [0010](0010-package-formats-and-type-declarations.md) | Package formats and type declarations | accepted |
-| [0011](0011-local-benchmarks-with-a-saved-baseline.md) | Local benchmarks with a saved baseline | accepted |
+| [0011](0011-local-benchmarks-with-a-saved-baseline.md) | Local benchmarks with a saved baseline | accepted, amended by [0021](0021-benchmark-standards.md) |
 | [0012](0012-trunk-based-releases-with-changesets.md) | Trunk-based releases with changesets | accepted, amended by [0015](0015-checks-on-the-release-pull-request.md) |
 | [0013](0013-documentation-versions-between-releases.md) | Documentation versions between releases | accepted, amended by [0017](0017-state-of-the-next-documentation.md) |
 | [0014](0014-instructions-for-ai-coding-agents.md) | Instructions for AI coding agents | accepted |
@@ -24,6 +24,7 @@ Each file records one decision: its context, the options considered and the cons
 | [0018](0018-shared-test-sources.md) | Shared test sources | accepted |
 | [0019](0019-full-test-coverage-of-the-library.md) | Full test coverage of the library | accepted |
 | [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted |
+| [0021](0021-benchmark-standards.md) | Benchmark standards | accepted |
 
 ## Adding a decision
 

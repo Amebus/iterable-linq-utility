@@ -26,14 +26,14 @@ Do every step, in this order. For a change to an existing operation, do the step
 4. **JSDoc** on both, with `@since next`: [references/jsdoc.md](references/jsdoc.md).
 5. **Tests**: `test/functions/<name>.spec.ts` and `test/linqIterableWrapper/<name>.spec.ts`: [references/tests.md](references/tests.md). Write them first and watch them fail.
 6. **Documentation site**: a row in the TLDR table and a section in `documentation/docs/api-reference/`: [references/docs-page.md](references/docs-page.md).
-7. **Bench**: `test/bench/functions/<name>.bench.ts` against a native reference: [references/bench.md](references/bench.md).
+7. **Bench**: `test/bench/functions/<name>.bench.ts` with the standard scenarios of [ADR 0021](../../../docs/decisions/0021-benchmark-standards.md), against a native reference: [references/bench.md](references/bench.md).
 8. **Changeset**: `pnpm changeset`, `minor` for a new operation, with a note for the users in the format of the [`pull-request` skill](../pull-request/SKILL.md#2-changeset). Before 1.0 a breaking change is a `minor` too, and goes in the migration guide.
 
 ## Check
 
 ```bash
 pnpm lint && pnpm typecheck && pnpm check:since && pnpm check:structure && pnpm test:coverage
-pnpm bench functions/<name>
+pnpm bench:report functions/<name>   # the report for the pull request
 ```
 
 `check:structure` fails when a spec, the bench, the export, the chain method or a JSDoc tag is missing, or when an operation is out of alphabetical order in the exports, the chain or the API reference. `lint` fails when the imports of a spec or a bench are out of order; `pnpm lint-fix` sorts them. `test:coverage` fails when a line or a branch of `src/` is not tested ([ADR 0019](../../../docs/decisions/0019-full-test-coverage-of-the-library.md)): add the missing test, or `/* istanbul ignore next -- <reason> */` on code that no test can reach. Nothing checks the content of the documentation site or the changeset: check those yourself.

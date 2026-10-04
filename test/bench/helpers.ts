@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync } from 'node:fs';
 import type { TestContext } from 'vitest';
 
 // Bench files import this module and the library as namespaces and copy the exports into local consts:
@@ -29,6 +29,15 @@ export const records: IRecord[] = numbers.map(i => ({
 
 export const small: number[] = numbers.slice(0, 1_000);
 
+// The callbacks of the standard scenarios (ADR 0021): `<name>/map` runs after `map(double)`, `<name>/filter` after `filter(isEven)`.
+export const double = (value: number): number => value * 2;
+export const isEven = (value: number): boolean => value % 2 === 0;
+
+// The values the early exit scenarios look for in `numbers`: `<name>/start`, `<name>/middle` and `<name>/none`.
+export const first = 0;
+export const middle = N / 2;
+export const missing = -1;
+
 const time = Number(process.env.BENCH_TIME) || 500;
 
 export function sum(iterable: Iterable<number>): number {
@@ -43,11 +52,21 @@ function fileName(text: string): string {
 	return text.replace(/[^\w.-]+/g, '_');
 }
 
-// Registers a case, saved as the baseline when BENCH_SAVE=1, plus the saved baseline when it exists.
+// The folder of `pnpm bench:report`: the results of the run and `cases.jsonl`, which lists them in the order they were registered.
+const report = process.env.BENCH_REPORT;
+
+// Registers a case, saved as the baseline when BENCH_SAVE=1 or for the report when BENCH_REPORT is set, plus the saved baseline when it exists.
 function measure(bench: Bench, group: string, name: string, fn: () => unknown): Registration[] {
-	const path = `.bench/${group.split('/').map(fileName).join('/')}/${fileName(name)}.json`;
-	const registrations = [bench(name, process.env.BENCH_SAVE ? { writeResult: path } : {}, fn)];
-	if (existsSync(path)) {
+	const relative = `${group.split('/').map(fileName).join('/')}/${fileName(name)}.json`;
+	const path = `.bench/${relative}`;
+	const hasBaseline = existsSync(path);
+	const result = process.env.BENCH_SAVE ? path : report ? `${report}/${relative}` : undefined;
+	const registrations = [bench(name, result ? { writeResult: result } : {}, fn)];
+	if (report && result) {
+		mkdirSync(report, { recursive: true });
+		appendFileSync(`${report}/cases.jsonl`, `${JSON.stringify({ group, name, result, baseline: hasBaseline ? path : undefined })}\n`);
+	}
+	if (hasBaseline) {
 		registrations.push(bench.from(`${name} (baseline)`, path));
 	}
 	return registrations;
