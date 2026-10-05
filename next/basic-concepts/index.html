@@ -86,8 +86,8 @@
         <aside class="md-banner">
           <div class="md-banner__inner md-grid md-typeset">
             
-            This is the <strong>next</strong> version: it matches the latest release, 0.11.0.
-    <a href="../../latest/">Go to the latest version</a>
+            This is the <strong>next</strong> version:
+    <a href="../upcoming/">1 unreleased change since 0.11.0</a>
           </div>
           
         </aside>
@@ -396,6 +396,8 @@
       
         
       
+        
+      
     
     
     
@@ -607,6 +609,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#equality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Equality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-unit-type" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -641,6 +654,34 @@
     
   
     Alternative Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrating-to-0.12.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to 0.12.0
   
 
     
@@ -1182,6 +1223,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#equality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Equality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-unit-type" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1289,6 +1341,72 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
 </code></pre></div></td></tr></table></div>
 <p>Every action runs the chain again, from the source: a chain is <strong>re-runnable</strong>. To avoid running an expensive chain twice, store its values with <a href="../api-reference/transformations/#memoize">memoize</a> or <a href="../api-reference/actions/#materialize">materialize</a>.</p>
 <p>See <a href="../glossary/#deferred-execution">Deferred Execution</a> and <a href="../glossary/#repeatable-execution">Repeatable Execution</a> in the glossary.</p>
+<h2 id="equality">Equality<a class="headerlink" href="#equality" title="Permanent link">⚓︎</a></h2>
+<p>JavaScript has three ways to compare two values, which differ only on <code>NaN</code> and <code>-0</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Comparison</th>
+<th><code>NaN</code> vs <code>NaN</code></th>
+<th><code>0</code> vs <code>-0</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>===</code></td>
+<td>not equal</td>
+<td>equal</td>
+</tr>
+<tr>
+<td><code>SameValueZero</code></td>
+<td>equal</td>
+<td>equal</td>
+</tr>
+<tr>
+<td><code>Object.is</code></td>
+<td>equal</td>
+<td>not equal</td>
+</tr>
+</tbody>
+</table>
+<p>The operations that compare values follow one rule: an operation with a native counterpart compares like it, every other one uses <code>SameValueZero</code>, like <code>Set</code> and <code>Map</code>. Objects are always compared by reference.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Equality</th>
+<th>Like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api-reference/actions/#indexof">indexOf</a>, <a href="../api-reference/actions/#lastindexof">lastIndexOf</a></td>
+<td><code>===</code></td>
+<td><code>Array.prototype.indexOf</code> and <code>lastIndexOf</code></td>
+</tr>
+<tr>
+<td><a href="../api-reference/actions/#includes">includes</a></td>
+<td><code>SameValueZero</code></td>
+<td><code>Array.prototype.includes</code></td>
+</tr>
+<tr>
+<td><a href="../api-reference/transformations/#distinct">distinct</a></td>
+<td><code>SameValueZero</code></td>
+<td><code>Set</code></td>
+</tr>
+<tr>
+<td><a href="../api-reference/actions/#collecttoset">collectToSet</a>, <a href="../api-reference/actions/#collecttomap">collectToMap</a></td>
+<td><code>SameValueZero</code></td>
+<td><code>Set</code> and <code>Map</code></td>
+</tr>
+<tr>
+<td><a href="../api-reference/actions/#sequenceequal">sequenceEqual</a></td>
+<td><code>SameValueZero</code></td>
+<td><code>Set</code> and <code>Map</code>; pass <code>equals</code> to change it</td>
+</tr>
+</tbody>
+</table>
+<p>So <code>indexOf(NaN)</code> is <code>-1</code> while <code>includes(NaN)</code> is <code>true</code>, exactly as with arrays. For a different equality, pass a callback: <code>sequenceEqual(other, Object.is)</code> tells <code>0</code> from <code>-0</code>, a key selector compares objects by a field.</p>
 <h2 id="the-unit-type">The <code>Unit</code> type<a class="headerlink" href="#the-unit-type" title="Permanent link">⚓︎</a></h2>
 <p>Callbacks that have nothing to return, like the ones passed to <code>forEach</code>, <code>forEachAsync</code>, <code>tap</code> and <code>tapChain</code>, return <code>unit()</code>: the only value of the <code>Unit</code> type.
 <code>Unit</code> is nominal, so the compiler rejects a callback that returns anything else (a number, a string, an object, <code>undefined</code>).</p>
@@ -1340,7 +1458,7 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 27, 2026 16:39:39 UTC">September 27, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 5, 2026 17:37:46 UTC">October 5, 2026</span>
   </span>
 
     
