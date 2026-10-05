@@ -112,9 +112,25 @@ describe('extend', () => {
 		expect(() => extend('map', function () { return this; })).toThrow(new Error('[iterable-linq-utility/extend] "map" already exists on IIterableLinq: use override() to replace it'));
 	});
 
-	test('throws for a second registration', () => {
-		extend('double', double);
-		expect(() => extend('double', double)).toThrow(new Error('[iterable-linq-utility/extend] "double" already exists on IIterableLinq: use override() to replace it'));
+	test('a second registration replaces the method on chains created before and after it', () => {
+		extend('twice', function () { return from([1]); });
+		const before = from([0]);
+		extend('twice', function () { return from([2]); });
+		expect(before.twice().collectToArray()).toEqual([2]);
+		expect(from([0]).twice().collectToArray()).toEqual([2]);
+		expect(Object.getOwnPropertyDescriptor(proto, 'twice')).toMatchObject({ enumerable: false, writable: false, configurable: true });
+	});
+
+	test('a registration after override of an extension replaces the method', () => {
+		extend('twice', function () { return from([1]); });
+		override('twice', function () { return from([42]); });
+		extend('twice', function () { return from([3]); });
+		expect(from([0]).twice().collectToArray()).toEqual([3]);
+	});
+
+	test('throws for a library method replaced by override', () => {
+		override('map', function () { return this; });
+		expect(() => extend('map', function () { return this; })).toThrow(new Error('[iterable-linq-utility/extend] "map" already exists on IIterableLinq: use override() to replace it'));
 	});
 
 	test('throws for Object.prototype members', () => {
