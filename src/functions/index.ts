@@ -24,6 +24,7 @@ export { forEach, forEachAsync } from './forEach';
 export { fromObject } from './fromObject';
 export { includes } from './includes';
 export { indexOf } from './indexOf';
+export { intersect } from './intersect';
 export { join } from './join';
 export { lastIndexOf } from './lastIndexOf';
 export { map } from './map';

@@ -28,6 +28,7 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [from](#from) :material-ray-start:           | Starts a chain over any `Iterable`                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap:                |
     | [fromObject](#fromobject) :material-ray-start: | Starts a chain over the entries, keys, values or descriptors of an object        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [fromRange](#fromrange) :material-ray-start: | Starts a chain of numbers from *start* up to, but not including, *end*           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [intersect](#intersect)                      | Keeps the distinct values that are also in another iterable                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
     | [prepend](#prepend)                          | Yields one value, then the values                                                | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -549,6 +550,38 @@ Throws an `Error` if:
 - `options` is not an object;
 - `step` is `0`, `NaN` or infinite;
 - `options` is passed as third argument while *start* is omitted, as in `fromRange(3, undefined, { step: 2 })`.
+
+## intersect
+
+Lazily yields the distinct values of the chain that are also in *other*, in the order of the chain. Like LINQ `Intersect` and `IntersectBy`, and `Set.prototype.intersection` for any `Iterable`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 2, 3]).intersect([2, 3, 4]).collectToArray();
+    // [2, 3]
+
+    IterableLinq.from([{ id: 1 }, { id: 2 }])
+        .intersect([{ id: 2 }], v => v.id)
+        .collectToArray();
+    // [{ id: 2 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.intersect([1, 2, 2, 3], [2, 3, 4]));
+    // [2, 3]
+    ```
+
+Values, or the keys returned by the optional `keySelector`, are compared with `SameValueZero`, like `Set` (see [Equality](../basic-concepts.md#equality)): `NaN` equals `NaN`, `+0` equals `-0`, and objects are compared by reference unless the selector returns another key. For each key the first value is yielded, unchanged. The `keySelector` is called with every value of the chain and of *other*, and its index in its own source.
+
+Before the first value it reads the whole *other* into a `Set`, so *other* must be finite; the source itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *other* again.
+
+If the selector throws, or *other* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is not a function.
 
 ## map
 

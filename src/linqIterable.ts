@@ -39,6 +39,7 @@ import {
 	forEachAsync,
 	includes,
 	indexOf,
+	intersect,
 	join,
 	lastIndexOf,
 	map,
@@ -196,6 +197,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	indexOf(value: T): number {
 		return indexOf(this.iterable, value);
+	}
+
+	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
+		return toChain(intersect(this.iterable, other, keySelector));
 	}
 
 	join(separator?: string): string {
