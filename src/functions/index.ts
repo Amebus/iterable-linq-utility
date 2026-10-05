@@ -3,6 +3,7 @@ export { at } from './at';
 export { average } from './average';
 export { collectToArray } from './collectToArray';
 export { collectToMap } from './collectToMap';
+export { collectToSet } from './collectToSet';
 export { concat } from './concat';
 export { count } from './count';
 export { distinct } from './distinct';

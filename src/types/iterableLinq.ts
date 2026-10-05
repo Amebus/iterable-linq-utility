@@ -131,6 +131,18 @@ export interface IIterableLinqBase<T> {
 	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
 
 	/**
+	 * Runs the chain and collects its values into a `Set`: a value equal to an earlier one (`SameValueZero`, as in `Set`) is left out.
+	 * @operation `Action`
+	 * @returns the distinct values, in the order of their first occurrence; an empty `Set` when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 1, 3]).collectToSet(); // Set { 1, 2, 3 }
+	 * ```
+	 * @since next
+	 */
+	collectToSet(): Set<T>;
+
+	/**
 	 * Yields the values of the chain, then the values of each iterable in `others`, in order.
 	 * Each iterable is opened only when the previous one ends, so the iterables after an infinite chain are never read.
 	 * Stopping early closes only the iterable being read.

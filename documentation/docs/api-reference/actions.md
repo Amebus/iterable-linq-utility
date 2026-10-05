@@ -9,6 +9,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [average](#average)               | Returns the average of the values, or of the numbers returned by a selector           | `number | undefined`        |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
     | [collectToMap](#collecttomap)     | Collects the values into a `Map`, by a selected key                                   | `Map<K, T>` or `Map<K, V>`  |
+    | [collectToSet](#collecttoset)     | Collects the distinct values into a `Set`                                             | `Set<T>`                    |
     | [count](#count)                   | Counts the values, or the values that satisfy a predicate                             | `number`                    |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
     | [find](#find)                     | Returns the first value that satisfies a predicate                                    | `T | undefined`             |
@@ -146,6 +147,29 @@ Collects the values of the chain into a `Map`, with the key returned by the key 
     ```
 
 Throws an `Error` if the key selector is not a function, or if a value selector is given and is not a function.
+
+## collectToSet
+
+Collects the values of the chain into a `Set`. A value equal to an earlier one is left out; the values are compared as `Set` does (`SameValueZero`).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 1, 3])
+        .collectToSet();
+    // Set { 1, 2, 3 }
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.collectToSet([1, 2, 1, 3]);
+    // Set { 1, 2, 3 }
+    ```
 
 ## count
 
