@@ -1,5 +1,6 @@
 import type { Action, AsyncAction } from './action';
 import type { Comparer } from './comparer';
+import type { FlatIterable } from './flatIterable';
 import type { Mapper } from './mapper';
 import type { IMemoizeOptions } from './memoizeOptions';
 import type { Predicate } from './predicate';
@@ -376,6 +377,23 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.6.0
 	 */
 	findLastIndex(predicate: Predicate<T>): number;
+
+	/**
+	 * Lazily flattens the nested iterables of the chain up to `depth` levels, like `Array.prototype.flat` for any `Iterable`.
+	 * Strings, primitive or `String` objects, are not flattened. Nested arrays are read by index: their `[Symbol.iterator]` is not called.
+	 * If a nested iterable throws, the iterables that contain it and the source are closed, and the error propagates.
+	 * @operation `Transformation`
+	 * @param depth - how many levels to flatten, `1` by default; a non-negative integer or `Infinity`
+	 * @returns a lazy, re-runnable chain of the flattened values
+	 * @throws Error if `depth` is not a non-negative integer or `Infinity`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, [2, [3]], new Set([4])]).flat().collectToArray(); // [1, 2, [3], 4]
+	 * IterableLinq.from([1, [2, [3]]]).flat(Infinity).collectToArray(); // [1, 2, 3]
+	 * ```
+	 * @since next
+	 */
+	flat<D extends number = 1>(depth?: D): IIterableLinq<FlatIterable<T, D>>;
 
 	/**
 	 * Maps each value to an `Iterable` and flattens the results into one chain.
@@ -954,6 +972,22 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.0.10
 	 */
 	tapChainCreation(chainCreationTapper: (chain: IIterableLinq<T>) => Unit): IIterableLinq<T>;
+
+	/**
+	 * Lazily yields tuples of the values at the same position in the chain and in each of `others`.
+	 * It stops at the end of the shortest iterable and closes the others; if an iterable throws, the others are closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param others - the iterables read side by side with the chain
+	 * @returns a lazy, re-runnable chain of tuples, as many as the values of the shortest iterable
+	 * @throws Error if a value of `others` is missing or does not implement `[Symbol.iterator]`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).zip(['a', 'b']).collectToArray(); // [[1, 'a'], [2, 'b']]
+	 * IterableLinq.from([1, 2]).zip(['a', 'b'], [true, false]).collectToArray(); // [[1, 'a', true], [2, 'b', false]]
+	 * ```
+	 * @since next
+	 */
+	zip<U extends unknown[]>(...others: { [K in keyof U]: Iterable<U[K]> }): IIterableLinq<[T, ...U]>;
 }
 
 /**

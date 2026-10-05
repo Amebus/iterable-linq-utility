@@ -2,6 +2,7 @@ import type {
 	Action,
 	AsyncAction,
 	Comparer,
+	FlatIterable,
 	IIterableLinq,
 	IIterableLinqBase,
 	IMemoizeOptions,
@@ -31,6 +32,7 @@ import {
 	findIndex,
 	findLast,
 	findLastIndex,
+	flat,
 	flatMap,
 	forEach,
 	forEachAsync,
@@ -59,7 +61,8 @@ import {
 	takeLast,
 	takeWhile,
 	tap,
-	tapChain
+	tapChain,
+	zip
 } from './functions';
 
 import { iterableLinqBrand } from './iterableLinqBrand';
@@ -163,6 +166,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	findLastIndex(predicate: Predicate<T>): number {
 		return findLastIndex(this.iterable, predicate);
+	}
+
+	flat<D extends number = 1>(depth?: D): IIterableLinq<FlatIterable<T, D>> {
+		return toChain(flat(this.iterable, depth));
 	}
 
 	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R> {
@@ -300,6 +307,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		const chain = this as unknown as IIterableLinq<T>;
 		chainCreationTapper(chain);
 		return chain;
+	}
+
+	zip<U extends unknown[]>(...others: { [K in keyof U]: Iterable<U[K]> }): IIterableLinq<[T, ...U]> {
+		return toChain(zip<T, U>(this.iterable, ...others));
 	}
 }
 
