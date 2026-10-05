@@ -35,12 +35,13 @@ The operations are grouped by what they do:
 
 ## Starting a chain
 
-| Function                                   | Starts a chain over                                                    |
-| ------------------------------------------ | ---------------------------------------------------------------------- |
-| [from](transformations.md#from)            | any `Iterable`: arrays, strings, `Set`, `Map`, generators, other chains |
-| [fromRange](transformations.md#fromrange)  | a range of numbers                                                     |
-| [repeat](transformations.md#repeat)        | the same value, repeated *n* times                                     |
-| [empty](transformations.md#empty)          | no values                                                              |
+| Function                                    | Starts a chain over                                                     |
+| ------------------------------------------- | ----------------------------------------------------------------------- |
+| [from](transformations.md#from)             | any `Iterable`: arrays, strings, `Set`, `Map`, generators, other chains |
+| [fromObject](transformations.md#fromobject) | the entries, keys, values or descriptors of an object                   |
+| [fromRange](transformations.md#fromrange)   | a range of numbers                                                      |
+| [repeat](transformations.md#repeat)         | the same value, repeated *n* times                                      |
+| [empty](transformations.md#empty)           | no values                                                               |
 
 ## Extending the chain
 
@@ -61,6 +62,8 @@ See [Extending the API](../advanced-concepts/extending.md).
 | `Unit`                       | The type of `unit()`, returned by callbacks that have nothing to return. See [The Unit type](../basic-concepts.md#the-unit-type) |
 | `IRangeOptions`              | Options of `fromRange` and `Functions.range`: `step` and `reverse`                                    |
 | `IMemoizeOptions`            | Options of `memoize`: `allowPartialMemoization`                                                       |
+| `IObjectOptions`             | Options of `fromObject`: `yield`, `inherited`, `nonEnumerable` and `symbols`                          |
+| `ObjectItem<O, Options>`     | The type of the values of `fromObject`, from `ObjectKey` and `ObjectValue`                            |
 | `Comparer<T>`                | How `min` and `max` compare: a compare function, a key or a list of keys                              |
 | `Mapper<T, R>`               | Callback of `map` and `flatMap`: `(value, index) => R`                                                |
 | `Predicate<T>`               | Callback of `filter` and `some`: `(value, index) => boolean`                                          |

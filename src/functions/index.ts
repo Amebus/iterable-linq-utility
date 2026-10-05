@@ -20,6 +20,7 @@ export { findLastIndex } from './findLastIndex';
 export { flat } from './flat';
 export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
+export { fromObject } from './fromObject';
 export { includes } from './includes';
 export { indexOf } from './indexOf';
 export { join } from './join';

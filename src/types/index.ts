@@ -5,6 +5,7 @@ export * from './flatIterable';
 export * from './iterableLinq';
 export * from './mapper';
 export * from './memoizeOptions';
+export * from './objectOptions';
 export * from './predicate';
 export * from './rangeOptions';
 export * from './reducer';
