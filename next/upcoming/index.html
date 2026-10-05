@@ -9,10 +9,6 @@
       
       
       
-        <link rel="prev" href="../advanced-concepts/extending/">
-      
-      
-        <link rel="next" href="actions/">
       
       
         
@@ -23,7 +19,7 @@
     
     
       
-        <title>API Reference - Iterable Linq Utility</title>
+        <title>Upcoming - Iterable Linq Utility</title>
       
     
     
@@ -76,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#api-reference" class="md-skip">
+        <a href="#upcoming" class="md-skip">
           Skip to content
         </a>
       
@@ -123,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              API Reference
+              Upcoming
             
           </span>
         </div>
@@ -283,13 +279,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../api-reference/" class="md-tabs__link">
           
   
   
@@ -785,8 +779,6 @@
       
   
   
-    
-  
   
   
     
@@ -806,21 +798,18 @@
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="./" class="md-nav__link md-nav__link--active">
+            <a href="../api-reference/" class="md-nav__link ">
               
   
   
@@ -838,13 +827,13 @@
             </a>
             
               
-              <label class="md-nav__link md-nav__link--active" for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -864,7 +853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="actions/" class="md-nav__link">
+      <a href="../api-reference/actions/" class="md-nav__link">
         
   
   
@@ -892,7 +881,7 @@
   
   
     <li class="md-nav__item">
-      <a href="transformations/" class="md-nav__link">
+      <a href="../api-reference/transformations/" class="md-nav__link">
         
   
   
@@ -920,7 +909,7 @@
   
   
     <li class="md-nav__item">
-      <a href="taps/" class="md-nav__link">
+      <a href="../api-reference/taps/" class="md-nav__link">
         
   
   
@@ -1002,32 +991,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#starting-a-chain" class="md-nav__link">
+  <a href="#minor-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Starting a chain
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#extending-the-chain" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Extending the chain
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#exported-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Exported types
+        Minor changes
       
     </span>
   </a>
@@ -1054,167 +1021,14 @@
   
 
 
-<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">⚓︎</a></h1>
-<p>The library has two ways to use every operation:</p>
+<h1 id="upcoming">Upcoming<a class="headerlink" href="#upcoming" title="Permanent link">⚓︎</a></h1>
+<p>The changes merged since 0.9.0, which the next release will contain. They are the notes of the pending changesets: the changelog of the release will have the same text.</p>
+<h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
-<li><strong>the chain</strong>: the functions below return an <code>IIterableLinq</code>, a lazy and re-runnable wrapper whose methods compose an <strong>O<sub>s</sub>C</strong>;</li>
-<li><strong>the raw functions</strong> in <code>Functions</code>: the same operations as plain functions over any <code>Iterable</code>, without the wrapper.</li>
+<li>New <code>collectToMap(keySelector, valueSelector?)</code> Action: collects the values into a <code>Map</code> from the key returned by <code>keySelector</code> to the value, or to the value returned by <code>valueSelector</code>. A later value with the same key replaces the earlier one (<a href="https://github.com/Amebus/iterable-linq-utility/issues/64">#64</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/166">#166</a>)</li>
+<li>New <code>collectToSet()</code> Action: collects the distinct values into a <code>Set</code>, compared with <code>SameValueZero</code> as <code>Set</code> does (<a href="https://github.com/Amebus/iterable-linq-utility/issues/63">#63</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/166">#166</a>)</li>
+<li>New <code>reduceRight</code> Action: like <code>reduce</code>, from the last value to the first, as <code>Array.prototype.reduceRight</code>, with and without a seed. The reducer receives the index of each value in the source; the whole source is read first (<a href="https://github.com/Amebus/iterable-linq-utility/issues/62">#62</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/166">#166</a>)</li>
 </ul>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Chain</label><label for="__tabbed_1_2">Raw Functions</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
-<span class="normal"><a href="#__codelineno-0-2">2</a></span>
-<span class="normal"><a href="#__codelineno-0-3">3</a></span>
-<span class="normal"><a href="#__codelineno-0-4">4</a></span>
-<span class="normal"><a href="#__codelineno-0-5">5</a></span>
-<span class="normal"><a href="#__codelineno-0-6">6</a></span>
-<span class="normal"><a href="#__codelineno-0-7">7</a></span>
-<span class="normal"><a href="#__codelineno-0-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">    </span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="c1">// [20, 40]</span>
-</code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span>
-<span class="normal"><a href="#__codelineno-1-4">4</a></span>
-<span class="normal"><a href="#__codelineno-1-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Functions</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">evens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">Functions</span><span class="p">.</span><span class="nx">filter</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">],</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">);</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="nx">Functions</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">(</span><span class="nx">Functions</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">evens</span><span class="p">,</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">));</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="c1">// [20, 40]</span>
-</code></pre></div></td></tr></table></div>
-</div>
-</div>
-</div>
-<p>The operations are grouped by what they do:</p>
-<ul>
-<li><a href="actions/">Actions</a> run the chain and return a result;</li>
-<li><a href="transformations/">Transformations</a> add an operation to the chain and return a new chain;</li>
-<li><a href="taps/">Taps</a> observe the chain without changing its values.</li>
-</ul>
-<h2 id="starting-a-chain">Starting a chain<a class="headerlink" href="#starting-a-chain" title="Permanent link">⚓︎</a></h2>
-<table>
-<thead>
-<tr>
-<th>Function</th>
-<th>Starts a chain over</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="transformations/#from">from</a></td>
-<td>any <code>Iterable</code>: arrays, strings, <code>Set</code>, <code>Map</code>, generators, other chains</td>
-</tr>
-<tr>
-<td><a href="transformations/#fromrange">fromRange</a></td>
-<td>a range of numbers</td>
-</tr>
-<tr>
-<td><a href="transformations/#repeat">repeat</a></td>
-<td>the same value, repeated <em>n</em> times</td>
-</tr>
-<tr>
-<td><a href="transformations/#empty">empty</a></td>
-<td>no values</td>
-</tr>
-</tbody>
-</table>
-<h2 id="extending-the-chain">Extending the chain<a class="headerlink" href="#extending-the-chain" title="Permanent link">⚓︎</a></h2>
-<table>
-<thead>
-<tr>
-<th>Function</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>isIterableLinq</code></td>
-<td>Tells whether a value is a chain created by this library</td>
-</tr>
-<tr>
-<td><code>extend</code></td>
-<td>Adds a method to every chain</td>
-</tr>
-<tr>
-<td><code>override</code></td>
-<td>Replaces an existing method of every chain</td>
-</tr>
-</tbody>
-</table>
-<p>See <a href="../advanced-concepts/extending/">Extending the API</a>.</p>
-<h2 id="exported-types">Exported types<a class="headerlink" href="#exported-types" title="Permanent link">⚓︎</a></h2>
-<table>
-<thead>
-<tr>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>IIterableLinq&lt;T&gt;</code></td>
-<td>The chain. Augment it to declare the methods added with <code>extend</code></td>
-</tr>
-<tr>
-<td><code>IIterableLinqBase&lt;T&gt;</code></td>
-<td>The methods the library provides on every chain</td>
-</tr>
-<tr>
-<td><code>Unit</code></td>
-<td>The type of <code>unit()</code>, returned by callbacks that have nothing to return. See <a href="../basic-concepts/#the-unit-type">The Unit type</a></td>
-</tr>
-<tr>
-<td><code>IRangeOptions</code></td>
-<td>Options of <code>fromRange</code> and <code>Functions.range</code>: <code>step</code> and <code>reverse</code></td>
-</tr>
-<tr>
-<td><code>IMemoizeOptions</code></td>
-<td>Options of <code>memoize</code>: <code>allowPartialMemoization</code></td>
-</tr>
-<tr>
-<td><code>Comparer&lt;T&gt;</code></td>
-<td>How <code>min</code> and <code>max</code> compare: a compare function, a key or a list of keys</td>
-</tr>
-<tr>
-<td><code>Mapper&lt;T, R&gt;</code></td>
-<td>Callback of <code>map</code> and <code>flatMap</code>: <code>(value, index) =&gt; R</code></td>
-</tr>
-<tr>
-<td><code>Predicate&lt;T&gt;</code></td>
-<td>Callback of <code>filter</code> and <code>some</code>: <code>(value, index) =&gt; boolean</code></td>
-</tr>
-<tr>
-<td><code>Reducer&lt;T, R&gt;</code></td>
-<td>Callback of <code>reduce</code>: <code>(acc, value, index) =&gt; R</code></td>
-</tr>
-<tr>
-<td><code>Action&lt;T&gt;</code></td>
-<td>Callback of <code>forEach</code>: <code>(value, index) =&gt; Unit</code></td>
-</tr>
-<tr>
-<td><code>AsyncAction&lt;T&gt;</code></td>
-<td>Callback of <code>forEachAsync</code>: <code>(value, index) =&gt; Promise&lt;Unit&gt;</code></td>
-</tr>
-<tr>
-<td><code>Tapper&lt;T&gt;</code></td>
-<td>Callback of <code>tap</code> and <code>tapChain</code>: <code>(value, index) =&gt; Unit</code></td>
-</tr>
-<tr>
-<td><code>ChainMethod</code></td>
-<td>Implementation passed to <code>extend</code> and <code>override</code></td>
-</tr>
-</tbody>
-</table>
-<p>Every exported symbol has a JSDoc comment with a description, the parameters, the errors, an example and the version that introduced it (<code>@since</code>): your editor shows it on hover.</p>
 
 
 
@@ -1222,38 +1036,6 @@
 
 
 
-  
-    
-  
-  
-    
-  
-
-
-  <aside class="md-source-file">
-    
-      
-  <span class="md-source-file__fact">
-    <span class="md-icon" title="Last update">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
-    </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 27, 2026 16:36:03 UTC">September 27, 2026</span>
-  </span>
-
-    
-    
-      
-  <span class="md-source-file__fact">
-    <span class="md-icon" title="Created">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
-    </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 7, 2023 16:21:43 UTC">January 7, 2023</span>
-  </span>
-
-    
-    
-    
-  </aside>
 
 
 
