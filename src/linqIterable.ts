@@ -38,6 +38,7 @@ import {
 	forEach,
 	forEachAsync,
 	groupBy,
+	groupJoin,
 	includes,
 	indexOf,
 	intersect,
@@ -195,6 +196,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]> {
 		return toChain(groupBy(this.iterable, keySelector));
+	}
+
+	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R> {
+		return toChain(groupJoin(this.iterable, inner, outerKey, innerKey, result));
 	}
 
 	includes(value: T): boolean {

@@ -488,6 +488,31 @@ export interface IIterableLinqBase<T> {
 	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]>;
 
 	/**
+	 * Yields `result(outer, inners)` for each value of the chain, with the values of `inner` that have the same key,
+	 * in the order of `inner`; `inners` is empty when there are none. Like LINQ `GroupJoin`.
+	 * Before the first value it reads the whole `inner`, so `inner` must be finite; each run reads it again.
+	 * The keys are compared with `SameValueZero`, like `Map`: `NaN` matches `NaN`, and `null` and `undefined` match themselves.
+	 * Each call of `result` gets a new array.
+	 * If a callback throws, or `inner` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - called with each value of the chain and its index; returns its key
+	 * @param innerKey - called with each value of `inner` and its index; returns its key
+	 * @param result - called with each value of the chain and the array of its inner values; returns the value to yield
+	 * @returns a new chain with one result for each value of the chain
+	 * @throws Error if `inner` is not iterable, or if `outerKey`, `innerKey` or `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }])
+	 * 	.groupJoin(players, t => t.id, p => p.team, (t, ps) => [t.name, ps.length])
+	 * 	.collectToArray(); // [['a', 2], ['b', 0]]
+	 * ```
+	 * @since next
+	 */
+	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
+
+	/**
 	 * Tells whether the chain contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
 	 * stops and closes the source at the first match.
 	 * @operation `Action`
