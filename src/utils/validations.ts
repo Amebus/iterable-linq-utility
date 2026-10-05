@@ -42,3 +42,8 @@ export function throwIfNotNonEmptyString(value: unknown, name: string, operation
 	if (typeof value !== 'string' || value.length === 0)
 		throw libraryError(operation, `The "${name}" parameter must be a non-empty string`);
 }
+
+export function throwIfNotBoolean(value: unknown, name: string, operation: string) {
+	if (typeof value !== 'boolean')
+		throw libraryError(operation, `The "${name}" option must be a boolean`);
+}

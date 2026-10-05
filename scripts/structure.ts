@@ -11,7 +11,7 @@ export interface IStructureProblem {
 }
 
 /** Operations that start a chain: they have no chain method, and their wrapper spec and bench use the public name. */
-const CHAIN_STARTERS: Record<string, string> = { empty: 'empty', range: 'fromRange', repeat: 'repeat' };
+const CHAIN_STARTERS: Record<string, string> = { empty: 'empty', fromObject: 'fromObject', range: 'fromRange', repeat: 'repeat' };
 
 /** Exported functions of src/functions that are not operations: their JSDoc needs no `@operation` and no `@example`. */
 const HELPERS = new Set(['getMemoizeDefaultOptions']);

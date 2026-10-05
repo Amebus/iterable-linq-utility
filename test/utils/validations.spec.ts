@@ -121,4 +121,15 @@ describe('Validations', () => {
 		});
 	});
 
+	describe('throwIfNotBoolean', () => {
+		test.each([true, false])('accepts %s', value => {
+			expect(() => Validations.throwIfNotBoolean(value, 'flag', 'op')).not.toThrow();
+		});
+
+		test.each([0, 1, 'true', null, undefined, {}])('rejects %s', value => {
+			expect(() => Validations.throwIfNotBoolean(value, 'flag', 'op'))
+				.toThrow(new Error(prefixed('op', 'The "flag" option must be a boolean')));
+		});
+	});
+
 });

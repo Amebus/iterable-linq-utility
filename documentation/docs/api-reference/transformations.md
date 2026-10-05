@@ -2,7 +2,7 @@
 
 A **Transformation** adds an operation to the **O~s~C** and returns a new chain. Nothing runs until an [Action](actions.md) runs the chain, and every run of the chain runs the transformations again.
 
-The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are listed here too: they are the first link of every **O~s~C**.
+The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` and `empty`) are listed here too: they are the first link of every **O~s~C**.
 
 ???+ summary "TLDR list of Transformations"
 
@@ -25,6 +25,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [flat](#flat)                                | Flattens the nested iterables up to *depth* levels                               | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [flatMap](#flatmap)                          | Maps each value to an `Iterable` and flattens the results                        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [from](#from) :material-ray-start:           | Starts a chain over any `Iterable`                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap:                |
+    | [fromObject](#fromobject) :material-ray-start: | Starts a chain over the entries, keys, values or descriptors of an object        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [fromRange](#fromrange) :material-ray-start: | Starts a chain of numbers from *start* up to, but not including, *end*           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
@@ -405,6 +406,71 @@ Throws an `Error` if the argument is missing or does not implement `[Symbol.iter
 
 !!! warning "Single-use sources"
     A generator object can be iterated only once. A chain over it gives values on the first run only. Use [memoize](#memoize) to run such a chain more than once.
+
+## fromObject
+
+Starts a chain over the properties of an object: its entries (the default), its keys, its values or its property descriptors. With no options it yields what `Object.entries`, `Object.keys` and `Object.values` return: the own, enumerable, string keys.
+
+- `options.yield`: `'entries'` (default) yields `[key, value]`, `'keys'` the keys, `'values'` the values, `'descriptors'` `[key, descriptor, owner]`.
+- `options.inherited` also reads the prototype chain, up to `Object.prototype` excluded. A key is yielded once, from the nearest object that has it, like `for…in`.
+- `options.nonEnumerable` also reads the non-enumerable properties.
+- `options.symbols` also reads the symbol keys, after the string keys of each object.
+
+| Native                                | Options                     |
+| ------------------------------------- | --------------------------- |
+| `Object.keys` / `entries` / `values`  | none                        |
+| `Object.getOwnPropertyNames`          | `nonEnumerable`             |
+| `Reflect.ownKeys`                     | `nonEnumerable` + `symbols` |
+| `for…in`                              | `inherited`                 |
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.fromObject({ a: 1, b: 2 }).collectToArray();
+    // [['a', 1], ['b', 2]]
+
+    IterableLinq.fromObject({ a: 1, b: 2 }, { yield: 'keys' }).collectToArray();
+    // ['a', 'b']
+
+    IterableLinq.fromObject({ a: 1, b: 2 }, { yield: 'values' }).collectToArray();
+    // [1, 2]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.fromObject({ a: 1, b: 2 }, { yield: 'keys' }));
+    // ['a', 'b']
+    ```
+
+The chain reads the object again at each run: the keys of an object when the iteration reaches it, a value when it is yielded, so a getter runs at that moment, with the object as `this`. A key deleted before it is reached is skipped.
+
+`'descriptors'` does not call the getters: `owner` is the object or the prototype that has the property. The cases the options cannot express are a [filter](#filter) on it:
+
+```typescript
+import * as IterableLinq from 'iterable-linq-utility';
+
+// only the accessors, without running them
+IterableLinq
+    .fromObject(object, { yield: 'descriptors', nonEnumerable: true })
+    .filter(([, descriptor]) => descriptor.get !== undefined)
+    .map(([key]) => key)
+    .collectToArray();
+
+// only the symbol keys of one prototype
+IterableLinq
+    .fromObject(object, { yield: 'descriptors', inherited: true, symbols: true })
+    .filter(([key, , owner]) => typeof key === 'symbol' && owner === Base.prototype)
+    .map(([key]) => key)
+    .collectToArray();
+```
+
+With no options, or with literal options, the keys are typed as the keys of the object, as strings (`'a' | 'b'`). With `inherited` or `nonEnumerable` the chain can yield keys the type does not declare, so the keys are `string` (and `symbol` with `symbols`) and the values `unknown`.
+
+Throws an `Error` if *object* is not an object or a function, *options* is not an object, `yield` is not one of its values, or a flag is not a boolean.
 
 ## fromRange
 

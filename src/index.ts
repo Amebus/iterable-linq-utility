@@ -2,7 +2,7 @@ import { libraryError, Validations } from './utils';
 import { toChain } from './linqIterable';
 
 import * as Functions from './functions';
-import type { IIterableLinq, IRangeOptions } from './types';
+import type { IIterableLinq, IObjectDefaultOptions, IObjectOptions, IRangeOptions, ObjectItem } from './types';
 
 /**
  * Starts a chain with no values.
@@ -32,6 +32,29 @@ export function empty<T>(): IIterableLinq<T> {
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
 	Validations.throwIfNotIterable(iterable, 'from');
 	return toChain(iterable);
+}
+
+/**
+ * Starts a chain over the properties of `object`: its entries, its keys, its values or its property descriptors.
+ * With the default options it yields what `Object.entries` returns: the own, enumerable, string keys.
+ * - `options.yield`: `'entries'` (default) `[key, value]`, `'keys'`, `'values'`, or `'descriptors'` `[key, descriptor, owner]` without calling the getters.
+ * - `options.inherited` also reads the prototype chain, up to `Object.prototype` excluded; a key is yielded once, from the nearest object that has it, like `for…in`.
+ * - `options.nonEnumerable` also reads the non-enumerable properties, `options.symbols` the symbol keys.
+ * - Each run of the chain reads the object again: the keys of an object when the iteration reaches it, a value when it is yielded.
+ * @param object - the object to read
+ * @param options - `yield`, `inherited`, `nonEnumerable` and `symbols`
+ * @returns a chain of the properties of `object`
+ * @throws Error if `object` is not an object or a function, `options` is not an object, `yield` is not one of its values, or a flag is not a boolean
+ * @example
+ * ```ts
+ * IterableLinq.fromObject({ a: 1, b: 2 }).collectToArray();                    // [['a', 1], ['b', 2]]
+ * IterableLinq.fromObject({ a: 1, b: 2 }, { yield: 'keys' }).collectToArray();   // ['a', 'b']
+ * IterableLinq.fromObject({ a: 1, b: 2 }, { yield: 'values' }).collectToArray(); // [1, 2]
+ * ```
+ * @since next
+ */
+export function fromObject<O extends object, const Options extends IObjectOptions = IObjectDefaultOptions>(object: O, options?: Options): IIterableLinq<ObjectItem<O, Options>> {
+	return from(Functions.fromObject(object, options));
 }
 
 /**
