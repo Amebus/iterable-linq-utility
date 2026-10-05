@@ -62,6 +62,7 @@ import {
 	takeWhile,
 	tap,
 	tapChain,
+	with as withValue,
 	zip
 } from './functions';
 
@@ -307,6 +308,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		const chain = this as unknown as IIterableLinq<T>;
 		chainCreationTapper(chain);
 		return chain;
+	}
+
+	with(index: number, value: T): IIterableLinq<T> {
+		return toChain(withValue(this.iterable, index, value));
 	}
 
 	zip<U extends unknown[]>(...others: { [K in keyof U]: Iterable<U[K]> }): IIterableLinq<[T, ...U]> {
