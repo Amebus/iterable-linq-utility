@@ -13,7 +13,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * Array.from(Functions.defaultIfEmpty([1, 2], 0)); // [1, 2]
  * Array.from(Functions.defaultIfEmpty([], 0)); // [0]
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function defaultIfEmpty<T>(iterable: Iterable<T>, value: T): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'defaultIfEmpty');

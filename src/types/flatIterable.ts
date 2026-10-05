@@ -1,7 +1,7 @@
 /**
  * The type of the values of `flat` with `Depth` levels: like `FlatArray`, for any `Iterable` except strings.
  * A `Depth` of type `number` (for example `Infinity`) gives a wide type, as `FlatArray` does.
- * @since next
+ * @since 0.10.0
  */
 export type FlatIterable<T, Depth extends number> = {
 	done: T;

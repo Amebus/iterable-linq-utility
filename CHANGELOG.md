@@ -1,5 +1,27 @@
 # iterable-linq-utility
 
+## 0.10.0
+
+### Minor Changes
+
+- [#168](https://github.com/Amebus/iterable-linq-utility/pull/168) [`f1f4df0`](https://github.com/Amebus/iterable-linq-utility/commit/f1f4df0b512e06e56d8e0123b84b676a65ae0779) Thanks [@Amebus](https://github.com/Amebus)! - New `chunk(size)` Transformation: yields arrays of `size` values, the last one with the remaining values. Each array is yielded once its values have been read, so it works with infinite sources ([#37](https://github.com/Amebus/iterable-linq-utility/issues/37)).
+
+- [#166](https://github.com/Amebus/iterable-linq-utility/pull/166) [`d488393`](https://github.com/Amebus/iterable-linq-utility/commit/d488393d1a96e838b614255ea9958d14b96158e7) Thanks [@Amebus](https://github.com/Amebus)! - New `collectToMap(keySelector, valueSelector?)` Action: collects the values into a `Map` from the key returned by `keySelector` to the value, or to the value returned by `valueSelector`. A later value with the same key replaces the earlier one ([#64](https://github.com/Amebus/iterable-linq-utility/issues/64)).
+
+- [#166](https://github.com/Amebus/iterable-linq-utility/pull/166) [`eaedb85`](https://github.com/Amebus/iterable-linq-utility/commit/eaedb854746de27e0018de00f15dc58718d30290) Thanks [@Amebus](https://github.com/Amebus)! - New `collectToSet()` Action: collects the distinct values into a `Set`, compared with `SameValueZero` as `Set` does ([#63](https://github.com/Amebus/iterable-linq-utility/issues/63)).
+
+- [#168](https://github.com/Amebus/iterable-linq-utility/pull/168) [`23664cf`](https://github.com/Amebus/iterable-linq-utility/commit/23664cf112e81f657303592f6c9a420265b0af35) Thanks [@Amebus](https://github.com/Amebus)! - New `defaultIfEmpty(value)` Transformation: yields the values, or only `value` when the source is empty ([#45](https://github.com/Amebus/iterable-linq-utility/issues/45)).
+
+- [#168](https://github.com/Amebus/iterable-linq-utility/pull/168) [`f115b0c`](https://github.com/Amebus/iterable-linq-utility/commit/f115b0c7f8638135e542f6883b2cff1238c03051) Thanks [@Amebus](https://github.com/Amebus)! - New `entries()` Transformation: yields `[index, value]` pairs, like `Array.prototype.entries` ([#44](https://github.com/Amebus/iterable-linq-utility/issues/44)).
+
+- [#169](https://github.com/Amebus/iterable-linq-utility/pull/169) [`59309d2`](https://github.com/Amebus/iterable-linq-utility/commit/59309d2ace22c5016b732e39d0d85cb4fee8f348) Thanks [@Amebus](https://github.com/Amebus)! - New `flat(depth?)` Transformation: flattens the nested iterables up to `depth` levels (1 by default, `Infinity` for all), like `Array.prototype.flat` for any `Iterable`; strings are not flattened. The type of the values is the new `FlatIterable<T, Depth>` ([#43](https://github.com/Amebus/iterable-linq-utility/issues/43)).
+
+- [#166](https://github.com/Amebus/iterable-linq-utility/pull/166) [`9693ad8`](https://github.com/Amebus/iterable-linq-utility/commit/9693ad83b8ddedc8ea10da34ba2c2f368c0c595a) Thanks [@Amebus](https://github.com/Amebus)! - New `reduceRight` Action: like `reduce`, from the last value to the first, as `Array.prototype.reduceRight`, with and without a seed. The reducer receives the index of each value in the source; the whole source is read first ([#62](https://github.com/Amebus/iterable-linq-utility/issues/62)).
+
+- [#170](https://github.com/Amebus/iterable-linq-utility/pull/170) [`ab87d9a`](https://github.com/Amebus/iterable-linq-utility/commit/ab87d9acd6ee4e0c0c7adef9ee83467c7a8e2e62) Thanks [@Amebus](https://github.com/Amebus)! - New `with(index, value)` Transformation: yields the values with `value` in place of the value at `index`, like `Array.prototype.with`; a negative index counts from the end. An index out of range throws when the source ends. The raw function is `Functions.with` ([#46](https://github.com/Amebus/iterable-linq-utility/issues/46)).
+
+- [#169](https://github.com/Amebus/iterable-linq-utility/pull/169) [`a20dd3d`](https://github.com/Amebus/iterable-linq-utility/commit/a20dd3df3511eb37505b5677ffafb303a4284041) Thanks [@Amebus](https://github.com/Amebus)! - New `zip(...others)` Transformation: yields tuples of the values at the same position in the source and in each of `others`, typed as `[T, ...U]`. It stops at the end of the shortest iterable and closes the others ([#36](https://github.com/Amebus/iterable-linq-utility/issues/36)).
+
 ## 0.9.0
 
 ### Minor Changes

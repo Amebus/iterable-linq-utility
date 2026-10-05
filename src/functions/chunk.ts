@@ -13,7 +13,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * ```ts
  * Array.from(Functions.chunk([1, 2, 3, 4, 5], 2)); // [[1, 2], [3, 4], [5]]
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function chunk<T>(iterable: Iterable<T>, size: number): Iterable<T[]> {
 	Validations.throwIfNotIterable(iterable, 'chunk');

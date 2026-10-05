@@ -14,7 +14,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.collectToMap([{ id: 1, name: 'a' }, { id: 2, name: 'b' }], v => v.id); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function collectToMap<T, K>(iterable: Iterable<T>, keySelector: Mapper<T, K>): Map<K, T>;
 /**
@@ -31,7 +31,7 @@ export function collectToMap<T, K>(iterable: Iterable<T>, keySelector: Mapper<T,
  * ```ts
  * Functions.collectToMap([{ id: 1, name: 'a' }, { id: 2, name: 'b' }], v => v.id, v => v.name); // Map { 1 => 'a', 2 => 'b' }
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function collectToMap<T, K, V>(iterable: Iterable<T>, keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
 export function collectToMap<T, K, V>(iterable: Iterable<T>, keySelector: Mapper<T, K>, valueSelector?: Mapper<T, V>): Map<K, T | V> {

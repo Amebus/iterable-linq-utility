@@ -18,7 +18,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, libraryError, Validat
  * Array.from(Functions.with([1, 2, 3], 1, 20)); // [1, 20, 3]
  * Array.from(Functions.with([1, 2, 3], -1, 30)); // [1, 2, 30]
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function withValue<T>(iterable: Iterable<T>, index: number, value: T): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'with');
