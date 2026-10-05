@@ -27,6 +27,7 @@ import {
 	distinct,
 	entries,
 	every,
+	except,
 	filter,
 	find,
 	findIndex,
@@ -38,6 +39,7 @@ import {
 	forEachAsync,
 	includes,
 	indexOf,
+	intersect,
 	join,
 	lastIndexOf,
 	map,
@@ -62,6 +64,7 @@ import {
 	takeWhile,
 	tap,
 	tapChain,
+	union,
 	with as withValue,
 	zip
 } from './functions';
@@ -143,6 +146,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return every(this.iterable, predicate);
 	}
 
+	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
+		return toChain(except(this.iterable, other, keySelector));
+	}
+
 	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
 	filter(predicate: Predicate<T>): IIterableLinq<T>;
 	filter(predicate: Predicate<T>): IIterableLinq<T> {
@@ -191,6 +198,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	indexOf(value: T): number {
 		return indexOf(this.iterable, value);
+	}
+
+	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
+		return toChain(intersect(this.iterable, other, keySelector));
 	}
 
 	join(separator?: string): string {
@@ -308,6 +319,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		const chain = this as unknown as IIterableLinq<T>;
 		chainCreationTapper(chain);
 		return chain;
+	}
+
+	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
+		return toChain(union(this.iterable, other, keySelector));
 	}
 
 	with(index: number, value: T): IIterableLinq<T> {
