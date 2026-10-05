@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">1 unreleased change since 0.11.0</a>
+    <a href="../upcoming/">4 unreleased changes since 0.11.0</a>
           </div>
           
         </aside>
@@ -1056,6 +1056,9 @@
 <h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>Breaking: <code>sequenceEqual(other, equals?)</code> without <code>equals</code> now compares the values with <code>SameValueZero</code>, like <code>Set</code> and <code>Map</code>, so <code>NaN</code> equals <code>NaN</code>; pass <code>(a, b) =&gt; a === b</code> for the old behaviour. See the <a href="https://amebus.github.io/iterable-linq-utility/0.12/migrating-to-0.12.0/">migration guide</a> and <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0024-equality-of-the-operations-that-compare-values.md">ADR 0024</a> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/152">#152</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/178">#178</a>)</li>
+<li>New <code>except(other, keySelector?)</code> Transformation: lazily yields the distinct values of the chain that are not in <code>other</code>, compared with <code>SameValueZero</code> or by the key of <code>keySelector</code>, like LINQ <code>Except</code> / <code>ExceptBy</code> and <code>Set.prototype.difference</code> for any <code>Iterable</code>; <code>other</code> is read whole before the first value (<a href="https://github.com/Amebus/iterable-linq-utility/issues/35">#35</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/180">#180</a>)</li>
+<li>New <code>intersect(other, keySelector?)</code> Transformation: lazily yields the distinct values of the chain that are also in <code>other</code>, compared with <code>SameValueZero</code> or by the key of <code>keySelector</code>, like LINQ <code>Intersect</code> / <code>IntersectBy</code> and <code>Set.prototype.intersection</code> for any <code>Iterable</code>; <code>other</code> is read whole before the first value (<a href="https://github.com/Amebus/iterable-linq-utility/issues/34">#34</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/180">#180</a>)</li>
+<li>New <code>union(other, keySelector?)</code> Transformation: lazily yields the distinct values of the chain, then the values of <code>other</code> not yielded yet, compared with <code>SameValueZero</code> or by the key of <code>keySelector</code>, like LINQ <code>Union</code> / <code>UnionBy</code> and <code>Set.prototype.union</code> for any <code>Iterable</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/33">#33</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/180">#180</a>)</li>
 </ul>
 
 
