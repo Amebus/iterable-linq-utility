@@ -534,7 +534,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).reverse().collectToArray(); // [3, 2, 1]
 	 * ```
-	 * @since next
+	 * @since 0.9.0
 	 */
 	reverse(): IIterableLinq<T>;
 
@@ -627,7 +627,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4, 5]).skipLast(2).collectToArray(); // [1, 2, 3]
 	 * ```
-	 * @since next
+	 * @since 0.9.0
 	 */
 	skipLast(count: number): IIterableLinq<T>;
 
@@ -746,7 +746,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4, 5]).takeLast(2).collectToArray(); // [4, 5]
 	 * ```
-	 * @since next
+	 * @since 0.9.0
 	 */
 	takeLast(count: number): IIterableLinq<T>;
 

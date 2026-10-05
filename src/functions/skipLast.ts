@@ -13,7 +13,7 @@ import { slice } from './slice';
  * ```ts
  * Array.from(Functions.skipLast([1, 2, 3, 4, 5], 2)); // [1, 2, 3]
  * ```
- * @since next
+ * @since 0.9.0
  */
 export function skipLast<T>(iterable: Iterable<T>, count: number): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'skipLast');

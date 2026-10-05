@@ -1,5 +1,15 @@
 # iterable-linq-utility
 
+## 0.9.0
+
+### Minor Changes
+
+- [#164](https://github.com/Amebus/iterable-linq-utility/pull/164) [`81b6243`](https://github.com/Amebus/iterable-linq-utility/commit/81b6243757ea3619bd75bccaccaf056e45ff4f17) Thanks [@Amebus](https://github.com/Amebus)! - New `reverse()` Transformation: yields the values in reverse order without changing the source, like `Array.prototype.toReversed`. It reads the whole source before the first value, and every run reads the source again ([#42](https://github.com/Amebus/iterable-linq-utility/issues/42)).
+
+- [#164](https://github.com/Amebus/iterable-linq-utility/pull/164) [`8debf5c`](https://github.com/Amebus/iterable-linq-utility/commit/8debf5c62b9edfe52acd0e714d19fdd14f4a87b7) Thanks [@Amebus](https://github.com/Amebus)! - New `skipLast(count)` Transformation: yields every value except the last `count`, each one once `count` more values have been read, so it works with infinite sources. It keeps a buffer of `count` values ([#31](https://github.com/Amebus/iterable-linq-utility/issues/31)).
+
+- [#164](https://github.com/Amebus/iterable-linq-utility/pull/164) [`5cc0dea`](https://github.com/Amebus/iterable-linq-utility/commit/5cc0dea2a569c519394b52f04cc13f498e9895b1) Thanks [@Amebus](https://github.com/Amebus)! - New `takeLast(count)` Transformation: yields the last `count` values. It reads the whole source before the first value, keeping a buffer of `count` values ([#30](https://github.com/Amebus/iterable-linq-utility/issues/30)).
+
 ## 0.8.0
 
 ### Minor Changes
