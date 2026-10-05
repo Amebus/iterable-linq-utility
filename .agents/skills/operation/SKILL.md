@@ -10,6 +10,7 @@ The rules and their reasons are in [How to contribute](../../../documentation/do
 ## Decide first
 
 - **Transformation or Action?** A Transformation returns a new chain and runs nothing until an Action runs the chain. An Action runs the chain and returns a value.
+- **Equality**: an operation that compares values follows its native counterpart (`indexOf` `===`, `includes` `SameValueZero`); without one, it uses `SameValueZero`, like `Set` and `Map`, and takes a callback for a different equality ([ADR 0024](../../../docs/decisions/0024-equality-of-the-operations-that-compare-values.md)). The JSDoc and the API reference state it.
 - **Signatures**: the raw function takes the iterable as its first argument; the chain method takes the other arguments. For a new operation, they should be agreed in an issue.
 
 ## Checklist
