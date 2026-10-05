@@ -38,6 +38,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeLast](#takelast)                        | Yields the last *count* values                                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [with](#with)                                | Yields the values with another value at an index, like `Array.prototype.with`    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [zip](#zip)                                  | Yields tuples of the values at the same position in several iterables            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
@@ -842,6 +843,43 @@ With a type guard, `takeWhile` narrows the element type, as `filter` does.
     Array.from(Functions.takeWhile(values, (v): v is number => typeof v === 'number'));
     // number[], [1, 2]
     ```
+
+## with
+
+Yields the values of the chain, with *value* in place of the value at *index*, like `Array.prototype.with`; a negative index counts from the end: `-1` is the last value.
+
+- A non-negative *index* yields the values as they are read, so `with` also works with infinite chains.
+- A negative *index* yields each value once `-index` more values have been read, keeping only those `-index` values.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .with(1, 20)
+        .collectToArray();
+    // [1, 20, 3]
+
+    IterableLinq
+        .from([1, 2, 3])
+        .with(-1, 30)
+        .collectToArray();
+    // [1, 2, 30]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.with([1, 2, 3], 1, 20));
+    // [1, 20, 3]
+    ```
+
+`with` is a reserved word in JavaScript: the raw function is called as `Functions.with`, and cannot be imported by name as `{ with }`.
+
+Throws an `Error` if *index* is not an integer (fractions, `NaN` and `Infinity` included): unlike `Array.prototype.with`, it is not converted to an integer. Like `Array.prototype.with`, an index out of range throws, but the chain finds it out only when it ends: the values before are yielded, then the last read throws.
 
 ## zip
 

@@ -974,6 +974,24 @@ export interface IIterableLinqBase<T> {
 	tapChainCreation(chainCreationTapper: (chain: IIterableLinq<T>) => Unit): IIterableLinq<T>;
 
 	/**
+	 * Lazily yields the values of the chain, with `value` in place of the value at `index`, like `Array.prototype.with`; a negative index counts from the end.
+	 * A non-negative index yields the values as they are read. A negative index yields each value once `-index` more values have been read,
+	 * keeping only those `-index` values.
+	 * @operation `Transformation`
+	 * @param index - an integer; `-1` is the last value
+	 * @param value - the value yielded in place of the value at `index`
+	 * @returns a lazy, re-runnable chain of the values, with `value` at `index`
+	 * @throws Error if `index` is not an integer (fractions, `NaN` and `Infinity` included); when the chain ends, if it has no value at `index`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).with(1, 20).collectToArray(); // [1, 20, 3]
+	 * IterableLinq.from([1, 2, 3]).with(-1, 30).collectToArray(); // [1, 2, 30]
+	 * ```
+	 * @since next
+	 */
+	with(index: number, value: T): IIterableLinq<T>;
+
+	/**
 	 * Lazily yields tuples of the values at the same position in the chain and in each of `others`.
 	 * It stops at the end of the shortest iterable and closes the others; if an iterable throws, the others are closed and the error propagates.
 	 * @operation `Transformation`

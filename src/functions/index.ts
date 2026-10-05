@@ -48,4 +48,5 @@ export { takeLast } from './takeLast';
 export { takeWhile } from './takeWhile';
 export { tap } from './tap';
 export { tapChain } from './tapChain';
+export { withValue as with } from './with';
 export { zip } from './zip';
