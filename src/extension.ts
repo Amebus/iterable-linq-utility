@@ -40,6 +40,11 @@ function defineChainMethod(name: string, implementation: ChainMethod): void {
 	});
 }
 
+/**
+ * The names added by `extend`: a later `extend` of one of them replaces it, a library method still throws.
+ */
+const extensions = new Set<string>();
+
 function validateMethod(operation: string, name: unknown, implementation: unknown): void {
 	Validations.throwIfNotNonEmptyString(name, 'name', operation);
 	Validations.throwIfNotFunction(implementation, 'implementation', operation);
@@ -47,10 +52,12 @@ function validateMethod(operation: string, name: unknown, implementation: unknow
 
 /**
  * Adds a method to every chain, including the chains created before the call.
- * Declare the method first by augmenting `IIterableLinq`, then register it once, at application start-up.
- * @param name - the method name; it must not exist yet (library methods, earlier extensions, `Object.prototype` members)
+ * Declare the method first by augmenting `IIterableLinq`, then register it at application start-up.
+ * Registering a name added by an earlier `extend` again replaces its implementation, so a module that runs twice
+ * (hot module replacement, a test runner that re-imports it) does not throw: the last registration wins.
+ * @param name - the method name; a new name or one added by an earlier `extend`, not a library method or an `Object.prototype` member
  * @param implementation - the method; `this` is the chain, typed `IIterableLinq<unknown>`
- * @throws Error if `name` already exists (use `override` to replace it), is empty, or `implementation` is not a function
+ * @throws Error if `name` is a library method (use `override` to replace it), an `Object.prototype` member or a name used by the chain instances, is empty, or `implementation` is not a function
  * @example
  * ```ts
  * declare module 'iterable-linq-utility' {
@@ -67,9 +74,10 @@ function validateMethod(operation: string, name: unknown, implementation: unknow
 export function extend<K extends Extract<keyof IIterableLinq<unknown>, string>>(name: K, implementation: ChainMethod): void {
 	validateMethod('extend', name, implementation);
 	// check an instance, not only the prototype: instance fields would shadow the new method
-	if (name in toChain([]))
+	if (!extensions.has(name) && name in toChain([]))
 		throw libraryError('extend', `"${name}" already exists on IIterableLinq: use override() to replace it`);
 	defineChainMethod(name, implementation);
+	extensions.add(name);
 }
 
 /**

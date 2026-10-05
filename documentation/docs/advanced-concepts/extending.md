@@ -20,13 +20,13 @@ It is a brand check, not a validation: any object can carry the same `Symbol.for
 Adding an operation takes two steps:
 
 1. Declare it by augmenting the `IIterableLinq` interface. Declare it on `IIterableLinq`, not on `IIterableLinqBase`, which holds the library's own operations.
-2. Register it once, at application start-up, with `extend`.
+2. Register it at application start-up with `extend`.
 
 The method is available on every chain, including chains created before the call to `extend`.
 
 `extend` throws if:
 
-- the name already exists: a library operation (`map`, `filter`, …), an operation you added before, or a member of `Object.prototype` (`toString`, `hasOwnProperty`, …);
+- the name is a library operation (`map`, `filter`, …) or a member of `Object.prototype` (`toString`, `hasOwnProperty`, …);
 - the name is empty;
 - the implementation is not a function.
 
@@ -137,7 +137,8 @@ Overriding changes only the fluent operation. The raw functions in `Functions` (
 
 ## Rules and limits
 
-- **Register once, at start-up.** Registering the same name twice with `extend` throws. This includes modules that run twice, for example with hot module replacement or test runners that re-import modules.
+- **Registering again replaces.** Calling `extend` again with a name that an earlier `extend` added replaces its implementation on every chain, including the chains created before. A module that runs twice, with hot module replacement or a test runner that re-imports it, does not throw, and the chains use the edited code.
+- **Name clashes are silent.** For the same reason, two packages that extend the same name overwrite each other without an error: the last one registered wins. Prefix the names of the operations you publish in a package (`myLibChunk`) to avoid it.
 - **Extensions are global.** Every chain in the process gets them, and an `override` lasts for the whole process.
 - **`this` has no element type.** Inside the implementation `this` is `IIterableLinq<unknown>`. Callers still get full typing from your `declare module` block (in the example, `from([1, 2]).pairwise()` is `IIterableLinq<[number, number]>`).
 - **The compiler does not match the implementation with the declaration.** Keeping the implementation consistent with the declared signature is up to you.

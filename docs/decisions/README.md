@@ -6,7 +6,7 @@ Each file records one decision: its context, the options considered and the cons
 | --- | --- | --- |
 | [0001](0001-folder-structure-based-on-topics.md) | Folder structure based on topics | accepted |
 | [0002](0002-material-for-mkdocs-as-documentation-engine.md) | Material for MkDocs as documentation engine | accepted |
-| [0003](0003-extension-api-instead-of-public-wrapper-class.md) | Extension API instead of a public wrapper class | accepted |
+| [0003](0003-extension-api-instead-of-public-wrapper-class.md) | Extension API instead of a public wrapper class | accepted, amended by [0023](0023-re-registering-an-extension.md) |
 | [0004](0004-re-runnable-deferred-chains.md) | Re-runnable deferred chains | accepted |
 | [0005](0005-fluent-chain-and-raw-functions.md) | Fluent chain and raw functions | accepted |
 | [0006](0006-position-against-the-native-iterator-helpers.md) | Position against the native Iterator Helpers | accepted |
@@ -26,6 +26,7 @@ Each file records one decision: its context, the options considered and the cons
 | [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted |
 | [0021](0021-benchmark-standards.md) | Benchmark standards | accepted, amended by [0022](0022-benchmark-scenarios-in-practice.md) |
 | [0022](0022-benchmark-scenarios-in-practice.md) | Benchmark scenarios in practice | accepted |
+| [0023](0023-re-registering-an-extension.md) | Re-registering an extension | accepted |
 
 ## Adding a decision
 

@@ -1,6 +1,6 @@
 # Extension API instead of a public wrapper class
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0023](0023-re-registering-an-extension.md)
 * Deciders: Amebus
 * Date: 2026-09-27
 
