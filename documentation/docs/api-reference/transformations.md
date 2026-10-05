@@ -28,6 +28,9 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [from](#from) :material-ray-start:           | Starts a chain over any `Iterable`                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap:                |
     | [fromObject](#fromobject) :material-ray-start: | Starts a chain over the entries, keys, values or descriptors of an object        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [fromRange](#fromrange) :material-ray-start: | Starts a chain of numbers from *start* up to, but not including, *end*           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [groupBy](#groupby)                          | Yields one `[key, values]` pair for each key                                     | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [groupJoin](#groupjoin)                      | Yields one result per value, with the matching values of another iterable        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [innerJoin](#innerjoin)                      | Yields one result for each pair of values with the same key                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [intersect](#intersect)                      | Keeps the distinct values that are also in another iterable                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
@@ -551,6 +554,101 @@ Throws an `Error` if:
 - `options` is not an object;
 - `step` is `0`, `NaN` or infinite;
 - `options` is passed as third argument while *start* is omitted, as in `fromRange(3, undefined, { step: 2 })`.
+
+## groupBy
+
+Yields one `[key, values]` pair for each key returned by `keySelector`, in the order of the first appearance of the key; the values of a group are in the order of the chain. Like LINQ `GroupBy` and `Map.groupBy` for any `Iterable`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 3, 4, 5]).groupBy(v => v % 2).collectToArray();
+    // [[1, [1, 3, 5]], [0, [2, 4]]]
+
+    IterableLinq.from([{ team: 'a', score: 1 }, { team: 'b', score: 2 }, { team: 'a', score: 3 }])
+        .groupBy(v => v.team)
+        .map(([team, values]) => [team, values.length])
+        .collectToArray();
+    // [['a', 2], ['b', 1]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.groupBy([1, 2, 3, 4, 5], v => v % 2));
+    // [[1, [1, 3, 5]], [0, [2, 4]]]
+    ```
+
+The `keySelector` is called with each value and its index. The keys are compared with `SameValueZero`, like `Map` (see [Equality](../basic-concepts.md#equality)): `NaN` is one key, `-0` is the key `+0`, `null` and `undefined` are keys like any other, and objects are compared by reference.
+
+The whole chain is read before the first group is yielded, so `groupBy` does not end on an infinite chain. Every run of the chain reads the source again and builds new arrays.
+
+If the selector throws, the source is closed and the error propagates. Throws an `Error` if the selector is not a function.
+
+## groupJoin
+
+Yields `result(outer, inners)` for each value of the chain, with the values of *inner* that have the same key, in the order of *inner*; `inners` is empty when there are none. Like LINQ `GroupJoin`: a left outer join that keeps the matches of each value together.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+
+    IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }])
+        .groupJoin(players, t => t.id, p => p.team, (t, ps) => [t.name, ps.length])
+        .collectToArray();
+    // [['a', 2], ['b', 0]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.groupJoin([1, 2], [1, 1, 3], v => v, v => v, (v, vs) => vs.length));
+    // [2, 0]
+    ```
+
+`outerKey` is called with each value of the chain and its index, `innerKey` with each value of *inner* and its index in *inner*. The keys are compared with `SameValueZero`, like `Map` (see [Equality](../basic-concepts.md#equality)): `NaN` matches `NaN`, `+0` matches `-0`, `null` and `undefined` match themselves (unlike LINQ, where a `null` key matches nothing), and objects are compared by reference. Each call of `result` gets a new array, which it can change.
+
+Before the first value it reads the whole *inner*, so *inner* must be finite; the chain itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *inner* again.
+
+If a callback throws, or *inner* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *inner* is not iterable or a callback is not a function.
+
+## innerJoin
+
+Yields `result(outer, inner)` for each pair of a value of the chain and a value of *inner* with the same key: in the order of the chain, and for each value of the chain in the order of *inner*. A value without a match yields nothing. Like LINQ `Join`; named `innerJoin` because `join` is the string [join](actions.md#join) of `Array.prototype`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+
+    IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }])
+        .innerJoin(players, t => t.id, p => p.team, (t, p) => `${t.name}-${p.name}`)
+        .collectToArray();
+    // ['a-x', 'a-y']
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.innerJoin([1, 2], [1, 1, 3], v => v, v => v, (o, i) => [o, i]));
+    // [[1, 1], [1, 1]]
+    ```
+
+`outerKey` is called with each value of the chain and its index, `innerKey` with each value of *inner* and its index in *inner*. The keys are compared with `SameValueZero`, like `Map` (see [Equality](../basic-concepts.md#equality)): `NaN` matches `NaN`, `+0` matches `-0`, `null` and `undefined` match themselves (unlike LINQ, where a `null` key matches nothing), and objects are compared by reference.
+
+Before the first value it reads the whole *inner*, so *inner* must be finite; the chain itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *inner* again.
+
+If a callback throws, or *inner* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *inner* is not iterable or a callback is not a function.
 
 ## intersect
 

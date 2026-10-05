@@ -469,6 +469,50 @@ export interface IIterableLinqBase<T> {
 	forEachAsync(action: AsyncAction<T>): Promise<Unit>;
 
 	/**
+	 * Yields one `[key, values]` pair for each key returned by `keySelector`, in the order of the first appearance of the key;
+	 * the values of a group are in the order of the chain.
+	 * The whole chain is read before the first group is yielded, so `groupBy` does not end on an infinite chain;
+	 * every run reads the chain again and builds new arrays.
+	 * The keys are compared with `SameValueZero`, like `Map`: `NaN` is one key, `null` and `undefined` are keys too.
+	 * If `keySelector` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param keySelector - called with each value and its index; returns the key of the group of the value
+	 * @returns a new chain of `[key, values]` pairs
+	 * @throws Error if `keySelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).groupBy(v => v % 2).collectToArray(); // [[1, [1, 3, 5]], [0, [2, 4]]]
+	 * ```
+	 * @since next
+	 */
+	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]>;
+
+	/**
+	 * Yields `result(outer, inners)` for each value of the chain, with the values of `inner` that have the same key,
+	 * in the order of `inner`; `inners` is empty when there are none. Like LINQ `GroupJoin`.
+	 * Before the first value it reads the whole `inner`, so `inner` must be finite; each run reads it again.
+	 * The keys are compared with `SameValueZero`, like `Map`: `NaN` matches `NaN`, and `null` and `undefined` match themselves.
+	 * Each call of `result` gets a new array.
+	 * If a callback throws, or `inner` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - called with each value of the chain and its index; returns its key
+	 * @param innerKey - called with each value of `inner` and its index; returns its key
+	 * @param result - called with each value of the chain and the array of its inner values; returns the value to yield
+	 * @returns a new chain with one result for each value of the chain
+	 * @throws Error if `inner` is not iterable, or if `outerKey`, `innerKey` or `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }])
+	 * 	.groupJoin(players, t => t.id, p => p.team, (t, ps) => [t.name, ps.length])
+	 * 	.collectToArray(); // [['a', 2], ['b', 0]]
+	 * ```
+	 * @since next
+	 */
+	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
+
+	/**
 	 * Tells whether the chain contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
 	 * stops and closes the source at the first match.
 	 * @operation `Action`
@@ -495,6 +539,31 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.6.0
 	 */
 	indexOf(value: T): number;
+
+	/**
+	 * Yields `result(outer, inner)` for each pair of a value of the chain and a value of `inner` with the same key:
+	 * in the order of the chain, and for each value of the chain in the order of `inner`. A value without a match yields nothing.
+	 * Like LINQ `Join`; named `innerJoin` because `join` is the string join of `Array.prototype`.
+	 * Before the first value it reads the whole `inner`, so `inner` must be finite; each run reads it again.
+	 * The keys are compared with `SameValueZero`, like `Map`: `NaN` matches `NaN`, and `null` and `undefined` match themselves.
+	 * If a callback throws, or `inner` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - called with each value of the chain and its index; returns its key
+	 * @param innerKey - called with each value of `inner` and its index; returns its key
+	 * @param result - called with each pair of values with the same key; returns the value to yield
+	 * @returns a new chain with one result for each pair of values with the same key
+	 * @throws Error if `inner` is not iterable, or if `outerKey`, `innerKey` or `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }])
+	 * 	.innerJoin(players, t => t.id, p => p.team, (t, p) => `${t.name}-${p.name}`)
+	 * 	.collectToArray(); // ['a-x', 'a-y']
+	 * ```
+	 * @since next
+	 */
+	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
 	/**
 	 * Yields the distinct values of the chain that are also in `other`, in the order of the chain.
