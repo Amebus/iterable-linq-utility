@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">1 unreleased change since 0.10.0</a>
+    <a href="../upcoming/">2 unreleased changes since 0.10.0</a>
           </div>
           
         </aside>
@@ -1026,6 +1026,7 @@
 <h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li><code>extend(name, implementation)</code> now replaces a method added by an earlier <code>extend</code> with the same name instead of throwing, so a module that runs twice (hot module replacement, test runners) keeps working; library methods still need <code>override</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/81">#81</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/172">#172</a>)</li>
+<li>New <code>fromObject(object, options?)</code> chain starter: lazily yields the entries, keys, values or property descriptors of an object, like <code>Object.entries</code>, <code>Object.keys</code> and <code>Object.values</code>, with <code>inherited</code>, <code>nonEnumerable</code> and <code>symbols</code> options (<a href="https://github.com/Amebus/iterable-linq-utility/issues/173">#173</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/174">#174</a>)</li>
 </ul>
 
 
