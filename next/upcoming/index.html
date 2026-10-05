@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">3 unreleased changes since 0.9.0</a>
+    <a href="../upcoming/">6 unreleased changes since 0.9.0</a>
           </div>
           
         </aside>
@@ -1028,6 +1028,9 @@
 <li>New <code>collectToMap(keySelector, valueSelector?)</code> Action: collects the values into a <code>Map</code> from the key returned by <code>keySelector</code> to the value, or to the value returned by <code>valueSelector</code>. A later value with the same key replaces the earlier one (<a href="https://github.com/Amebus/iterable-linq-utility/issues/64">#64</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/166">#166</a>)</li>
 <li>New <code>collectToSet()</code> Action: collects the distinct values into a <code>Set</code>, compared with <code>SameValueZero</code> as <code>Set</code> does (<a href="https://github.com/Amebus/iterable-linq-utility/issues/63">#63</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/166">#166</a>)</li>
 <li>New <code>reduceRight</code> Action: like <code>reduce</code>, from the last value to the first, as <code>Array.prototype.reduceRight</code>, with and without a seed. The reducer receives the index of each value in the source; the whole source is read first (<a href="https://github.com/Amebus/iterable-linq-utility/issues/62">#62</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/166">#166</a>)</li>
+<li>New <code>chunk(size)</code> Transformation: yields arrays of <code>size</code> values, the last one with the remaining values. Each array is yielded once its values have been read, so it works with infinite sources (<a href="https://github.com/Amebus/iterable-linq-utility/issues/37">#37</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/168">#168</a>)</li>
+<li>New <code>defaultIfEmpty(value)</code> Transformation: yields the values, or only <code>value</code> when the source is empty (<a href="https://github.com/Amebus/iterable-linq-utility/issues/45">#45</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/168">#168</a>)</li>
+<li>New <code>entries()</code> Transformation: yields <code>[index, value]</code> pairs, like <code>Array.prototype.entries</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/44">#44</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/168">#168</a>)</li>
 </ul>
 
 
