@@ -75,7 +75,7 @@ The operations that compare values follow one rule: an operation with a native c
 | ------------------------------------------------------------ | --------------- | ---------------------------------------------- |
 | [indexOf](api-reference/actions.md#indexof), [lastIndexOf](api-reference/actions.md#lastindexof) | `===`           | `Array.prototype.indexOf` and `lastIndexOf`    |
 | [includes](api-reference/actions.md#includes)                | `SameValueZero` | `Array.prototype.includes`                     |
-| [distinct](api-reference/transformations.md#distinct)        | `SameValueZero` | `Set`                                          |
+| [distinct](api-reference/transformations.md#distinct), [union](api-reference/transformations.md#union), [intersect](api-reference/transformations.md#intersect), [except](api-reference/transformations.md#except) | `SameValueZero` | `Set` |
 | [collectToSet](api-reference/actions.md#collecttoset), [collectToMap](api-reference/actions.md#collecttomap) | `SameValueZero` | `Set` and `Map`                                |
 | [sequenceEqual](api-reference/actions.md#sequenceequal)      | `SameValueZero` | `Set` and `Map`; pass `equals` to change it    |
 

@@ -64,6 +64,7 @@ import {
 	takeWhile,
 	tap,
 	tapChain,
+	union,
 	with as withValue,
 	zip
 } from './functions';
@@ -318,6 +319,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		const chain = this as unknown as IIterableLinq<T>;
 		chainCreationTapper(chain);
 		return chain;
+	}
+
+	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
+		return toChain(union(this.iterable, other, keySelector));
 	}
 
 	with(index: number, value: T): IIterableLinq<T> {

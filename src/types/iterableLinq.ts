@@ -1013,6 +1013,25 @@ export interface IIterableLinqBase<T> {
 	tapChainCreation(chainCreationTapper: (chain: IIterableLinq<T>) => Unit): IIterableLinq<T>;
 
 	/**
+	 * Yields the distinct values of the chain, then the values of `other` not yielded yet.
+	 * `other` is opened only when the chain ends, so after an infinite chain it is never read; stopping early closes only the source being read.
+	 * Values, or the keys returned by `keySelector`, are compared with `SameValueZero`, like `Set`: for each key the first value is yielded.
+	 * If `keySelector` throws, the source being read is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param other - the `Iterable` read after the chain
+	 * @param keySelector - called with every value and its index in its own source (from 0 again for `other`); omitted or `undefined` compares the values
+	 * @returns a new lazy, re-runnable chain of the distinct values of the chain and of `other`
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 2]).union([2, 3]).collectToArray(); // [1, 2, 3]
+	 * IterableLinq.from([{ id: 1 }]).union([{ id: 1 }, { id: 2 }], v => v.id).collectToArray(); // [{ id: 1 }, { id: 2 }]
+	 * ```
+	 * @since next
+	 */
+	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
+
+	/**
 	 * Lazily yields the values of the chain, with `value` in place of the value at `index`, like `Array.prototype.with`; a negative index counts from the end.
 	 * A non-negative index yields the values as they are read. A negative index yields each value once `-index` more values have been read,
 	 * keeping only those `-index` values.

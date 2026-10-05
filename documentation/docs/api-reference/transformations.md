@@ -41,6 +41,7 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeLast](#takelast)                        | Yields the last *count* values                                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [union](#union)                              | Yields the distinct values, then the values of another iterable not yielded yet  | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [with](#with)                                | Yields the values with another value at an index, like `Array.prototype.with`    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [zip](#zip)                                  | Yields tuples of the values at the same position in several iterables            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
@@ -975,6 +976,38 @@ With a type guard, `takeWhile` narrows the element type, as `filter` does.
     Array.from(Functions.takeWhile(values, (v): v is number => typeof v === 'number'));
     // number[], [1, 2]
     ```
+
+## union
+
+Lazily yields the distinct values of the chain, then the values of *other* not yielded yet. Like LINQ `Union` and `UnionBy`, and `Set.prototype.union` for any `Iterable`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 2]).union([2, 3]).collectToArray();
+    // [1, 2, 3]
+
+    IterableLinq.from([{ id: 1 }])
+        .union([{ id: 1 }, { id: 2 }], v => v.id)
+        .collectToArray();
+    // [{ id: 1 }, { id: 2 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.union([1, 2, 2], [2, 3]));
+    // [1, 2, 3]
+    ```
+
+Values, or the keys returned by the optional `keySelector`, are compared with `SameValueZero`, like `Set` (see [Equality](../basic-concepts.md#equality)): `NaN` equals `NaN`, `+0` equals `-0`, and objects are compared by reference unless the selector returns another key. For each key the first value is yielded, unchanged. The `keySelector` is called with every value and its index in its own source: the index starts from 0 again on *other*.
+
+*other* is opened only when the chain ends, so after an infinite source it is never read; stopping early closes only the source being read. Memory grows with the number of distinct keys.
+
+If the selector throws, the source being read is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is not a function.
 
 ## with
 
