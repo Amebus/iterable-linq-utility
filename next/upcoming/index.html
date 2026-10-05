@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">8 unreleased changes since 0.9.0</a>
+    <a href="../upcoming/">9 unreleased changes since 0.9.0</a>
           </div>
           
         </aside>
@@ -1033,6 +1033,7 @@
 <li>New <code>entries()</code> Transformation: yields <code>[index, value]</code> pairs, like <code>Array.prototype.entries</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/44">#44</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/168">#168</a>)</li>
 <li>New <code>flat(depth?)</code> Transformation: flattens the nested iterables up to <code>depth</code> levels (1 by default, <code>Infinity</code> for all), like <code>Array.prototype.flat</code> for any <code>Iterable</code>; strings are not flattened. The type of the values is the new <code>FlatIterable&lt;T, Depth&gt;</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/43">#43</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/169">#169</a>)</li>
 <li>New <code>zip(...others)</code> Transformation: yields tuples of the values at the same position in the source and in each of <code>others</code>, typed as <code>[T, ...U]</code>. It stops at the end of the shortest iterable and closes the others (<a href="https://github.com/Amebus/iterable-linq-utility/issues/36">#36</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/169">#169</a>)</li>
+<li>New <code>with(index, value)</code> Transformation: yields the values with <code>value</code> in place of the value at <code>index</code>, like <code>Array.prototype.with</code>; a negative index counts from the end. An index out of range throws when the source ends. The raw function is <code>Functions.with</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/46">#46</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/170">#170</a>)</li>
 </ul>
 
 
