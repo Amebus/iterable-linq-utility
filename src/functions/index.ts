@@ -22,6 +22,7 @@ export { flat } from './flat';
 export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
 export { fromObject } from './fromObject';
+export { groupBy } from './groupBy';
 export { includes } from './includes';
 export { indexOf } from './indexOf';
 export { intersect } from './intersect';

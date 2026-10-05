@@ -37,6 +37,7 @@ import {
 	flatMap,
 	forEach,
 	forEachAsync,
+	groupBy,
 	includes,
 	indexOf,
 	intersect,
@@ -190,6 +191,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	forEachAsync(action: AsyncAction<T>): Promise<Unit> {
 		return forEachAsync(this.iterable, action);
+	}
+
+	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]> {
+		return toChain(groupBy(this.iterable, keySelector));
 	}
 
 	includes(value: T): boolean {

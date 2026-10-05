@@ -469,6 +469,25 @@ export interface IIterableLinqBase<T> {
 	forEachAsync(action: AsyncAction<T>): Promise<Unit>;
 
 	/**
+	 * Yields one `[key, values]` pair for each key returned by `keySelector`, in the order of the first appearance of the key;
+	 * the values of a group are in the order of the chain.
+	 * The whole chain is read before the first group is yielded, so `groupBy` does not end on an infinite chain;
+	 * every run reads the chain again and builds new arrays.
+	 * The keys are compared with `SameValueZero`, like `Map`: `NaN` is one key, `null` and `undefined` are keys too.
+	 * If `keySelector` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param keySelector - called with each value and its index; returns the key of the group of the value
+	 * @returns a new chain of `[key, values]` pairs
+	 * @throws Error if `keySelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).groupBy(v => v % 2).collectToArray(); // [[1, [1, 3, 5]], [0, [2, 4]]]
+	 * ```
+	 * @since next
+	 */
+	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]>;
+
+	/**
 	 * Tells whether the chain contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
 	 * stops and closes the source at the first match.
 	 * @operation `Action`

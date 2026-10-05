@@ -28,6 +28,7 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [from](#from) :material-ray-start:           | Starts a chain over any `Iterable`                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap:                |
     | [fromObject](#fromobject) :material-ray-start: | Starts a chain over the entries, keys, values or descriptors of an object        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [fromRange](#fromrange) :material-ray-start: | Starts a chain of numbers from *start* up to, but not including, *end*           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [groupBy](#groupby)                          | Yields one `[key, values]` pair for each key                                     | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [intersect](#intersect)                      | Keeps the distinct values that are also in another iterable                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
@@ -551,6 +552,39 @@ Throws an `Error` if:
 - `options` is not an object;
 - `step` is `0`, `NaN` or infinite;
 - `options` is passed as third argument while *start* is omitted, as in `fromRange(3, undefined, { step: 2 })`.
+
+## groupBy
+
+Yields one `[key, values]` pair for each key returned by `keySelector`, in the order of the first appearance of the key; the values of a group are in the order of the chain. Like LINQ `GroupBy` and `Map.groupBy` for any `Iterable`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 3, 4, 5]).groupBy(v => v % 2).collectToArray();
+    // [[1, [1, 3, 5]], [0, [2, 4]]]
+
+    IterableLinq.from([{ team: 'a', score: 1 }, { team: 'b', score: 2 }, { team: 'a', score: 3 }])
+        .groupBy(v => v.team)
+        .map(([team, values]) => [team, values.length])
+        .collectToArray();
+    // [['a', 2], ['b', 1]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.groupBy([1, 2, 3, 4, 5], v => v % 2));
+    // [[1, [1, 3, 5]], [0, [2, 4]]]
+    ```
+
+The `keySelector` is called with each value and its index. The keys are compared with `SameValueZero`, like `Map` (see [Equality](../basic-concepts.md#equality)): `NaN` is one key, `-0` is the key `+0`, `null` and `undefined` are keys like any other, and objects are compared by reference.
+
+The whole chain is read before the first group is yielded, so `groupBy` does not end on an infinite chain. Every run of the chain reads the source again and builds new arrays.
+
+If the selector throws, the source is closed and the error propagates. Throws an `Error` if the selector is not a function.
 
 ## intersect
 
