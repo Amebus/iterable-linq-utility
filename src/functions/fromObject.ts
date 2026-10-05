@@ -30,7 +30,7 @@ const BOOLEAN_OPTIONS = ['inherited', 'nonEnumerable', 'symbols'] as const;
  * Array.from(Functions.fromObject({ a: 1, b: 2 })); // [['a', 1], ['b', 2]]
  * Array.from(Functions.fromObject({ a: 1, b: 2 }, { yield: 'keys' })); // ['a', 'b']
  * ```
- * @since next
+ * @since 0.11.0
  */
 export function fromObject<O extends object, const Options extends IObjectOptions = IObjectDefaultOptions>(object: O, options?: Options): Iterable<ObjectItem<O, Options>> {
 	if (object === null || (typeof object !== 'object' && typeof object !== 'function'))

@@ -51,7 +51,7 @@ export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
  * IterableLinq.fromObject({ a: 1, b: 2 }, { yield: 'keys' }).collectToArray();   // ['a', 'b']
  * IterableLinq.fromObject({ a: 1, b: 2 }, { yield: 'values' }).collectToArray(); // [1, 2]
  * ```
- * @since next
+ * @since 0.11.0
  */
 export function fromObject<O extends object, const Options extends IObjectOptions = IObjectDefaultOptions>(object: O, options?: Options): IIterableLinq<ObjectItem<O, Options>> {
 	return from(Functions.fromObject(object, options));

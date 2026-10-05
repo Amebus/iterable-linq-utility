@@ -1,5 +1,13 @@
 # iterable-linq-utility
 
+## 0.11.0
+
+### Minor Changes
+
+- [#172](https://github.com/Amebus/iterable-linq-utility/pull/172) [`4e06e95`](https://github.com/Amebus/iterable-linq-utility/commit/4e06e953010471eb79e596b2b817aed9caee0ee1) Thanks [@Amebus](https://github.com/Amebus)! - `extend(name, implementation)` now replaces a method added by an earlier `extend` with the same name instead of throwing, so a module that runs twice (hot module replacement, test runners) keeps working; library methods still need `override` ([#81](https://github.com/Amebus/iterable-linq-utility/issues/81)).
+
+- [#174](https://github.com/Amebus/iterable-linq-utility/pull/174) [`031b850`](https://github.com/Amebus/iterable-linq-utility/commit/031b8505c70d9b57ab8d1b9fc64921b9c3828220) Thanks [@Amebus](https://github.com/Amebus)! - New `fromObject(object, options?)` chain starter: lazily yields the entries, keys, values or property descriptors of an object, like `Object.entries`, `Object.keys` and `Object.values`, with `inherited`, `nonEnumerable` and `symbols` options ([#173](https://github.com/Amebus/iterable-linq-utility/issues/173)).
+
 ## 0.10.0
 
 ### Minor Changes
