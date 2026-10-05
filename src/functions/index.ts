@@ -26,6 +26,7 @@ export { groupBy } from './groupBy';
 export { groupJoin } from './groupJoin';
 export { includes } from './includes';
 export { indexOf } from './indexOf';
+export { innerJoin } from './innerJoin';
 export { intersect } from './intersect';
 export { join } from './join';
 export { lastIndexOf } from './lastIndexOf';

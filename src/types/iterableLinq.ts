@@ -541,6 +541,31 @@ export interface IIterableLinqBase<T> {
 	indexOf(value: T): number;
 
 	/**
+	 * Yields `result(outer, inner)` for each pair of a value of the chain and a value of `inner` with the same key:
+	 * in the order of the chain, and for each value of the chain in the order of `inner`. A value without a match yields nothing.
+	 * Like LINQ `Join`; named `innerJoin` because `join` is the string join of `Array.prototype`.
+	 * Before the first value it reads the whole `inner`, so `inner` must be finite; each run reads it again.
+	 * The keys are compared with `SameValueZero`, like `Map`: `NaN` matches `NaN`, and `null` and `undefined` match themselves.
+	 * If a callback throws, or `inner` throws, the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - called with each value of the chain and its index; returns its key
+	 * @param innerKey - called with each value of `inner` and its index; returns its key
+	 * @param result - called with each pair of values with the same key; returns the value to yield
+	 * @returns a new chain with one result for each pair of values with the same key
+	 * @throws Error if `inner` is not iterable, or if `outerKey`, `innerKey` or `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }])
+	 * 	.innerJoin(players, t => t.id, p => p.team, (t, p) => `${t.name}-${p.name}`)
+	 * 	.collectToArray(); // ['a-x', 'a-y']
+	 * ```
+	 * @since next
+	 */
+	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inner: I) => R): IIterableLinq<R>;
+
+	/**
 	 * Yields the distinct values of the chain that are also in `other`, in the order of the chain.
 	 * Before the first value it reads the whole `other` into a `Set`, so `other` must be finite; each run reads it again.
 	 * Values, or the keys returned by `keySelector`, are compared with `SameValueZero`, like `Set`: for each key the first value is yielded.

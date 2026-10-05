@@ -41,6 +41,7 @@ import {
 	groupJoin,
 	includes,
 	indexOf,
+	innerJoin,
 	intersect,
 	join,
 	lastIndexOf,
@@ -208,6 +209,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	indexOf(value: T): number {
 		return indexOf(this.iterable, value);
+	}
+
+	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inner: I) => R): IIterableLinq<R> {
+		return toChain(innerJoin(this.iterable, inner, outerKey, innerKey, result));
 	}
 
 	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {

@@ -30,6 +30,7 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [fromRange](#fromrange) :material-ray-start: | Starts a chain of numbers from *start* up to, but not including, *end*           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [groupBy](#groupby)                          | Yields one `[key, values]` pair for each key                                     | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [groupJoin](#groupjoin)                      | Yields one result per value, with the matching values of another iterable        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [innerJoin](#innerjoin)                      | Yields one result for each pair of values with the same key                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [intersect](#intersect)                      | Keeps the distinct values that are also in another iterable                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [map](#map)                                  | Transforms each value                                                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [memoize](#memoize)                          | Caches the values the first time they are read                                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
@@ -613,6 +614,37 @@ Yields `result(outer, inners)` for each value of the chain, with the values of *
     ```
 
 `outerKey` is called with each value of the chain and its index, `innerKey` with each value of *inner* and its index in *inner*. The keys are compared with `SameValueZero`, like `Map` (see [Equality](../basic-concepts.md#equality)): `NaN` matches `NaN`, `+0` matches `-0`, `null` and `undefined` match themselves (unlike LINQ, where a `null` key matches nothing), and objects are compared by reference. Each call of `result` gets a new array, which it can change.
+
+Before the first value it reads the whole *inner*, so *inner* must be finite; the chain itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *inner* again.
+
+If a callback throws, or *inner* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *inner* is not iterable or a callback is not a function.
+
+## innerJoin
+
+Yields `result(outer, inner)` for each pair of a value of the chain and a value of *inner* with the same key: in the order of the chain, and for each value of the chain in the order of *inner*. A value without a match yields nothing. Like LINQ `Join`; named `innerJoin` because `join` is the string [join](actions.md#join) of `Array.prototype`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+
+    IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }])
+        .innerJoin(players, t => t.id, p => p.team, (t, p) => `${t.name}-${p.name}`)
+        .collectToArray();
+    // ['a-x', 'a-y']
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.innerJoin([1, 2], [1, 1, 3], v => v, v => v, (o, i) => [o, i]));
+    // [[1, 1], [1, 1]]
+    ```
+
+`outerKey` is called with each value of the chain and its index, `innerKey` with each value of *inner* and its index in *inner*. The keys are compared with `SameValueZero`, like `Map` (see [Equality](../basic-concepts.md#equality)): `NaN` matches `NaN`, `+0` matches `-0`, `null` and `undefined` match themselves (unlike LINQ, where a `null` key matches nothing), and objects are compared by reference.
 
 Before the first value it reads the whole *inner*, so *inner* must be finite; the chain itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *inner* again.
 
