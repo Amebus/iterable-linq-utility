@@ -42,6 +42,7 @@ import {
 	min,
 	prepend,
 	reduce,
+	reduceRight,
 	reverse,
 	sequenceEqual,
 	single,
@@ -208,6 +209,15 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return args.length === 1
 			? reduce(this.iterable, args[0])
 			: reduce(this.iterable, args[0], args[1]);
+	}
+
+	reduceRight(reducer: Reducer<T, T>): T;
+	reduceRight<R>(neutralElement: R, reducer: Reducer<T, R>): R;
+	reduceRight<R>(...args: [Reducer<T, T>] | [R, Reducer<T, R>]): T | R {
+		// spreading args would not resolve the overloads: the number of arguments picks the form
+		return args.length === 1
+			? reduceRight(this.iterable, args[0])
+			: reduceRight(this.iterable, args[0], args[1]);
 	}
 
 	reverse(): IIterableLinq<T> {

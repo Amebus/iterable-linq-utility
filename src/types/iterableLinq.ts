@@ -570,6 +570,37 @@ export interface IIterableLinqBase<T> {
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
+	 * Runs the chain and accumulates its values into a single result, from the last value to the first, starting from the last value.
+	 * The whole chain runs before `reducer` is called.
+	 * @operation `Action`
+	 * @param reducer - called with the accumulator, each value from the second-to-last one back to the first, and its index in the chain; returns the new accumulator
+	 * @returns the final accumulator; the only value when the chain has one value, without calling `reducer`
+	 * @throws Error if the chain is empty or if `reducer` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(['a', 'b', 'c']).reduceRight((acc, v) => acc + v); // 'cba'
+	 * ```
+	 * @since next
+	 */
+	reduceRight(reducer: Reducer<T, T>): T;
+
+	/**
+	 * Runs the chain and accumulates its values into a single result, from the last value to the first.
+	 * The whole chain runs before `reducer` is called.
+	 * @operation `Action`
+	 * @param neutralElement - the initial accumulator (the seed)
+	 * @param reducer - called with the accumulator, each value from the last one back to the first, and its index in the chain; returns the new accumulator
+	 * @returns the final accumulator; `neutralElement` when the chain is empty
+	 * @throws Error if `reducer` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).reduceRight('', (acc, v) => acc + v); // '321'
+	 * ```
+	 * @since next
+	 */
+	reduceRight<R>(neutralElement: R, reducer: Reducer<T, R>): R;
+
+	/**
 	 * Lazily yields the values in reverse order. Unlike `Array.prototype.reverse`, the source is not changed.
 	 * The whole chain runs before the first value is yielded, so `reverse` does not end on an infinite chain.
 	 * Every run of the chain reads the source again.

@@ -28,6 +28,7 @@ export { min } from './min';
 export { prepend } from './prepend';
 export { range } from './range';
 export { reduce } from './reduce';
+export { reduceRight } from './reduceRight';
 export { repeat } from './repeat';
 export { reverse } from './reverse';
 export { sequenceEqual } from './sequenceEqual';
