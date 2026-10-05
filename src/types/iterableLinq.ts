@@ -98,6 +98,51 @@ export interface IIterableLinqBase<T> {
 	collectToArray(): T[];
 
 	/**
+	 * Runs the chain and collects its values into a `Map`, with the key returned by `keySelector`.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * If `keySelector` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param keySelector - called with each value and its index; returns the key of the value
+	 * @returns a `Map` from each key to the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if `keySelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
+
+	/**
+	 * Runs the chain and collects its values into a `Map`, with the key returned by `keySelector` and the value returned by `valueSelector`.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * If `keySelector` or `valueSelector` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param keySelector - called with each value and its index; returns the key of the value
+	 * @param valueSelector - called with each value and its index; returns the value to store; `undefined` stores the value itself
+	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if `keySelector` is not a function, or if a provided `valueSelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, v => v.name); // Map { 1 => 'a', 2 => 'b' }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+
+	/**
+	 * Runs the chain and collects its values into a `Set`: a value equal to an earlier one (`SameValueZero`, as in `Set`) is left out.
+	 * @operation `Action`
+	 * @returns the distinct values, in the order of their first occurrence; an empty `Set` when the chain is empty
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 1, 3]).collectToSet(); // Set { 1, 2, 3 }
+	 * ```
+	 * @since next
+	 */
+	collectToSet(): Set<T>;
+
+	/**
 	 * Yields the values of the chain, then the values of each iterable in `others`, in order.
 	 * Each iterable is opened only when the previous one ends, so the iterables after an infinite chain are never read.
 	 * Stopping early closes only the iterable being read.
@@ -523,6 +568,37 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.0.10
 	 */
 	reduce<R>(neutralElement: R, reducer: Reducer<T, R>): R;
+
+	/**
+	 * Runs the chain and accumulates its values into a single result, from the last value to the first, starting from the last value.
+	 * The whole chain runs before `reducer` is called.
+	 * @operation `Action`
+	 * @param reducer - called with the accumulator, each value from the second-to-last one back to the first, and its index in the chain; returns the new accumulator
+	 * @returns the final accumulator; the only value when the chain has one value, without calling `reducer`
+	 * @throws Error if the chain is empty or if `reducer` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(['a', 'b', 'c']).reduceRight((acc, v) => acc + v); // 'cba'
+	 * ```
+	 * @since next
+	 */
+	reduceRight(reducer: Reducer<T, T>): T;
+
+	/**
+	 * Runs the chain and accumulates its values into a single result, from the last value to the first.
+	 * The whole chain runs before `reducer` is called.
+	 * @operation `Action`
+	 * @param neutralElement - the initial accumulator (the seed)
+	 * @param reducer - called with the accumulator, each value from the last one back to the first, and its index in the chain; returns the new accumulator
+	 * @returns the final accumulator; `neutralElement` when the chain is empty
+	 * @throws Error if `reducer` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).reduceRight('', (acc, v) => acc + v); // '321'
+	 * ```
+	 * @since next
+	 */
+	reduceRight<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
 	/**
 	 * Lazily yields the values in reverse order. Unlike `Array.prototype.reverse`, the source is not changed.

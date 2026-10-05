@@ -8,6 +8,8 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [at](#at)                         | Returns the value at an index; a negative index counts from the end                   | `T | undefined`             |
     | [average](#average)               | Returns the average of the values, or of the numbers returned by a selector           | `number | undefined`        |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
+    | [collectToMap](#collecttomap)     | Collects the values into a `Map`, by a selected key                                   | `Map<K, T>` or `Map<K, V>`  |
+    | [collectToSet](#collecttoset)     | Collects the distinct values into a `Set`                                             | `Set<T>`                    |
     | [count](#count)                   | Counts the values, or the values that satisfy a predicate                             | `number`                    |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
     | [find](#find)                     | Returns the first value that satisfies a predicate                                    | `T | undefined`             |
@@ -24,6 +26,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [max](#max)                       | Returns the greatest value                                                            | `T | undefined`             |
     | [min](#min)                       | Returns the smallest value                                                            | `T | undefined`             |
     | [reduce](#reduce)                 | Accumulates the values into a single result                                           | `R`, or `T` without a seed  |
+    | [reduceRight](#reduceright)       | Accumulates the values into a single result, from the last to the first               | `R`, or `T` without a seed  |
     | [sequenceEqual](#sequenceequal)   | Tells whether the chain and another iterable have the same values in the same order   | `boolean`                   |
     | [single](#single)                 | Returns the only value, or the only value that satisfies a predicate                  | `T | undefined`             |
     | [some](#some)                     | Tells whether at least one value satisfies a predicate                                | `boolean`                   |
@@ -112,6 +115,61 @@ Collects the values of the chain into an `Array`, in order.
 
     Functions.collectToArray(new Set([1, 2, 3, 4]));
     // [1, 2, 3, 4]
+    ```
+
+## collectToMap
+
+Collects the values of the chain into a `Map`, with the key returned by the key selector. A later value with the same key replaces the earlier one; the keys are compared as `Map` does (`SameValueZero`). The value selector, when given, returns the value to store instead of the value itself. Both selectors are called with each value and its index.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const people = [{ id: 1, name: 'Ada' }, { id: 2, name: 'Bob' }];
+
+    IterableLinq
+        .from(people)
+        .collectToMap(p => p.id);
+    // Map { 1 => { id: 1, name: 'Ada' }, 2 => { id: 2, name: 'Bob' } }
+
+    IterableLinq
+        .from(people)
+        .collectToMap(p => p.id, p => p.name);
+    // Map { 1 => 'Ada', 2 => 'Bob' }
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.collectToMap(people, p => p.id, p => p.name);
+    // Map { 1 => 'Ada', 2 => 'Bob' }
+    ```
+
+Throws an `Error` if the key selector is not a function, or if a value selector is given and is not a function.
+
+## collectToSet
+
+Collects the values of the chain into a `Set`. A value equal to an earlier one is left out; the values are compared as `Set` does (`SameValueZero`).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 1, 3])
+        .collectToSet();
+    // Set { 1, 2, 3 }
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.collectToSet([1, 2, 1, 3]);
+    // Set { 1, 2, 3 }
     ```
 
 ## count
@@ -692,6 +750,36 @@ Without a seed, the first value is the initial accumulator, like `Array.prototyp
     ```
 
 The number of arguments, not their type, tells the two forms apart: `reduce(undefined, reducer)` has the seed `undefined`. Without a seed, `reduce` throws an `Error` if the chain is empty.
+
+## reduceRight
+
+Like [reduce](#reduce), from the last value to the first, like `Array.prototype.reduceRight`. The whole chain runs before the reducer is called, and the reducer receives the index of each value in the chain, from the last one down to 0.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .reduceRight('', (acc, v) => acc + v);
+    // '321'
+
+    IterableLinq
+        .from(['a', 'b', 'c'])
+        .reduceRight((acc, v) => acc + v);
+    // 'cba'
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.reduceRight([1, 2, 3], '', (acc, v) => acc + v);
+    // '321'
+    ```
+
+Without a seed, the last value is the initial accumulator and the reducer starts from the second-to-last value; with one value, `reduceRight` returns it and does not call the reducer. As in `reduce`, the number of arguments tells the two forms apart. Throws an `Error` if the reducer is not a function, or, without a seed, if the chain is empty.
 
 ## sequenceEqual
 

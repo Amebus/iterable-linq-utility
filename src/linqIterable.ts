@@ -17,6 +17,8 @@ import {
 	at,
 	average,
 	collectToArray,
+	collectToMap,
+	collectToSet,
 	concat,
 	count,
 	distinct,
@@ -40,6 +42,7 @@ import {
 	min,
 	prepend,
 	reduce,
+	reduceRight,
 	reverse,
 	sequenceEqual,
 	single,
@@ -93,6 +96,16 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	collectToArray(): T[] {
 		return collectToArray(this.iterable);
+	}
+
+	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
+	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, V>): Map<K, T | V> {
+		return collectToMap(this.iterable, keySelector, valueSelector);
+	}
+
+	collectToSet(): Set<T> {
+		return collectToSet(this.iterable);
 	}
 
 	concat(...others: Iterable<T>[]): IIterableLinq<T> {
@@ -196,6 +209,15 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return args.length === 1
 			? reduce(this.iterable, args[0])
 			: reduce(this.iterable, args[0], args[1]);
+	}
+
+	reduceRight(reducer: Reducer<T, T>): T;
+	reduceRight<R>(neutralElement: R, reducer: Reducer<T, R>): R;
+	reduceRight<R>(...args: [Reducer<T, T>] | [R, Reducer<T, R>]): T | R {
+		// spreading args would not resolve the overloads: the number of arguments picks the form
+		return args.length === 1
+			? reduceRight(this.iterable, args[0])
+			: reduceRight(this.iterable, args[0], args[1]);
 	}
 
 	reverse(): IIterableLinq<T> {
