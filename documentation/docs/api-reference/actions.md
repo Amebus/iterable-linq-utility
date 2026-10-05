@@ -8,6 +8,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
     | [at](#at)                         | Returns the value at an index; a negative index counts from the end                   | `T | undefined`             |
     | [average](#average)               | Returns the average of the values, or of the numbers returned by a selector           | `number | undefined`        |
     | [collectToArray](#collecttoarray) | Collects the values into an `Array`                                                   | `T[]`                       |
+    | [collectToMap](#collecttomap)     | Collects the values into a `Map`, by a selected key                                   | `Map<K, T>` or `Map<K, V>`  |
     | [count](#count)                   | Counts the values, or the values that satisfy a predicate                             | `number`                    |
     | [every](#every)                   | Tells whether every value satisfies a predicate                                       | `boolean`                   |
     | [find](#find)                     | Returns the first value that satisfies a predicate                                    | `T | undefined`             |
@@ -113,6 +114,38 @@ Collects the values of the chain into an `Array`, in order.
     Functions.collectToArray(new Set([1, 2, 3, 4]));
     // [1, 2, 3, 4]
     ```
+
+## collectToMap
+
+Collects the values of the chain into a `Map`, with the key returned by the key selector. A later value with the same key replaces the earlier one; the keys are compared as `Map` does (`SameValueZero`). The value selector, when given, returns the value to store instead of the value itself. Both selectors are called with each value and its index.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const people = [{ id: 1, name: 'Ada' }, { id: 2, name: 'Bob' }];
+
+    IterableLinq
+        .from(people)
+        .collectToMap(p => p.id);
+    // Map { 1 => { id: 1, name: 'Ada' }, 2 => { id: 2, name: 'Bob' } }
+
+    IterableLinq
+        .from(people)
+        .collectToMap(p => p.id, p => p.name);
+    // Map { 1 => 'Ada', 2 => 'Bob' }
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Functions.collectToMap(people, p => p.id, p => p.name);
+    // Map { 1 => 'Ada', 2 => 'Bob' }
+    ```
+
+Throws an `Error` if the key selector is not a function, or if a value selector is given and is not a function.
 
 ## count
 

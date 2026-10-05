@@ -98,6 +98,39 @@ export interface IIterableLinqBase<T> {
 	collectToArray(): T[];
 
 	/**
+	 * Runs the chain and collects its values into a `Map`, with the key returned by `keySelector`.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * If `keySelector` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param keySelector - called with each value and its index; returns the key of the value
+	 * @returns a `Map` from each key to the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if `keySelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
+
+	/**
+	 * Runs the chain and collects its values into a `Map`, with the key returned by `keySelector` and the value returned by `valueSelector`.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * If `keySelector` or `valueSelector` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param keySelector - called with each value and its index; returns the key of the value
+	 * @param valueSelector - called with each value and its index; returns the value to store; `undefined` stores the value itself
+	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if `keySelector` is not a function, or if a provided `valueSelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, v => v.name); // Map { 1 => 'a', 2 => 'b' }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+
+	/**
 	 * Yields the values of the chain, then the values of each iterable in `others`, in order.
 	 * Each iterable is opened only when the previous one ends, so the iterables after an infinite chain are never read.
 	 * Stopping early closes only the iterable being read.

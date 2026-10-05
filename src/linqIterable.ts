@@ -17,6 +17,7 @@ import {
 	at,
 	average,
 	collectToArray,
+	collectToMap,
 	concat,
 	count,
 	distinct,
@@ -93,6 +94,12 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	collectToArray(): T[] {
 		return collectToArray(this.iterable);
+	}
+
+	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
+	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, V>): Map<K, T | V> {
+		return collectToMap(this.iterable, keySelector, valueSelector);
 	}
 
 	concat(...others: Iterable<T>[]): IIterableLinq<T> {
