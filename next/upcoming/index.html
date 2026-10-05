@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">4 unreleased changes since 0.11.0</a>
+    <a href="../upcoming/">7 unreleased changes since 0.11.0</a>
           </div>
           
         </aside>
@@ -1059,6 +1059,9 @@
 <li>New <code>except(other, keySelector?)</code> Transformation: lazily yields the distinct values of the chain that are not in <code>other</code>, compared with <code>SameValueZero</code> or by the key of <code>keySelector</code>, like LINQ <code>Except</code> / <code>ExceptBy</code> and <code>Set.prototype.difference</code> for any <code>Iterable</code>; <code>other</code> is read whole before the first value (<a href="https://github.com/Amebus/iterable-linq-utility/issues/35">#35</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/180">#180</a>)</li>
 <li>New <code>intersect(other, keySelector?)</code> Transformation: lazily yields the distinct values of the chain that are also in <code>other</code>, compared with <code>SameValueZero</code> or by the key of <code>keySelector</code>, like LINQ <code>Intersect</code> / <code>IntersectBy</code> and <code>Set.prototype.intersection</code> for any <code>Iterable</code>; <code>other</code> is read whole before the first value (<a href="https://github.com/Amebus/iterable-linq-utility/issues/34">#34</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/180">#180</a>)</li>
 <li>New <code>union(other, keySelector?)</code> Transformation: lazily yields the distinct values of the chain, then the values of <code>other</code> not yielded yet, compared with <code>SameValueZero</code> or by the key of <code>keySelector</code>, like LINQ <code>Union</code> / <code>UnionBy</code> and <code>Set.prototype.union</code> for any <code>Iterable</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/33">#33</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/180">#180</a>)</li>
+<li>New <code>groupBy(keySelector)</code> Transformation: yields one <code>[key, values]</code> pair for each key, in the order of the first appearance of the key, with the keys compared with <code>SameValueZero</code>, like LINQ <code>GroupBy</code> and <code>Map.groupBy</code> for any <code>Iterable</code>; the whole chain is read before the first group (<a href="https://github.com/Amebus/iterable-linq-utility/issues/38">#38</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/182">#182</a>)</li>
+<li>New <code>groupJoin(inner, outerKey, innerKey, result)</code> Transformation: lazily yields <code>result(outer, inners)</code> for each value of the chain, with the values of <code>inner</code> that have the same key, compared with <code>SameValueZero</code>, like LINQ <code>GroupJoin</code>; <code>inner</code> is read whole before the first value (<a href="https://github.com/Amebus/iterable-linq-utility/issues/40">#40</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/182">#182</a>)</li>
+<li>New <code>innerJoin(inner, outerKey, innerKey, result)</code> Transformation: lazily yields <code>result(outer, inner)</code> for each pair of a value of the chain and a value of <code>inner</code> with the same key, compared with <code>SameValueZero</code>, like LINQ <code>Join</code>; <code>inner</code> is read whole before the first value (<a href="https://github.com/Amebus/iterable-linq-utility/issues/39">#39</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/182">#182</a>)</li>
 </ul>
 
 
