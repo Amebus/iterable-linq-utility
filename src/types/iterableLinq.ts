@@ -86,6 +86,21 @@ export interface IIterableLinqBase<T> {
 	average(selector: Mapper<T, number> | undefined): number | undefined;
 
 	/**
+	 * Lazily yields arrays of `size` values; the last array has the remaining values and can be shorter.
+	 * Each array is new, and is yielded once its values have been read, so `chunk` works with infinite chains.
+	 * @operation `Transformation`
+	 * @param size - how many values in each array; must be a positive integer
+	 * @returns a lazy, re-runnable chain of arrays of at most `size` values
+	 * @throws Error if `size` is not a positive integer (`0`, fractions, `NaN` and `Infinity` included)
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).chunk(2).collectToArray(); // [[1, 2], [3, 4], [5]]
+	 * ```
+	 * @since next
+	 */
+	chunk(size: number): IIterableLinq<T[]>;
+
+	/**
 	 * Runs the chain and collects its values into an `Array`.
 	 * @operation `Action`
 	 * @returns the values of the chain, in order; an empty array when the chain is empty

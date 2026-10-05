@@ -16,6 +16,7 @@ import {
 	append,
 	at,
 	average,
+	chunk,
 	collectToArray,
 	collectToMap,
 	collectToSet,
@@ -92,6 +93,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	average(selector?: Mapper<T, number>): number | undefined {
 		return average(this.iterable, selector);
+	}
+
+	chunk(size: number): IIterableLinq<T[]> {
+		return toChain(chunk(this.iterable, size));
 	}
 
 	collectToArray(): T[] {

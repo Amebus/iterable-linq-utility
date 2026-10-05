@@ -15,6 +15,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | Transformation                               | Brief Description                                                                | Execution                                   | Availability                                        |
     | -------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
     | [append](#append)                            | Yields the values, then one more value                                           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [chunk](#chunk)                              | Yields arrays of *size* values; the last one can be shorter                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [concat](#concat)                            | Yields the values, then the values of other iterables                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [distinct](#distinct)                        | Keeps the first value for each distinct value or selected key                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -60,6 +61,32 @@ Yields the values of the chain, then *value*. *value* is yielded only when the s
     Array.from(Functions.append([1, 2, 3], 4));
     // [1, 2, 3, 4]
     ```
+
+## chunk
+
+Yields arrays of *size* values; the last array has the remaining values and can be shorter. Each array is new, and is yielded once its values have been read, so `chunk` works with infinite chains.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .chunk(2)
+        .collectToArray();
+    // [[1, 2], [3, 4], [5]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.chunk([1, 2, 3, 4, 5], 2));
+    // [[1, 2], [3, 4], [5]]
+    ```
+
+Throws an `Error` if *size* is not a positive integer: `0`, negative values, fractions, `NaN` and `Infinity` throw when `chunk` is called.
 
 ## concat
 

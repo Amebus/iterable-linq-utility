@@ -1,6 +1,7 @@
 export { append } from './append';
 export { at } from './at';
 export { average } from './average';
+export { chunk } from './chunk';
 export { collectToArray } from './collectToArray';
 export { collectToMap } from './collectToMap';
 export { collectToSet } from './collectToSet';
