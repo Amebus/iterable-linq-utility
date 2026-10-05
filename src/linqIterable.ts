@@ -24,6 +24,7 @@ import {
 	count,
 	defaultIfEmpty,
 	distinct,
+	entries,
 	every,
 	filter,
 	find,
@@ -128,6 +129,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T> {
 		return toChain(distinct(this.iterable, keySelector));
+	}
+
+	entries(): IIterableLinq<[number, T]> {
+		return toChain(entries(this.iterable));
 	}
 
 	every(predicate: Predicate<T>): boolean {

@@ -10,6 +10,7 @@ export { count } from './count';
 export { defaultIfEmpty } from './defaultIfEmpty';
 export { distinct } from './distinct';
 export { empty } from './empty';
+export { entries } from './entries';
 export { every } from './every';
 export { filter } from './filter';
 export { find } from './find';

@@ -232,6 +232,18 @@ export interface IIterableLinqBase<T> {
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T>;
 
 	/**
+	 * Lazily yields `[index, value]` pairs, like `Array.prototype.entries`.
+	 * @operation `Transformation`
+	 * @returns a lazy, re-runnable chain of pairs of the index, from 0, and the value
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(['a', 'b']).entries().collectToArray(); // [[0, 'a'], [1, 'b']]
+	 * ```
+	 * @since next
+	 */
+	entries(): IIterableLinq<[number, T]>;
+
+	/**
 	 * Tells whether every value satisfies `predicate`; stops and closes the source at the first rejected value.
 	 * @operation `Action`
 	 * @param predicate - called with each value and its index

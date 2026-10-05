@@ -20,6 +20,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [defaultIfEmpty](#defaultifempty)            | Yields the values, or only a default value when there are none                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [distinct](#distinct)                        | Keeps the first value for each distinct value or selected key                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [entries](#entries)                          | Yields `[index, value]` pairs                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [filter](#filter)                            | Keeps only the values that satisfy a predicate                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [flatMap](#flatmap)                          | Maps each value to an `Iterable` and flattens the results                        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [from](#from) :material-ray-start:           | Starts a chain over any `Iterable`                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap:                |
@@ -228,6 +229,30 @@ Starts a chain with no values.
 
     Array.from(Functions.empty());
     // []
+    ```
+
+## entries
+
+Yields `[index, value]` pairs, like `Array.prototype.entries`; the index starts from 0.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from(['a', 'b'])
+        .entries()
+        .collectToArray();
+    // [[0, 'a'], [1, 'b']]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.entries(['a', 'b']));
+    // [[0, 'a'], [1, 'b']]
     ```
 
 ## filter
