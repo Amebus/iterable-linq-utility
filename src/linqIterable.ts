@@ -22,6 +22,7 @@ import {
 	collectToSet,
 	concat,
 	count,
+	defaultIfEmpty,
 	distinct,
 	every,
 	filter,
@@ -119,6 +120,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	count(predicate?: Predicate<T>): number {
 		return count(this.iterable, predicate);
+	}
+
+	defaultIfEmpty(value: T): IIterableLinq<T> {
+		return toChain(defaultIfEmpty(this.iterable, value));
 	}
 
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T> {

@@ -7,6 +7,7 @@ export { collectToMap } from './collectToMap';
 export { collectToSet } from './collectToSet';
 export { concat } from './concat';
 export { count } from './count';
+export { defaultIfEmpty } from './defaultIfEmpty';
 export { distinct } from './distinct';
 export { empty } from './empty';
 export { every } from './every';

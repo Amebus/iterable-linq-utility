@@ -201,6 +201,20 @@ export interface IIterableLinqBase<T> {
 	count(predicate: Predicate<T> | undefined): number;
 
 	/**
+	 * Lazily yields the values of the chain, or only `value` when the chain is empty.
+	 * @operation `Transformation`
+	 * @param value - the value yielded when the chain has no values
+	 * @returns a lazy, re-runnable chain of the values, or of `value` alone
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2]).defaultIfEmpty(0).collectToArray(); // [1, 2]
+	 * IterableLinq.empty<number>().defaultIfEmpty(0).collectToArray(); // [0]
+	 * ```
+	 * @since next
+	 */
+	defaultIfEmpty(value: T): IIterableLinq<T>;
+
+	/**
 	 * Yields the first value for each distinct value or selected key, in source order.
 	 * Keys use `SameValueZero`, like `Set`; original values are preserved.
 	 * Each iteration stores its own seen keys. If `keySelector` throws, the source is closed and the error propagates.
