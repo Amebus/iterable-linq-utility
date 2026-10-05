@@ -1,12 +1,12 @@
 /**
  * What `fromObject` yields for each property.
- * @since next
+ * @since 0.11.0
  */
 export type ObjectYield = 'entries' | 'keys' | 'values' | 'descriptors';
 
 /**
  * Options of `fromObject`. The defaults read what `Object.keys` reads: the own, enumerable, string keys.
- * @since next
+ * @since 0.11.0
  */
 export interface IObjectOptions {
 	/** `'entries'` (default) yields `[key, value]`, `'keys'` the keys, `'values'` the values, `'descriptors'` `[key, descriptor, owner]` without calling the getters. */
@@ -21,7 +21,7 @@ export interface IObjectOptions {
 
 /**
  * The options of `fromObject` when none are given: the type of the values follows `Object.entries`.
- * @since next
+ * @since 0.11.0
  */
 export interface IObjectDefaultOptions extends IObjectOptions {
 	yield?: 'entries';
@@ -41,7 +41,7 @@ type ReadsSymbols<Options extends IObjectOptions> =
 /**
  * The type of the keys `fromObject` yields: the keys of `O` as strings, as they are at runtime,
  * or `string` (and `symbol`) when the options read keys that `O` does not declare.
- * @since next
+ * @since 0.11.0
  */
 export type ObjectKey<O, Options extends IObjectOptions> = ReadsWide<Options> extends true
 	? string | (ReadsSymbols<Options> extends true ? symbol : never)
@@ -50,7 +50,7 @@ export type ObjectKey<O, Options extends IObjectOptions> = ReadsWide<Options> ex
 /**
  * The type of the values `fromObject` yields: the values of the keys of `O` it reads, or `unknown`
  * when the options read keys that `O` does not declare.
- * @since next
+ * @since 0.11.0
  */
 export type ObjectValue<O, Options extends IObjectOptions> = ReadsWide<Options> extends true
 	? unknown
@@ -65,7 +65,7 @@ type ObjectItemOf<O, Options extends IObjectOptions, Y> =
 
 /**
  * The type of the values of `fromObject(object, options)`, chosen by `options.yield` (default `'entries'`).
- * @since next
+ * @since 0.11.0
  */
 export type ObjectItem<O, Options extends IObjectOptions> = ObjectItemOf<O, Options, Options extends { yield: infer Y }
 	? Y
