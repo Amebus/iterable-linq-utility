@@ -38,6 +38,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeLast](#takelast)                        | Yields the last *count* values                                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [zip](#zip)                                  | Yields tuples of the values at the same position in several iterables            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
 
     For `tap`, `tapChain` and `tapChainCreation` see [Taps](taps.md).
 
@@ -841,3 +842,37 @@ With a type guard, `takeWhile` narrows the element type, as `filter` does.
     Array.from(Functions.takeWhile(values, (v): v is number => typeof v === 'number'));
     // number[], [1, 2]
     ```
+
+## zip
+
+Yields tuples of the values at the same position in the chain and in each of the other iterables, read side by side. It stops at the end of the shortest iterable and closes the others, so it also ends an infinite chain zipped with a finite iterable. If an iterable throws, the others are closed and the error propagates.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .zip(['a', 'b'])
+        .collectToArray();
+    // [[1, 'a'], [2, 'b']]
+
+    IterableLinq
+        .from([1, 2])
+        .zip(['a', 'b'], [true, false])
+        .collectToArray();
+    // [[1, 'a', true], [2, 'b', false]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.zip([1, 2, 3], ['a', 'b']));
+    // [[1, 'a'], [2, 'b']]
+    ```
+
+The type of the values is a tuple of the types of the iterables: `[number, string, boolean]` in the second example.
+
+Throws an `Error` if one of the other iterables is missing or does not implement `[Symbol.iterator]`.

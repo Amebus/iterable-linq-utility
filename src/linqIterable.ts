@@ -61,7 +61,8 @@ import {
 	takeLast,
 	takeWhile,
 	tap,
-	tapChain
+	tapChain,
+	zip
 } from './functions';
 
 import { iterableLinqBrand } from './iterableLinqBrand';
@@ -306,6 +307,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		const chain = this as unknown as IIterableLinq<T>;
 		chainCreationTapper(chain);
 		return chain;
+	}
+
+	zip<U extends unknown[]>(...others: { [K in keyof U]: Iterable<U[K]> }): IIterableLinq<[T, ...U]> {
+		return toChain(zip<T, U>(this.iterable, ...others));
 	}
 }
 

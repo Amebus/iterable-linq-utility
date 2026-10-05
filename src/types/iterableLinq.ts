@@ -972,6 +972,22 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.0.10
 	 */
 	tapChainCreation(chainCreationTapper: (chain: IIterableLinq<T>) => Unit): IIterableLinq<T>;
+
+	/**
+	 * Lazily yields tuples of the values at the same position in the chain and in each of `others`.
+	 * It stops at the end of the shortest iterable and closes the others; if an iterable throws, the others are closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param others - the iterables read side by side with the chain
+	 * @returns a lazy, re-runnable chain of tuples, as many as the values of the shortest iterable
+	 * @throws Error if a value of `others` is missing or does not implement `[Symbol.iterator]`
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).zip(['a', 'b']).collectToArray(); // [[1, 'a'], [2, 'b']]
+	 * IterableLinq.from([1, 2]).zip(['a', 'b'], [true, false]).collectToArray(); // [[1, 'a', true], [2, 'b', false]]
+	 * ```
+	 * @since next
+	 */
+	zip<U extends unknown[]>(...others: { [K in keyof U]: Iterable<U[K]> }): IIterableLinq<[T, ...U]>;
 }
 
 /**
