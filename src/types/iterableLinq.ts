@@ -259,6 +259,25 @@ export interface IIterableLinqBase<T> {
 	every(predicate: Predicate<T>): boolean;
 
 	/**
+	 * Yields the distinct values of the chain that are not in `other`, in the order of the chain.
+	 * Before the first value it reads the whole `other` into a `Set`, so `other` must be finite; each run reads it again.
+	 * Values, or the keys returned by `keySelector`, are compared with `SameValueZero`, like `Set`: for each key the first value is yielded.
+	 * If `keySelector` throws, or `other` throws, the sources are closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param other - the `Iterable` whose values, or keys, are left out
+	 * @param keySelector - called with every value of the chain and of `other`, and its index in its own source; omitted or `undefined` compares the values
+	 * @returns a new lazy, re-runnable chain of the distinct values that are not in `other`
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 2, 3]).except([3, 4]).collectToArray(); // [1, 2]
+	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).except([{ id: 2 }], v => v.id).collectToArray(); // [{ id: 1 }]
+	 * ```
+	 * @since next
+	 */
+	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
+
+	/**
 	 * Keeps the values accepted by a type guard and narrows their type.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`

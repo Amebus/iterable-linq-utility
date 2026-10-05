@@ -27,6 +27,7 @@ import {
 	distinct,
 	entries,
 	every,
+	except,
 	filter,
 	find,
 	findIndex,
@@ -141,6 +142,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	every(predicate: Predicate<T>): boolean {
 		return every(this.iterable, predicate);
+	}
+
+	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
+		return toChain(except(this.iterable, other, keySelector));
 	}
 
 	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;

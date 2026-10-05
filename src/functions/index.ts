@@ -12,6 +12,7 @@ export { distinct } from './distinct';
 export { empty } from './empty';
 export { entries } from './entries';
 export { every } from './every';
+export { except } from './except';
 export { filter } from './filter';
 export { find } from './find';
 export { findIndex } from './findIndex';

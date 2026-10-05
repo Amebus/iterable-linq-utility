@@ -21,6 +21,7 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [distinct](#distinct)                        | Keeps the first value for each distinct value or selected key                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [entries](#entries)                          | Yields `[index, value]` pairs                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [except](#except)                            | Keeps the distinct values that are not in another iterable                       | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [filter](#filter)                            | Keeps only the values that satisfy a predicate                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [flat](#flat)                                | Flattens the nested iterables up to *depth* levels                               | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [flatMap](#flatmap)                          | Maps each value to an `Iterable` and flattens the results                        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -258,6 +259,38 @@ Yields `[index, value]` pairs, like `Array.prototype.entries`; the index starts 
     Array.from(Functions.entries(['a', 'b']));
     // [[0, 'a'], [1, 'b']]
     ```
+
+## except
+
+Lazily yields the distinct values of the chain that are not in *other*, in the order of the chain. Like LINQ `Except` and `ExceptBy`, and `Set.prototype.difference` for any `Iterable`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq.from([1, 2, 2, 3]).except([3, 4]).collectToArray();
+    // [1, 2]
+
+    IterableLinq.from([{ id: 1 }, { id: 2 }])
+        .except([{ id: 2 }], v => v.id)
+        .collectToArray();
+    // [{ id: 1 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.except([1, 2, 2, 3], [3, 4]));
+    // [1, 2]
+    ```
+
+Values, or the keys returned by the optional `keySelector`, are compared with `SameValueZero`, like `Set` (see [Equality](../basic-concepts.md#equality)): `NaN` equals `NaN`, `+0` equals `-0`, and objects are compared by reference unless the selector returns another key. For each key the first value is yielded, unchanged. The `keySelector` is called with every value of the chain and of *other*, and its index in its own source.
+
+Before the first value it reads the whole *other* into a `Set`, so *other* must be finite; the source itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *other* again.
+
+If the selector throws, or *other* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is not a function.
 
 ## filter
 
