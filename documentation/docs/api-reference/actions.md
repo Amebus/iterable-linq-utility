@@ -815,7 +815,7 @@ It reads the two sources side by side, and stops at the first difference or when
     // true
     ```
 
-With `===`, `NaN` is not equal to itself: pass `Object.is` as `equals` to compare it. Throws an `Error` if the other iterable is missing or not iterable, or if a provided `equals` is not a function. Passing `undefined` as `equals` is the same as omitting it.
+Without `equals`, the values are compared with `SameValueZero`, like `Set` and `Map`: `NaN` equals `NaN`, `+0` equals `-0`, and objects are compared by reference (see [Equality](../basic-concepts.md#equality)). Pass `Object.is` to tell `+0` from `-0`, or `(a, b) => a === b` for `===`. Throws an `Error` if the other iterable is missing or not iterable, or if a provided `equals` is not a function. Passing `undefined` as `equals` is the same as omitting it.
 
 ## single
 

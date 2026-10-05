@@ -27,6 +27,7 @@ Each file records one decision: its context, the options considered and the cons
 | [0021](0021-benchmark-standards.md) | Benchmark standards | accepted, amended by [0022](0022-benchmark-scenarios-in-practice.md) |
 | [0022](0022-benchmark-scenarios-in-practice.md) | Benchmark scenarios in practice | accepted |
 | [0023](0023-re-registering-an-extension.md) | Re-registering an extension | accepted |
+| [0024](0024-equality-of-the-operations-that-compare-values.md) | Equality of the operations that compare values | accepted |
 
 ## Adding a decision
 

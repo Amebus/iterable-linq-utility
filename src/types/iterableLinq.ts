@@ -679,12 +679,13 @@ export interface IIterableLinqBase<T> {
 	 * If `equals` throws, both sources are closed and the error propagates; if a source throws, the other one is closed.
 	 * @operation `Action`
 	 * @param other - the `Iterable` to compare with, for example another chain
-	 * @param equals - called with a value of the chain and the value of `other` at the same position; defaults to `===`
+	 * @param equals - called with a value of the chain and the value of `other` at the same position; defaults to `SameValueZero`, like `Set` and `Map`: `NaN` equals `NaN`, `+0` equals `-0`, objects are compared by reference
 	 * @returns `true` if the two sources have the same number of values and every pair is equal
 	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `equals` is not a function
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).sequenceEqual([1, 2, 3]); // true
+	 * IterableLinq.from([NaN]).sequenceEqual([NaN]); // true
 	 * IterableLinq.from(['a', 'bb']).sequenceEqual(['x', 'yy'], (a, b) => a.length === b.length); // true
 	 * ```
 	 * @since 0.7.0

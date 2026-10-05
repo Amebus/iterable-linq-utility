@@ -28,6 +28,7 @@ describe('IterableLinq.sequenceEqual', () => {
 	test('IterableLinq.sequenceEqual compares with another chain and with equals', () => {
 		expect(IterableLinq.fromRange(0, 4).filter(v => v % 2 === 0).sequenceEqual(IterableLinq.from([0, 2]))).toBe(true);
 		expect(IterableLinq.from(['a', 'bb']).sequenceEqual(['x', 'yy'], (a, b) => a.length === b.length)).toBe(true);
+		expect(IterableLinq.from([1, Number.NaN]).sequenceEqual([1, Number.NaN])).toBe(true);
 	});
 
 	test('IterableLinq.sequenceEqual is action', () => {

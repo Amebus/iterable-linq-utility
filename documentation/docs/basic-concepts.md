@@ -59,6 +59,28 @@ Every action runs the chain again, from the source: a chain is **re-runnable**. 
 
 See [Deferred Execution](glossary.md#deferred-execution) and [Repeatable Execution](glossary.md#repeatable-execution) in the glossary.
 
+## Equality
+
+JavaScript has three ways to compare two values, which differ only on `NaN` and `-0`:
+
+| Comparison      | `NaN` vs `NaN` | `0` vs `-0` |
+| --------------- | -------------- | ----------- |
+| `===`           | not equal      | equal       |
+| `SameValueZero` | equal          | equal       |
+| `Object.is`     | equal          | not equal   |
+
+The operations that compare values follow one rule: an operation with a native counterpart compares like it, every other one uses `SameValueZero`, like `Set` and `Map`. Objects are always compared by reference.
+
+| Operation                                                    | Equality        | Like                                           |
+| ------------------------------------------------------------ | --------------- | ---------------------------------------------- |
+| [indexOf](api-reference/actions.md#indexof), [lastIndexOf](api-reference/actions.md#lastindexof) | `===`           | `Array.prototype.indexOf` and `lastIndexOf`    |
+| [includes](api-reference/actions.md#includes)                | `SameValueZero` | `Array.prototype.includes`                     |
+| [distinct](api-reference/transformations.md#distinct)        | `SameValueZero` | `Set`                                          |
+| [collectToSet](api-reference/actions.md#collecttoset), [collectToMap](api-reference/actions.md#collecttomap) | `SameValueZero` | `Set` and `Map`                                |
+| [sequenceEqual](api-reference/actions.md#sequenceequal)      | `SameValueZero` | `Set` and `Map`; pass `equals` to change it    |
+
+So `indexOf(NaN)` is `-1` while `includes(NaN)` is `true`, exactly as with arrays. For a different equality, pass a callback: `sequenceEqual(other, Object.is)` tells `0` from `-0`, a key selector compares objects by a field.
+
 ## The `Unit` type
 
 Callbacks that have nothing to return, like the ones passed to `forEach`, `forEachAsync`, `tap` and `tapChain`, return `unit()`: the only value of the `Unit` type.
