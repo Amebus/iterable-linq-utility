@@ -15,9 +15,12 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | Transformation                               | Brief Description                                                                | Execution                                   | Availability                                        |
     | -------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------- | --------------------------------------------------- |
     | [append](#append)                            | Yields the values, then one more value                                           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [chunk](#chunk)                              | Yields arrays of *size* values; the last one can be shorter                      | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [concat](#concat)                            | Yields the values, then the values of other iterables                            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [defaultIfEmpty](#defaultifempty)            | Yields the values, or only a default value when there are none                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [distinct](#distinct)                        | Keeps the first value for each distinct value or selected key                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [entries](#entries)                          | Yields `[index, value]` pairs                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [filter](#filter)                            | Keeps only the values that satisfy a predicate                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [flatMap](#flatmap)                          | Maps each value to an `Iterable` and flattens the results                        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [from](#from) :material-ray-start:           | Starts a chain over any `Iterable`                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap:                |
@@ -61,6 +64,32 @@ Yields the values of the chain, then *value*. *value* is yielded only when the s
     // [1, 2, 3, 4]
     ```
 
+## chunk
+
+Yields arrays of *size* values; the last array has the remaining values and can be shorter. Each array is new, and is yielded once its values have been read, so `chunk` works with infinite chains.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3, 4, 5])
+        .chunk(2)
+        .collectToArray();
+    // [[1, 2], [3, 4], [5]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.chunk([1, 2, 3, 4, 5], 2));
+    // [[1, 2], [3, 4], [5]]
+    ```
+
+Throws an `Error` if *size* is not a positive integer: `0`, negative values, fractions, `NaN` and `Infinity` throw when `chunk` is called.
+
 ## concat
 
 Yields the values of the chain, then the values of each iterable in *others*, in order. Each iterable is opened only when the previous one ends, so the iterables after an infinite chain are never read. Stopping early closes only the iterable being read.
@@ -86,6 +115,36 @@ Yields the values of the chain, then the values of each iterable in *others*, in
     ```
 
 Throws an `Error` if a value of *others* is missing or is not an `Iterable`.
+
+## defaultIfEmpty
+
+Yields the values of the chain, or only *value* when the chain is empty.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2])
+        .defaultIfEmpty(0)
+        .collectToArray();
+    // [1, 2]
+
+    IterableLinq
+        .empty<number>()
+        .defaultIfEmpty(0)
+        .collectToArray();
+    // [0]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.defaultIfEmpty([], 0));
+    // [0]
+    ```
 
 ## distinct
 
@@ -170,6 +229,30 @@ Starts a chain with no values.
 
     Array.from(Functions.empty());
     // []
+    ```
+
+## entries
+
+Yields `[index, value]` pairs, like `Array.prototype.entries`; the index starts from 0.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from(['a', 'b'])
+        .entries()
+        .collectToArray();
+    // [[0, 'a'], [1, 'b']]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.entries(['a', 'b']));
+    // [[0, 'a'], [1, 'b']]
     ```
 
 ## filter

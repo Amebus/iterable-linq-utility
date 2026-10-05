@@ -86,6 +86,21 @@ export interface IIterableLinqBase<T> {
 	average(selector: Mapper<T, number> | undefined): number | undefined;
 
 	/**
+	 * Lazily yields arrays of `size` values; the last array has the remaining values and can be shorter.
+	 * Each array is new, and is yielded once its values have been read, so `chunk` works with infinite chains.
+	 * @operation `Transformation`
+	 * @param size - how many values in each array; must be a positive integer
+	 * @returns a lazy, re-runnable chain of arrays of at most `size` values
+	 * @throws Error if `size` is not a positive integer (`0`, fractions, `NaN` and `Infinity` included)
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2, 3, 4, 5]).chunk(2).collectToArray(); // [[1, 2], [3, 4], [5]]
+	 * ```
+	 * @since next
+	 */
+	chunk(size: number): IIterableLinq<T[]>;
+
+	/**
 	 * Runs the chain and collects its values into an `Array`.
 	 * @operation `Action`
 	 * @returns the values of the chain, in order; an empty array when the chain is empty
@@ -186,6 +201,20 @@ export interface IIterableLinqBase<T> {
 	count(predicate: Predicate<T> | undefined): number;
 
 	/**
+	 * Lazily yields the values of the chain, or only `value` when the chain is empty.
+	 * @operation `Transformation`
+	 * @param value - the value yielded when the chain has no values
+	 * @returns a lazy, re-runnable chain of the values, or of `value` alone
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([1, 2]).defaultIfEmpty(0).collectToArray(); // [1, 2]
+	 * IterableLinq.empty<number>().defaultIfEmpty(0).collectToArray(); // [0]
+	 * ```
+	 * @since next
+	 */
+	defaultIfEmpty(value: T): IIterableLinq<T>;
+
+	/**
 	 * Yields the first value for each distinct value or selected key, in source order.
 	 * Keys use `SameValueZero`, like `Set`; original values are preserved.
 	 * Each iteration stores its own seen keys. If `keySelector` throws, the source is closed and the error propagates.
@@ -201,6 +230,18 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.5.0
 	 */
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T>;
+
+	/**
+	 * Lazily yields `[index, value]` pairs, like `Array.prototype.entries`.
+	 * @operation `Transformation`
+	 * @returns a lazy, re-runnable chain of pairs of the index, from 0, and the value
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(['a', 'b']).entries().collectToArray(); // [[0, 'a'], [1, 'b']]
+	 * ```
+	 * @since next
+	 */
+	entries(): IIterableLinq<[number, T]>;
 
 	/**
 	 * Tells whether every value satisfies `predicate`; stops and closes the source at the first rejected value.

@@ -1,13 +1,16 @@
 export { append } from './append';
 export { at } from './at';
 export { average } from './average';
+export { chunk } from './chunk';
 export { collectToArray } from './collectToArray';
 export { collectToMap } from './collectToMap';
 export { collectToSet } from './collectToSet';
 export { concat } from './concat';
 export { count } from './count';
+export { defaultIfEmpty } from './defaultIfEmpty';
 export { distinct } from './distinct';
 export { empty } from './empty';
+export { entries } from './entries';
 export { every } from './every';
 export { filter } from './filter';
 export { find } from './find';

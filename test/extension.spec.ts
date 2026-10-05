@@ -6,7 +6,7 @@ import { unit } from '@/types';
 
 declare module '@/types' {
 	interface IIterableLinq<T> {
-		chunk(size: number): IIterableLinq<T[]>;
+		batch(size: number): IIterableLinq<T[]>;
 		double(): IIterableLinq<number>;
 		twice(): IIterableLinq<number>;
 	}
@@ -81,8 +81,8 @@ describe('extend', () => {
 		expect(from([3]).double().collectToArray()).toEqual([6]);
 	});
 
-	test('chunk example', () => {
-		extend('chunk', function (size: number) {
+	test('batch example', () => {
+		extend('batch', function (size: number) {
 			const source = this;
 			return from({
 				*[Symbol.iterator]() {
@@ -99,7 +99,7 @@ describe('extend', () => {
 				}
 			});
 		});
-		expect(from([1, 2, 3, 4, 5]).chunk(2).collectToArray()).toEqual([[1, 2], [3, 4], [5]]);
+		expect(from([1, 2, 3, 4, 5]).batch(2).collectToArray()).toEqual([[1, 2], [3, 4], [5]]);
 	});
 
 	test('the result is still a chain', () => {
@@ -195,7 +195,7 @@ describe('override', () => {
 	});
 
 	test('throws for a name that does not exist, suggesting extend', () => {
-		expect(() => override('chunk', overridden)).toThrow(new Error('[iterable-linq-utility/override] "chunk" is not a method of IIterableLinq: use extend() to add it'));
+		expect(() => override('batch', overridden)).toThrow(new Error('[iterable-linq-utility/override] "batch" is not a method of IIterableLinq: use extend() to add it'));
 	});
 
 	test('throws for Object.prototype members', () => {

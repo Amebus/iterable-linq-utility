@@ -16,12 +16,15 @@ import {
 	append,
 	at,
 	average,
+	chunk,
 	collectToArray,
 	collectToMap,
 	collectToSet,
 	concat,
 	count,
+	defaultIfEmpty,
 	distinct,
+	entries,
 	every,
 	filter,
 	find,
@@ -94,6 +97,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return average(this.iterable, selector);
 	}
 
+	chunk(size: number): IIterableLinq<T[]> {
+		return toChain(chunk(this.iterable, size));
+	}
+
 	collectToArray(): T[] {
 		return collectToArray(this.iterable);
 	}
@@ -116,8 +123,16 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return count(this.iterable, predicate);
 	}
 
+	defaultIfEmpty(value: T): IIterableLinq<T> {
+		return toChain(defaultIfEmpty(this.iterable, value));
+	}
+
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T> {
 		return toChain(distinct(this.iterable, keySelector));
+	}
+
+	entries(): IIterableLinq<[number, T]> {
+		return toChain(entries(this.iterable));
 	}
 
 	every(predicate: Predicate<T>): boolean {

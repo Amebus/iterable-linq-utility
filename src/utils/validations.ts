@@ -23,6 +23,11 @@ export function throwIfNotNonNegativeInteger(value: number, name: string, operat
 		throw libraryError(operation, `The "${name}" parameter must be a non-negative integer`);
 }
 
+export function throwIfNotPositiveInteger(value: number, name: string, operation: string) {
+	if (!Number.isInteger(value) || value < 1)
+		throw libraryError(operation, `The "${name}" parameter must be a positive integer`);
+}
+
 export function throwIfNotFiniteNonZero(value: number, name: string, operation: string) {
 	if (!Number.isFinite(value) || value === 0)
 		throw libraryError(operation, `The "${name}" parameter must be a finite number other than 0`);
