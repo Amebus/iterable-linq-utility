@@ -10,7 +10,7 @@ import { Validations } from '../utils';
  * ```ts
  * Functions.collectToSet([1, 2, 1, 3]); // Set { 1, 2, 3 }
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function collectToSet<T>(iterable: Iterable<T>): Set<T> {
 	Validations.throwIfNotIterable(iterable, 'collectToSet');

@@ -14,7 +14,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * Array.from(Functions.zip([1, 2, 3], ['a', 'b'])); // [[1, 'a'], [2, 'b']]
  * Array.from(Functions.zip([1, 2], ['a', 'b'], [true, false])); // [[1, 'a', true], [2, 'b', false]]
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function zip<T, U extends unknown[]>(iterable: Iterable<T>, ...others: { [K in keyof U]: Iterable<U[K]> }): Iterable<[T, ...U]> {
 	Validations.throwIfNotIterable(iterable, 'zip');

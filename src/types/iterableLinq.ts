@@ -97,7 +97,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4, 5]).chunk(2).collectToArray(); // [[1, 2], [3, 4], [5]]
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	chunk(size: number): IIterableLinq<T[]>;
 
@@ -125,7 +125,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
 
@@ -142,7 +142,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, v => v.name); // Map { 1 => 'a', 2 => 'b' }
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
 
@@ -154,7 +154,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 1, 3]).collectToSet(); // Set { 1, 2, 3 }
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	collectToSet(): Set<T>;
 
@@ -211,7 +211,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2]).defaultIfEmpty(0).collectToArray(); // [1, 2]
 	 * IterableLinq.empty<number>().defaultIfEmpty(0).collectToArray(); // [0]
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	defaultIfEmpty(value: T): IIterableLinq<T>;
 
@@ -240,7 +240,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from(['a', 'b']).entries().collectToArray(); // [[0, 'a'], [1, 'b']]
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	entries(): IIterableLinq<[number, T]>;
 
@@ -391,7 +391,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, [2, [3]], new Set([4])]).flat().collectToArray(); // [1, 2, [3], 4]
 	 * IterableLinq.from([1, [2, [3]]]).flat(Infinity).collectToArray(); // [1, 2, 3]
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	flat<D extends number = 1>(depth?: D): IIterableLinq<FlatIterable<T, D>>;
 
@@ -639,7 +639,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from(['a', 'b', 'c']).reduceRight((acc, v) => acc + v); // 'cba'
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	reduceRight(reducer: Reducer<T, T>): T;
 
@@ -655,7 +655,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).reduceRight('', (acc, v) => acc + v); // '321'
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	reduceRight<R>(neutralElement: R, reducer: Reducer<T, R>): R;
 
@@ -987,7 +987,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 3]).with(1, 20).collectToArray(); // [1, 20, 3]
 	 * IterableLinq.from([1, 2, 3]).with(-1, 30).collectToArray(); // [1, 2, 30]
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	with(index: number, value: T): IIterableLinq<T>;
 
@@ -1003,7 +1003,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 3]).zip(['a', 'b']).collectToArray(); // [[1, 'a'], [2, 'b']]
 	 * IterableLinq.from([1, 2]).zip(['a', 'b'], [true, false]).collectToArray(); // [[1, 'a', true], [2, 'b', false]]
 	 * ```
-	 * @since next
+	 * @since 0.10.0
 	 */
 	zip<U extends unknown[]>(...others: { [K in keyof U]: Iterable<U[K]> }): IIterableLinq<[T, ...U]>;
 }

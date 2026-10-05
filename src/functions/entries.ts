@@ -11,7 +11,7 @@ import { map } from './map';
  * ```ts
  * Array.from(Functions.entries(['a', 'b'])); // [[0, 'a'], [1, 'b']]
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function entries<T>(iterable: Iterable<T>): Iterable<[number, T]> {
 	Validations.throwIfNotIterable(iterable, 'entries');

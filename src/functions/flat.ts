@@ -16,7 +16,7 @@ import { getContinueIteratorResult, isFunction, libraryError, Validations } from
  * Array.from(Functions.flat([1, [2, [3]], new Set([4])])); // [1, 2, [3], 4]
  * Array.from(Functions.flat([1, [2, [3]]], Infinity)); // [1, 2, 3]
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function flat<T, D extends number = 1>(iterable: Iterable<T>, depth?: D): Iterable<FlatIterable<T, D>> {
 	Validations.throwIfNotIterable(iterable, 'flat');

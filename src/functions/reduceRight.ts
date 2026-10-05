@@ -14,7 +14,7 @@ import { collectToArray } from './collectToArray';
  * ```ts
  * Functions.reduceRight(['a', 'b', 'c'], (acc, v) => acc + v); // 'cba'
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function reduceRight<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T;
 /**
@@ -30,7 +30,7 @@ export function reduceRight<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T
  * ```ts
  * Functions.reduceRight([1, 2, 3], '', (acc, v) => acc + v); // '321'
  * ```
- * @since next
+ * @since 0.10.0
  */
 export function reduceRight<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>): R;
 export function reduceRight<T, R>(iterable: Iterable<T>, ...args: [Reducer<T, T>] | [R, Reducer<T, R>]): T | R {
