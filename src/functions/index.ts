@@ -17,6 +17,7 @@ export { find } from './find';
 export { findIndex } from './findIndex';
 export { findLast } from './findLast';
 export { findLastIndex } from './findLastIndex';
+export { flat } from './flat';
 export { flatMap } from './flatMap';
 export { forEach, forEachAsync } from './forEach';
 export { includes } from './includes';

@@ -22,6 +22,7 @@ The functions that start a chain (`from`, `fromRange`, `repeat` and `empty`) are
     | [empty](#empty) :material-ray-start:         | Starts a chain with no values                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [entries](#entries)                          | Yields `[index, value]` pairs                                                    | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [filter](#filter)                            | Keeps only the values that satisfy a predicate                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [flat](#flat)                                | Flattens the nested iterables up to *depth* levels                               | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [flatMap](#flatmap)                          | Maps each value to an `Iterable` and flattens the results                        | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [from](#from) :material-ray-start:           | Starts a chain over any `Iterable`                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap:                |
     | [fromRange](#fromrange) :material-ray-start: | Starts a chain of numbers from *start* up to, but not including, *end*           | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -308,6 +309,42 @@ With a type guard, `filter` narrows the element type. Later operations receive t
     ```
 
 A predicate whose return type is `boolean` preserves the source element type. A type guard still receives the source value and its index; filtering remains lazy and re-runnable.
+
+## flat
+
+Flattens the nested iterables of the chain up to *depth* levels (1 by default), like `Array.prototype.flat` for any `Iterable`: arrays, `Set`, `Map` (whose values are `[key, value]` pairs), generators and chains. Strings, primitive or `String` objects, are not flattened. *depth* is a non-negative integer or `Infinity`; `0` yields the values as they are.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, [2, [3]], new Set([4])])
+        .flat()
+        .collectToArray();
+    // [1, 2, [3], 4]
+
+    IterableLinq
+        .from([1, [2, [3]]])
+        .flat(Infinity)
+        .collectToArray();
+    // [1, 2, 3]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.flat([['a', 'b'], 'cd']));
+    // ['a', 'b', 'cd']
+    ```
+
+The nested iterables are read only as far as the chain is consumed, and nested arrays are read by index. Stopping early closes every open iterable and the source; if a nested iterable throws, the iterables that contain it and the source are closed, and the error propagates.
+
+The type of the values is `FlatIterable<T, Depth>`, the counterpart of `FlatArray`. As with `Array.prototype.flat`, a depth whose type is `number`, such as `Infinity`, gives a wide type.
+
+Throws an `Error` if *depth* is not a non-negative integer or `Infinity`.
 
 ## flatMap
 
