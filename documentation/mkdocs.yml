@@ -91,6 +91,7 @@ nav:
     - Getting Started: getting-started.md
     - Basic Concepts: basic-concepts.md
     - Alternative Projects: alternative-projects.md
+    - Migrating to 0.12.0: migrating-to-0.12.0.md
     - Migrating to 0.1.0: migrating-to-0.1.0.md
     - Changelog: changelog.md
     - How to contribute: how-to-contribute.md

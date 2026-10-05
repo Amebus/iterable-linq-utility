@@ -51,19 +51,26 @@ describe('sequenceEqual', () => {
 		expect(sequenceEqual(values, other, undefined)).toBe(expectedResult);
 	});
 
-	test('sequenceEqual compares with === by default', () => {
+	test('sequenceEqual compares with SameValueZero by default', () => {
 		const item = { id: 1 };
 		expect(sequenceEqual([item], [item])).toBe(true);
 		expect(sequenceEqual([{ id: 1 }], [{ id: 1 }])).toBe(false);
-		expect(sequenceEqual([Number.NaN], [Number.NaN])).toBe(false);
+		expect(sequenceEqual([Number.NaN], [Number.NaN])).toBe(true);
+		expect(sequenceEqual([1, Number.NaN, 3], [1, Number.NaN, 3])).toBe(true);
+		expect(sequenceEqual([Number.NaN], [0])).toBe(false);
+		expect(sequenceEqual([0], [Number.NaN])).toBe(false);
 		expect(sequenceEqual([0], [-0])).toBe(true);
 		expect(sequenceEqual<unknown>([1], ['1'])).toBe(false);
+		const values = [1, Number.NaN];
+		expect(sequenceEqual(values, values)).toBe(true);
 	});
 
 	test('sequenceEqual compares with equals', () => {
 		expect(sequenceEqual([{ id: 1 }, { id: 2 }], [{ id: 1 }, { id: 2 }], (a, b) => a.id === b.id)).toBe(true);
 		expect(sequenceEqual([{ id: 1 }, { id: 2 }], [{ id: 1 }, { id: 3 }], (a, b) => a.id === b.id)).toBe(false);
 		expect(sequenceEqual([Number.NaN], [Number.NaN], Object.is)).toBe(true);
+		expect(sequenceEqual([0], [-0], Object.is)).toBe(false);
+		expect(sequenceEqual([Number.NaN], [Number.NaN], (a, b) => a === b)).toBe(false);
 	});
 
 	test('sequenceEqual compares different kinds of iterables', () => {
