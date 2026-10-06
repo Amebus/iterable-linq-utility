@@ -18,7 +18,7 @@ import { Validations } from '../utils';
  * Array.from(Functions.except([1, 2, 2, 3], [3, 4])); // [1, 2]
  * Array.from(Functions.except([{ id: 1 }, { id: 2 }], [{ id: 2 }], v => v.id)); // [{ id: 1 }]
  * ```
- * @since next
+ * @since 0.12.0
  */
 export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'except');

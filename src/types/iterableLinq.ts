@@ -273,7 +273,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 2, 3]).except([3, 4]).collectToArray(); // [1, 2]
 	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).except([{ id: 2 }], v => v.id).collectToArray(); // [{ id: 1 }]
 	 * ```
-	 * @since next
+	 * @since 0.12.0
 	 */
 	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
 
@@ -483,7 +483,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4, 5]).groupBy(v => v % 2).collectToArray(); // [[1, [1, 3, 5]], [0, [2, 4]]]
 	 * ```
-	 * @since next
+	 * @since 0.12.0
 	 */
 	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]>;
 
@@ -508,7 +508,7 @@ export interface IIterableLinqBase<T> {
 	 * 	.groupJoin(players, t => t.id, p => p.team, (t, ps) => [t.name, ps.length])
 	 * 	.collectToArray(); // [['a', 2], ['b', 0]]
 	 * ```
-	 * @since next
+	 * @since 0.12.0
 	 */
 	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
 
@@ -561,7 +561,7 @@ export interface IIterableLinqBase<T> {
 	 * 	.innerJoin(players, t => t.id, p => p.team, (t, p) => `${t.name}-${p.name}`)
 	 * 	.collectToArray(); // ['a-x', 'a-y']
 	 * ```
-	 * @since next
+	 * @since 0.12.0
 	 */
 	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
@@ -580,7 +580,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 2, 3]).intersect([2, 3, 4]).collectToArray(); // [2, 3]
 	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).intersect([{ id: 2 }], v => v.id).collectToArray(); // [{ id: 2 }]
 	 * ```
-	 * @since next
+	 * @since 0.12.0
 	 */
 	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
 
@@ -1096,7 +1096,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([1, 2, 2]).union([2, 3]).collectToArray(); // [1, 2, 3]
 	 * IterableLinq.from([{ id: 1 }]).union([{ id: 1 }, { id: 2 }], v => v.id).collectToArray(); // [{ id: 1 }, { id: 2 }]
 	 * ```
-	 * @since next
+	 * @since 0.12.0
 	 */
 	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
 
