@@ -18,7 +18,7 @@ import { Validations } from '../utils';
  * ```ts
  * Array.from(Functions.groupBy([1, 2, 3, 4, 5], v => v % 2)); // [[1, [1, 3, 5]], [0, [2, 4]]]
  * ```
- * @since next
+ * @since 0.12.0
  */
 export function groupBy<T, K>(iterable: Iterable<T>, keySelector: Mapper<T, K>): Iterable<[K, T[]]> {
 	Validations.throwIfNotIterable(iterable, 'groupBy');

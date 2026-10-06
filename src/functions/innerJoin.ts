@@ -24,7 +24,7 @@ import { getContinueIteratorResult, Validations } from '../utils';
  * Array.from(Functions.innerJoin(teams, players, t => t.id, p => p.team, (t, p) => `${t.name}-${p.name}`));
  * // ['a-x', 'a-y']
  * ```
- * @since next
+ * @since 0.12.0
  */
 export function innerJoin<T, I, K, R>(
 	iterable: Iterable<T>,

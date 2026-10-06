@@ -18,7 +18,7 @@ import { Validations } from '../utils';
  * Array.from(Functions.intersect([1, 2, 2, 3], [2, 3, 4])); // [2, 3]
  * Array.from(Functions.intersect([{ id: 1 }, { id: 2 }], [{ id: 2 }], v => v.id)); // [{ id: 2 }]
  * ```
- * @since next
+ * @since 0.12.0
  */
 export function intersect<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'intersect');

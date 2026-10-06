@@ -18,7 +18,7 @@ import { Validations } from '../utils';
  * Array.from(Functions.union([1, 2, 2], [2, 3])); // [1, 2, 3]
  * Array.from(Functions.union([{ id: 1 }], [{ id: 1 }, { id: 2 }], v => v.id)); // [{ id: 1 }, { id: 2 }]
  * ```
- * @since next
+ * @since 0.12.0
  */
 export function union<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'union');

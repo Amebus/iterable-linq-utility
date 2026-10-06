@@ -1,5 +1,23 @@
 # iterable-linq-utility
 
+## 0.12.0
+
+### Minor Changes
+
+- [#180](https://github.com/Amebus/iterable-linq-utility/pull/180) [`eace7f7`](https://github.com/Amebus/iterable-linq-utility/commit/eace7f75021a95b01fe2f779fe90e58b021f91a1) Thanks [@Amebus](https://github.com/Amebus)! - New `except(other, keySelector?)` Transformation: lazily yields the distinct values of the chain that are not in `other`, compared with `SameValueZero` or by the key of `keySelector`, like LINQ `Except` / `ExceptBy` and `Set.prototype.difference` for any `Iterable`; `other` is read whole before the first value ([#35](https://github.com/Amebus/iterable-linq-utility/issues/35)).
+
+- [#182](https://github.com/Amebus/iterable-linq-utility/pull/182) [`f4fe81f`](https://github.com/Amebus/iterable-linq-utility/commit/f4fe81fc2790c9c70eb129853791038377c01ea0) Thanks [@Amebus](https://github.com/Amebus)! - New `groupBy(keySelector)` Transformation: yields one `[key, values]` pair for each key, in the order of the first appearance of the key, with the keys compared with `SameValueZero`, like LINQ `GroupBy` and `Map.groupBy` for any `Iterable`; the whole chain is read before the first group ([#38](https://github.com/Amebus/iterable-linq-utility/issues/38)).
+
+- [#182](https://github.com/Amebus/iterable-linq-utility/pull/182) [`9c887e8`](https://github.com/Amebus/iterable-linq-utility/commit/9c887e84a233ab8c21877e34309e5cad665e42bf) Thanks [@Amebus](https://github.com/Amebus)! - New `groupJoin(inner, outerKey, innerKey, result)` Transformation: lazily yields `result(outer, inners)` for each value of the chain, with the values of `inner` that have the same key, compared with `SameValueZero`, like LINQ `GroupJoin`; `inner` is read whole before the first value ([#40](https://github.com/Amebus/iterable-linq-utility/issues/40)).
+
+- [#182](https://github.com/Amebus/iterable-linq-utility/pull/182) [`29e901b`](https://github.com/Amebus/iterable-linq-utility/commit/29e901bf986b4c35b7f4918b8031b3c6d5dc0881) Thanks [@Amebus](https://github.com/Amebus)! - New `innerJoin(inner, outerKey, innerKey, result)` Transformation: lazily yields `result(outer, inner)` for each pair of a value of the chain and a value of `inner` with the same key, compared with `SameValueZero`, like LINQ `Join`; `inner` is read whole before the first value ([#39](https://github.com/Amebus/iterable-linq-utility/issues/39)).
+
+- [#180](https://github.com/Amebus/iterable-linq-utility/pull/180) [`d283c2a`](https://github.com/Amebus/iterable-linq-utility/commit/d283c2a6952319685b78936c588f1c337e68f3ea) Thanks [@Amebus](https://github.com/Amebus)! - New `intersect(other, keySelector?)` Transformation: lazily yields the distinct values of the chain that are also in `other`, compared with `SameValueZero` or by the key of `keySelector`, like LINQ `Intersect` / `IntersectBy` and `Set.prototype.intersection` for any `Iterable`; `other` is read whole before the first value ([#34](https://github.com/Amebus/iterable-linq-utility/issues/34)).
+
+- [#178](https://github.com/Amebus/iterable-linq-utility/pull/178) [`40196f0`](https://github.com/Amebus/iterable-linq-utility/commit/40196f0d2a8af6fca75090ae7ef6daf17eebb7ea) Thanks [@Amebus](https://github.com/Amebus)! - Breaking: `sequenceEqual(other, equals?)` without `equals` now compares the values with `SameValueZero`, like `Set` and `Map`, so `NaN` equals `NaN`; pass `(a, b) => a === b` for the old behaviour. See the [migration guide](https://amebus.github.io/iterable-linq-utility/0.12/migrating-to-0.12.0/) and [ADR 0024](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0024-equality-of-the-operations-that-compare-values.md) ([#152](https://github.com/Amebus/iterable-linq-utility/issues/152)).
+
+- [#180](https://github.com/Amebus/iterable-linq-utility/pull/180) [`4733c35`](https://github.com/Amebus/iterable-linq-utility/commit/4733c357c166bd6349220dbe054fe91941cce5c0) Thanks [@Amebus](https://github.com/Amebus)! - New `union(other, keySelector?)` Transformation: lazily yields the distinct values of the chain, then the values of `other` not yielded yet, compared with `SameValueZero` or by the key of `keySelector`, like LINQ `Union` / `UnionBy` and `Set.prototype.union` for any `Iterable` ([#33](https://github.com/Amebus/iterable-linq-utility/issues/33)).
+
 ## 0.11.0
 
 ### Minor Changes

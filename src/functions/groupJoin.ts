@@ -24,7 +24,7 @@ import { getContinueIteratorResult, Validations } from '../utils';
  * Array.from(Functions.groupJoin(teams, players, t => t.id, p => p.team, (t, ps) => [t.name, ps.length]));
  * // [['a', 2], ['b', 0]]
  * ```
- * @since next
+ * @since 0.12.0
  */
 export function groupJoin<T, I, K, R>(
 	iterable: Iterable<T>,
