@@ -78,7 +78,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Action`
 	 * @param selector - called with each value and its index, returns the number to average; `undefined` averages the values themselves
 	 * @returns the average of the selected numbers, `undefined` when the chain is empty
-	 * @throws Error if a provided `selector` is not a function
+	 * @throws Error if a provided `selector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from(['a', 'bb', 'ccc']).average(v => v.length); // 2
@@ -136,7 +136,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Action`
 	 * @param keySelector - called with each value and its index; returns the key of the value
 	 * @returns a `Map` from each key to the last value with that key; an empty `Map` when the chain is empty
-	 * @throws Error if `keySelector` is not a function
+	 * @throws Error if `keySelector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
@@ -146,6 +146,22 @@ export interface IIterableLinqBase<T> {
 	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
 
 	/**
+	 * Collects the values of the chain into a `Map`, with their property `key` as the key: the same as `collectToMap(v => v[key])`.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @returns a `Map` from each key to the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if a selector is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id'); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<P extends keyof T>(key: P): Map<T[P], T>;
+
+	/**
 	 * Runs the chain and collects its values into a `Map`, with the key returned by `keySelector` and the value returned by `valueSelector`.
 	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
 	 * If `keySelector` or `valueSelector` throws, the source is closed and the error propagates.
@@ -153,7 +169,7 @@ export interface IIterableLinqBase<T> {
 	 * @param keySelector - called with each value and its index; returns the key of the value
 	 * @param valueSelector - called with each value and its index; returns the value to store; `undefined` stores the value itself
 	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
-	 * @throws Error if `keySelector` is not a function, or if a provided `valueSelector` is not a function
+	 * @throws Error if `keySelector` is neither a function nor a property key, or if a provided `valueSelector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, v => v.name); // Map { 1 => 'a', 2 => 'b' }
@@ -161,6 +177,57 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.10.0
 	 */
 	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+
+	/**
+	 * Collects the values of the chain into a `Map`, with the key returned by `keySelector` and their property `valueKey` as the value.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param keySelector - called with each value and its index; returns the key of the value
+	 * @param valueKey - the property to store: a `string`, a `symbol` or a `number`
+	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if a selector is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, 'name'); // Map { 1 => 'a', 2 => 'b' }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<K, Q extends keyof T>(keySelector: Mapper<T, K>, valueKey: Q): Map<K, T[Q]>;
+
+	/**
+	 * Collects the values of the chain into a `Map`, with their property `key` as the key and the value returned by `valueSelector`.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @param valueSelector - called with each value and its index; returns the value to store; `undefined` stores the value itself
+	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if a selector is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id', v => v.name.toUpperCase()); // Map { 1 => 'A', 2 => 'B' }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<P extends keyof T, V>(key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
+
+	/**
+	 * Collects the values of the chain into a `Map`, with their property `key` as the key and their property `valueKey` as the value.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @param valueKey - the property to store: a `string`, a `symbol` or a `number`
+	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
+	 * @throws Error if a selector is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id', 'name'); // Map { 1 => 'a', 2 => 'b' }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<P extends keyof T, Q extends keyof T>(key: P, valueKey: Q): Map<T[P], T[Q]>;
 
 	/**
 	 * Runs the chain and collects its values into a `Set`: a value equal to an earlier one (`SameValueZero`, as in `Set`) is left out.
@@ -299,7 +366,7 @@ export interface IIterableLinqBase<T> {
 	 * @param other - the `Iterable` whose values, or keys, are left out
 	 * @param keySelector - called with every value of the chain and of `other`, and its index in its own source; omitted or `undefined` compares the values
 	 * @returns a new lazy, re-runnable chain of the distinct values that are not in `other`
-	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is not a function
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 2, 3]).except([3, 4]).collectToArray(); // [1, 2]
@@ -471,7 +538,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Transformation`
 	 * @param mapper - called with each value and its index; returns the `Iterable` to flatten
 	 * @returns a new chain with the flattened values
-	 * @throws Error if `mapper` is not a function
+	 * @throws Error if `mapper` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2]).flatMap(v => [v, v * 10]).collectToArray(); // [1, 10, 2, 20]
@@ -581,7 +648,7 @@ export interface IIterableLinqBase<T> {
 	 * @param innerKey - called with each value of `inner` and its index; returns its key
 	 * @param result - called with each value of the chain and the array of its inner values; returns the value to yield
 	 * @returns a new chain with one result for each value of the chain
-	 * @throws Error if `inner` is not iterable, or if `outerKey`, `innerKey` or `result` is not a function
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
 	 * @example
 	 * ```ts
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
@@ -694,7 +761,7 @@ export interface IIterableLinqBase<T> {
 	 * @param innerKey - called with each value of `inner` and its index; returns its key
 	 * @param result - called with each pair of values with the same key; returns the value to yield
 	 * @returns a new chain with one result for each pair of values with the same key
-	 * @throws Error if `inner` is not iterable, or if `outerKey`, `innerKey` or `result` is not a function
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
 	 * @example
 	 * ```ts
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
@@ -775,7 +842,7 @@ export interface IIterableLinqBase<T> {
 	 * @param other - the `Iterable` whose values, or keys, are kept
 	 * @param keySelector - called with every value of the chain and of `other`, and its index in its own source; omitted or `undefined` compares the values
 	 * @returns a new lazy, re-runnable chain of the distinct values that are in `other`
-	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is not a function
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 2, 3]).intersect([2, 3, 4]).collectToArray(); // [2, 3]
@@ -1338,7 +1405,7 @@ export interface IIterableLinqBase<T> {
 	 * @param other - the `Iterable` read after the chain
 	 * @param keySelector - called with every value and its index in its own source (from 0 again for `other`); omitted or `undefined` compares the values
 	 * @returns a new lazy, re-runnable chain of the distinct values of the chain and of `other`
-	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is not a function
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 2]).union([2, 3]).collectToArray(); // [1, 2, 3]

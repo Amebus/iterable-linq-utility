@@ -116,10 +116,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return collectToArray(this.iterable);
 	}
 
-	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
-	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
-	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, V>): Map<K, T | V> {
-		return collectToMap(this.iterable, keySelector, valueSelector);
+	collectToMap<K, V>(keySelector: Mapper<T, K> | keyof T, valueSelector?: Mapper<T, V> | keyof T): Map<K, T | V> {
+		return collectToMap(this.iterable, keySelector as Mapper<T, K>, valueSelector as Mapper<T, V>);
 	}
 
 	collectToSet(): Set<T> {

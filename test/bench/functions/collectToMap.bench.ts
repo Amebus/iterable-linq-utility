@@ -35,5 +35,7 @@ test('collectToMap: records by id', async ({ bench }) => {
 		.add('native', () => new Map(records.map(r => [r.id, r])))
 		.add('chain', () => from(records).collectToMap(r => r.id))
 		.add('Functions', () => Functions.collectToMap(records, r => r.id))
+		// a property key against the equivalent keySelector (ADR 0025)
+		.add('key', () => Functions.collectToMap(records, 'id'))
 		.run();
 });
