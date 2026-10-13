@@ -38,12 +38,16 @@ Chosen option: "C: a property key, read inline in a dedicated iterator or loop".
 * **Where it does not apply.** Predicates (`filter`, `some`, `every`, `find…`, `count`, `takeWhile`, `skipWhile`, `single`), reducers, taps, `forEach`, the `equals` of `sequenceEqual` and the `result` of the joins. They compute or decide; they do not read a value. `min` and `max` keep `Comparer<T>`, where a key orders the values with `<`.
 * **Typing.**
   * There is one more overload per selector, after the function one: `P extends keyof T`, with the result typed from `T[P]`.
-  * `sum` and `average` accept only the keys whose value is a `number`, and `flatMap` only those whose value is an `Iterable`. Both use `KeysOfType<T, V>`, which is exported and leaves out the optional properties.
-  * The joins and `collectToMap` get every combination of function and key. Primitive element types are allowed, as `v[key]` is (`map('length')` on strings, `map(0)` on tuples).
+  * `sum` and `average` accept only the keys whose value is a `number`, and `flatMap` only those whose value is an `Iterable`. Both use `KeysOfType<T, V>`, which is exported and leaves out the optional properties. On a tuple its keys are the indices: `sum(map.entries(), 1)`.
+  * The joins and `collectToMap` get every combination of function and key. The two keys of a join need values in common, in either direction, as two functions would: `KeysOverlapping<T, V>`, exported too, keeps an optional foreign key (`customerId?: number`) and matches `string` with `'a' | 'b'`.
+  * Primitive element types are allowed, as `v[key]` is (`map('length')` on strings, `map(0)` on tuples).
 * **Validation.** `Validations.throwIfNotSelector` accepts a function or a property key. Anything else is rejected when the operation is called, with `The "<name>" must be a function or a property key` ([ADR 0020](0020-error-messages-of-the-library.md)).
-* **Implementation.**
-  * After the validation, `isPropertyKey(selector)` chooses the code. A Transformation creates an iterator class for the key. An Action calls a function for the key, and the loop of the selector also gets its own function. The code of the function form stays the one it had before.
-  * The `try`/`catch` around the read and `closeAfterCallbackError()` are the same as for a callback.
+* **Implementation.** After the validation, `isPropertyKey(selector)` chooses the code. The key is read inline with one of three patterns, and the function form keeps its code, or code measured as fast as before:
+  * an iterator class for the key, when the iterator has no branch to reuse: `map`, `groupBy`, `distinct`, and `flatMap`, whose states and steps move to an abstract base class with one subclass for the mapper and one for the key;
+  * a field for the key, read in the branch that the iterator already has for a missing selector: `except`, `intersect`, `union`;
+  * a field for the function and a field for the property, with a check before the read, when a selector is never missing: the keys of `innerJoin` and `groupJoin`.
+
+  An Action calls a function for the key, and the loop of the selector also gets its own function: `sum`, `average`, and `collectToMap`, whose two mixed forms (a key and a function) share one loop. The `try`/`catch` around the read and `closeAfterCallbackError()` are the same as for a callback.
 * **Compatibility.** An options object after the selectors (#167) is not a property key, so the overloads stay unambiguous. A data-last form (#114) can tell `map('name')`, one argument, from `map(iterable, 'name')`.
 
 ### Positive Consequences
@@ -56,9 +60,9 @@ Chosen option: "C: a property key, read inline in a dedicated iterator or loop".
 
 ### Negative Consequences
 
-* Every operation covered has two code paths, so the specs and the benches cover both: a property key equals the lambda, a `null` value closes the source, and a `property` (or `key`) bench case stands next to the lambda one.
+* Every operation covered has two code paths, so the specs and the benches cover both: a property key equals the lambda, a `null` value closes the source, and a `property` (or `key`) bench case stands next to the lambda one. The three patterns of the implementation are one more thing to choose from when adding an operation, and a change to the function form must be measured again.
 * An Action has to keep each loop in a function of its own. A `return` before the loop, in the same function, slowed the loop of `sum` by 14%, with the same code in the loop.
-* The overloads multiply: `collectToMap`, `innerJoin` and `groupJoin` get four signatures each, on the raw function and on the chain.
+* The overloads multiply: `collectToMap` has six signatures, `innerJoin` and `groupJoin` four each, on the raw function and on the chain.
 * The validation message of these operations changes, from `The "<name>" function must be provided`.
 * The measures of `groupBy` and `distinct` have a noise of ±10%: a difference smaller than that cannot be excluded, although the code of their function form is unchanged.
 
