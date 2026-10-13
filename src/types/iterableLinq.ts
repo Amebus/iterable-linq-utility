@@ -88,6 +88,21 @@ export interface IIterableLinqBase<T> {
 	average(selector: Mapper<T, number> | undefined): number | undefined;
 
 	/**
+	 * Returns the average of the property `key` of each value: the same as `average(v => v[key])`; runs the whole chain.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param key - a property whose value is a `number`
+	 * @returns the average of the values of the property, `undefined` when the chain is empty
+	 * @throws Error if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ price: 10 }, { price: 5 }]).average('price'); // 7.5
+	 * ```
+	 * @since next
+	 */
+	average(key: KeysOfType<T, number>): number | undefined;
+
+	/**
 	 * Lazily yields arrays of `size` values; the last array has the remaining values and can be shorter.
 	 * Each array is new, and is yielded once its values have been read, so `chunk` works with infinite chains.
 	 * @operation `Transformation`
@@ -447,6 +462,21 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.0.11
 	 */
 	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R>;
+
+	/**
+	 * Flattens the property `key` of each value, an `Iterable`: the same as `flatMap(v => v[key])`.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param key - a property whose value is an `Iterable`
+	 * @returns a new chain with the flattened values
+	 * @throws Error if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ tags: ['a', 'b'] }, { tags: ['c'] }]).flatMap('tags').collectToArray(); // ['a', 'b', 'c']
+	 * ```
+	 * @since next
+	 */
+	flatMap<P extends KeysOfType<T, Iterable<unknown>>>(key: P): IIterableLinq<T[P] extends Iterable<infer R> ? R : never>;
 
 	/**
 	 * Runs the chain and calls `action` on each value.

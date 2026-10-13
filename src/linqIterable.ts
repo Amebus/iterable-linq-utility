@@ -104,8 +104,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return at(this.iterable, index);
 	}
 
-	average(selector?: Mapper<T, number>): number | undefined {
-		return average(this.iterable, selector);
+	average(selector?: Mapper<T, number> | KeysOfType<T, number>): number | undefined {
+		return average(this.iterable, selector as Mapper<T, number>);
 	}
 
 	chunk(size: number): IIterableLinq<T[]> {
@@ -184,8 +184,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return toChain(flat(this.iterable, depth));
 	}
 
-	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R> {
-		return toChain(flatMap(this.iterable, mapper));
+	flatMap<R>(mapper: Mapper<T, Iterable<R>> | keyof T): IIterableLinq<R> {
+		return toChain(flatMap(this.iterable, mapper as Mapper<T, Iterable<R>>));
 	}
 
 	forEach(action: Action<T>): Unit {
