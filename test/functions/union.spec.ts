@@ -17,9 +17,9 @@ describe('union', () => {
 		expect(() => union([1], other as never)).toThrow(/^\[iterable-linq-utility\/union\] The (provided )?"sourceIterable"/);
 	});
 
-	test.each([null, false, 0, 'key', {}])('rejects invalid keySelector %j immediately', keySelector => {
+	test.each([null, false, {}])('rejects invalid keySelector %j immediately', keySelector => {
 		const source = spyIterable([1, 2]);
-		expect(() => union(source, [], keySelector as never)).toThrow(new Error('[iterable-linq-utility/union] The "keySelector" function must be provided'));
+		expect(() => union(source, [], keySelector as never)).toThrow(new Error('[iterable-linq-utility/union] The "keySelector" must be a function or a property key'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 
@@ -142,6 +142,42 @@ describe('union', () => {
 			expectTypeOf(value).toEqualTypeOf<string>();
 			expectTypeOf(index).toEqualTypeOf<number>();
 			return value;
+		});
+	});
+
+	describe('with a property key', () => {
+		const users = [{ email: 'a@x', n: 1 }, { email: 'b@x', n: 2 }, { email: 'a@x', n: 3 }];
+		const others = [{ email: 'b@x', n: 4 }, { email: 'c@x', n: 5 }];
+
+		test('gives the same values as the equivalent keySelector', () => {
+			expect(Array.from(union(users, others, 'email'))).toEqual(Array.from(union(users, others, u => u.email)));
+			expect(Array.from(union(users, others, 'email'))).toEqual([{ email: 'a@x', n: 1 }, { email: 'b@x', n: 2 }, { email: 'c@x', n: 5 }]);
+		});
+
+		test('uses the key 0, not the values themselves', () => {
+			const pairs: [number, string][] = [[1, 'a'], [2, 'b']];
+			const otherPairs: [number, string][] = [[2, 'x'], [3, 'y']];
+			expect(Array.from(union(pairs, otherPairs, 0))).toEqual(Array.from(union(pairs, otherPairs, p => p[0])));
+		});
+
+		test('without a keySelector, or with undefined, compares the values', () => {
+			expect(Array.from(union([1, 2, 2], [2, 3], undefined))).toEqual(Array.from(union([1, 2, 2], [2, 3])));
+		});
+
+		test('a null value of the source throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ email: string } | null>([{ email: 'a@x' }, null]);
+			expect(() => Array.from(union(iterable as Iterable<{ email: string }>, [{ email: 'z@x' }], 'email'))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('a null value of other throws a TypeError', () => {
+			expect(() => Array.from(union([{ email: 'a@x' }], [null as unknown as { email: string }], 'email'))).toThrow(TypeError);
+		});
+
+		test('accepts only the keys of the values', () => {
+			expectTypeOf(union(users, others, 'email')).toEqualTypeOf<Iterable<{ email: string; n: number }>>();
+			// @ts-expect-error not a key of the values
+			union(users, others, 'missing');
 		});
 	});
 });

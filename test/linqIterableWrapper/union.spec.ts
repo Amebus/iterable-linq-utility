@@ -4,8 +4,8 @@ import { expectTransformation } from '../_helpers/operationKind';
 import * as IterableLinq from '@/index';
 
 describe('IterableLinq.union', () => {
-	test.each([null, false, 0, 'key', {}])('rejects invalid keySelector %j', keySelector => {
-		expect(() => IterableLinq.from([1]).union([], keySelector as never)).toThrow(new Error('[iterable-linq-utility/union] The "keySelector" function must be provided'));
+	test.each([null, false, {}])('rejects invalid keySelector %j', keySelector => {
+		expect(() => IterableLinq.from([1]).union([], keySelector as never)).toThrow(new Error('[iterable-linq-utility/union] The "keySelector" must be a function or a property key'));
 	});
 
 	test('rejects an invalid other', () => {
@@ -30,5 +30,11 @@ describe('IterableLinq.union', () => {
 	test('preserves the element type', () => {
 		expectTypeOf(IterableLinq.from([1]).union([2])).toEqualTypeOf<IterableLinq.IIterableLinq<number>>();
 		expectTypeOf(IterableLinq.from([{ id: 1 }]).union([{ id: 2 }], value => value.id)).toEqualTypeOf<IterableLinq.IIterableLinq<{ id: number }>>();
+	});
+
+	test('IterableLinq.union with a property key compares the property', () => {
+		const chain = IterableLinq.from([{ email: 'a@x', n: 'a' }, { email: 'b@x', n: 'b' }]).union([{ email: 'b@x', n: 'x' }, { email: 'c@x', n: 'c' }], 'email');
+		expect(chain.map(v => v.n).collectToArray()).toEqual(['a', 'b', 'c']);
+		expectTypeOf(chain).toEqualTypeOf<IterableLinq.IIterableLinq<{ email: string; n: string }>>();
 	});
 });

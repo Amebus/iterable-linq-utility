@@ -150,8 +150,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return every(this.iterable, predicate);
 	}
 
-	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(except(this.iterable, other, keySelector));
+	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(except(this.iterable, other, keySelector as Mapper<T, K>));
 	}
 
 	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
@@ -337,8 +337,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return chain;
 	}
 
-	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(union(this.iterable, other, keySelector));
+	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(union(this.iterable, other, keySelector as Mapper<T, K>));
 	}
 
 	with(index: number, value: T): IIterableLinq<T> {

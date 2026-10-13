@@ -310,6 +310,23 @@ export interface IIterableLinqBase<T> {
 	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
 
 	/**
+	 * Yields the values of the chain whose property `key` is not the key of a value of `other`, once per key: the same as `except(other, v => v[key])`.
+	 * The keys are compared with `SameValueZero`, like `Set`.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param other - the `Iterable` to compare with
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @returns a new lazy, re-runnable chain of the values
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).except([{ id: 2 }], 'id').collectToArray(); // [{ id: 1 }]
+	 * ```
+	 * @since next
+	 */
+	except(other: Iterable<T>, key: keyof T): IIterableLinq<T>;
+
+	/**
 	 * Keeps the values accepted by a type guard and narrows their type.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Transformation`
@@ -647,6 +664,23 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.12.0
 	 */
 	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
+
+	/**
+	 * Yields the values of the chain whose property `key` is also the key of a value of `other`, once per key: the same as `intersect(other, v => v[key])`.
+	 * The keys are compared with `SameValueZero`, like `Set`.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param other - the `Iterable` to compare with
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @returns a new lazy, re-runnable chain of the values
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).intersect([{ id: 2 }], 'id').collectToArray(); // [{ id: 2 }]
+	 * ```
+	 * @since next
+	 */
+	intersect(other: Iterable<T>, key: keyof T): IIterableLinq<T>;
 
 	/**
 	 * Joins the values of the chain in a string, like `Array.prototype.join`; runs the whole chain.
@@ -1193,6 +1227,23 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.12.0
 	 */
 	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T>;
+
+	/**
+	 * Yields the values of the chain, then those of `other`, once per property `key`: the same as `union(other, v => v[key])`.
+	 * The keys are compared with `SameValueZero`, like `Set`.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param other - the `Iterable` to compare with
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @returns a new lazy, re-runnable chain of the values
+	 * @throws Error if `other` is missing or does not implement `[Symbol.iterator]`, or if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).union([{ id: 2 }, { id: 3 }], 'id').collectToArray(); // [{ id: 1 }, { id: 2 }, { id: 3 }]
+	 * ```
+	 * @since next
+	 */
+	union(other: Iterable<T>, key: keyof T): IIterableLinq<T>;
 
 	/**
 	 * Lazily yields the values of the chain, with `value` in place of the value at `index`, like `Array.prototype.with`; a negative index counts from the end.
