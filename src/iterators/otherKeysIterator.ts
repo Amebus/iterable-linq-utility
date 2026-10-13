@@ -4,12 +4,13 @@ import { SourceIterator } from './sourceIterator';
 /**
  * Base class of `intersect` and `except`: before the first value, it reads the whole `other` into a `Set` of keys
  * (`SameValueZero`, ADR 0024), then yields the values of the source that `keep` accepts.
- * The keys of the source and of `other` come from the same `keySelector`, called with the index in their own source.
+ * The keys of the source and of `other` come from the same `keySelector`, called with the index in their own source,
+ * or from the same property `key`, read in the branch without a `keySelector`, so the code of the `keySelector` does not change (ADR 0025).
  */
 export abstract class OtherKeysIterator<T, K> extends SourceIterator<T, T> {
 	private keys: Set<unknown> | undefined;
 
-	constructor(iterable: Iterable<T>, private readonly other: Iterable<T>, private readonly keySelector?: Mapper<T, K>) {
+	constructor(iterable: Iterable<T>, private readonly other: Iterable<T>, private readonly keySelector?: Mapper<T, K>, private readonly key?: PropertyKey) {
 		super(iterable);
 	}
 
@@ -29,8 +30,16 @@ export abstract class OtherKeysIterator<T, K> extends SourceIterator<T, T> {
 	}
 
 	private keyOf(value: T): unknown {
-		if (this.keySelector === undefined)
-			return value;
+		if (this.keySelector === undefined) {
+			if (this.key === undefined)
+				return value;
+			try {
+				return (value as any)[this.key];
+			} catch (error) {
+				this.closeAfterCallbackError();
+				throw error;
+			}
+		}
 		try {
 			return this.keySelector(value, this.index++);
 		} catch (error) {
@@ -46,7 +55,7 @@ export abstract class OtherKeysIterator<T, K> extends SourceIterator<T, T> {
 		// for…of closes `other` when the keySelector throws
 		try {
 			for (const value of this.other)
-				keys.add(this.keySelector === undefined ? value : this.keySelector(value, index++));
+				keys.add(this.keySelector === undefined ? (this.key === undefined ? value : (value as any)[this.key]) : this.keySelector(value, index++));
 		} catch (error) {
 			this.closeAfterCallbackError();
 			throw error;

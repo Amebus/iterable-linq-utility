@@ -6,8 +6,8 @@ import * as IterableLinq from '@/index';
 
 describe('IterableLinq.sum', () => {
 
-	test.each([null, 0, {}])('IterableLinq.sum rejects invalid selector %s', selector => {
-		expect(() => IterableLinq.from([1]).sum(selector as never)).toThrow(new Error('[iterable-linq-utility/sum] The "selector" function must be provided'));
+	test.each([null, false, {}])('IterableLinq.sum rejects invalid selector %s', selector => {
+		expect(() => IterableLinq.from([1]).sum(selector as never)).toThrow(new Error('[iterable-linq-utility/sum] The "selector" must be a function or a property key'));
 	});
 
 	test.each([
@@ -56,6 +56,14 @@ describe('IterableLinq.sum', () => {
 		// @ts-expect-error without a selector the chain must contain numbers
 		expect(chain.sum()).toBe('0abb');
 		expectTypeOf(chain.sum(v => v.length)).toEqualTypeOf<number>();
+	});
+
+	test('IterableLinq.sum with a property key sums the property', () => {
+		const chain = IterableLinq.from([{ price: 10, note: 'a' }, { price: 5, note: 'b' }]);
+		expect(chain.sum('price')).toBe(15);
+		expectTypeOf(chain.sum('price')).toEqualTypeOf<number>();
+		// @ts-expect-error the value of note is a string
+		chain.sum('note');
 	});
 
 });

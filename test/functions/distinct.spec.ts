@@ -13,9 +13,9 @@ describe('distinct', () => {
 		withoutInputIterableThrowsException(distinct);
 	});
 
-	test.each([null, false, 0, 'key', {}])('rejects invalid keySelector %j immediately', keySelector => {
+	test.each([null, false, {}])('rejects invalid keySelector %j immediately', keySelector => {
 		const source = spyIterable([1, 2]);
-		expect(() => distinct(source, keySelector as never)).toThrow(new Error('[iterable-linq-utility/distinct] The "keySelector" function must be provided'));
+		expect(() => distinct(source, keySelector as never)).toThrow(new Error('[iterable-linq-utility/distinct] The "keySelector" must be a function or a property key'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 
@@ -194,5 +194,36 @@ describe('distinct', () => {
 		});
 		expectTypeOf(result).toEqualTypeOf<Iterable<number | string>>();
 		expect(Array.from(result)).toEqual([1, 'one']);
+	});
+
+	describe('with a property key', () => {
+		const users = [{ email: 'a@x', n: 1 }, { email: 'b@x', n: 2 }, { email: 'a@x', n: 3 }];
+
+		test('gives the same values as the equivalent keySelector', () => {
+			expect(Array.from(distinct(users, 'email'))).toEqual(Array.from(distinct(users, u => u.email)));
+		});
+
+		test('uses the key 0, not the values themselves', () => {
+			const pairs: [number, string][] = [[1, 'a'], [1, 'b'], [2, 'c']];
+			expect(Array.from(distinct(pairs, 0))).toEqual([[1, 'a'], [2, 'c']]);
+		});
+
+		test('without a keySelector, or with undefined, compares the values', () => {
+			const values = [1, 1, 2];
+			expect(Array.from(distinct(values))).toEqual([1, 2]);
+			expect(Array.from(distinct(values, undefined))).toEqual([1, 2]);
+		});
+
+		test('a null value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ email: string } | null>([{ email: 'a@x' }, null]);
+			expect(() => Array.from(distinct(iterable as Iterable<{ email: string }>, 'email'))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('accepts only the keys of the values', () => {
+			expectTypeOf(distinct(users, 'email')).toEqualTypeOf<Iterable<{ email: string; n: number }>>();
+			// @ts-expect-error not a key of the values
+			distinct(users, 'missing');
+		});
 	});
 });

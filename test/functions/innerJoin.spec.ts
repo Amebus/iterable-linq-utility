@@ -20,14 +20,18 @@ describe('innerJoin', () => {
 		expect(() => innerJoin([1], inner as never, identity, identity, pair)).toThrow(/^\[iterable-linq-utility\/innerJoin\] The (provided )?"sourceIterable"/);
 	});
 
-	test.each(['outerKey', 'innerKey', 'result'])('rejects an invalid %s immediately', name => {
+	test.each([
+		{ name: 'outerKey', message: 'must be a function or a property key', invalids: [undefined, null, false, {}] },
+		{ name: 'innerKey', message: 'must be a function or a property key', invalids: [undefined, null, false, {}] },
+		{ name: 'result', message: 'function must be provided', invalids: [undefined, null, 0, 'key', {}] }
+	])('rejects an invalid $name immediately', ({ name, message, invalids }) => {
 		const source = spyIterable([1, 2]);
 		const inner = spyIterable([1]);
 		const callbacks: Record<string, unknown> = { outerKey: identity, innerKey: identity, result: pair };
-		for (const invalid of [undefined, null, 0, 'key', {}]) {
+		for (const invalid of invalids) {
 			callbacks[name] = invalid;
 			expect(() => innerJoin(source, inner, callbacks.outerKey as never, callbacks.innerKey as never, callbacks.result as never))
-				.toThrow(new Error(`[iterable-linq-utility/innerJoin] The "${name}" function must be provided`));
+				.toThrow(new Error(`[iterable-linq-utility/innerJoin] The "${name}" ${message}`));
 		}
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 		expect(inner.stats).toEqual({ iterations: 0, reads: 0 });
@@ -160,5 +164,52 @@ describe('innerJoin', () => {
 			return inner.length > outer;
 		});
 		expectTypeOf(result).toEqualTypeOf<Iterable<boolean>>();
+	});
+
+	describe('with property keys', () => {
+		const teams = [{ id: 1, name: 'red' }, { id: 2, name: 'blue' }, { id: 3, name: 'none' }];
+		const players = [{ teamId: 1, name: 'Ann' }, { teamId: 2, name: 'Bob' }, { teamId: 1, name: 'Cid' }];
+		const byLambdas = Array.from(innerJoin(teams, players, t => t.id, p => p.teamId, (t, p) => `${t.name}-${p.name}`));
+
+		test('every combination of functions and keys gives the same values', () => {
+			expect(Array.from(innerJoin(teams, players, 'id', 'teamId', (t, p) => `${t.name}-${p.name}`))).toEqual(byLambdas);
+			expect(Array.from(innerJoin(teams, players, 'id', p => p.teamId, (t, p) => `${t.name}-${p.name}`))).toEqual(byLambdas);
+			expect(Array.from(innerJoin(teams, players, t => t.id, 'teamId', (t, p) => `${t.name}-${p.name}`))).toEqual(byLambdas);
+		});
+
+		test('a null outer value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ id: number; name: string } | null>([{ id: 1, name: 'red' }, null]);
+			expect(() => Array.from(innerJoin(iterable as Iterable<{ id: number; name: string }>, players, 'id', 'teamId', (t, p) => `${t.name}-${p.name}`))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('a null inner value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource(teams);
+			expect(() => Array.from(innerJoin(iterable, [null as unknown as { teamId: number; name: string }], 'id', 'teamId', (t, p) => `${t.name}-${p.name}`))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('the two keys must have the same type', () => {
+			// @ts-expect-error name is a string, teamId a number
+			innerJoin(teams, players, 'name', 'teamId', (t, p) => `${t.name}-${p.name}`);
+			// @ts-expect-error id is not a key of the inner values
+			innerJoin(teams, players, 'id', 'id', (t, p) => `${t.name}-${p.name}`);
+			// @ts-expect-error the outer function gives a string, teamId is a number
+			innerJoin(teams, players, t => t.name, 'teamId', (t, p) => `${t.name}-${p.name}`);
+			// @ts-expect-error name is a string, the inner function gives a number
+			innerJoin(teams, players, 'name', p => p.teamId, (t, p) => `${t.name}-${p.name}`);
+		});
+	});
+
+	test('the keys only need types that overlap, as with functions', () => {
+		const customers = [{ id: 1, name: 'Ann', tier: 'gold' as 'gold' | 'silver' }];
+		const orders: { customerId?: number; total: number; tier: string }[] = [{ customerId: 1, total: 10, tier: 'gold' }];
+		// an optional foreign key
+		expect(Array.from(innerJoin(customers, orders, 'id', 'customerId', (c, o) => `${c.name}-${o.total}`))).toEqual(Array.from(innerJoin(customers, orders, c => c.id, o => o.customerId, (c, o) => `${c.name}-${o.total}`)));
+		innerJoin(customers, orders, c => c.id, 'customerId', (c, o) => `${c.name}-${o.total}`);
+		// a union of literals against a string
+		innerJoin(customers, orders, 'tier', 'tier', (c, o) => `${c.name}-${o.total}`);
+		// @ts-expect-error a string and a number never overlap
+		innerJoin(customers, orders, 'name', 'total', (c, o) => `${c.name}-${o.total}`);
 	});
 });

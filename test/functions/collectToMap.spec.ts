@@ -21,15 +21,15 @@ describe('collectToMap', () => {
 		withoutInputIterableThrowsException(collectToMap);
 	});
 
-	test.each([undefined, null, {}, 'id'])('collectToMap(range(5), %s) -> throw exception', keySelector => {
+	test.each([undefined, null, {}, false])('collectToMap(range(5), %s) -> throw exception', keySelector => {
 		const collectToMapJs = collectToMap as any;
-		expect(() => collectToMapJs(range(5), keySelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "keySelector" function must be provided'));
-		expect(() => collectToMapJs([], keySelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "keySelector" function must be provided'));
+		expect(() => collectToMapJs(range(5), keySelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "keySelector" must be a function or a property key'));
+		expect(() => collectToMapJs([], keySelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "keySelector" must be a function or a property key'));
 	});
 
-	test.each([null, {}, 'name'])('collectToMap(range(5), v => v, %s) -> throw exception', valueSelector => {
+	test.each([null, {}, false])('collectToMap(range(5), v => v, %s) -> throw exception', valueSelector => {
 		const collectToMapJs = collectToMap as any;
-		expect(() => collectToMapJs(range(5), (v: number) => v, valueSelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "valueSelector" function must be provided'));
+		expect(() => collectToMapJs(range(5), (v: number) => v, valueSelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "valueSelector" must be a function or a property key'));
 	});
 
 	test('collectToMap maps each key to the value', () => {
@@ -108,4 +108,53 @@ describe('collectToMap', () => {
 		expectTypeOf(collectToMap(people, p => p.id, p => p.name)).toEqualTypeOf<Map<number, string>>();
 	});
 
+	describe('with property keys', () => {
+		const people = [{ id: 1, name: 'Ann' }, { id: 2, name: 'Bob' }, { id: 1, name: 'Cy' }];
+
+		test('a key gives the same map as the equivalent keySelector', () => {
+			expect([...collectToMap(people, 'id')]).toEqual([...collectToMap(people, p => p.id)]);
+		});
+
+		test('every combination of functions and keys gives the same map', () => {
+			const byLambdas = [...collectToMap(people, p => p.id, p => p.name)];
+			expect([...collectToMap(people, 'id', 'name')]).toEqual(byLambdas);
+			expect([...collectToMap(people, 'id', p => p.name)]).toEqual(byLambdas);
+			expect([...collectToMap(people, p => p.id, 'name')]).toEqual(byLambdas);
+		});
+
+		test('a key with an undefined valueSelector stores the values themselves', () => {
+			expect([...collectToMap(people, 'id', undefined)]).toEqual([...collectToMap(people, 'id')]);
+		});
+
+		test('the mixed forms pass the index to the function', () => {
+			expect([...collectToMap(people, 'name', (_, index) => index)]).toEqual([['Ann', 0], ['Bob', 1], ['Cy', 2]]);
+			expect([...collectToMap(people, (_, index) => index, 'name')]).toEqual([[0, 'Ann'], [1, 'Bob'], [2, 'Cy']]);
+		});
+
+		test.each([
+			{ name: 'key', run: (it: Iterable<{ id: number; name: string }>) => collectToMap(it, 'id') },
+			{ name: 'key and value', run: (it: Iterable<{ id: number; name: string }>) => collectToMap(it, 'id', 'name') },
+			{ name: 'key and valueSelector', run: (it: Iterable<{ id: number; name: string }>) => collectToMap(it, 'id', p => p.name) },
+			{ name: 'keySelector and value', run: (it: Iterable<{ id: number; name: string }>) => collectToMap(it, p => p?.id, 'name') }
+		])('a null value with $name throws a TypeError and closes the source', ({ run }) => {
+			const { state, iterable } = closableSource<{ id: number; name: string } | null>([{ id: 1, name: 'Ann' }, null]);
+			expect(() => run(iterable as Iterable<{ id: number; name: string }>)).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('gives the types of the properties', () => {
+			expectTypeOf(collectToMap(people, 'id')).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+			expectTypeOf(collectToMap(people, 'id', 'name')).toEqualTypeOf<Map<number, string>>();
+			expectTypeOf(collectToMap(people, p => p.name, 'id')).toEqualTypeOf<Map<string, number>>();
+			expectTypeOf(collectToMap(people, 'name', p => p.id * 2)).toEqualTypeOf<Map<string, number>>();
+			// @ts-expect-error not a key of the values
+			collectToMap(people, 'missing');
+		});
+	});
+
+	test('an undefined valueSelector stores the values themselves, also in the type', () => {
+		const people = [{ id: 1, name: 'Ann' }];
+		expectTypeOf(collectToMap(people, 'id', undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+		expectTypeOf(collectToMap(people, p => p.id, undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+	});
 });

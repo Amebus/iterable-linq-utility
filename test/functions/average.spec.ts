@@ -17,9 +17,9 @@ describe('average', () => {
 		withoutInputIterableThrowsException(average);
 	});
 
-	test.each([null, false, 0, 'selector', {}])('average(iterable, %j) -> throw exception without reading the source', selector => {
+	test.each([null, false, {}])('average(iterable, %j) -> throw exception without reading the source', selector => {
 		const source = spyIterable([1, 2]);
-		expect(() => average(source, selector as never)).toThrow(new Error('[iterable-linq-utility/average] The "selector" function must be provided'));
+		expect(() => average(source, selector as never)).toThrow(new Error('[iterable-linq-utility/average] The "selector" must be a function or a property key'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 
@@ -105,6 +105,34 @@ describe('average', () => {
 		});
 		expectTypeOf(result).toEqualTypeOf<number | undefined>();
 		expect(result).toBe(2);
+	});
+
+	describe('with a property key', () => {
+		const orders = [{ price: 10, note: 'a' }, { price: 5, note: 'b' }];
+
+		test('gives the same average as the equivalent selector', () => {
+			expect(average(orders, 'price')).toBe(average(orders, o => o.price));
+		});
+
+		test('is undefined on an empty source', () => {
+			expect(average([] as { price: number }[], 'price')).toBeUndefined();
+		});
+
+		test('undefined still averages the values themselves', () => {
+			expect(average([1, 2], undefined)).toBe(1.5);
+		});
+
+		test('a null value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ price: number } | null>([{ price: 1 }, null, { price: 3 }]);
+			expect(() => average(iterable as Iterable<{ price: number }>, 'price')).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('accepts only the keys whose value is a number', () => {
+			// @ts-expect-error the value of note is a string
+			average(orders, 'note');
+			expectTypeOf(average(orders, 'price')).toEqualTypeOf<number | undefined>();
+		});
 	});
 
 });

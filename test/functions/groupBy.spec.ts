@@ -1,4 +1,5 @@
 import { describe, expect, expectTypeOf, test } from 'vitest';
+import { closableSource } from '../_helpers/generators/closableSource';
 import { spyIterable } from '../_helpers/generators/spyIterable';
 import { throwingSource } from '../_helpers/generators/throwingSource';
 import { expectTransformation } from '../_helpers/operationKind';
@@ -11,9 +12,9 @@ describe('groupBy', () => {
 		withoutInputIterableThrowsException((iterable: any) => groupBy(iterable, v => v), 'groupBy');
 	});
 
-	test.each([undefined, null, false, 0, 'key', {}])('rejects invalid keySelector %j immediately', keySelector => {
+	test.each([undefined, null, false, {}])('rejects invalid keySelector %j immediately', keySelector => {
 		const source = spyIterable([1, 2]);
-		expect(() => groupBy(source, keySelector as never)).toThrow(new Error('[iterable-linq-utility/groupBy] The "keySelector" function must be provided'));
+		expect(() => groupBy(source, keySelector as never)).toThrow(new Error('[iterable-linq-utility/groupBy] The "keySelector" must be a function or a property key'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 
@@ -110,6 +111,31 @@ describe('groupBy', () => {
 			expectTypeOf(value).toEqualTypeOf<string>();
 			expectTypeOf(index).toEqualTypeOf<number>();
 			return value;
+		});
+	});
+
+	describe('with a property key', () => {
+		const players = [{ name: 'Ann', team: 'red' }, { name: 'Bob', team: 'blue' }, { name: 'Cid', team: 'red' }];
+
+		test('gives the same groups as the equivalent keySelector', () => {
+			expect(Array.from(groupBy(players, 'team'))).toEqual(Array.from(groupBy(players, p => p.team)));
+		});
+
+		test('compares the keys with SameValueZero', () => {
+			const values = [{ k: NaN, v: 1 }, { k: NaN, v: 2 }, { k: 0, v: 3 }, { k: -0, v: 4 }];
+			expect(Array.from(groupBy(values, 'k')).map(([, group]) => group.length)).toEqual([2, 2]);
+		});
+
+		test('a null value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ team: string } | null>([{ team: 'red' }, null]);
+			expect(() => Array.from(groupBy(iterable as Iterable<{ team: string }>, 'team'))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('gives the type of the property as the key', () => {
+			expectTypeOf(groupBy(players, 'team')).toEqualTypeOf<Iterable<[string, { name: string; team: string }[]]>>();
+			// @ts-expect-error not a key of the values
+			groupBy(players, 'missing');
 		});
 	});
 });

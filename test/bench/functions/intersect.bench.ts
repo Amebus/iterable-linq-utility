@@ -43,5 +43,7 @@ test('intersect: key', async ({ bench }) => {
 		})
 		.add('chain', () => sum(from(records).intersect(otherRecords, record => record.group).map(record => record.score)))
 		.add('Functions', () => sum(Functions.map(Functions.intersect(records, otherRecords, record => record.group), record => record.score)))
+		// a property key against the equivalent keySelector (ADR 0025)
+		.add('key', () => sum(Functions.map(Functions.intersect(records, otherRecords, 'group'), record => record.score)))
 		.run();
 });

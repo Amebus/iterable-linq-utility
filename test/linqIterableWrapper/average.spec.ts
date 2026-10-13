@@ -6,8 +6,8 @@ import * as IterableLinq from '@/index';
 
 describe('IterableLinq.average', () => {
 
-	test.each([null, 0, {}])('IterableLinq.average rejects invalid selector %s', selector => {
-		expect(() => IterableLinq.from([1]).average(selector as never)).toThrow(new Error('[iterable-linq-utility/average] The "selector" function must be provided'));
+	test.each([null, false, {}])('IterableLinq.average rejects invalid selector %s', selector => {
+		expect(() => IterableLinq.from([1]).average(selector as never)).toThrow(new Error('[iterable-linq-utility/average] The "selector" must be a function or a property key'));
 	});
 
 	test.each([
@@ -56,6 +56,14 @@ describe('IterableLinq.average', () => {
 		// @ts-expect-error without a selector the chain must contain numbers
 		expect(chain.average()).toBe(Number.NaN);
 		expectTypeOf(chain.average(v => v.length)).toEqualTypeOf<number | undefined>();
+	});
+
+	test('IterableLinq.average with a property key averages the property', () => {
+		const chain = IterableLinq.from([{ price: 10, note: 'a' }, { price: 5, note: 'b' }]);
+		expect(chain.average('price')).toBe(7.5);
+		expectTypeOf(chain.average('price')).toEqualTypeOf<number | undefined>();
+		// @ts-expect-error the value of note is a string
+		chain.average('note');
 	});
 
 });

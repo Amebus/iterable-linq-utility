@@ -46,6 +46,8 @@ test('union: key', async ({ bench }) => {
 		})
 		.add('chain', () => sum(from(records).union(otherRecords, record => record.group).map(record => record.score)))
 		.add('Functions', () => sum(Functions.map(Functions.union(records, otherRecords, record => record.group), record => record.score)))
+		// a property key against the equivalent keySelector (ADR 0025)
+		.add('key', () => sum(Functions.map(Functions.union(records, otherRecords, 'group'), record => record.score)))
 		.run();
 });
 

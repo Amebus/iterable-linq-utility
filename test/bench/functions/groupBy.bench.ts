@@ -44,5 +44,7 @@ test('groupBy: key', async ({ bench }) => {
 		.add('loop', () => sizes(groupByLoop(records, record => record.group)))
 		.add('chain', () => sizes(from(records).groupBy(record => record.group)))
 		.add('Functions', () => sizes(Functions.groupBy(records, record => record.group)))
+		// a property key against the equivalent keySelector (ADR 0025)
+		.add('key', () => sizes(Functions.groupBy(records, 'group')))
 		.run();
 });

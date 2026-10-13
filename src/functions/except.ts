@@ -1,6 +1,6 @@
 import { DeferredIterable, OtherKeysIterator } from '../iterators';
 import type { Mapper } from '../types';
-import { Validations } from '../utils';
+import { isPropertyKey, Validations } from '../utils';
 
 /**
  * Lazily yields the distinct values of `iterable` that are not in `other`, in the order of `iterable`.
@@ -12,7 +12,7 @@ import { Validations } from '../utils';
  * @param other - the `Iterable` whose values, or keys, are left out
  * @param keySelector - called with every value of `iterable` and of `other`, and its index in its own source; omitted or `undefined` compares the values
  * @returns a lazy, re-runnable `Iterable` of the distinct values of `iterable` that are not in `other`
- * @throws Error if `iterable` or `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is not a function
+ * @throws Error if `iterable` or `other` is missing or does not implement `[Symbol.iterator]`, or if a provided `keySelector` is neither a function nor a property key
  * @example
  * ```ts
  * Array.from(Functions.except([1, 2, 2, 3], [3, 4])); // [1, 2]
@@ -20,11 +20,32 @@ import { Validations } from '../utils';
  * ```
  * @since 0.12.0
  */
-export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K>): Iterable<T> {
+export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K>): Iterable<T>;
+/**
+ * Lazily yields the values of `iterable` whose property `key` is not the key of a value of `other`, once per key: the same as `except(iterable, other, v => v[key])`.
+ * The keys are compared with `SameValueZero`, like `Set`.
+ * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+ * @operation `Transformation`
+ * @param iterable - the source `Iterable`
+ * @param other - the `Iterable` to compare with
+ * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+ * @returns a lazy, re-runnable `Iterable` of the values of the source
+ * @throws Error if `iterable` or `other` is missing or does not implement `[Symbol.iterator]`, or if `key` is neither a function nor a property key
+ * @example
+ * ```ts
+ * Array.from(Functions.except([{ id: 1 }, { id: 2 }], [{ id: 2 }], 'id')); // [{ id: 1 }]
+ * ```
+ * @since next
+ */
+export function except<T>(iterable: Iterable<T>, other: Iterable<T>, key: keyof T): Iterable<T>;
+export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'except');
 	Validations.throwIfNotIterable(other, 'except');
-	if (keySelector !== undefined)
-		Validations.throwIfNotFunction(keySelector, 'keySelector', 'except');
+	if (keySelector === undefined)
+		return new DeferredIterable(() => new ExceptIterator<T, K>(iterable, other));
+	Validations.throwIfNotSelector(keySelector, 'keySelector', 'except');
+	if (isPropertyKey(keySelector))
+		return new DeferredIterable(() => new ExceptIterator<T, K>(iterable, other, undefined, keySelector));
 	return new DeferredIterable(() => new ExceptIterator(iterable, other, keySelector));
 }
 

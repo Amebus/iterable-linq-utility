@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import * as IterableLinq from '@/index';
@@ -47,6 +47,12 @@ describe('IterableLinq.map', () => {
 
 	test('IterableLinq.map is transformation', () => {
 		expectTransformation(source => IterableLinq.from(source).map(v => v * 10));
+	});
+
+	test('IterableLinq.map with a property key reads the property', () => {
+		const chain = IterableLinq.from([{ name: 'Ann' }, { name: 'Bob' }]).map('name');
+		expect(chain.collectToArray()).toEqual(['Ann', 'Bob']);
+		expectTypeOf(chain).toEqualTypeOf<IterableLinq.IIterableLinq<string>>();
 	});
 
 });

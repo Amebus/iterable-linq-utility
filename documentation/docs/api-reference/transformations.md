@@ -187,7 +187,7 @@ Lazily yields the first value for each distinct value or selected key, in source
 
 Keys use `SameValueZero`, like `Set`: `NaN` equals `NaN`, and `+0` and `-0` are equal. The first original value is retained, including its signed zero. Objects are compared by reference unless a selector supplies another key.
 
-The optional `keySelector` is called with every value and its index, duplicates included; without it the values are compared directly. Throws an `Error` if the selector is not a function.
+The optional `keySelector` is called with every value and its index, duplicates included; without it the values are compared directly. Throws an `Error` if the selector is neither a function nor a property key.
 
 Memory grows with the number of distinct keys.
 
@@ -217,6 +217,29 @@ An infinite source can be consumed with a downstream limit:
     ```
 
 Asking for another distinct value keeps reading until a new key or the end is found: an infinite source with only already-seen keys never yields again.
+
+### With a property key
+
+In place of the `keySelector` can be a property key, which reads that property of each value: `distinct('customer')` is the same as `distinct(v => v.customer)`. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    IterableLinq.from(orders).distinct('customer').collectToArray();
+    // [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    Array.from(Functions.distinct(orders, 'customer'));
+    // [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }]
+    ```
 
 ## empty
 
@@ -295,7 +318,32 @@ Values, or the keys returned by the optional `keySelector`, are compared with `S
 
 Before the first value it reads the whole *other* into a `Set`, so *other* must be finite; the source itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *other* again.
 
-If the selector throws, or *other* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is not a function.
+If the selector throws, or *other* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is neither a function nor a property key.
+
+### With a property key
+
+In place of the `keySelector` can be a property key, which reads that property of each value: `except(other, 'id')` is the same as `except(other, v => v.id)`. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    const shipped = [{ id: 2 }];
+    IterableLinq.from(orders).except(shipped, 'id').collectToArray();
+    // [{ id: 1 }, { id: 3 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    const shipped = [{ id: 2 }];
+    Array.from(Functions.except(orders, shipped, 'id'));
+    // [{ id: 1 }, { id: 3 }]
+    ```
 
 ## filter
 
@@ -421,7 +469,30 @@ IterableLinq
 // ['a', 'b', 'c']
 ```
 
-Throws an `Error` if the mapper is not a function.
+Throws an `Error` if the mapper is neither a function nor a property key.
+
+### With a property key
+
+In place of the mapper can be a property key, which reads that property of each value: `flatMap('tags')` is the same as `flatMap(v => v.tags)`. Only the keys whose value is an `Iterable` are accepted. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const posts = [{ tags: ['a', 'b'] }, { tags: ['c'] }];
+    IterableLinq.from(posts).flatMap('tags').collectToArray();
+    // ['a', 'b', 'c']
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const posts = [{ tags: ['a', 'b'] }, { tags: ['c'] }];
+    Array.from(Functions.flatMap(posts, 'tags'));
+    // ['a', 'b', 'c']
+    ```
 
 ## from
 
@@ -586,7 +657,33 @@ The `keySelector` is called with each value and its index. The keys are compared
 
 The whole chain is read before the first group is yielded, so `groupBy` does not end on an infinite chain. Every run of the chain reads the source again and builds new arrays.
 
-If the selector throws, the source is closed and the error propagates. Throws an `Error` if the selector is not a function.
+If the selector throws, the source is closed and the error propagates. Throws an `Error` if the selector is neither a function nor a property key.
+
+### With a property key
+
+In place of the `keySelector` can be a property key, which reads that property of each value: `groupBy('customer')` is the same as `groupBy(v => v.customer)`. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    IterableLinq.from(orders)
+        .groupBy('customer')
+        .map(([customer, list]) => [customer, list.length])
+        .collectToArray();
+    // [['Ann', 2], ['Bob', 1]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    Array.from(Functions.groupBy(orders, 'customer'), ([customer, list]) => [customer, list.length]);
+    // [['Ann', 2], ['Bob', 1]]
+    ```
 
 ## groupJoin
 
@@ -617,7 +714,34 @@ Yields `result(outer, inners)` for each value of the chain, with the values of *
 
 Before the first value it reads the whole *inner*, so *inner* must be finite; the chain itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *inner* again.
 
-If a callback throws, or *inner* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *inner* is not iterable or a callback is not a function.
+If a callback throws, or *inner* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *inner* is not iterable, if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function.
+
+### With a property key
+
+In place of `outerKey` and `innerKey`, each one can be a property key, which reads that property of each value: `groupJoin(players, 'id', 'teamId', …)` is the same as `groupJoin(players, t => t.id, p => p.teamId, …)`. A key and a function can be mixed, and the two keys must have the same type. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const teams = [{ id: 1, name: 'red' }, { id: 2, name: 'blue' }];
+    const players = [{ teamId: 1, name: 'Ann' }, { teamId: 1, name: 'Cid' }];
+    IterableLinq.from(teams)
+        .groupJoin(players, 'id', 'teamId', (t, ps) => [t.name, ps.length])
+        .collectToArray();
+    // [['red', 2], ['blue', 0]]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const teams = [{ id: 1, name: 'red' }, { id: 2, name: 'blue' }];
+    const players = [{ teamId: 1, name: 'Ann' }, { teamId: 1, name: 'Cid' }];
+    Array.from(Functions.groupJoin(teams, players, 'id', 'teamId', (t, ps) => [t.name, ps.length]));
+    // [['red', 2], ['blue', 0]]
+    ```
 
 ## innerJoin
 
@@ -648,7 +772,34 @@ Yields `result(outer, inner)` for each pair of a value of the chain and a value 
 
 Before the first value it reads the whole *inner*, so *inner* must be finite; the chain itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *inner* again.
 
-If a callback throws, or *inner* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *inner* is not iterable or a callback is not a function.
+If a callback throws, or *inner* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *inner* is not iterable, if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function.
+
+### With a property key
+
+In place of `outerKey` and `innerKey`, each one can be a property key, which reads that property of each value: `innerJoin(players, 'id', 'teamId', …)` is the same as `innerJoin(players, t => t.id, p => p.teamId, …)`. A key and a function can be mixed, and the two keys must have the same type. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const teams = [{ id: 1, name: 'red' }, { id: 2, name: 'blue' }];
+    const players = [{ teamId: 1, name: 'Ann' }, { teamId: 1, name: 'Cid' }];
+    IterableLinq.from(teams)
+        .innerJoin(players, 'id', 'teamId', (t, p) => `${t.name}-${p.name}`)
+        .collectToArray();
+    // ['red-Ann', 'red-Cid']
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const teams = [{ id: 1, name: 'red' }, { id: 2, name: 'blue' }];
+    const players = [{ teamId: 1, name: 'Ann' }, { teamId: 1, name: 'Cid' }];
+    Array.from(Functions.innerJoin(teams, players, 'id', 'teamId', (t, p) => `${t.name}-${p.name}`));
+    // ['red-Ann', 'red-Cid']
+    ```
 
 ## intersect
 
@@ -680,7 +831,32 @@ Values, or the keys returned by the optional `keySelector`, are compared with `S
 
 Before the first value it reads the whole *other* into a `Set`, so *other* must be finite; the source itself is read lazily and can be infinite with a downstream limit. Each run of the chain reads *other* again.
 
-If the selector throws, or *other* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is not a function.
+If the selector throws, or *other* throws while it is read, the source is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is neither a function nor a property key.
+
+### With a property key
+
+In place of the `keySelector` can be a property key, which reads that property of each value: `intersect(other, 'id')` is the same as `intersect(other, v => v.id)`. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    const shipped = [{ id: 2 }];
+    IterableLinq.from(orders).intersect(shipped, 'id').collectToArray();
+    // [{ id: 2 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    const shipped = [{ id: 2 }];
+    Array.from(Functions.intersect(orders, shipped, 'id'));
+    // [{ id: 2 }]
+    ```
 
 ## map
 
@@ -706,7 +882,30 @@ Transforms each value. The mapper is called with each value and its index.
     // [10, 20, 30, 40]
     ```
 
-Throws an `Error` if the mapper is not a function.
+Throws an `Error` if the mapper is neither a function nor a property key.
+
+### With a property key
+
+In place of the mapper can be a property key, which reads that property of each value: `map('name')` is the same as `map(v => v.name)`. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const people = [{ name: 'Ann' }, { name: 'Bob' }];
+    IterableLinq.from(people).map('name').collectToArray();
+    // ['Ann', 'Bob']
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const people = [{ name: 'Ann' }, { name: 'Bob' }];
+    Array.from(Functions.map(people, 'name'));
+    // ['Ann', 'Bob']
+    ```
 
 ## memoize
 
@@ -1105,7 +1304,32 @@ Values, or the keys returned by the optional `keySelector`, are compared with `S
 
 *other* is opened only when the chain ends, so after an infinite source it is never read; stopping early closes only the source being read. Memory grows with the number of distinct keys.
 
-If the selector throws, the source being read is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is not a function.
+If the selector throws, the source being read is closed and the error propagates. Throws an `Error` if *other* is not iterable or the selector is neither a function nor a property key.
+
+### With a property key
+
+In place of the `keySelector` can be a property key, which reads that property of each value: `union(other, 'id')` is the same as `union(other, v => v.id)`. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1 }, { id: 2 }];
+    const more = [{ id: 2 }, { id: 3 }];
+    IterableLinq.from(orders).union(more, 'id').collectToArray();
+    // [{ id: 1 }, { id: 2 }, { id: 3 }]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1 }, { id: 2 }];
+    const more = [{ id: 2 }, { id: 3 }];
+    Array.from(Functions.union(orders, more, 'id'));
+    // [{ id: 1 }, { id: 2 }, { id: 3 }]
+    ```
 
 ## with
 

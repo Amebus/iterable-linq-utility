@@ -44,4 +44,18 @@ describe('IterableLinq.collectToMap', () => {
 		expectTypeOf(IterableLinq.from(people).collectToMap(p => p.id, p => p.name)).toEqualTypeOf<Map<number, string>>();
 	});
 
+	test('IterableLinq.collectToMap with property keys reads the properties', () => {
+		const people = [{ id: 1, name: 'Ann' }, { id: 2, name: 'Bob' }];
+		const chain = IterableLinq.from(people);
+		expect([...chain.collectToMap('id', 'name')]).toEqual([[1, 'Ann'], [2, 'Bob']]);
+		expect([...chain.collectToMap('id')]).toEqual([[1, people[0]], [2, people[1]]]);
+		expectTypeOf(chain.collectToMap('id', 'name')).toEqualTypeOf<Map<number, string>>();
+		expectTypeOf(chain.collectToMap('name')).toEqualTypeOf<Map<string, { id: number; name: string }>>();
+	});
+
+	test('IterableLinq.collectToMap with an undefined valueSelector keeps the type of the values', () => {
+		const chain = IterableLinq.from([{ id: 1, name: 'Ann' }]);
+		expectTypeOf(chain.collectToMap('id', undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+		expectTypeOf(chain.collectToMap(p => p.id, undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+	});
 });

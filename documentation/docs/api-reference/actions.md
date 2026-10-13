@@ -92,7 +92,30 @@ Returns the average of the values: their sum, added with `+`, divided by their n
     // 2
     ```
 
-Without a selector, the chain must contain numbers: TypeScript rejects `average()` on a chain of other values. Throws an `Error` if a provided selector is not a function. Passing `undefined` is the same as omitting it.
+Without a selector, the chain must contain numbers: TypeScript rejects `average()` on a chain of other values. Throws an `Error` if a provided selector is neither a function nor a property key. Passing `undefined` is the same as omitting it.
+
+### With a property key
+
+In place of the selector can be a property key, which reads that property of each value: `average('price')` is the same as `average(v => v.price)`. Only the keys whose value is a `number` are accepted. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    IterableLinq.from(orders).average('price');
+    // 7.333333333333333
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    Functions.average(orders, 'price');
+    // 7.333333333333333
+    ```
 
 ## collectToArray
 
@@ -147,7 +170,30 @@ Collects the values of the chain into a `Map`, with the key returned by the key 
     // Map { 1 => 'Ada', 2 => 'Bob' }
     ```
 
-Throws an `Error` if the key selector is not a function, or if a value selector is given and is not a function.
+Throws an `Error` if the key selector is neither a function nor a property key, or if a value selector is given and is neither a function nor a property key.
+
+### With a property key
+
+In place of the key selector and the value selector, each one can be a property key, which reads that property of each value: `collectToMap('id', 'customer')` is the same as `collectToMap(v => v.id, v => v.customer)`. A key and a function can be mixed: `collectToMap('id', v => v.price * 2)`. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    IterableLinq.from(orders).collectToMap('id', 'customer');
+    // Map { 1 => 'Ann', 2 => 'Bob', 3 => 'Ann' }
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    Functions.collectToMap(orders, 'id', 'customer');
+    // Map { 1 => 'Ann', 2 => 'Bob', 3 => 'Ann' }
+    ```
 
 ## collectToSet
 
@@ -914,4 +960,28 @@ Returns the sum of the values, added with `+`; with a selector, the sum of the n
     // 6
     ```
 
-Without a selector, the chain must contain numbers: TypeScript rejects `sum()` on a chain of other values. Throws an `Error` if a provided selector is not a function. Passing `undefined` is the same as omitting it.
+Without a selector, the chain must contain numbers: TypeScript rejects `sum()` on a chain of other values. Throws an `Error` if a provided selector is neither a function nor a property key. Passing `undefined` is the same as omitting it.
+
+### With a property key
+
+In place of the selector can be a property key, which reads that property of each value: `sum('price')` is the same as `sum(v => v.price)`. Only the keys whose value is a `number` are accepted. A value that is `null` or `undefined` throws a `TypeError`, and the source is closed. See [Selectors](../basic-concepts.md#selectors).
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    IterableLinq.from(orders).sum('price');
+    // 22
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    Functions.sum(orders, 'price');
+    // 22
+    ```
+

@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import * as IterableLinq from '@/index';
@@ -52,6 +52,12 @@ describe('IterableLinq.flatMap', () => {
 
 	test('IterableLinq.flatMap is transformation', () => {
 		expectTransformation(source => IterableLinq.from(source).flatMap(v => IterableLinq.fromRange(v)));
+	});
+
+	test('IterableLinq.flatMap with a property key flattens the property', () => {
+		const chain = IterableLinq.from([{ tags: ['a', 'b'] }, { tags: ['c'] }]).flatMap('tags');
+		expect(chain.collectToArray()).toEqual(['a', 'b', 'c']);
+		expectTypeOf(chain).toEqualTypeOf<IterableLinq.IIterableLinq<string>>();
 	});
 
 });

@@ -17,9 +17,9 @@ describe('sum', () => {
 		withoutInputIterableThrowsException(sum);
 	});
 
-	test.each([null, false, 0, 'selector', {}])('sum(iterable, %j) -> throw exception without reading the source', selector => {
+	test.each([null, false, {}])('sum(iterable, %j) -> throw exception without reading the source', selector => {
 		const source = spyIterable([1, 2]);
-		expect(() => sum(source, selector as never)).toThrow(new Error('[iterable-linq-utility/sum] The "selector" function must be provided'));
+		expect(() => sum(source, selector as never)).toThrow(new Error('[iterable-linq-utility/sum] The "selector" must be a function or a property key'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 
@@ -107,4 +107,37 @@ describe('sum', () => {
 		expect(result).toBe(4);
 	});
 
+	describe('with a property key', () => {
+		const orders = [{ id: 1, price: 10, note: 'a' }, { id: 2, price: 5, note: 'b' }];
+
+		test('gives the same sum as the equivalent selector', () => {
+			expect(sum(orders, 'price')).toBe(sum(orders, o => o.price));
+		});
+
+		test('undefined still sums the values themselves', () => {
+			expect(sum([1, 2], undefined)).toBe(3);
+		});
+
+		test('a null value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ price: number } | null>([{ price: 1 }, null, { price: 3 }]);
+			expect(() => sum(iterable as Iterable<{ price: number }>, 'price')).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('accepts only the keys whose value is a number', () => {
+			// @ts-expect-error the value of note is a string
+			sum(orders, 'note');
+			const discounted: { discount?: number }[] = [{ discount: 1 }];
+			// @ts-expect-error the value of discount can be undefined
+			sum(discounted, 'discount');
+			expectTypeOf(sum(orders, 'price')).toEqualTypeOf<number>();
+		});
+	});
+
+	test('sums an index of tuples, such as the entries of a Map', () => {
+		const prices = new Map([['a', 10], ['b', 5]]);
+		expect(sum(prices, 1)).toBe(15);
+		// @ts-expect-error the index 0 holds a string
+		sum(prices, 0);
+	});
 });

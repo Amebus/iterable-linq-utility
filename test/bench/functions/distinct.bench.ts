@@ -38,6 +38,8 @@ test('distinct: key', async ({ bench }) => {
 		})
 		.add('chain', () => sum(from(records).distinct(value => value.group).map(value => value.score)))
 		.add('Functions', () => sum(Functions.map(Functions.distinct(records, value => value.group), value => value.score)))
+		// a property key against the equivalent keySelector (ADR 0025)
+		.add('key', () => sum(Functions.map(Functions.distinct(records, 'group'), value => value.score)))
 		.run();
 });
 

@@ -5,7 +5,7 @@ import * as IterableLinq from 'iterable-linq-utility';
 
 // Read the exports once: an imported binding goes through a module runner getter on every read.
 const { from, Functions } = IterableLinq;
-const { cases, group, numbers, scenarios, sum } = Helpers;
+const { cases, group, numbers, records, scenarios, sum } = Helpers;
 
 scenarios('flatMap', {
 	native: values => sum(values.flatMap(v => [v])),
@@ -47,5 +47,22 @@ test('flatMap: inner array of 10', async ({ bench }) => {
 		.add('native', () => sum(tenth.flatMap(v => [v, v, v, v, v, v, v, v, v, v])))
 		.add('chain', () => sum(from(tenth).flatMap(v => [v, v, v, v, v, v, v, v, v, v])))
 		.add('Functions', () => sum(Functions.flatMap(tenth, v => [v, v, v, v, v, v, v, v, v, v])))
+		.run();
+});
+
+// reads every value, so the lazy variants flatten them all
+function length(iterable: Iterable<string>): number {
+	let total = 0;
+	for (const value of iterable)
+		total += value.length;
+	return total;
+}
+
+// a property key against the equivalent mapper (ADR 0025)
+test('flatMap: property', async ({ bench }) => {
+	await cases(bench, 'flatMap/property')
+		.add('native', () => length(records.flatMap(record => record.tags)))
+		.add('lambda', () => length(Functions.flatMap(records, record => record.tags)))
+		.add('key', () => length(Functions.flatMap(records, 'tags')))
 		.run();
 });

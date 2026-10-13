@@ -6,6 +6,7 @@ import type {
 	IIterableLinq,
 	IIterableLinqBase,
 	IMemoizeOptions,
+	KeysOfType,
 	Mapper,
 	Predicate,
 	Reducer,
@@ -103,8 +104,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return at(this.iterable, index);
 	}
 
-	average(selector?: Mapper<T, number>): number | undefined {
-		return average(this.iterable, selector);
+	average(selector?: Mapper<T, number> | KeysOfType<T, number>): number | undefined {
+		return average(this.iterable, selector as Mapper<T, number>);
 	}
 
 	chunk(size: number): IIterableLinq<T[]> {
@@ -115,10 +116,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return collectToArray(this.iterable);
 	}
 
-	collectToMap<K>(keySelector: Mapper<T, K>): Map<K, T>;
-	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
-	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, V>): Map<K, T | V> {
-		return collectToMap(this.iterable, keySelector, valueSelector);
+	collectToMap<K, V>(keySelector: Mapper<T, K> | keyof T, valueSelector?: Mapper<T, V> | keyof T): Map<K, T | V> {
+		return collectToMap(this.iterable, keySelector as Mapper<T, K>, valueSelector as Mapper<T, V>);
 	}
 
 	collectToSet(): Set<T> {
@@ -137,8 +136,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return toChain(defaultIfEmpty(this.iterable, value));
 	}
 
-	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(distinct(this.iterable, keySelector));
+	distinct<K>(keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(distinct(this.iterable, keySelector as Mapper<T, K>));
 	}
 
 	entries(): IIterableLinq<[number, T]> {
@@ -149,8 +148,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return every(this.iterable, predicate);
 	}
 
-	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(except(this.iterable, other, keySelector));
+	except<K>(other: Iterable<T>, keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(except(this.iterable, other, keySelector as Mapper<T, K>));
 	}
 
 	filter<S extends T>(predicate: (value: T, index: number) => value is S): IIterableLinq<S>;
@@ -183,8 +182,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return toChain(flat(this.iterable, depth));
 	}
 
-	flatMap<R>(mapper: Mapper<T, Iterable<R>>): IIterableLinq<R> {
-		return toChain(flatMap(this.iterable, mapper));
+	flatMap<R>(mapper: Mapper<T, Iterable<R>> | keyof T): IIterableLinq<R> {
+		return toChain(flatMap(this.iterable, mapper as Mapper<T, Iterable<R>>));
 	}
 
 	forEach(action: Action<T>): Unit {
@@ -195,12 +194,12 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return forEachAsync(this.iterable, action);
 	}
 
-	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]> {
-		return toChain(groupBy(this.iterable, keySelector));
+	groupBy<K>(keySelector: Mapper<T, K> | keyof T): IIterableLinq<[K, T[]]> {
+		return toChain(groupBy(this.iterable, keySelector as Mapper<T, K>));
 	}
 
-	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R> {
-		return toChain(groupJoin(this.iterable, inner, outerKey, innerKey, result));
+	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K> | keyof T, innerKey: Mapper<I, K> | keyof I, result: (outer: T, inners: I[]) => R): IIterableLinq<R> {
+		return toChain(groupJoin(this.iterable, inner, outerKey as Mapper<T, K>, innerKey as Mapper<I, K>, result));
 	}
 
 	includes(value: T): boolean {
@@ -211,12 +210,12 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return indexOf(this.iterable, value);
 	}
 
-	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inner: I) => R): IIterableLinq<R> {
-		return toChain(innerJoin(this.iterable, inner, outerKey, innerKey, result));
+	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K> | keyof T, innerKey: Mapper<I, K> | keyof I, result: (outer: T, inner: I) => R): IIterableLinq<R> {
+		return toChain(innerJoin(this.iterable, inner, outerKey as Mapper<T, K>, innerKey as Mapper<I, K>, result));
 	}
 
-	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(intersect(this.iterable, other, keySelector));
+	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(intersect(this.iterable, other, keySelector as Mapper<T, K>));
 	}
 
 	join(separator?: string): string {
@@ -227,8 +226,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return lastIndexOf(this.iterable, value);
 	}
 
-	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {
-		return toChain(map(this.iterable, mapper));
+	map<R>(mapper: Mapper<T, R> | keyof T): IIterableLinq<R> {
+		return toChain(map(this.iterable, mapper as Mapper<T, R>));
 	}
 
 	materialize(): IIterableLinq<T> {
@@ -303,8 +302,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return some(this.iterable, predicate);
 	}
 
-	sum(selector?: Mapper<T, number>): number {
-		return sum(this.iterable, selector);
+	sum(selector?: Mapper<T, number> | KeysOfType<T, number>): number {
+		return sum(this.iterable, selector as Mapper<T, number>);
 	}
 
 	take(count: number): IIterableLinq<T> {
@@ -336,8 +335,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return chain;
 	}
 
-	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(union(this.iterable, other, keySelector));
+	union<K>(other: Iterable<T>, keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(union(this.iterable, other, keySelector as Mapper<T, K>));
 	}
 
 	with(index: number, value: T): IIterableLinq<T> {

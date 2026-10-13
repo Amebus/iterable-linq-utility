@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { closableSource } from '../_helpers/generators/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
@@ -155,4 +155,48 @@ describe('flatMap', () => {
 		expect(() => collectToArray(flatMap([1], () => { throw err; }))).toThrow(err);
 	});
 
+	describe('with a property key', () => {
+		const teams = [{ name: 'red', players: ['Ann', 'Bob'] }, { name: 'blue', players: new Set(['Cid']) }, { name: 'none', players: [] as string[] }];
+
+		test('gives the same values as the equivalent mapper, from arrays and other iterables', () => {
+			expect(collectToArray(flatMap(teams, 'players'))).toEqual(collectToArray(flatMap(teams, t => t.players)));
+			expect(collectToArray(flatMap(teams, 'players'))).toEqual(['Ann', 'Bob', 'Cid']);
+		});
+
+		test('allows re-run', () => {
+			const players = flatMap(teams, 'players');
+			expect(collectToArray(players)).toEqual(collectToArray(players));
+		});
+
+		test('return() closes the source and the inner iterator', () => {
+			const { state, iterable } = closableSource([{ inner: new Set([1, 2]) }]);
+			const it = flatMap(iterable, 'inner')[Symbol.iterator]();
+			it.next();
+			it.return!();
+			expect(state.closed).toBe(true);
+		});
+
+		test('a null value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ players: string[] } | null>([{ players: ['Ann'] }, null]);
+			expect(() => collectToArray(flatMap(iterable as Iterable<{ players: string[] }>, 'players'))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('a selector that is neither a function nor a property key throws', () => {
+			expect(() => flatMap(teams, true as never))
+				.toThrow(new Error('[iterable-linq-utility/flatMap] The "mapper" must be a function or a property key'));
+		});
+
+		test('accepts only the keys whose value is iterable, and gives the type of their values', () => {
+			expectTypeOf(flatMap([{ tags: ['a'], n: 1 }], 'tags')).toEqualTypeOf<Iterable<string>>();
+			// @ts-expect-error the value of n is not iterable
+			flatMap([{ tags: ['a'], n: 1 }], 'n');
+		});
+	});
+
+	test('flattens an index of tuples, such as the groups of groupBy', () => {
+		const groups: [string, number[]][] = [['a', [1, 2]], ['b', [3]]];
+		expect(collectToArray(flatMap(groups, 1))).toEqual([1, 2, 3]);
+		expectTypeOf(flatMap(groups, 1)).toEqualTypeOf<Iterable<number>>();
+	});
 });
