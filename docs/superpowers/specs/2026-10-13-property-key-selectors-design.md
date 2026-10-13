@@ -1,6 +1,6 @@
 # Property keys in place of the selector functions — design
 
-* Status: draft, to review
+* Status: approved; Phase 0 done (gate passed 2026-10-13), Phase 1 in progress
 * Date: 2026-10-13
 * Branch: `feat/property-key-selectors`
 * Issue: https://github.com/Amebus/iterable-linq-utility/issues/185
@@ -54,7 +54,7 @@ from(orders).groupBy(o => o.customer);
 | Typing | One extra overload per selector, `P extends keyof T` → `T[P]`. The joins and `collectToMap` get every function/key combination. | One signature with a `Selector<T>` union and a conditional result type: no overloads to multiply, but less readable compiler errors and a weaker check that the two join keys match. Same-kind-only combinations: fewer overloads, but mixing the forms needs a lambda. |
 | Primitive element types | Allowed, as `v => v[key]` would be: `from(words).map('length')`, `from(pairs).map(0)`. Consistent with `Comparer<T>`, which accepts any `keyof T`. Autocompletion also offers the methods (`map('charAt')`). | `T extends object` only: loses `length` and diverges from `Comparer<T>`. Methods excluded: a more complex type, and no longer `v => v[key]`. |
 | `null` or `undefined` element | The native `TypeError` of `v[key]` propagates unchanged as a callback error, and the source is closed ([ADR 0008](../../decisions/0008-error-handling-and-source-closing.md)). | A library error: diverges from `v => v[key]`, and costs a check per value. `v?.[key]`: hides bad data (an `undefined` group, `NaN` sums). |
-| Implementation | The fastest one that is measured, chosen per operation in the prototype (§0). Candidates: resolve the key once into `v => v[key]` (`toSelector`, like `toCompareFunction`), or a dedicated loop or iterator that reads `value[key]` inline. Neither may slow down the function path. | Measuring after the rollout: if the issue is rejected, the work on 13 operations and the documentation is lost. |
+| Implementation | **The inline read of `value[key]`, chosen by the prototype (§0)**: a Transformation gets an iterator class for the key, an Action one function per loop (selector and key), so the code of the function path stays the one of `main`. Resolving the key into `v => v[key]` (`toSelector`) was 2–10% slower than the lambda, and 2.5 times slower for `sum` when both forms reach the same call site. | Measuring after the rollout: if the issue is rejected, the work on 13 operations and the documentation is lost. |
 | Go/no-go | A gate on a prototype of 4 operations, before the rollout (§0). If it fails, the issue is closed with the numbers. | Implementing everything and then measuring. |
 | Validation | `Validations.throwIfNotSelector(value, name, operation)` accepts a function, a `string`, a `symbol` or a `number`, with no other check (`v['']` and `v[1.5]` are valid JavaScript). One message: `The "<name>" must be a function or a property key`. Only the operations in scope change their message. | Two messages, one for a missing and one for a wrong selector: two branches, and a text that does not mention the key. |
 | Public types | `KeysOfType<T, V>` exported, for anyone who writes wrappers or extensions ([ADR 0003](../../decisions/0003-extension-api-instead-of-public-wrapper-class.md)) with the same signatures. `Comparer<T>` unchanged. | Internal only. Rewriting `Comparer<T>` on a common type: changes a released public type with no need. |
@@ -114,19 +114,12 @@ An optional property `price?: number` has the value type `number | undefined`, w
 
 ### 2. Utilities
 
-`src/utils/selector.ts`, exported from `src/utils/index.ts`. `toSelector` is one candidate of §0: an operation where the inline read wins does not use it.
+`src/utils/selector.ts`, exported from `src/utils/index.ts`. `toSelector` was a candidate of §0; it lost to the inline read and is not in the library.
 
 ```ts
 export function isPropertyKey(value: unknown): value is PropertyKey {
 	const type = typeof value;
 	return type === 'string' || type === 'symbol' || type === 'number';
-}
-
-/** Turns a selector (a function or a property key) into a function: a key `k` becomes `v => v[k]`. */
-export function toSelector<T, R>(selector: Mapper<T, R> | PropertyKey): Mapper<T, R> {
-	if (isFunction(selector))
-		return selector;
-	return (value: T) => (value as any)[selector];
 }
 ```
 
@@ -187,7 +180,7 @@ The function overload stays first, so a lambda gets its parameter contextually t
 Each operation applies the same change:
 
 1. It adds the overloads from §2a to `src/functions/<op>.ts`, and widens the implementation signature to `Mapper<T, K> | PropertyKey`.
-2. It replaces `throwIfNotFunction(selector, …)` with `throwIfNotSelector(selector, …)`, then applies the implementation that won the prototype for that kind of operation: `toSelector(selector)` passed to the existing iterator or loop, or a dedicated inline read of `value[key]`. Optional selectors (`distinct`, `except`, `intersect`, `union`) and the `sum`/`average` without a selector keep their `undefined` branch.
+2. It replaces `throwIfNotFunction(selector, …)` with `throwIfNotSelector(selector, …)`, then, when `isPropertyKey(selector)`, reads `value[key]` inline: in an iterator class for the key (Transformations), or in a function of its own (Actions, where the loop of the selector also gets its own function: a `return` before a loop, in the same function, slowed that loop by 14%). Optional selectors (`distinct`, `except`, `intersect`, `union`) and the `sum`/`average` without a selector keep their `undefined` branch.
 3. It adds the same overloads to `IIterableLinqBase` (`src/types/iterableLinq.ts`) and to the delegating method in `src/linqIterable.ts`, with the overloads next to each other.
 4. It adds JSDoc to every overload: a summary, `@operation`, `@param`, `@returns`, `@throws`, `@example` with a key, and `@since next` on the new overloads ([ADR 0012](../../decisions/0012-trunk-based-releases-with-changesets.md)).
 
@@ -202,7 +195,7 @@ Each operation applies the same change:
 
 These follow [ADR 0018](../../decisions/0018-shared-test-sources.md) and [ADR 0019](../../decisions/0019-full-test-coverage-of-the-library.md).
 
-* `test/utils/selector.spec.ts` covers `isPropertyKey`, and `toSelector` with a function, a string, a symbol and a number.
+* `test/utils/selector.spec.ts` covers `isPropertyKey`.
 * `test/functions/<op>.spec.ts`, for each operation in scope:
   * a key gives the same result as the equivalent lambda;
   * a `symbol` key and a `number` key work;
@@ -252,7 +245,7 @@ The ADR is written through the `adr` skill, in MADR format. It records:
 
 These follow the "Keeping the instructions in sync" section of `AGENTS.md`:
 
-* `AGENTS.md` gets a Rules line: a selector that reads a value from the element also accepts a property key, resolved with `toSelector` and validated with `throwIfNotSelector` (ADR 0025).
+* `AGENTS.md` gets a Rules line: a selector that reads a value from the element also accepts a property key, read inline with its own iterator class or loop function, and validated with `throwIfNotSelector` (ADR 0025).
 * `.agents/skills/operation/SKILL.md` and its `references/` (`jsdoc.md` and `tests.md`, if they show selectors) get the same rule.
 * `documentation/docs/how-to-contribute.md` gets the same rule.
 
