@@ -49,7 +49,7 @@ export function innerJoin<T, I, K, R>(
  * ```ts
  * const teams = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
- * Array.from(Functions.innerJoin(teams, players, 'id', 'team', (t, p) => `${t.name}-${p.name}`)); // ['a-x', 'a-y']
+ * Array.from(Functions.innerJoin(teams, players, 'id', p => p.team, (t, p) => `${t.name}-${p.name}`)); // ['a-x', 'a-y']
  * ```
  * @since next
  */
@@ -76,7 +76,7 @@ export function innerJoin<T, I, PO extends keyof T, R>(
  * ```ts
  * const teams = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
- * Array.from(Functions.innerJoin(teams, players, 'id', 'team', (t, p) => `${t.name}-${p.name}`)); // ['a-x', 'a-y']
+ * Array.from(Functions.innerJoin(teams, players, t => t.id, 'team', (t, p) => `${t.name}-${p.name}`)); // ['a-x', 'a-y']
  * ```
  * @since next
  */

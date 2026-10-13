@@ -171,8 +171,10 @@ describe('intersect', () => {
 			expect(state.closed).toBe(true);
 		});
 
-		test('a null value of other throws a TypeError', () => {
-			expect(() => Array.from(intersect([{ email: 'a@x' }], [null as unknown as { email: string }], 'email'))).toThrow(TypeError);
+		test('a null value of other throws a TypeError and closes other', () => {
+			const { state, iterable } = closableSource<{ email: string } | null>([{ email: 'b@x' }, null]);
+			expect(() => Array.from(intersect([{ email: 'a@x' }], iterable as Iterable<{ email: string }>, 'email'))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
 		});
 
 		test('accepts only the keys of the values', () => {

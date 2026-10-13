@@ -52,4 +52,10 @@ describe('IterableLinq.collectToMap', () => {
 		expectTypeOf(chain.collectToMap('id', 'name')).toEqualTypeOf<Map<number, string>>();
 		expectTypeOf(chain.collectToMap('name')).toEqualTypeOf<Map<string, { id: number; name: string }>>();
 	});
+
+	test('IterableLinq.collectToMap with an undefined valueSelector keeps the type of the values', () => {
+		const chain = IterableLinq.from([{ id: 1, name: 'Ann' }]);
+		expectTypeOf(chain.collectToMap('id', undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+		expectTypeOf(chain.collectToMap(p => p.id, undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+	});
 });

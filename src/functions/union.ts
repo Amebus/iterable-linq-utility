@@ -24,7 +24,7 @@ export function union<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelect
 /**
  * Lazily yields the values of `iterable`, then those of `other`, once per property `key`: the same as `union(iterable, other, v => v[key])`.
  * The keys are compared with `SameValueZero`, like `Set`.
- * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+ * A value that is `null` or `undefined` throws a `TypeError`: the source being read is closed and the error propagates.
  * @operation `Transformation`
  * @param iterable - the source `Iterable`
  * @param other - the `Iterable` to compare with

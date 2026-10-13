@@ -49,7 +49,7 @@ export function collectToMap<T, P extends keyof T>(iterable: Iterable<T>, key: P
  * ```
  * @since 0.10.0
  */
-export function collectToMap<T, K, V>(iterable: Iterable<T>, keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+export function collectToMap<T, K, V = T>(iterable: Iterable<T>, keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
 /**
  * Collects the values of `iterable` into a `Map`, with the key returned by `keySelector` and their property `valueKey` as the value.
  * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
@@ -83,7 +83,7 @@ export function collectToMap<T, K, Q extends keyof T>(iterable: Iterable<T>, key
  * ```
  * @since next
  */
-export function collectToMap<T, P extends keyof T, V>(iterable: Iterable<T>, key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
+export function collectToMap<T, P extends keyof T, V = T>(iterable: Iterable<T>, key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
 /**
  * Collects the values of `iterable` into a `Map`, with their property `key` as the key and their property `valueKey` as the value.
  * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.

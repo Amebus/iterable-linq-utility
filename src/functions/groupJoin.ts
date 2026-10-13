@@ -49,7 +49,7 @@ export function groupJoin<T, I, K, R>(
  * ```ts
  * const teams = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
- * Array.from(Functions.groupJoin(teams, players, 'id', 'team', (t, ps) => [t.name, ps.length])); // [['a', 2], ['b', 0]]
+ * Array.from(Functions.groupJoin(teams, players, 'id', p => p.team, (t, ps) => [t.name, ps.length])); // [['a', 2], ['b', 0]]
  * ```
  * @since next
  */
@@ -76,7 +76,7 @@ export function groupJoin<T, I, PO extends keyof T, R>(
  * ```ts
  * const teams = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
- * Array.from(Functions.groupJoin(teams, players, 'id', 'team', (t, ps) => [t.name, ps.length])); // [['a', 2], ['b', 0]]
+ * Array.from(Functions.groupJoin(teams, players, t => t.id, 'team', (t, ps) => [t.name, ps.length])); // [['a', 2], ['b', 0]]
  * ```
  * @since next
  */

@@ -176,7 +176,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since 0.10.0
 	 */
-	collectToMap<K, V>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+	collectToMap<K, V = T>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
 
 	/**
 	 * Collects the values of the chain into a `Map`, with the key returned by `keySelector` and their property `valueKey` as the value.
@@ -210,7 +210,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since next
 	 */
-	collectToMap<P extends keyof T, V>(key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
+	collectToMap<P extends keyof T, V = T>(key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
 
 	/**
 	 * Collects the values of the chain into a `Map`, with their property `key` as the key and their property `valueKey` as the value.
@@ -674,7 +674,7 @@ export interface IIterableLinqBase<T> {
 	 * @example
 	 * ```ts
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
-	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', p => p.team, (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
 	 * ```
 	 * @since next
 	 */
@@ -694,7 +694,7 @@ export interface IIterableLinqBase<T> {
 	 * @example
 	 * ```ts
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
-	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, t => t.id, 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
 	 * ```
 	 * @since next
 	 */
@@ -787,7 +787,7 @@ export interface IIterableLinqBase<T> {
 	 * @example
 	 * ```ts
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
-	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', p => p.team, (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
 	 * ```
 	 * @since next
 	 */
@@ -807,7 +807,7 @@ export interface IIterableLinqBase<T> {
 	 * @example
 	 * ```ts
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
-	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, t => t.id, 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
 	 * ```
 	 * @since next
 	 */
@@ -1418,7 +1418,7 @@ export interface IIterableLinqBase<T> {
 	/**
 	 * Yields the values of the chain, then those of `other`, once per property `key`: the same as `union(other, v => v[key])`.
 	 * The keys are compared with `SameValueZero`, like `Set`.
-	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source being read is closed and the error propagates.
 	 * @operation `Transformation`
 	 * @param other - the `Iterable` to compare with
 	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`

@@ -151,4 +151,10 @@ describe('collectToMap', () => {
 			collectToMap(people, 'missing');
 		});
 	});
+
+	test('an undefined valueSelector stores the values themselves, also in the type', () => {
+		const people = [{ id: 1, name: 'Ann' }];
+		expectTypeOf(collectToMap(people, 'id', undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+		expectTypeOf(collectToMap(people, p => p.id, undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+	});
 });
