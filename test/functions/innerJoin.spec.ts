@@ -200,4 +200,16 @@ describe('innerJoin', () => {
 			innerJoin(teams, players, 'name', p => p.teamId, (t, p) => `${t.name}-${p.name}`);
 		});
 	});
+
+	test('the keys only need types that overlap, as with functions', () => {
+		const customers = [{ id: 1, name: 'Ann', tier: 'gold' as 'gold' | 'silver' }];
+		const orders: { customerId?: number; total: number; tier: string }[] = [{ customerId: 1, total: 10, tier: 'gold' }];
+		// an optional foreign key
+		expect(Array.from(innerJoin(customers, orders, 'id', 'customerId', (c, o) => `${c.name}-${o.total}`))).toEqual(Array.from(innerJoin(customers, orders, c => c.id, o => o.customerId, (c, o) => `${c.name}-${o.total}`)));
+		innerJoin(customers, orders, c => c.id, 'customerId', (c, o) => `${c.name}-${o.total}`);
+		// a union of literals against a string
+		innerJoin(customers, orders, 'tier', 'tier', (c, o) => `${c.name}-${o.total}`);
+		// @ts-expect-error a string and a number never overlap
+		innerJoin(customers, orders, 'name', 'total', (c, o) => `${c.name}-${o.total}`);
+	});
 });

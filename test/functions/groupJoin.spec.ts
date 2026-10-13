@@ -204,4 +204,16 @@ describe('groupJoin', () => {
 			groupJoin(teams, players, 'name', p => p.teamId, (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`);
 		});
 	});
+
+	test('the keys only need types that overlap, as with functions', () => {
+		const customers = [{ id: 1, name: 'Ann', tier: 'gold' as 'gold' | 'silver' }];
+		const orders: { customerId?: number; total: number; tier: string }[] = [{ customerId: 1, total: 10, tier: 'gold' }];
+		// an optional foreign key
+		expect(Array.from(groupJoin(customers, orders, 'id', 'customerId', (c, os) => `${c.name}-${os.length}`))).toEqual(Array.from(groupJoin(customers, orders, c => c.id, o => o.customerId, (c, os) => `${c.name}-${os.length}`)));
+		groupJoin(customers, orders, c => c.id, 'customerId', (c, os) => `${c.name}-${os.length}`);
+		// a union of literals against a string
+		groupJoin(customers, orders, 'tier', 'tier', (c, os) => `${c.name}-${os.length}`);
+		// @ts-expect-error a string and a number never overlap
+		groupJoin(customers, orders, 'name', 'total', (c, os) => `${c.name}-${os.length}`);
+	});
 });

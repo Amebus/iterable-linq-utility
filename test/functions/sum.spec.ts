@@ -134,4 +134,10 @@ describe('sum', () => {
 		});
 	});
 
+	test('sums an index of tuples, such as the entries of a Map', () => {
+		const prices = new Map([['a', 10], ['b', 5]]);
+		expect(sum(prices, 1)).toBe(15);
+		// @ts-expect-error the index 0 holds a string
+		sum(prices, 0);
+	});
 });

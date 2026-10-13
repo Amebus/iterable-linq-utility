@@ -21,4 +21,11 @@ describe('KeysOfType', () => {
 		expectTypeOf<'price'>().not.toExtend<KeysOfType<IRecord, number>>();
 	});
 
+	test('gives the indices of a tuple, and number for an array', () => {
+		expectTypeOf<KeysOfType<[string, number], number>>().toEqualTypeOf<1>();
+		expectTypeOf<KeysOfType<readonly [string, number[]], Iterable<unknown>>>().toEqualTypeOf<0 | 1>();
+		expectTypeOf<KeysOfType<number[], number>>().toEqualTypeOf<number>();
+		expectTypeOf<KeysOfType<string[], number>>().toEqualTypeOf<never>();
+	});
+
 });

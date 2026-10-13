@@ -1,7 +1,7 @@
 import type { Action, AsyncAction } from './action';
 import type { Comparer } from './comparer';
 import type { FlatIterable } from './flatIterable';
-import type { KeysOfType } from './keysOfType';
+import type { KeysOfType, KeysOverlapping } from './keysOfType';
 import type { Mapper } from './mapper';
 import type { IMemoizeOptions } from './memoizeOptions';
 import type { Predicate } from './predicate';
@@ -560,7 +560,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since next
 	 */
-	flatMap<P extends KeysOfType<T, Iterable<unknown>>>(key: P): IIterableLinq<T[P] extends Iterable<infer R> ? R : never>;
+	flatMap<P extends keyof T & KeysOfType<T, Iterable<unknown>>>(key: P): IIterableLinq<T[P] extends Iterable<infer R> ? R : never>;
 
 	/**
 	 * Runs the chain and calls `action` on each value.
@@ -698,7 +698,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since next
 	 */
-	groupJoin<I, K, PI extends KeysOfType<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
+	groupJoin<I, K, PI extends KeysOverlapping<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
 
 	/**
 	 * Yields `result` for each value of the chain, with the values of `inner` that have the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
@@ -718,7 +718,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since next
 	 */
-	groupJoin<I, PO extends keyof T, PI extends KeysOfType<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
+	groupJoin<I, PO extends keyof T, PI extends KeysOverlapping<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
 
 	/**
 	 * Tells whether the chain contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
@@ -811,7 +811,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since next
 	 */
-	innerJoin<I, K, PI extends KeysOfType<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
+	innerJoin<I, K, PI extends KeysOverlapping<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
 	/**
 	 * Yields `result` for each pair of a value of the chain and a value of `inner` with the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
@@ -831,7 +831,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since next
 	 */
-	innerJoin<I, PO extends keyof T, PI extends KeysOfType<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
+	innerJoin<I, PO extends keyof T, PI extends KeysOverlapping<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
 	/**
 	 * Yields the distinct values of the chain that are also in `other`, in the order of the chain.

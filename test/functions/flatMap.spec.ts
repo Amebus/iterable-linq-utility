@@ -194,4 +194,9 @@ describe('flatMap', () => {
 		});
 	});
 
+	test('flattens an index of tuples, such as the groups of groupBy', () => {
+		const groups: [string, number[]][] = [['a', [1, 2]], ['b', [3]]];
+		expect(collectToArray(flatMap(groups, 1))).toEqual([1, 2, 3]);
+		expectTypeOf(flatMap(groups, 1)).toEqualTypeOf<Iterable<number>>();
+	});
 });

@@ -1,5 +1,5 @@
 import { DeferredIterable, InnerLookupIterator } from '../iterators';
-import type { KeysOfType, Mapper } from '../types';
+import type { KeysOverlapping, Mapper } from '../types';
 import { getContinueIteratorResult, Validations } from '../utils';
 
 /**
@@ -80,7 +80,7 @@ export function innerJoin<T, I, PO extends keyof T, R>(
  * ```
  * @since next
  */
-export function innerJoin<T, I, K, PI extends KeysOfType<I, K>, R>(
+export function innerJoin<T, I, K, PI extends KeysOverlapping<I, K>, R>(
 	iterable: Iterable<T>,
 	inner: Iterable<I>,
 	outerKey: Mapper<T, K>,
@@ -107,7 +107,7 @@ export function innerJoin<T, I, K, PI extends KeysOfType<I, K>, R>(
  * ```
  * @since next
  */
-export function innerJoin<T, I, PO extends keyof T, PI extends KeysOfType<I, T[PO]>, R>(
+export function innerJoin<T, I, PO extends keyof T, PI extends KeysOverlapping<I, T[PO]>, R>(
 	iterable: Iterable<T>,
 	inner: Iterable<I>,
 	outerKey: PO,
