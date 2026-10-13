@@ -9,7 +9,7 @@ describe('IterableLinq.innerJoin', () => {
 	test.each(['outerKey', 'innerKey', 'result'])('rejects an invalid %s', name => {
 		const callbacks: Record<string, unknown> = { outerKey: identity, innerKey: identity, result: identity, [name]: null };
 		expect(() => IterableLinq.from([1]).innerJoin([1], callbacks.outerKey as never, callbacks.innerKey as never, callbacks.result as never))
-			.toThrow(new Error(`[iterable-linq-utility/innerJoin] The "${name}" function must be provided`));
+			.toThrow(new Error(`[iterable-linq-utility/innerJoin] The "${name}" ${name === 'result' ? 'function must be provided' : 'must be a function or a property key'}`));
 	});
 
 	test('rejects an invalid inner', () => {
@@ -31,5 +31,13 @@ describe('IterableLinq.innerJoin', () => {
 
 	test('infers the result type', () => {
 		expectTypeOf(IterableLinq.from([1]).innerJoin(['a'], String, identity, (_, inner) => inner)).toEqualTypeOf<IterableLinq.IIterableLinq<string>>();
+	});
+
+	test('IterableLinq.innerJoin with property keys joins on the properties', () => {
+		const teams = [{ id: 1, name: 'red' }, { id: 2, name: 'blue' }];
+		const players = [{ teamId: 1, name: 'Ann' }, { teamId: 1, name: 'Cid' }];
+		const chain = IterableLinq.from(teams).innerJoin(players, 'id', 'teamId', (t, p) => `${t.name}-${p.name}`);
+		expect(chain.collectToArray()).toEqual(IterableLinq.from(teams).innerJoin(players, t => t.id, p => p.teamId, (t, p) => `${t.name}-${p.name}`).collectToArray());
+		expectTypeOf(chain).toEqualTypeOf<IterableLinq.IIterableLinq<string>>();
 	});
 });

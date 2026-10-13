@@ -200,8 +200,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return toChain(groupBy(this.iterable, keySelector as Mapper<T, K>));
 	}
 
-	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R> {
-		return toChain(groupJoin(this.iterable, inner, outerKey, innerKey, result));
+	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K> | keyof T, innerKey: Mapper<I, K> | keyof I, result: (outer: T, inners: I[]) => R): IIterableLinq<R> {
+		return toChain(groupJoin(this.iterable, inner, outerKey as Mapper<T, K>, innerKey as Mapper<I, K>, result));
 	}
 
 	includes(value: T): boolean {
@@ -212,12 +212,12 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return indexOf(this.iterable, value);
 	}
 
-	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inner: I) => R): IIterableLinq<R> {
-		return toChain(innerJoin(this.iterable, inner, outerKey, innerKey, result));
+	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K> | keyof T, innerKey: Mapper<I, K> | keyof I, result: (outer: T, inner: I) => R): IIterableLinq<R> {
+		return toChain(innerJoin(this.iterable, inner, outerKey as Mapper<T, K>, innerKey as Mapper<I, K>, result));
 	}
 
-	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(intersect(this.iterable, other, keySelector));
+	intersect<K>(other: Iterable<T>, keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(intersect(this.iterable, other, keySelector as Mapper<T, K>));
 	}
 
 	join(separator?: string): string {

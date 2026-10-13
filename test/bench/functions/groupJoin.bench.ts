@@ -47,5 +47,7 @@ test('groupJoin: key', async ({ bench }) => {
 		.add('loop', () => groupJoinLoop(groupNames, innerRecords, name => name, record => record.group))
 		.add('chain', () => sum(from(groupNames).groupJoin(innerRecords, name => name, record => record.group, count)))
 		.add('Functions', () => sum(Functions.groupJoin(groupNames, innerRecords, name => name, record => record.group, count)))
+		// a property key against the equivalent innerKey (ADR 0025)
+		.add('key', () => sum(Functions.groupJoin(groupNames, innerRecords, name => name, 'group', count)))
 		.run();
 });

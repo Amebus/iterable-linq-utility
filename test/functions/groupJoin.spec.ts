@@ -20,14 +20,18 @@ describe('groupJoin', () => {
 		expect(() => groupJoin([1], inner as never, identity, identity, pair)).toThrow(/^\[iterable-linq-utility\/groupJoin\] The (provided )?"sourceIterable"/);
 	});
 
-	test.each(['outerKey', 'innerKey', 'result'])('rejects an invalid %s immediately', name => {
+	test.each([
+		{ name: 'outerKey', message: 'must be a function or a property key', invalids: [undefined, null, false, {}] },
+		{ name: 'innerKey', message: 'must be a function or a property key', invalids: [undefined, null, false, {}] },
+		{ name: 'result', message: 'function must be provided', invalids: [undefined, null, 0, 'key', {}] }
+	])('rejects an invalid $name immediately', ({ name, message, invalids }) => {
 		const source = spyIterable([1, 2]);
 		const inner = spyIterable([1]);
 		const callbacks: Record<string, unknown> = { outerKey: identity, innerKey: identity, result: pair };
-		for (const invalid of [undefined, null, 0, 'key', {}]) {
+		for (const invalid of invalids) {
 			callbacks[name] = invalid;
 			expect(() => groupJoin(source, inner, callbacks.outerKey as never, callbacks.innerKey as never, callbacks.result as never))
-				.toThrow(new Error(`[iterable-linq-utility/groupJoin] The "${name}" function must be provided`));
+				.toThrow(new Error(`[iterable-linq-utility/groupJoin] The "${name}" ${message}`));
 		}
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 		expect(inner.stats).toEqual({ iterations: 0, reads: 0 });
@@ -164,5 +168,40 @@ describe('groupJoin', () => {
 			return inners.length > 0;
 		});
 		expectTypeOf(result).toEqualTypeOf<Iterable<boolean>>();
+	});
+
+	describe('with property keys', () => {
+		const teams = [{ id: 1, name: 'red' }, { id: 2, name: 'blue' }, { id: 3, name: 'none' }];
+		const players = [{ teamId: 1, name: 'Ann' }, { teamId: 2, name: 'Bob' }, { teamId: 1, name: 'Cid' }];
+		const byLambdas = Array.from(groupJoin(teams, players, t => t.id, p => p.teamId, (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`));
+
+		test('every combination of functions and keys gives the same values', () => {
+			expect(Array.from(groupJoin(teams, players, 'id', 'teamId', (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`))).toEqual(byLambdas);
+			expect(Array.from(groupJoin(teams, players, 'id', p => p.teamId, (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`))).toEqual(byLambdas);
+			expect(Array.from(groupJoin(teams, players, t => t.id, 'teamId', (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`))).toEqual(byLambdas);
+		});
+
+		test('a null outer value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ id: number; name: string } | null>([{ id: 1, name: 'red' }, null]);
+			expect(() => Array.from(groupJoin(iterable as Iterable<{ id: number; name: string }>, players, 'id', 'teamId', (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('a null inner value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource(teams);
+			expect(() => Array.from(groupJoin(iterable, [null as unknown as { teamId: number; name: string }], 'id', 'teamId', (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('the two keys must have the same type', () => {
+			// @ts-expect-error name is a string, teamId a number
+			groupJoin(teams, players, 'name', 'teamId', (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`);
+			// @ts-expect-error id is not a key of the inner values
+			groupJoin(teams, players, 'id', 'id', (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`);
+			// @ts-expect-error the outer function gives a string, teamId is a number
+			groupJoin(teams, players, t => t.name, 'teamId', (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`);
+			// @ts-expect-error name is a string, the inner function gives a number
+			groupJoin(teams, players, 'name', p => p.teamId, (t, ps) => `${t.name}:${ps.map(p => p.name).join('+')}`);
+		});
 	});
 });

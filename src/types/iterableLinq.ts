@@ -594,6 +594,66 @@ export interface IIterableLinqBase<T> {
 	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
 
 	/**
+	 * Yields `result` for each value of the chain, with the values of `inner` that have the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
+	 * The keys are compared with `SameValueZero`, like `Map`.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - the property of each value of the chain that gives its key
+	 * @param innerKey - called with each value of `inner` and its index; returns its key, of the type of the outer property
+	 * @param result - called with each outer value and the array of its inner values; returns the value to yield
+	 * @returns a new chain with one result for each value of the chain
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
+	 * ```
+	 * @since next
+	 */
+	groupJoin<I, PO extends keyof T, R>(inner: Iterable<I>, outerKey: PO, innerKey: Mapper<I, T[PO]>, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
+
+	/**
+	 * Yields `result` for each value of the chain, with the values of `inner` that have the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
+	 * The keys are compared with `SameValueZero`, like `Map`.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - called with each value of the chain and its index; returns its key
+	 * @param innerKey - the property of each value of `inner` that gives its key, of the type returned by `outerKey`
+	 * @param result - called with each outer value and the array of its inner values; returns the value to yield
+	 * @returns a new chain with one result for each value of the chain
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
+	 * ```
+	 * @since next
+	 */
+	groupJoin<I, K, PI extends KeysOfType<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
+
+	/**
+	 * Yields `result` for each value of the chain, with the values of `inner` that have the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
+	 * The keys are compared with `SameValueZero`, like `Map`.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - the property of each value of the chain that gives its key
+	 * @param innerKey - the property of each value of `inner` that gives its key, of the same type
+	 * @param result - called with each outer value and the array of its inner values; returns the value to yield
+	 * @returns a new chain with one result for each value of the chain
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
+	 * ```
+	 * @since next
+	 */
+	groupJoin<I, PO extends keyof T, PI extends KeysOfType<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
+
+	/**
 	 * Tells whether the chain contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
 	 * stops and closes the source at the first match.
 	 * @operation `Action`
@@ -645,6 +705,66 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.12.0
 	 */
 	innerJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inner: I) => R): IIterableLinq<R>;
+
+	/**
+	 * Yields `result` for each pair of a value of the chain and a value of `inner` with the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
+	 * The keys are compared with `SameValueZero`, like `Map`.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - the property of each value of the chain that gives its key
+	 * @param innerKey - called with each value of `inner` and its index; returns its key, of the type of the outer property
+	 * @param result - called with each pair of values with the same key; returns the value to yield
+	 * @returns a new chain with one result for each pair of values with the same key
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
+	 * ```
+	 * @since next
+	 */
+	innerJoin<I, PO extends keyof T, R>(inner: Iterable<I>, outerKey: PO, innerKey: Mapper<I, T[PO]>, result: (outer: T, inner: I) => R): IIterableLinq<R>;
+
+	/**
+	 * Yields `result` for each pair of a value of the chain and a value of `inner` with the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
+	 * The keys are compared with `SameValueZero`, like `Map`.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - called with each value of the chain and its index; returns its key
+	 * @param innerKey - the property of each value of `inner` that gives its key, of the type returned by `outerKey`
+	 * @param result - called with each pair of values with the same key; returns the value to yield
+	 * @returns a new chain with one result for each pair of values with the same key
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
+	 * ```
+	 * @since next
+	 */
+	innerJoin<I, K, PI extends KeysOfType<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
+
+	/**
+	 * Yields `result` for each pair of a value of the chain and a value of `inner` with the same key, as the overload with functions does: a property key behaves like `v => v[key]`.
+	 * The keys are compared with `SameValueZero`, like `Map`.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param inner - the `Iterable` whose values are joined to the values of the chain
+	 * @param outerKey - the property of each value of the chain that gives its key
+	 * @param innerKey - the property of each value of `inner` that gives its key, of the same type
+	 * @param result - called with each pair of values with the same key; returns the value to yield
+	 * @returns a new chain with one result for each pair of values with the same key
+	 * @throws Error if `inner` is not iterable, or if `outerKey` or `innerKey` is neither a function nor a property key, or if `result` is not a function
+	 * @example
+	 * ```ts
+	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
+	 * ```
+	 * @since next
+	 */
+	innerJoin<I, PO extends keyof T, PI extends KeysOfType<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
 	/**
 	 * Yields the distinct values of the chain that are also in `other`, in the order of the chain.
