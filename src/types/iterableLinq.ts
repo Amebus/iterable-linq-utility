@@ -1,6 +1,7 @@
 import type { Action, AsyncAction } from './action';
 import type { Comparer } from './comparer';
 import type { FlatIterable } from './flatIterable';
+import type { KeysOfType } from './keysOfType';
 import type { Mapper } from './mapper';
 import type { IMemoizeOptions } from './memoizeOptions';
 import type { Predicate } from './predicate';
@@ -222,7 +223,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Transformation`
 	 * @param keySelector - called with every source value and its index; omitted or `undefined` compares values directly
 	 * @returns a new lazy, re-runnable chain of the first values for each key
-	 * @throws Error if a provided `keySelector` is not a function
+	 * @throws Error if a provided `keySelector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([3, 1, 3, 2, 1]).distinct().collectToArray(); // [3, 1, 2]
@@ -231,6 +232,22 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.5.0
 	 */
 	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T>;
+
+	/**
+	 * Yields the first value for each distinct property `key`, in source order: the same as `distinct(v => v[key])`.
+	 * Keys use `SameValueZero`, like `Set`; original values are preserved.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @returns a new lazy, re-runnable chain of the first values for each key
+	 * @throws Error if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1 }, { id: 1 }, { id: 2 }]).distinct('id').collectToArray(); // [{ id: 1 }, { id: 2 }]
+	 * ```
+	 * @since next
+	 */
+	distinct(key: keyof T): IIterableLinq<T>;
 
 	/**
 	 * Lazily yields `[index, value]` pairs, like `Array.prototype.entries`.
@@ -478,7 +495,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Transformation`
 	 * @param keySelector - called with each value and its index; returns the key of the group of the value
 	 * @returns a new chain of `[key, values]` pairs
-	 * @throws Error if `keySelector` is not a function
+	 * @throws Error if `keySelector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4, 5]).groupBy(v => v % 2).collectToArray(); // [[1, [1, 3, 5]], [0, [2, 4]]]
@@ -486,6 +503,23 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.12.0
 	 */
 	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]>;
+
+	/**
+	 * Groups the values by their property `key`: the same as `groupBy(v => v[key])`.
+	 * The keys are compared with `SameValueZero`, like `Map`.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param key - the property that gives the key of the group: a `string`, a `symbol` or a `number`
+	 * @returns a new chain of `[key, values]` pairs
+	 * @throws Error if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ team: 'red' }, { team: 'blue' }, { team: 'red' }]).groupBy('team').map(([team, players]) => [team, players.length]).collectToArray();
+	 * // [['red', 2], ['blue', 1]]
+	 * ```
+	 * @since next
+	 */
+	groupBy<P extends keyof T>(key: P): IIterableLinq<[T[P], T[]]>;
 
 	/**
 	 * Yields `result(outer, inners)` for each value of the chain, with the values of `inner` that have the same key,
@@ -619,7 +653,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Transformation`
 	 * @param mapper - called with each value and its index; returns the new value
 	 * @returns a new chain with the mapped values
-	 * @throws Error if `mapper` is not a function
+	 * @throws Error if `mapper` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3, 4]).map(v => v * 10).collectToArray(); // [10, 20, 30, 40]
@@ -627,6 +661,21 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.0.1
 	 */
 	map<R>(mapper: Mapper<T, R>): IIterableLinq<R>;
+
+	/**
+	 * Reads the property `key` of each value: the same as `map(v => v[key])`.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Transformation`
+	 * @param key - the property to read: a `string`, a `symbol` or a `number`
+	 * @returns a new chain with the values of the property
+	 * @throws Error if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ name: 'Ann' }, { name: 'Bob' }]).map('name').collectToArray(); // ['Ann', 'Bob']
+	 * ```
+	 * @since next
+	 */
+	map<P extends keyof T>(key: P): IIterableLinq<T[P]>;
 
 	/**
 	 * Runs the chain immediately and stores its values, so later chains start from the stored values
@@ -954,7 +1003,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Action`
 	 * @param selector - called with each value and its index, returns the number to add; `undefined` sums the values themselves
 	 * @returns the sum of the selected numbers, `0` when the chain is empty
-	 * @throws Error if a provided `selector` is not a function
+	 * @throws Error if a provided `selector` is neither a function nor a property key
 	 * @example
 	 * ```ts
 	 * IterableLinq.from(['a', 'bb', 'ccc']).sum(v => v.length); // 6
@@ -962,6 +1011,21 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.7.0
 	 */
 	sum(selector: Mapper<T, number> | undefined): number;
+
+	/**
+	 * Sums the property `key` of each value: the same as `sum(v => v[key])`; runs the whole chain.
+	 * A value that is `null` or `undefined` throws a `TypeError`: the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param key - a property whose value is a `number`
+	 * @returns the sum of the values of the property, `0` when the chain is empty
+	 * @throws Error if `key` is neither a function nor a property key
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ price: 10 }, { price: 5 }]).sum('price'); // 15
+	 * ```
+	 * @since next
+	 */
+	sum(key: KeysOfType<T, number>): number;
 
 	/**
 	 * Yields the first `count` values, then closes the source.

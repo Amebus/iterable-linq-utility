@@ -29,4 +29,10 @@ describe('IterableLinq.groupBy', () => {
 	test('infers the key and value types', () => {
 		expectTypeOf(IterableLinq.from(['a']).groupBy(v => v.length)).toEqualTypeOf<IterableLinq.IIterableLinq<[number, string[]]>>();
 	});
+
+	test('IterableLinq.groupBy with a property key groups by the property', () => {
+		const chain = IterableLinq.from([{ team: 'red' }, { team: 'blue' }, { team: 'red' }]).groupBy('team');
+		expect(chain.map(([key, group]) => [key, group.length]).collectToArray()).toEqual([['red', 2], ['blue', 1]]);
+		expectTypeOf(chain).toEqualTypeOf<IterableLinq.IIterableLinq<[string, { team: string }[]]>>();
+	});
 });

@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { closableSource } from '../_helpers/generators/closableSource';
 import { expectTransformation } from '../_helpers/operationKind';
 
@@ -96,6 +96,53 @@ describe('map', () => {
 		it.next();
 		expect(it.return!('x')).toEqual({ done: true, value: 'x' });
 		expect(originalReturn).toHaveBeenCalledWith('x');
+	});
+
+	describe('with a property key', () => {
+		const people = [{ name: 'Ann', age: 30 }, { name: 'Bob', age: 25 }];
+
+		test('gives the same values as the equivalent mapper', () => {
+			expect(collectToArray(map(people, 'name'))).toEqual(collectToArray(map(people, p => p.name)));
+		});
+
+		test('reads the index 0 of a tuple', () => {
+			const pairs: [string, number][] = [['a', 1], ['b', 2]];
+			expect(collectToArray(map(pairs, 0))).toEqual(['a', 'b']);
+		});
+
+		test('reads a symbol key', () => {
+			const id = Symbol('id');
+			expect(collectToArray(map([{ [id]: 1 }, { [id]: 2 }], id))).toEqual([1, 2]);
+		});
+
+		test('reads the properties of the prototype chain and the getters', () => {
+			class Person {
+				constructor(private readonly first: string, private readonly last: string) {}
+				get full(): string {
+					return `${this.first} ${this.last}`;
+				}
+			}
+			expect(collectToArray(map([new Set([1, 2]), new Set([3])], 'size'))).toEqual([2, 1]);
+			expect(collectToArray(map([new Person('Ann', 'Lee')], 'full'))).toEqual(['Ann Lee']);
+		});
+
+		test('a null value throws a TypeError and closes the source', () => {
+			const { state, iterable } = closableSource<{ a: number } | null>([{ a: 1 }, null, { a: 3 }]);
+			expect(() => collectToArray(map(iterable as Iterable<{ a: number }>, 'a'))).toThrow(TypeError);
+			expect(state.closed).toBe(true);
+		});
+
+		test('a selector that is neither a function nor a property key throws', () => {
+			expect(() => map([1], true as never))
+				.toThrow(new Error('[iterable-linq-utility/map] The "mapper" must be a function or a property key'));
+		});
+
+		test('gives the type of the property', () => {
+			expectTypeOf(map(people, 'name')).toEqualTypeOf<Iterable<string>>();
+			expectTypeOf(map(people, 'age')).toEqualTypeOf<Iterable<number>>();
+			// @ts-expect-error not a key of the values
+			map(people, 'missing');
+		});
 	});
 
 });

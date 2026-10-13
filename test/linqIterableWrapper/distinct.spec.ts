@@ -6,8 +6,8 @@ import { expectTransformation } from '../_helpers/operationKind';
 import * as IterableLinq from '@/index';
 
 describe('IterableLinq.distinct', () => {
-	test.each([null, false, 0, 'key', {}])('rejects invalid keySelector %j', keySelector => {
-		expect(() => IterableLinq.from([1]).distinct(keySelector as never)).toThrow(new Error('[iterable-linq-utility/distinct] The "keySelector" function must be provided'));
+	test.each([null, false, {}])('rejects invalid keySelector %j', keySelector => {
+		expect(() => IterableLinq.from([1]).distinct(keySelector as never)).toThrow(new Error('[iterable-linq-utility/distinct] The "keySelector" must be a function or a property key'));
 	});
 
 	test.each([
@@ -96,5 +96,11 @@ describe('IterableLinq.distinct', () => {
 		});
 		expectTypeOf(result.collectToArray()).toEqualTypeOf<(number | string)[]>();
 		expect(result.collectToArray()).toEqual([1, 'one']);
+	});
+
+	test('IterableLinq.distinct with a property key keeps the first value of each key', () => {
+		const chain = IterableLinq.from([{ id: 1, n: 'a' }, { id: 1, n: 'b' }, { id: 2, n: 'c' }]).distinct('id');
+		expect(chain.map(v => v.n).collectToArray()).toEqual(['a', 'c']);
+		expectTypeOf(chain).toEqualTypeOf<IterableLinq.IIterableLinq<{ id: number; n: string }>>();
 	});
 });

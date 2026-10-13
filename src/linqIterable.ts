@@ -6,6 +6,7 @@ import type {
 	IIterableLinq,
 	IIterableLinqBase,
 	IMemoizeOptions,
+	KeysOfType,
 	Mapper,
 	Predicate,
 	Reducer,
@@ -137,8 +138,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return toChain(defaultIfEmpty(this.iterable, value));
 	}
 
-	distinct<K>(keySelector?: Mapper<T, K>): IIterableLinq<T> {
-		return toChain(distinct(this.iterable, keySelector));
+	distinct<K>(keySelector?: Mapper<T, K> | keyof T): IIterableLinq<T> {
+		return toChain(distinct(this.iterable, keySelector as Mapper<T, K>));
 	}
 
 	entries(): IIterableLinq<[number, T]> {
@@ -195,8 +196,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return forEachAsync(this.iterable, action);
 	}
 
-	groupBy<K>(keySelector: Mapper<T, K>): IIterableLinq<[K, T[]]> {
-		return toChain(groupBy(this.iterable, keySelector));
+	groupBy<K>(keySelector: Mapper<T, K> | keyof T): IIterableLinq<[K, T[]]> {
+		return toChain(groupBy(this.iterable, keySelector as Mapper<T, K>));
 	}
 
 	groupJoin<I, K, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: Mapper<I, K>, result: (outer: T, inners: I[]) => R): IIterableLinq<R> {
@@ -227,8 +228,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return lastIndexOf(this.iterable, value);
 	}
 
-	map<R>(mapper: Mapper<T, R>): IIterableLinq<R> {
-		return toChain(map(this.iterable, mapper));
+	map<R>(mapper: Mapper<T, R> | keyof T): IIterableLinq<R> {
+		return toChain(map(this.iterable, mapper as Mapper<T, R>));
 	}
 
 	materialize(): IIterableLinq<T> {
@@ -303,8 +304,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return some(this.iterable, predicate);
 	}
 
-	sum(selector?: Mapper<T, number>): number {
-		return sum(this.iterable, selector);
+	sum(selector?: Mapper<T, number> | KeysOfType<T, number>): number {
+		return sum(this.iterable, selector as Mapper<T, number>);
 	}
 
 	take(count: number): IIterableLinq<T> {
