@@ -40,4 +40,13 @@ describe('closableSource', () => {
 		expect(state.closed).toBe(true);
 	});
 
+	test('yields any type of value', () => {
+		const record = { a: 1 };
+		const { state, iterable } = closableSource([record, null]);
+		const it = iterable[Symbol.iterator]();
+		expect(it.next().value).toBe(record);
+		it.return!();
+		expect(state.closed).toBe(true);
+	});
+
 });

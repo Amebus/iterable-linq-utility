@@ -1,4 +1,5 @@
 import { libraryError } from './libraryError';
+import { isPropertyKey } from './selector';
 import { isFunction } from './utils';
 
 export function throwIfNotIterable<T>(sourceIterable: Iterable<T>, operation: string) {
@@ -11,6 +12,11 @@ export function throwIfNotIterable<T>(sourceIterable: Iterable<T>, operation: st
 export function throwIfNotFunction(value: unknown, name: string, operation: string) {
 	if (!isFunction(value))
 		throw libraryError(operation, `The "${name}" function must be provided`);
+}
+
+export function throwIfNotSelector(value: unknown, name: string, operation: string) {
+	if (!isFunction(value) && !isPropertyKey(value))
+		throw libraryError(operation, `The "${name}" must be a function or a property key`);
 }
 
 export function throwIfNotInteger(value: number, name: string, operation: string) {

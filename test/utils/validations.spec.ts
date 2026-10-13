@@ -51,6 +51,23 @@ describe('Validations', () => {
 		});
 	});
 
+	describe('throwIfNotSelector', () => {
+		test.each([
+			{ name: 'an arrow function', value: () => 1 },
+			{ name: 'a string key', value: 'id' },
+			{ name: 'the empty string', value: '' },
+			{ name: 'the key 0', value: 0 },
+			{ name: 'a symbol key', value: Symbol('s') }
+		])('accepts $name', ({ value }) => {
+			expect(() => Validations.throwIfNotSelector(value, 'keySelector', 'op')).not.toThrow();
+		});
+
+		test.each([undefined, null, {}, true, BigInt(10)])('rejects %s', value => {
+			expect(() => Validations.throwIfNotSelector(value, 'keySelector', 'op'))
+				.toThrow(new Error(prefixed('op', 'The "keySelector" must be a function or a property key')));
+		});
+	});
+
 	describe('throwIfNotInteger', () => {
 		test.each([0, -0, 3, -3, Number.MAX_SAFE_INTEGER])('accepts %s', value => {
 			expect(() => Validations.throwIfNotInteger(value, 'index', 'op')).not.toThrow();

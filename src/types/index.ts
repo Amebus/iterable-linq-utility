@@ -3,6 +3,7 @@ export * from './chainMethod';
 export * from './comparer';
 export * from './flatIterable';
 export * from './iterableLinq';
+export * from './keysOfType';
 export * from './mapper';
 export * from './memoizeOptions';
 export * from './objectOptions';
