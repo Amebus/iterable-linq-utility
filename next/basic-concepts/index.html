@@ -86,8 +86,8 @@
         <aside class="md-banner">
           <div class="md-banner__inner md-grid md-typeset">
             
-            This is the <strong>next</strong> version: it matches the latest release, 0.12.0.
-    <a href="../../latest/">Go to the latest version</a>
+            This is the <strong>next</strong> version:
+    <a href="../upcoming/">1 unreleased change since 0.12.0</a>
           </div>
           
         </aside>
@@ -398,6 +398,8 @@
       
         
       
+        
+      
     
     
     
@@ -620,6 +622,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#selectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selectors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-unit-type" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -654,6 +667,34 @@
     
   
     Alternative Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migrating-to-0.13.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrating to 0.13.0
   
 
     
@@ -1234,6 +1275,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#selectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selectors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-unit-type" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1407,26 +1459,59 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
 </tbody>
 </table>
 <p>So <code>indexOf(NaN)</code> is <code>-1</code> while <code>includes(NaN)</code> is <code>true</code>, exactly as with arrays. For a different equality, pass a callback: <code>sequenceEqual(other, Object.is)</code> tells <code>0</code> from <code>-0</code>, a key selector compares objects by a field.</p>
+<h2 id="selectors">Selectors<a class="headerlink" href="#selectors" title="Permanent link">⚓︎</a></h2>
+<p>A selector reads a value from each element: the key of <code>groupBy</code> and <code>distinct</code>, the number of <code>sum</code>, the new value of <code>map</code>. Where it only reads a property, a property key can take the place of the function: a <code>string</code>, a <code>symbol</code> or a <code>number</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">orders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">1</span><span class="p">,</span><span class="w"> </span><span class="nx">customer</span><span class="o">:</span><span class="w"> </span><span class="s1">'Ann'</span><span class="p">,</span><span class="w"> </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">10</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">2</span><span class="p">,</span><span class="w"> </span><span class="nx">customer</span><span class="o">:</span><span class="w"> </span><span class="s1">'Bob'</span><span class="p">,</span><span class="w"> </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">5</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">3</span><span class="p">,</span><span class="w"> </span><span class="nx">customer</span><span class="o">:</span><span class="w"> </span><span class="s1">'Ann'</span><span class="p">,</span><span class="w"> </span><span class="nx">price</span><span class="o">:</span><span class="w"> </span><span class="kt">7</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="p">]);</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="nx">orders</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="s1">'customer'</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// ['Ann', 'Bob', 'Ann']</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="nx">orders</span><span class="p">.</span><span class="nx">sum</span><span class="p">(</span><span class="s1">'price'</span><span class="p">);</span><span class="w"> </span><span class="c1">// 22</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="nx">orders</span><span class="p">.</span><span class="nx">groupBy</span><span class="p">(</span><span class="s1">'customer'</span><span class="p">).</span><span class="nx">map</span><span class="p">(([</span><span class="nx">customer</span><span class="p">,</span><span class="w"> </span><span class="nx">list</span><span class="p">])</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">customer</span><span class="p">,</span><span class="w"> </span><span class="nx">list</span><span class="p">.</span><span class="nx">length</span><span class="p">]).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [['Ann', 2], ['Bob', 1]]</span>
+</code></pre></div></td></tr></table></div>
+<p><code>key</code> behaves like <code>v =&gt; v[key]</code>:</p>
+<ul>
+<li>it gives the same values, reads the properties of the prototype chain and the getters, and compares the keys as the function would (see <a href="#equality">Equality</a>);</li>
+<li>it does not receive the index of the value;</li>
+<li>a value that is <code>null</code> or <code>undefined</code> throws a <code>TypeError</code>, which closes the source, like an error thrown by a callback;</li>
+<li>the result is typed from the property: <code>map('customer')</code> is a chain of <code>string</code>, and <code>sum</code> and <code>average</code> accept only the keys whose value is a <code>number</code>.</li>
+</ul>
+<p>Keys are accepted where the selector reads a value: <code>map</code>, <code>flatMap</code>, <code>sum</code>, <code>average</code>, <code>distinct</code>, <code>union</code>, <code>intersect</code>, <code>except</code>, <code>groupBy</code>, the keys of <code>innerJoin</code> and <code>groupJoin</code>, and the key and value of <code>collectToMap</code>. Predicates (<code>filter</code>, <code>some</code>, <code>find</code>, …), reducers and taps keep taking functions. <code>min</code> and <code>max</code> take a <a href="../api-reference/actions/#max">Comparer</a>, where a key orders the values with <code>&lt;</code>.</p>
+<p>A key is not slower than the equivalent function, and often faster (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0025-property-keys-as-selectors.md">ADR 0025</a>).</p>
 <h2 id="the-unit-type">The <code>Unit</code> type<a class="headerlink" href="#the-unit-type" title="Permanent link">⚓︎</a></h2>
 <p>Callbacks that have nothing to return, like the ones passed to <code>forEach</code>, <code>forEachAsync</code>, <code>tap</code> and <code>tapChain</code>, return <code>unit()</code>: the only value of the <code>Unit</code> type.
 <code>Unit</code> is nominal, so the compiler rejects a callback that returns anything else (a number, a string, an object, <code>undefined</code>).</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span>
-<span class="normal"><a href="#__codelineno-1-4">4</a></span>
-<span class="normal"><a href="#__codelineno-1-5">5</a></span>
-<span class="normal"><a href="#__codelineno-1-6">6</a></span>
-<span class="normal"><a href="#__codelineno-1-7">7</a></span>
-<span class="normal"><a href="#__codelineno-1-8">8</a></span>
-<span class="normal"><a href="#__codelineno-1-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">    </span><span class="p">});</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">4</a></span>
+<span class="normal"><a href="#__codelineno-2-5">5</a></span>
+<span class="normal"><a href="#__codelineno-2-6">6</a></span>
+<span class="normal"><a href="#__codelineno-2-7">7</a></span>
+<span class="normal"><a href="#__codelineno-2-8">8</a></span>
+<span class="normal"><a href="#__codelineno-2-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">    </span><span class="p">});</span>
 </code></pre></div></td></tr></table></div>
 <div class="footnote">
 <hr />
@@ -1458,7 +1543,7 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 5, 2026 19:40:16 UTC">October 5, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 13, 2026 08:17:29 UTC">October 13, 2026</span>
   </span>
 
     
