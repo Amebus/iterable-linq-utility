@@ -1491,6 +1491,7 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
 <li>the result is typed from the property: <code>map('customer')</code> is a chain of <code>string</code>, and <code>sum</code> and <code>average</code> accept only the keys whose value is a <code>number</code>.</li>
 </ul>
 <p>Keys are accepted where the selector reads a value: <code>map</code>, <code>flatMap</code>, <code>sum</code>, <code>average</code>, <code>distinct</code>, <code>union</code>, <code>intersect</code>, <code>except</code>, <code>groupBy</code>, the keys of <code>innerJoin</code> and <code>groupJoin</code>, and the key and value of <code>collectToMap</code>. Predicates (<code>filter</code>, <code>some</code>, <code>find</code>, …), reducers and taps keep taking functions. <code>min</code> and <code>max</code> take a <a href="../api-reference/actions/#max">Comparer</a>, where a key orders the values with <code>&lt;</code>.</p>
+<p>A selector is one key, never an array: a nested property, a composite key or a subset of the properties is a function, for example <code>groupBy(o =&gt; o.address.city)</code> or <code>map(o =&gt; ({ id: o.id, customer: o.customer }))</code> (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0026-arrays-of-keys-are-not-selectors.md">ADR 0026</a>).</p>
 <p>A key is not slower than the equivalent function, and often faster (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0025-property-keys-as-selectors.md">ADR 0025</a>).</p>
 <h2 id="the-unit-type">The <code>Unit</code> type<a class="headerlink" href="#the-unit-type" title="Permanent link">⚓︎</a></h2>
 <p>Callbacks that have nothing to return, like the ones passed to <code>forEach</code>, <code>forEachAsync</code>, <code>tap</code> and <code>tapChain</code>, return <code>unit()</code>: the only value of the <code>Unit</code> type.
@@ -1543,7 +1544,7 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 13, 2026 08:17:29 UTC">October 13, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 15, 2026 12:17:29 UTC">October 15, 2026</span>
   </span>
 
     
