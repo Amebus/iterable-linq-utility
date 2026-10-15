@@ -62,7 +62,7 @@ describe('Validations', () => {
 			expect(() => Validations.throwIfNotSelector(value, 'keySelector', 'op')).not.toThrow();
 		});
 
-		test.each([undefined, null, {}, true, BigInt(10)])('rejects %s', value => {
+		test.each([undefined, null, {}, [], ['id'], true, BigInt(10)])('rejects %s', value => {
 			expect(() => Validations.throwIfNotSelector(value, 'keySelector', 'op'))
 				.toThrow(new Error(prefixed('op', 'The "keySelector" must be a function or a property key')));
 		});
