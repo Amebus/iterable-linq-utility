@@ -108,6 +108,8 @@ orders.groupBy('customer').map(([customer, list]) => [customer, list.length]).co
 
 Keys are accepted where the selector reads a value: `map`, `flatMap`, `sum`, `average`, `distinct`, `union`, `intersect`, `except`, `groupBy`, the keys of `innerJoin` and `groupJoin`, and the key and value of `collectToMap`. Predicates (`filter`, `some`, `find`, …), reducers and taps keep taking functions. `min` and `max` take a [Comparer](api-reference/actions.md#max), where a key orders the values with `<`.
 
+A selector is one key, never an array: a nested property, a composite key or a subset of the properties is a function, for example `groupBy(o => o.address.city)` or `map(o => ({ id: o.id, customer: o.customer }))` ([ADR 0026](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0026-arrays-of-keys-are-not-selectors.md)).
+
 A key is not slower than the equivalent function, and often faster ([ADR 0025](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0025-property-keys-as-selectors.md)).
 
 ## The `Unit` type

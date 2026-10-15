@@ -1,6 +1,6 @@
 # Property keys as selectors
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0026](0026-arrays-of-keys-are-not-selectors.md)
 * Deciders: Amebus
 * Date: 2026-10-13
 
