@@ -5,39 +5,37 @@
 | **Activity** | [![Commits since the latest release](https://img.shields.io/github/commits-since/Amebus/iterable-linq-utility/latest)](https://amebus.github.io/iterable-linq-utility/next/) [![Latest release date](https://img.shields.io/github/release-date/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/releases/latest) [![Open issues](https://img.shields.io/github/issues/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/issues) [![Open pull requests](https://img.shields.io/github/issues-pr/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/pulls) |
 | **Community** | [![GitHub stars](https://img.shields.io/github/stars/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/stargazers) [![Forks](https://img.shields.io/github/forks/Amebus/iterable-linq-utility)](https://github.com/Amebus/iterable-linq-utility/forks) |
 
-A [.NET Linq to Objects](https://learn.microsoft.com/it-it/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects) porting with javacript naming conventions (e.g.: `Select` as been ranamed to `map`) and some new features (e.g.: [memoize](https://amebus.github.io/iterable-linq-utility/api-reference/transformations.md#memoize) and [materialize](https://amebus.github.io/iterable-linq-utility/api-reference/actions.md#materialize)).
+Lazy, re-runnable operations on JavaScript iterables, inspired by [.NET LINQ to Objects](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects) with JavaScript names (`Select` is `map`, `Aggregate` is `reduce`), and some new features, like [memoize](https://amebus.github.io/iterable-linq-utility/latest/api-reference/transformations/#memoize) and [materialize](https://amebus.github.io/iterable-linq-utility/latest/api-reference/actions/#materialize).
 
-[Official documentation available here](https://amebus.github.io/iterable-linq-utility)
+## Installation
 
-## Main Idea
-
-As the previous description says, the idea is to create a kind-of-porting of [.NET Linq to Objects](https://learn.microsoft.com/it-it/dotnet/csharp/programming-guide/concepts/linq/linq-to-objects) with a naming convetions that is more javascript and functional programming oriented and not sql oriented [^1].  
-In other words the idea is:
-
-- to keep the [LINQ Deferred Exceution](https://learn.microsoft.com/en-us/dotnet/standard/linq/deferred-execution-lazy-evaluation#deferred-execution) and apply it to the [JavaScript Iterator Protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) with a more standard way of naming well known high order functions like `map`, `flatMap`, `reduce` used by javascript and some functional programming libraries (e.g.: [Ramdajs](https://github.com/functionalland/ramda), [SanctuaryJs](https://github.com/orgs/sanctuary-js/repositories?type=all), [FantasyLand](https://github.com/fantasyland) and [lodash](https://github.com/lodash/lodash)).
-- to keep the **Linq repeatable execution** which allows to traverse the same chain multiple times without having to recreate it from scratch every time, in this way is possible to store the chain in a variable and then trigger it to get the max and min without recreating it:
-
-  ```ts
-  const myChain = IterableLinq.from([1,2,3,4]).filter().map(); // chain creation
-  const max = myChain.max();
-  const min = myChain.min(); // using the same chain twice
-  ```
-
-Since in javascript you cannot rely on [extensions methods](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods) as in c# there is the need to create a wrapper over `Iterable` to achive the same [Deferred Exceution](https://learn.microsoft.com/en-us/dotnet/standard/linq/deferred-execution-lazy-evaluation#deferred-execution) concept.  
-
-```typescript
-IterableLinq
-    .fromRange(start, end)
-    .filter(myFilterFunction)
-    .map(myMapFunction)
-    .collectToArray()
+```sh
+npm install iterable-linq-utility
 ```
 
-as **Operations Chain** or **O~s~C**.  
-The **O~s~C** supports two types of operations:
+## Usage
 
-- [Actions](https://amebus.github.io/iterable-linq-utility/api-reference/actions.md)
-- [Transformations](https://amebus.github.io/iterable-linq-utility/api-reference/transformations.md)
+```ts
+import * as IterableLinq from 'iterable-linq-utility';
+
+const chain = IterableLinq
+	.from([1, 2, 3, 4, 5, 6])
+	.filter(v => v % 2 === 0)
+	.map(v => v * 10);   // nothing runs yet
+
+chain.collectToArray();  // [20, 40, 60]
+chain.max();             // 60: the same chain runs again
+```
+
+## Documentation
+
+The [documentation site](https://amebus.github.io/iterable-linq-utility/latest/) has the details:
+
+- [Getting Started](https://amebus.github.io/iterable-linq-utility/latest/getting-started/): installation from npm or a CDN, and the module formats;
+- [Basic Concepts](https://amebus.github.io/iterable-linq-utility/latest/basic-concepts/): actions, transformations and taps, deferred execution, equality, selectors;
+- [API Reference](https://amebus.github.io/iterable-linq-utility/latest/api-reference/): every operation, on the chain and as a raw function in `Functions`;
+- [Changelog](https://amebus.github.io/iterable-linq-utility/latest/changelog/) and the migration guides;
+- [How to contribute](https://amebus.github.io/iterable-linq-utility/latest/how-to-contribute/).
 
 ## Benchmarks
 
