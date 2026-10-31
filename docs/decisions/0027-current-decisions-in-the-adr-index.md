@@ -4,7 +4,7 @@
 * Deciders: Amebus
 * Date: 2026-10-31
 
-Technical Story: https://github.com/Amebus/iterable-linq-utility/pull/<number>
+Technical Story: https://github.com/Amebus/iterable-linq-utility/pull/191
 
 Amends: [ADR 0014](0014-instructions-for-ai-coding-agents.md)
 
