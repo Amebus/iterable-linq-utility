@@ -28,7 +28,7 @@ The instructions help the agent; the checks hold whoever writes the code:
 - `pnpm lint`: the style, and the order of the imports in the specs and the benches;
 - `pnpm check:structure`: every operation has its specs, its bench with the `direct` and `small` groups, its export and its chain method, and a complete JSDoc, and the operations are in alphabetical order in the exports, in the chain and in the API reference;
 - `pnpm check:since`: `@since` is `next` or a released version;
-- `pnpm check:instructions`: the links of `AGENTS.md` and of the skills point to existing files, and the ADRs they cite exist; it cannot tell whether a rule still matches its ADR;
+- `pnpm check:instructions`: the links of `AGENTS.md` and of the skills point to existing files, and the ADRs they cite exist, and [Current decisions](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/README.md#current-decisions) cites every ADR in force and no other one; it cannot tell whether a rule or a sentence still matches its ADR;
 - `pnpm check:changeset`: a pull request that changes `src/` has a changeset;
 - `pnpm check:commits`: the `feat`, `fix`, `perf` and `refactor` commits of a pull request have a body.
 
@@ -49,6 +49,7 @@ The rules live in three places: `AGENTS.md`, the skills (with their `references/
 1. updates the rule in `AGENTS.md`, with the number of the ADR, and removes the rules that no longer hold;
 2. updates every skill that covers it, templates in `references/` included: skills hold checklists and templates, the reasons stay in the ADR;
 3. updates How to contribute;
-4. adds a check in `scripts/` when the rule can be verified, and runs it in `.github/workflows/build-test.yml`.
+4. adds a check in `scripts/` when the rule can be verified, and runs it in `.github/workflows/build-test.yml`;
+5. updates Current decisions in the index of the ADRs: a new row, an amendment merged into the row it changes, a superseded ADR removed ([ADR 0027](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0027-current-decisions-in-the-adr-index.md)).
 
 A change to the code the templates are taken from (`map`, `some`, the test and bench helpers) updates the templates too. `AGENTS.md` and the `adr` skill tell agents the same.
