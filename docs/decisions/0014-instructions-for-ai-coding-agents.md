@@ -1,6 +1,6 @@
 # Instructions for AI coding agents
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0027](0027-current-decisions-in-the-adr-index.md)
 * Deciders: Amebus
 * Date: 2026-09-29
 
