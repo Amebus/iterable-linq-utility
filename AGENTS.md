@@ -25,7 +25,7 @@ pnpm bench:report         # the benchmarks and their report for the pull request
 
 ## Rules
 
-The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
+The decisions in force are summarised in [Current decisions](docs/decisions/README.md#current-decisions); the reasons are in the ADRs of `docs/decisions/` (ADR 0027).
 
 - One file per operation in `src/functions/<name>.ts`, exported from `src/functions/index.ts`; the chain method in `src/linqIterable.ts` only delegates to it, and is declared on `IIterableLinqBase` in `src/types/iterableLinq.ts` (ADR 0001, 0005).
 - A Transformation is lazy and re-runnable: a `DeferredIterable` that creates a `SourceIterator` subclass (ADR 0004, 0007). An iterator with several states keeps them in a `state` field with a transition table, not a `switch` (ADR 0009).
@@ -53,7 +53,7 @@ The reasons are in the ADRs in [`docs/decisions/`](docs/decisions/README.md).
 
 ## Keeping the instructions in sync
 
-The rules live in three places: this file, the skills in `.agents/skills/` (with their `references/`) and `documentation/docs/how-to-contribute.md`. The ADRs hold the reasons; the instructions point to them and never copy them. In the same pull request that adds, changes, supersedes or amends an ADR or a convention, update all three, and remove the rules that no longer hold. A change to the code the templates in `references/` are taken from (`map`, `some`, the test helpers, the bench helpers) updates those templates too.
+The rules live in three places: this file, the skills in `.agents/skills/` (with their `references/`) and `documentation/docs/how-to-contribute.md`. The ADRs hold the reasons; the instructions point to them and never copy them. In the same pull request that adds, changes, supersedes or amends an ADR or a convention, update all three, and remove the rules that no longer hold. An ADR also updates Current decisions in the index of `docs/decisions/`, which `pnpm check:instructions` checks. A change to the code the templates in `references/` are taken from (`map`, `some`, the test helpers, the bench helpers) updates those templates too.
 
 ## Skills
 

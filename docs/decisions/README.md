@@ -64,5 +64,6 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 
 1. Copy the structure of an existing ADR: Context and Problem Statement, Decision Drivers, Considered Options, Decision Outcome (with the positive and negative consequences), Pros and Cons of the Options.
 2. Name the file with the next number and a short title in kebab case, for example `0012-my-decision.md`.
-3. Link the issue or the pull request in `Technical Story`, and add the ADR to the table above.
-4. A decision that replaces an older one does not edit it: set the old one to `superseded by [ADR NNNN](…)`. A decision that corrects or completes part of an older one sets it to `accepted, amended by [ADR NNNN](…)`, and links it with `Amends:`.
+3. Link the issue or the pull request in `Technical Story`, add the ADR to All records, and add its decision to Current decisions.
+4. A decision that replaces an older one does not edit it: set the old one to `superseded by [ADR NNNN](…)`, and remove it from Current decisions. A decision that corrects or completes part of an older one sets it to `accepted, amended by [ADR NNNN](…)`, links it with `Amends:`, and rewrites the row of the older decision in Current decisions with the merged state and a link to both.
+5. `pnpm check:instructions` checks that Current decisions cites every ADR in force and no superseded one, and that the statuses of All records match the files.
