@@ -28,7 +28,7 @@ The instructions help the agent; the checks hold whoever writes the code:
 - `pnpm lint`: the style, and the order of the imports in the specs and the benches;
 - `pnpm check:structure`: every operation has its specs, its bench with the `direct` and `small` groups, its export and its chain method, and a complete JSDoc, and the operations are in alphabetical order in the exports, in the chain and in the API reference;
 - `pnpm check:since`: `@since` is `next` or a released version;
-- `pnpm check:instructions`: the links of `AGENTS.md` and of the skills point to existing files, and the ADRs they cite exist, and [Current decisions](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/README.md#current-decisions) cites every ADR in force and no superseded one; it cannot tell whether a rule or a sentence still matches its ADR;
+- `pnpm check:instructions`: the links of `AGENTS.md` and of the skills point to existing files, and the ADRs they cite exist, and [Current decisions](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/README.md#current-decisions) cites every ADR in force and no other one; it cannot tell whether a rule or a sentence still matches its ADR;
 - `pnpm check:changeset`: a pull request that changes `src/` has a changeset;
 - `pnpm check:commits`: the `feat`, `fix`, `perf` and `refactor` commits of a pull request have a body.
 

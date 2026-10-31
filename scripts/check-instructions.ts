@@ -17,7 +17,7 @@ const decisions = readdirSync('docs/decisions')
 	.filter(name => /^\d{4}-.*\.md$/.test(name))
 	.map(name => ({
 		number: name.slice(0, 4),
-		status: /^\* Status: (.*)$/m.exec(readFileSync(join('docs/decisions', name), 'utf8'))?.[1] ?? ''
+		status: /^\* Status: (.*)$/m.exec(readFileSync(join('docs/decisions', name), 'utf8'))?.[1]
 	}));
 
 const problems = [

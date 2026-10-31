@@ -75,7 +75,45 @@ describe('findDecisionProblems', () => {
 		const records = [...RECORDS.slice(0, 3), { number: '0004', status: 'superseded by [ADR 0003](0003-c.md)' }];
 		const catalog = [...CATALOG.slice(0, 3), '| [0004](0004-d.md) | D | superseded by [0003](0003-c.md) |'];
 		expect(findDecisionProblems(index(SNAPSHOT, catalog), records)).toEqual([
-			{ path: PATH, line: 9, message: 'ADR 0004 is superseded but still in the current decisions' }
+			{ path: PATH, line: 9, message: 'ADR 0004 is not in force ("superseded by 0003") but still in the current decisions' }
+		]);
+	});
+
+	test('only an accepted ADR is in force, whatever the case of its status', () => {
+		const records = [
+			RECORDS[0],
+			{ number: '0002', status: 'Superseded by [ADR 0001](0001-a.md)' },
+			{ number: '0003', status: 'Accepted' },
+			{ number: '0004', status: 'rejected' }
+		];
+		const catalog = [
+			CATALOG[0],
+			'| [0002](0002-b.md) | B | Superseded by [0001](0001-a.md) |',
+			'| [0003](0003-c.md) | C | Accepted |',
+			'| [0004](0004-d.md) | D | rejected |'
+		];
+		expect(findDecisionProblems(index([SNAPSHOT[0], '| Three. | [0003](0003-c.md) |'], catalog), records)).toEqual([]);
+		expect(findDecisionProblems(index([SNAPSHOT[0], '| Three. | [0003](0003-c.md), [0004](0004-d.md) |'], catalog), records)).toEqual([
+			{ path: PATH, line: 8, message: 'ADR 0004 is not in force ("rejected") but still in the current decisions' }
+		]);
+	});
+
+	test('an ADR without a status line is reported once', () => {
+		const records = [RECORDS[0], { number: '0002', status: undefined }, RECORDS[2], RECORDS[3]];
+		expect(findDecisionProblems(index(SNAPSHOT, CATALOG), records)).toEqual([
+			{ path: PATH, line: 1, message: 'ADR 0002 has no "* Status:" line in its file' }
+		]);
+	});
+
+	test('an ADR in two rows of the snapshot is reported on the second one', () => {
+		expect(findDecisionProblems(index([...SNAPSHOT, '| Again. | [0001](0001-a.md) |'], CATALOG), RECORDS)).toEqual([
+			{ path: PATH, line: 10, message: 'ADR 0001 is in more than one row of the current decisions' }
+		]);
+	});
+
+	test('an ADR with two rows in the catalog is reported on the second one', () => {
+		expect(findDecisionProblems(index(SNAPSHOT, [...CATALOG, CATALOG[0]]), RECORDS)).toEqual([
+			{ path: PATH, line: 19, message: 'ADR 0001 has more than one row in the catalog' }
 		]);
 	});
 
@@ -100,7 +138,7 @@ describe('findDecisionProblems', () => {
 
 	test('an ADR without a row in the catalog is reported', () => {
 		expect(findDecisionProblems(index(SNAPSHOT, [CATALOG[0], CATALOG[2], CATALOG[3]]), RECORDS)).toEqual([
-			{ path: PATH, line: 1, message: 'ADR 0002 has no row in the catalog' }
+			{ path: PATH, line: 11, message: 'ADR 0002 has no row in the catalog' }
 		]);
 	});
 
