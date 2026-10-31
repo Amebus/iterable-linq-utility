@@ -13,7 +13,7 @@ pnpm lint                 # ESLint (pnpm lint-fix to fix)
 pnpm typecheck
 pnpm check:since          # @since is `next` or a released version
 pnpm check:structure      # every operation has specs, bench (with the direct and small groups), export, chain method and a complete JSDoc, in alphabetical order
-pnpm check:instructions   # AGENTS.md and the skills link to existing files and ADRs
+pnpm check:instructions   # AGENTS.md and the skills link to existing files and ADRs; the ADR index matches the ADRs
 pnpm check:changeset      # the branch adds a changeset when it changes src/
 pnpm check:commits        # the feat, fix, perf and refactor commits of the branch have a body
 pnpm build

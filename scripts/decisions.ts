@@ -12,7 +12,9 @@ const PATH = 'docs/decisions/README.md';
 const CURRENT = '## Current decisions';
 const CATALOG = '## All records';
 const ADR_LINK = /\[(?:ADR )?(\d{4})\]\([^)]*\)/g;
-const CATALOG_ROW = /^\|\s*\[(\d{4})\]\([^)]*\)\s*\|[^|]*\|(.*)\|\s*$/;
+/** The ADR column of a row of the current decisions: its last cell. The sentence before it may link other ADRs. */
+const LAST_CELL = /^\|.*\|([^|]*)\|\s*$/;
+const CATALOG_ROW =/^\|\s*\[(\d{4})\]\([^)]*\)\s*\|[^|]*\|(.*)\|\s*$/;
 
 interface ISection {
 	heading: number;
@@ -51,7 +53,8 @@ export function findDecisionProblems(content: string, records: IDecisionRecord[]
 	} else {
 		const cited = new Set<string>();
 		for (const [line, text] of current.lines) {
-			for (const [, number] of text.matchAll(ADR_LINK)) {
+			const cell = LAST_CELL.exec(text)?.[1] ?? '';
+			for (const [, number] of cell.matchAll(ADR_LINK)) {
 				cited.add(number);
 				const record = byNumber.get(number);
 				if (record === undefined)

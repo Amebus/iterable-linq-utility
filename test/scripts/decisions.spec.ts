@@ -64,6 +64,13 @@ describe('findDecisionProblems', () => {
 			.toEqual([]);
 	});
 
+	test('a link in the sentence of a decision is not a citation', () => {
+		const snapshot = ['| One, unlike [ADR 0002](0002-b.md). | [0001](0001-a.md) |', SNAPSHOT[2]];
+		expect(findDecisionProblems(index(snapshot, CATALOG), RECORDS)).toEqual([
+			{ path: PATH, line: 3, message: 'ADR 0002 is in force but not in the current decisions' }
+		]);
+	});
+
 	test('a superseded ADR still cited in the snapshot is reported on its row', () => {
 		const records = [...RECORDS.slice(0, 3), { number: '0004', status: 'superseded by [ADR 0003](0003-c.md)' }];
 		const catalog = [...CATALOG.slice(0, 3), '| [0004](0004-d.md) | D | superseded by [0003](0003-c.md) |'];
