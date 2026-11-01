@@ -1,6 +1,7 @@
 # Overview
 
-!!! danger "The library and the documentation are in WIP status"
+!!! note "Before 1.0"
+    A minor version can contain breaking changes. The [Changelog](changelog.md) lists every change, and each breaking change is described in a migration guide, in the Upgrading tab.
 
 | | |
 | --- | --- |

@@ -57,7 +57,16 @@ chain.some(v => v > 10);
 
 Every action runs the chain again, from the source: a chain is **re-runnable**. To avoid running an expensive chain twice, store its values with [memoize](api-reference/transformations.md#memoize) or [materialize](api-reference/actions.md#materialize).
 
-See [Deferred Execution](glossary.md#deferred-execution) and [Repeatable Execution](glossary.md#repeatable-execution) in the glossary.
+When the work runs depends on the kind of operation:
+
+| Operation | When it runs |
+| --- | --- |
+| [Transformations](api-reference/transformations.md) | [Fully deferred](glossary.md#fully-deferred-execution): nothing runs until an action reads the chain |
+| [tapChainCreation](api-reference/taps.md#tapchaincreation) | [Partially deferred](glossary.md#partially-deferred-execution): its callback runs at once, the chain still waits for an action |
+| [Actions](api-reference/actions.md) | [Immediate](glossary.md#immediate-evaluation): they run the chain when they are called |
+| [memoize](api-reference/transformations.md#memoize) with `allowPartialMemoization: false` | [Eager](glossary.md#eager-evaluation): the first read reads the whole source |
+
+Running a chain again has some pitfalls, with single-use and mutable sources, side effects and closing the source: see [Repeatable Execution](advanced-concepts/index.md#repeatable-execution).
 
 ## Equality
 
@@ -111,6 +120,35 @@ Keys are accepted where the selector reads a value: `map`, `flatMap`, `sum`, `av
 A selector is one key, never an array: a nested property, a composite key or a subset of the properties is a function, for example `groupBy(o => o.address.city)` or `map(o => ({ id: o.id, customer: o.customer }))` ([ADR 0026](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0026-arrays-of-keys-are-not-selectors.md)).
 
 A key is not slower than the equivalent function, and often faster ([ADR 0025](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0025-property-keys-as-selectors.md)).
+
+## Errors
+
+The library throws an `Error` when an argument is not valid. Its message starts with the name of the operation that checks it:
+
+```typescript
+import * as IterableLinq from 'iterable-linq-utility';
+
+IterableLinq.from([1, 2, 3]).map(undefined);
+// throws Error: [iterable-linq-utility/map] The "mapper" must be a function or a property key
+```
+
+The arguments are checked when the operation is called, Transformations included: the error comes from the line that builds the chain, not from the action that runs it.
+
+Some errors depend on the values, so they are thrown when the chain runs: [single](api-reference/actions.md#single) on more than one value, [reduce](api-reference/actions.md#reduce) and [reduceRight](api-reference/actions.md#reduceright) without a seed on an empty chain, [with](api-reference/transformations.md#with) with an index outside the chain.
+
+```typescript
+const chain = IterableLinq.from([1, 2]).with(5, 0); // no error yet
+chain.collectToArray();
+// throws Error: [iterable-linq-utility/with] The "index" parameter is out of range: the source has 2 values
+```
+
+The errors that the library does not create reach the action unchanged, as the same object:
+
+- an error thrown by a callback (a mapper, a predicate, …) closes the source first, as the native Iterator Helpers do;
+- an error thrown by the source does not close it: the source has already failed;
+- a property key read on `null` or `undefined` throws the `TypeError` of JavaScript (see [Selectors](#selectors)).
+
+Before 1.0 the text after the prefix can change in a minor version, as in [Migrating to 0.13.0](migrating-to-0.13.0.md): the migration guides list these changes.
 
 ## The `Unit` type
 
