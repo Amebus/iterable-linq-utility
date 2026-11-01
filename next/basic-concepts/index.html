@@ -628,6 +628,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-unit-type" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1413,6 +1424,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errors
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-unit-type" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1519,7 +1541,34 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
 <a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="c1">// true: map ran on the first 7 values only (0 to 6)</span>
 </code></pre></div></td></tr></table></div>
 <p>Every action runs the chain again, from the source: a chain is <strong>re-runnable</strong>. To avoid running an expensive chain twice, store its values with <a href="../api-reference/transformations/#memoize">memoize</a> or <a href="../api-reference/actions/#materialize">materialize</a>.</p>
-<p>See <a href="../glossary/#deferred-execution">Deferred Execution</a> and <a href="../glossary/#repeatable-execution">Repeatable Execution</a> in the glossary.</p>
+<p>When the work runs depends on the kind of operation:</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>When it runs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../api-reference/transformations/">Transformations</a></td>
+<td><a href="../glossary/#fully-deferred-execution">Fully deferred</a>: nothing runs until an action reads the chain</td>
+</tr>
+<tr>
+<td><a href="../api-reference/taps/#tapchaincreation">tapChainCreation</a></td>
+<td><a href="../glossary/#partially-deferred-execution">Partially deferred</a>: its callback runs at once, the chain still waits for an action</td>
+</tr>
+<tr>
+<td><a href="../api-reference/actions/">Actions</a></td>
+<td><a href="../glossary/#immediate-evaluation">Immediate</a>: they run the chain when they are called</td>
+</tr>
+<tr>
+<td><a href="../api-reference/transformations/#memoize">memoize</a> with <code>allowPartialMemoization: false</code></td>
+<td><a href="../glossary/#eager-evaluation">Eager</a>: the first read reads the whole source</td>
+</tr>
+</tbody>
+</table>
+<p>Running a chain again has some pitfalls, with single-use and mutable sources, side effects and closing the source: see <a href="../advanced-concepts/#repeatable-execution">Repeatable Execution</a>.</p>
 <h2 id="equality">Equality<a class="headerlink" href="#equality" title="Permanent link">⚓︎</a></h2>
 <p>JavaScript has three ways to compare two values, which differ only on <code>NaN</code> and <code>-0</code>:</p>
 <table>
@@ -1620,26 +1669,51 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
 <p>Keys are accepted where the selector reads a value: <code>map</code>, <code>flatMap</code>, <code>sum</code>, <code>average</code>, <code>distinct</code>, <code>union</code>, <code>intersect</code>, <code>except</code>, <code>groupBy</code>, the keys of <code>innerJoin</code> and <code>groupJoin</code>, and the key and value of <code>collectToMap</code>. Predicates (<code>filter</code>, <code>some</code>, <code>find</code>, …), reducers and taps keep taking functions. <code>min</code> and <code>max</code> take a <a href="../api-reference/actions/#max">Comparer</a>, where a key orders the values with <code>&lt;</code>.</p>
 <p>A selector is one key, never an array: a nested property, a composite key or a subset of the properties is a function, for example <code>groupBy(o =&gt; o.address.city)</code> or <code>map(o =&gt; ({ id: o.id, customer: o.customer }))</code> (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0026-arrays-of-keys-are-not-selectors.md">ADR 0026</a>).</p>
 <p>A key is not slower than the equivalent function, and often faster (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0025-property-keys-as-selectors.md">ADR 0025</a>).</p>
-<h2 id="the-unit-type">The <code>Unit</code> type<a class="headerlink" href="#the-unit-type" title="Permanent link">⚓︎</a></h2>
-<p>Callbacks that have nothing to return, like the ones passed to <code>forEach</code>, <code>forEachAsync</code>, <code>tap</code> and <code>tapChain</code>, return <code>unit()</code>: the only value of the <code>Unit</code> type.
-<code>Unit</code> is nominal, so the compiler rejects a callback that returns anything else (a number, a string, an object, <code>undefined</code>).</p>
+<h2 id="errors">Errors<a class="headerlink" href="#errors" title="Permanent link">⚓︎</a></h2>
+<p>The library throws an <code>Error</code> when an argument is not valid. Its message starts with the name of the operation that checks it:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
 <span class="normal"><a href="#__codelineno-2-2">2</a></span>
 <span class="normal"><a href="#__codelineno-2-3">3</a></span>
-<span class="normal"><a href="#__codelineno-2-4">4</a></span>
-<span class="normal"><a href="#__codelineno-2-5">5</a></span>
-<span class="normal"><a href="#__codelineno-2-6">6</a></span>
-<span class="normal"><a href="#__codelineno-2-7">7</a></span>
-<span class="normal"><a href="#__codelineno-2-8">8</a></span>
-<span class="normal"><a href="#__codelineno-2-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="nx">IterableLinq</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="w">    </span><span class="p">});</span>
+<span class="normal"><a href="#__codelineno-2-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">]).</span><span class="nx">map</span><span class="p">(</span><span class="kc">undefined</span><span class="p">);</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="c1">// throws Error: [iterable-linq-utility/map] The "mapper" must be a function or a property key</span>
+</code></pre></div></td></tr></table></div>
+<p>The arguments are checked when the operation is called, Transformations included: the error comes from the line that builds the chain, not from the action that runs it.</p>
+<p>Some errors depend on the values, so they are thrown when the chain runs: <a href="../api-reference/actions/#single">single</a> on more than one value, <a href="../api-reference/actions/#reduce">reduce</a> and <a href="../api-reference/actions/#reduceright">reduceRight</a> without a seed on an empty chain, <a href="../api-reference/transformations/#with">with</a> with an index outside the chain.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">]).</span><span class="kd">with</span><span class="p">(</span><span class="mf">5</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// no error yet</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="c1">// throws Error: [iterable-linq-utility/with] The "index" parameter is out of range: the source has 2 values</span>
+</code></pre></div></td></tr></table></div>
+<p>The errors that the library does not create reach the action unchanged, as the same object:</p>
+<ul>
+<li>an error thrown by a callback (a mapper, a predicate, …) closes the source first, as the native Iterator Helpers do;</li>
+<li>an error thrown by the source does not close it: the source has already failed;</li>
+<li>a property key read on <code>null</code> or <code>undefined</code> throws the <code>TypeError</code> of JavaScript (see <a href="#selectors">Selectors</a>).</li>
+</ul>
+<p>Before 1.0 the text after the prefix can change in a minor version, as in <a href="../migrating-to-0.13.0/">Migrating to 0.13.0</a>: the migration guides list these changes.</p>
+<h2 id="the-unit-type">The <code>Unit</code> type<a class="headerlink" href="#the-unit-type" title="Permanent link">⚓︎</a></h2>
+<p>Callbacks that have nothing to return, like the ones passed to <code>forEach</code>, <code>forEachAsync</code>, <code>tap</code> and <code>tapChain</code>, return <code>unit()</code>: the only value of the <code>Unit</code> type.
+<code>Unit</code> is nominal, so the compiler rejects a callback that returns anything else (a number, a string, an object, <code>undefined</code>).</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span>
+<span class="normal"><a href="#__codelineno-4-6">6</a></span>
+<span class="normal"><a href="#__codelineno-4-7">7</a></span>
+<span class="normal"><a href="#__codelineno-4-8">8</a></span>
+<span class="normal"><a href="#__codelineno-4-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="k">import</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unit</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'iterable-linq-utility'</span><span class="p">;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="nx">IterableLinq</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">    </span><span class="p">});</span>
 </code></pre></div></td></tr></table></div>
 <div class="footnote">
 <hr />
@@ -1671,7 +1745,7 @@ Other common <a href="../api-reference/transformations/">Transformations</a> are
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 15, 2026 12:17:29 UTC">October 15, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 1, 2026 21:20:11 UTC">November 1, 2026</span>
   </span>
 
     
