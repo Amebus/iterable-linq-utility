@@ -1434,35 +1434,144 @@
 
 
 <h1 id="advanced-concepts">Advanced Concepts<a class="headerlink" href="#advanced-concepts" title="Permanent link">⚓︎</a></h1>
-<div class="admonition danger">
-<p class="admonition-title">WIP</p>
-<p>Most sections of this page are still to be written. For the basics see <a href="../basic-concepts/#deferred-execution">Deferred Execution</a> and the <a href="../glossary/">Glossary</a>.</p>
-</div>
+<p>This page goes deeper into what <a href="../basic-concepts/#deferred-execution">Deferred Execution</a> summarises in the Basic Concepts: when a chain reads its source, how much of it, and what it sees when the source changes.</p>
 <h2 id="deferred-execution">Deferred Execution<a class="headerlink" href="#deferred-execution" title="Permanent link">⚓︎</a></h2>
 <h3 id="input-iterable-mutability">Input iterable mutability<a class="headerlink" href="#input-iterable-mutability" title="Permanent link">⚓︎</a></h3>
+<p>A chain keeps a reference to its source, never a copy, and every run asks the source for a new iterator. So each run sees the source as it is when the run starts:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">];</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">);</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [10, 20, 30]</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">4</span><span class="p">);</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [10, 20, 30, 40]</span>
+</code></pre></div></td></tr></table></div>
+<p>During a run, the chain sees what the iterator of the source yields. An array iterator reads by index, so a value changed or added before it is reached is seen; a <code>Set</code> yields the values added during the iteration too:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">7</a></span>
+<span class="normal"><a href="#__codelineno-1-8">8</a></span>
+<span class="normal"><a href="#__codelineno-1-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">];</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">seen</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">values</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">30</span><span class="p">;</span><span class="w"> </span><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">4</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="nx">seen</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="p">});</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="nx">seen</span><span class="p">;</span><span class="w"> </span><span class="c1">// [1, 2, 30, 4]</span>
+</code></pre></div></td></tr></table></div>
+<p>An operation that reads the whole source before its first value (<a href="#eager-evaluation">Eager Evaluation</a>) sees the source as it was at that moment: a change made later in the same run reaches only the next run.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">];</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">seen</span><span class="o">:</span><span class="w"> </span><span class="kt">number</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">reverse</span><span class="p">().</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span><span class="w"> </span><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">4</span><span class="p">);</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">    </span><span class="nx">seen</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">v</span><span class="p">);</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="p">});</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="nx">seen</span><span class="p">;</span><span class="w">                                            </span><span class="c1">// [3, 2, 1]</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">reverse</span><span class="p">().</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [4, 3, 2, 1]</span>
+</code></pre></div></td></tr></table></div>
+<p>The other iterables of <code>except</code>, <code>intersect</code>, <code>innerJoin</code> and <code>groupJoin</code> are read again on every run too, so a change to them is seen by the next run.</p>
+<p>To fix the values of a chain, store them: <a href="../api-reference/actions/#materialize">materialize</a> takes a snapshot, while <a href="../api-reference/transformations/#memoize">memoize</a> keeps the values it has read and reads the others from the source as it is when they are needed. See the caveat on <a href="#repeatable-execution-caveats">mutable sources</a> and <a href="#memoize-vs-materialize">Memoize vs Materialize</a>.</p>
 <h3 id="fully-deferred-execution">Fully Deferred Execution<a class="headerlink" href="#fully-deferred-execution" title="Permanent link">⚓︎</a></h3>
+<p>Every <a href="../api-reference/transformations/">Transformation</a>, and every function that starts a chain, reads nothing and calls no callback when it is called: it only records the work. The work happens in the iterator that each run creates (see <a href="../architecture/">Architecture</a>). So a chain over an infinite source can be built, and run as far as an action needs:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">reads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">naturals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reads</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="nx">n</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="kd">const</span><span class="w"> </span><span class="nx">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">naturals</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">);</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                         </span><span class="c1">// 0</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [0, 20, 40]</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                         </span><span class="c1">// 5</span>
+</code></pre></div></td></tr></table></div>
+<p>Only the arguments are checked at the call, so a wrong argument throws when the chain is built: see <a href="../basic-concepts/#errors">Errors</a>.</p>
+<p>When the chain runs, most transformations read one value of the source for each value they yield (<a href="../glossary/#lazy-evaluation">Lazy Evaluation</a>). A few read a bounded number of values ahead: <code>skip</code> and <code>skipWhile</code> read the values they skip, <code>skipLast(count)</code> and <code>with</code> with a negative index keep <code>count</code> values in a buffer, <code>chunk(size)</code> reads <code>size</code> values for each chunk.</p>
 <h3 id="partially-deferred-execution">Partially Deferred Execution<a class="headerlink" href="#partially-deferred-execution" title="Permanent link">⚓︎</a></h3>
+<p><a href="../api-reference/taps/#tapchaincreation">tapChainCreation</a> is the only operation that does part of its work at the call: its callback runs at once, with the chain built so far, while the chain itself still runs only when an action asks for the values. <a href="../api-reference/taps/#tapchain">tapChain</a>, instead, calls its callback at every run:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">calls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="kd">let</span><span class="w"> </span><span class="nx">runs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">])</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">tapChainCreation</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">calls</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="p">.</span><span class="nx">tapChain</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">runs</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">unit</span><span class="p">();</span><span class="w"> </span><span class="p">});</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="nx">calls</span><span class="p">;</span><span class="w"> </span><span class="c1">// 1, at the call</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="nx">runs</span><span class="p">;</span><span class="w">  </span><span class="c1">// 0</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="nx">calls</span><span class="p">;</span><span class="w"> </span><span class="c1">// still 1</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="nx">runs</span><span class="p">;</span><span class="w">  </span><span class="c1">// 2, one per run</span>
+</code></pre></div></td></tr></table></div>
 <h3 id="eager-evaluation">Eager Evaluation<a class="headerlink" href="#eager-evaluation" title="Permanent link">⚓︎</a></h3>
+<p>Lazy and eager say how much of the source an operation reads for each value it yields, not when the work starts, which is deferred for every transformation, nor whether the values are kept, which is the job of <code>memoize</code>. The words follow the <a href="https://learn.microsoft.com/en-us/dotnet/standard/linq/deferred-execution-lazy-evaluation#eager-vs-lazy-evaluation">LINQ documentation</a>: see <a href="../glossary/#lazy-evaluation">Lazy Evaluation</a> in the glossary.</p>
+<p>These operations read the whole source before they yield the first value:</p>
+<ul>
+<li><a href="../api-reference/transformations/#groupby">groupBy</a>, <a href="../api-reference/transformations/#reverse">reverse</a> and <a href="../api-reference/transformations/#takelast">takeLast</a>;</li>
+<li><a href="../api-reference/transformations/#slice">slice</a> with a negative <code>start</code>;</li>
+<li><a href="../api-reference/transformations/#memoize">memoize</a> with <code>allowPartialMemoization: false</code>, which is eager and keeps the values.</li>
+</ul>
+<p><a href="../api-reference/transformations/#except">except</a>, <a href="../api-reference/transformations/#intersect">intersect</a>, <a href="../api-reference/transformations/#innerjoin">innerJoin</a> and <a href="../api-reference/transformations/#groupjoin">groupJoin</a> read their other iterable whole before the first value, and their source lazily.</p>
+<p>An eager operation holds the values it reads in memory, and on an infinite source it never yields its first value:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">naturals</span><span class="p">).</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">           </span><span class="c1">// [0, 1, 2]</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">naturals</span><span class="p">).</span><span class="nx">reverse</span><span class="p">().</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// never returns</span>
+</code></pre></div></td></tr></table></div>
 <h2 id="repeatable-execution">Repeatable Execution<a class="headerlink" href="#repeatable-execution" title="Permanent link">⚓︎</a></h2>
 <p>Every <a href="../api-reference/actions/">Action</a> runs the chain again, from the source. A chain is re-runnable only if its source is.</p>
 <h3 id="repeatable-execution-caveats">Repeatable Execution Caveats<a class="headerlink" href="#repeatable-execution-caveats" title="Permanent link">⚓︎</a></h3>
 <ul>
 <li>
 <p><strong>Single-use sources.</strong> A generator object, or any iterator that returns itself from <code>[Symbol.iterator]()</code>, can be read only once. A chain over it gives the values on the first run and nothing on the next ones:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
-<span class="normal"><a href="#__codelineno-0-2">2</a></span>
-<span class="normal"><a href="#__codelineno-0-3">3</a></span>
-<span class="normal"><a href="#__codelineno-0-4">4</a></span>
-<span class="normal"><a href="#__codelineno-0-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="kd">function</span><span class="o">*</span><span class="w"> </span><span class="nx">numbers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">numbers</span><span class="p">());</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1, 2]</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// []</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="kd">function</span><span class="o">*</span><span class="w"> </span><span class="nx">numbers</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="kd">const</span><span class="w"> </span><span class="nx">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">numbers</span><span class="p">());</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1, 2]</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="nx">chain</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// []</span>
 </code></pre></div></td></tr></table></div>
 <p>Add <a href="../api-reference/transformations/#memoize">memoize</a> to cache the values on the first run, or pass a re-runnable source, for example an object whose <code>[Symbol.iterator]</code> calls the generator function:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">numbers</span><span class="p">()).</span><span class="nx">memoize</span><span class="p">();</span><span class="w">                   </span><span class="c1">// re-runnable, from the cache</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">({</span><span class="w"> </span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="nx">numbers</span><span class="w"> </span><span class="p">});</span><span class="w">        </span><span class="c1">// re-runnable, calls numbers() on every run</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">numbers</span><span class="p">()).</span><span class="nx">memoize</span><span class="p">();</span><span class="w">                   </span><span class="c1">// re-runnable, from the cache</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">({</span><span class="w"> </span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="nx">numbers</span><span class="w"> </span><span class="p">});</span><span class="w">        </span><span class="c1">// re-runnable, calls numbers() on every run</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -1476,76 +1585,76 @@
 <ul>
 <li>
 <p><strong>One cache, several consumers.</strong> Every run of the chain, and every iterator over it, reads the same cache by index. A consumer reads the source only past the cached values, so every value of the source is read once, even when two consumers interleave:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-2-10">10</a></span>
-<span class="normal"><a href="#__codelineno-2-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">reads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reads</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">v</span><span class="p">;</span><span class="w"> </span><span class="p">})</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">memoize</span><span class="p">();</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="kd">const</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cached</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]();</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8"></a><span class="kd">const</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cached</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]();</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span><span class="w"> </span><span class="c1">// { value: 1, done: false }, read from the source</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="nx">b</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span><span class="w"> </span><span class="c1">// { value: 1, done: false }, read from the cache</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="nx">reads</span><span class="p">;</span><span class="w">    </span><span class="c1">// 1</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-8-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-8-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-8-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-8-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-8-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-8-10">10</a></span>
+<span class="normal"><a href="#__codelineno-8-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">reads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reads</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">v</span><span class="p">;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">memoize</span><span class="p">();</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7"></a><span class="kd">const</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cached</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]();</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8"></a><span class="kd">const</span><span class="w"> </span><span class="nx">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cached</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]();</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9"></a><span class="nx">a</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span><span class="w"> </span><span class="c1">// { value: 1, done: false }, read from the source</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10"></a><span class="nx">b</span><span class="p">.</span><span class="nx">next</span><span class="p">();</span><span class="w"> </span><span class="c1">// { value: 1, done: false }, read from the cache</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11"></a><span class="nx">reads</span><span class="p">;</span><span class="w">    </span><span class="c1">// 1</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
 <p><strong>Partial or full.</strong> With <code>allowPartialMemoization: true</code>, the default, the cache fills as far as the consumers read. With <code>false</code>, the first read reads the whole source into the cache, so an infinite source never returns:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
-<span class="normal"><a href="#__codelineno-3-2">2</a></span>
-<span class="normal"><a href="#__codelineno-3-3">3</a></span>
-<span class="normal"><a href="#__codelineno-3-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">naturals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="nx">n</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">naturals</span><span class="p">).</span><span class="nx">memoize</span><span class="p">().</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [0, 1, 2]</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">naturals</span><span class="p">).</span><span class="nx">memoize</span><span class="p">({</span><span class="w"> </span><span class="nx">allowPartialMemoization</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">}).</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// never returns</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
+<span class="normal"><a href="#__codelineno-9-2">2</a></span>
+<span class="normal"><a href="#__codelineno-9-3">3</a></span>
+<span class="normal"><a href="#__codelineno-9-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">naturals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="nx">n</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">naturals</span><span class="p">).</span><span class="nx">memoize</span><span class="p">().</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [0, 1, 2]</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">naturals</span><span class="p">).</span><span class="nx">memoize</span><span class="p">({</span><span class="w"> </span><span class="nx">allowPartialMemoization</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">}).</span><span class="nx">take</span><span class="p">(</span><span class="mf">3</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// never returns</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
 <p><strong>Stopping early does not close the source.</strong> A consumer that stops early, like <a href="../api-reference/actions/#some">some</a> or <a href="../api-reference/transformations/#take">take</a>, leaves the source open, so that another consumer can continue from the end of the cache. The source is released when a consumer reads it to the end. Until then it stays open: the <code>finally</code> block of a generator does not run.</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-4-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">reads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reads</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">v</span><span class="p">;</span><span class="w"> </span><span class="p">})</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">memoize</span><span class="p">();</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6"></a>
-<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span><span class="w"> </span><span class="c1">// true</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                     </span><span class="c1">// 2</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">   </span><span class="c1">// [1, 2, 3, 4]</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                     </span><span class="c1">// 4: only 3 and 4 were read from the source</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-10-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-10-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-10-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-10-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-10-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-10-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-10-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-10-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-10-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">reads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reads</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">v</span><span class="p">;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">memoize</span><span class="p">();</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">some</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">2</span><span class="p">);</span><span class="w"> </span><span class="c1">// true</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                     </span><span class="c1">// 2</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">   </span><span class="c1">// [1, 2, 3, 4]</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                     </span><span class="c1">// 4: only 3 and 4 were read from the source</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
 <p><strong>Source errors are stored.</strong> When the source throws, the error reaches the consumer that was reading. Every later read past the cached values throws the same error, without reading the source again. The values cached before the error can still be read:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
-<span class="normal"><a href="#__codelineno-5-2">2</a></span>
-<span class="normal"><a href="#__codelineno-5-3">3</a></span>
-<span class="normal"><a href="#__codelineno-5-4">4</a></span>
-<span class="normal"><a href="#__codelineno-5-5">5</a></span>
-<span class="normal"><a href="#__codelineno-5-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">failing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">'boom'</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">failing</span><span class="p">).</span><span class="nx">memoize</span><span class="p">();</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3"></a>
-<a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// throws Error('boom')</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// throws the same error, the source is not read again</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mf">1</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1], from the cache</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
+<span class="normal"><a href="#__codelineno-11-2">2</a></span>
+<span class="normal"><a href="#__codelineno-11-3">3</a></span>
+<span class="normal"><a href="#__codelineno-11-4">4</a></span>
+<span class="normal"><a href="#__codelineno-11-5">5</a></span>
+<span class="normal"><a href="#__codelineno-11-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">failing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="p">[</span><span class="nb">Symbol</span><span class="p">.</span><span class="nx">iterator</span><span class="p">]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">'boom'</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">failing</span><span class="p">).</span><span class="nx">memoize</span><span class="p">();</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a>
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// throws Error('boom')</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// throws the same error, the source is not read again</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mf">1</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1], from the cache</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -1553,23 +1662,23 @@
 </li>
 <li>
 <p><strong>Mutable sources.</strong> The cache never changes once a value is in it, but a value not read yet comes from the source as it is when it is read. After the source has been read to the end, the cache ignores it:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
-<span class="normal"><a href="#__codelineno-6-2">2</a></span>
-<span class="normal"><a href="#__codelineno-6-3">3</a></span>
-<span class="normal"><a href="#__codelineno-6-4">4</a></span>
-<span class="normal"><a href="#__codelineno-6-5">5</a></span>
-<span class="normal"><a href="#__codelineno-6-6">6</a></span>
-<span class="normal"><a href="#__codelineno-6-7">7</a></span>
-<span class="normal"><a href="#__codelineno-6-8">8</a></span>
-<span class="normal"><a href="#__codelineno-6-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">];</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">memoize</span><span class="p">();</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3"></a>
-<a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mf">1</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1]</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="nx">values</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">20</span><span class="p">;</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">3</span><span class="p">);</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// [1, 20, 3]: 20 and 3 were not cached yet</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">4</span><span class="p">);</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// [1, 20, 3]: the source was read to the end</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span>
+<span class="normal"><a href="#__codelineno-12-2">2</a></span>
+<span class="normal"><a href="#__codelineno-12-3">3</a></span>
+<span class="normal"><a href="#__codelineno-12-4">4</a></span>
+<span class="normal"><a href="#__codelineno-12-5">5</a></span>
+<span class="normal"><a href="#__codelineno-12-6">6</a></span>
+<span class="normal"><a href="#__codelineno-12-7">7</a></span>
+<span class="normal"><a href="#__codelineno-12-8">8</a></span>
+<span class="normal"><a href="#__codelineno-12-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">];</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">memoize</span><span class="p">();</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3"></a>
+<a id="__codelineno-12-4" name="__codelineno-12-4"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">take</span><span class="p">(</span><span class="mf">1</span><span class="p">).</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1]</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5"></a><span class="nx">values</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">20</span><span class="p">;</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6"></a><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">3</span><span class="p">);</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// [1, 20, 3]: 20 and 3 were not cached yet</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8"></a><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">4</span><span class="p">);</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9"></a><span class="nx">cached</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w">         </span><span class="c1">// [1, 20, 3]: the source was read to the end</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -1581,25 +1690,25 @@
 <ul>
 <li>
 <p><strong>The work runs at the call, once.</strong> The callbacks of the chain run when <code>materialize</code> is called, and never again:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-7-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">reads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reads</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">;</span><span class="w"> </span><span class="p">})</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">materialize</span><span class="p">();</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6"></a>
-<a id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                   </span><span class="c1">// 3, before any read</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [10, 20, 30]</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [10, 20, 30]</span>
-<a id="__codelineno-7-10" name="__codelineno-7-10"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                   </span><span class="c1">// still 3</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-13-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-13-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-13-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-13-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-13-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-13-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-13-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-13-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-13-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><span class="kd">let</span><span class="w"> </span><span class="nx">reads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a><span class="w">    </span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3</span><span class="p">])</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a><span class="w">    </span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">v</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">reads</span><span class="o">++</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">v</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">10</span><span class="p">;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a><span class="w">    </span><span class="p">.</span><span class="nx">materialize</span><span class="p">();</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a>
+<a id="__codelineno-13-7" name="__codelineno-13-7"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                   </span><span class="c1">// 3, before any read</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [10, 20, 30]</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [10, 20, 30]</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10"></a><span class="nx">reads</span><span class="p">;</span><span class="w">                   </span><span class="c1">// still 3</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -1608,15 +1717,15 @@
 <li><strong>No infinite sources.</strong> <code>materialize</code> reads the source to the end, so on an infinite source it never returns. Use <a href="../api-reference/transformations/#take">take</a> first, or <code>memoize</code>.</li>
 <li>
 <p><strong>A snapshot.</strong> The values are copied when <code>materialize</code> is called, so later changes to a mutable source are not seen:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
-<span class="normal"><a href="#__codelineno-8-2">2</a></span>
-<span class="normal"><a href="#__codelineno-8-3">3</a></span>
-<span class="normal"><a href="#__codelineno-8-4">4</a></span>
-<span class="normal"><a href="#__codelineno-8-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">];</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">materialize</span><span class="p">();</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a>
-<a id="__codelineno-8-4" name="__codelineno-8-4"></a><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">3</span><span class="p">);</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1, 2]</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-14-1">1</a></span>
+<span class="normal"><a href="#__codelineno-14-2">2</a></span>
+<span class="normal"><a href="#__codelineno-14-3">3</a></span>
+<span class="normal"><a href="#__codelineno-14-4">4</a></span>
+<span class="normal"><a href="#__codelineno-14-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">];</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2"></a><span class="kd">const</span><span class="w"> </span><span class="nx">stored</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">values</span><span class="p">).</span><span class="nx">materialize</span><span class="p">();</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4"></a><span class="nx">values</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mf">3</span><span class="p">);</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5"></a><span class="nx">stored</span><span class="p">.</span><span class="nx">collectToArray</span><span class="p">();</span><span class="w"> </span><span class="c1">// [1, 2]</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -1691,7 +1800,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 2, 2026 11:17:53 UTC">October 2, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 1, 2026 21:56:33 UTC">November 1, 2026</span>
   </span>
 
     
