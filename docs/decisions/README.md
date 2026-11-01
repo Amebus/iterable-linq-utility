@@ -27,6 +27,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | Every error the library creates starts with `[iterable-linq-utility/<operation>]`, through `libraryError` or a `Validations` helper; the errors of the source and of the callbacks propagate unchanged. | [0020](0020-error-messages-of-the-library.md) |
 | An operation with a native counterpart uses its equality (`indexOf` `===`, `includes` `SameValueZero`); every other one uses `SameValueZero`, and a different equality is a callback. | [0024](0024-equality-of-the-operations-that-compare-values.md) |
 | A selector that reads a value from the element also accepts one property key, never an array, read inline without slowing the function form; predicates, reducers and taps take functions only. | [0025](0025-property-keys-as-selectors.md), [0026](0026-arrays-of-keys-are-not-selectors.md) |
+| The specs and plans that agents write for a change stay local in `docs/superpowers/`, which git ignores; a decision goes in an ADR, the agreed design in the issue or the pull request. | [0028](0028-specs-and-plans-stay-out-of-the-repository.md) |
 
 ## All records
 
@@ -59,6 +60,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0025](0025-property-keys-as-selectors.md) | Property keys as selectors | accepted, amended by [0026](0026-arrays-of-keys-are-not-selectors.md) |
 | [0026](0026-arrays-of-keys-are-not-selectors.md) | Arrays of keys are not selectors | accepted |
 | [0027](0027-current-decisions-in-the-adr-index.md) | Current decisions in the ADR index | accepted |
+| [0028](0028-specs-and-plans-stay-out-of-the-repository.md) | Specs and plans stay out of the repository | accepted |
 
 ## Adding a decision
 
