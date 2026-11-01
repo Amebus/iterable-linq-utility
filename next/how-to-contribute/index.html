@@ -12,7 +12,7 @@
         <link rel="prev" href="../migrating-to-0.1.0/">
       
       
-        <link rel="next" href="../ai-agents/">
+        <link rel="next" href="../architecture/">
       
       
         
@@ -1053,6 +1053,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1262,40 +1268,96 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Releases">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#protection-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Protection rules
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#documentation-between-releases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Documentation between releases
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../releasing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Releasing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1459,34 +1521,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Releases">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#protection-rules" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Protection rules
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#documentation-between-releases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Documentation between releases
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -1515,7 +1549,7 @@
 <ul>
 <li><strong>Open an issue first</strong> for a new operation or for a change of behaviour, so the design can be agreed before the code is written. For a new operation, write its signatures in the issue: the chain method and the raw function in <code>Functions</code>.</li>
 <li><strong>Record architecture decisions</strong> as an ADR in <a href="https://github.com/Amebus/iterable-linq-utility/tree/main/docs/decisions"><code>docs/decisions/</code></a>. Copy the format of the existing ones, and update <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/README.md#current-decisions">Current decisions</a>, the summary of the decisions in force: add a row, merge an amendment into the row it changes, remove a superseded ADR (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0027-current-decisions-in-the-adr-index.md">ADR 0027</a>).</li>
-<li><strong>Working with an AI agent?</strong> The repository has instructions for it: see <a href="../ai-agents/">Working with AI agents</a>.</li>
+<li><strong>Working with an AI agent?</strong> The repository has instructions for it: see <a href="../ai-agents/">Working with AI agents</a>. The specs and plans that an agent writes for a change stay local, in <code>docs/superpowers/</code>, which git ignores: what must last goes in the issue, the pull request or an ADR (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0028-specs-and-plans-stay-out-of-the-repository.md">ADR 0028</a>).</li>
 </ul>
 <h2 id="set-up">Set up<a class="headerlink" href="#set-up" title="Permanent link">⚓︎</a></h2>
 <p>The repository has a devcontainer: open it in VS Code (or any editor that supports devcontainers). It runs on the local image <code>node-alpine:24.20.0</code>, built from <code>.devcontainer/Dockerfile</code>, and runs <code>pnpm install</code> when the container is created. Build the image once before opening the devcontainer, and again after changing the Dockerfile:</p>
@@ -1537,8 +1571,16 @@
 </thead>
 <tbody>
 <tr>
+<td><code>src/index.ts</code></td>
+<td>The entry point: the starters (<code>from</code>, <code>fromRange</code>, …), <code>Functions</code>, the extension API and the types.</td>
+</tr>
+<tr>
 <td><code>src/functions/</code></td>
 <td>One file per operation. These are the raw functions exported as <code>Functions</code>.</td>
+</tr>
+<tr>
+<td><code>src/linqIterable.ts</code></td>
+<td>The chain: each method calls the matching raw function.</td>
 </tr>
 <tr>
 <td><code>src/types/</code></td>
@@ -1546,23 +1588,59 @@
 </tr>
 <tr>
 <td><code>src/iterators/</code></td>
-<td>The building blocks of the lazy operations: <code>BaseIterator</code>, <code>SourceIterator</code>, <code>DeferredIterable</code>.</td>
+<td>The building blocks of the lazy operations: <code>BaseIterator</code>, <code>SourceIterator</code>, <code>DeferredIterable</code>, and the base classes shared by a few operations.</td>
 </tr>
 <tr>
-<td><code>src/linqIterable.ts</code></td>
-<td>The chain: each method calls the matching raw function.</td>
+<td><code>src/extension.ts</code></td>
+<td><code>extend</code>, <code>override</code> and <code>isIterableLinq</code>.</td>
+</tr>
+<tr>
+<td><code>src/utils/</code></td>
+<td><code>Validations</code>, <code>libraryError</code> and the helpers shared by the operations.</td>
+</tr>
+<tr>
+<td><code>src/collections/</code></td>
+<td>The linked list used by <code>materialize</code> and <code>reverse</code>.</td>
 </tr>
 <tr>
 <td><code>test/functions/</code></td>
-<td>One spec file per operation.</td>
+<td>One spec file per operation, on the raw function.</td>
+</tr>
+<tr>
+<td><code>test/linqIterableWrapper/</code></td>
+<td>One spec file per operation, on the chain method.</td>
+</tr>
+<tr>
+<td><code>test/iterators/</code>, <code>test/utils/</code>, <code>test/collections/</code>, <code>test/types/</code></td>
+<td>The specs of the other parts of <code>src/</code>; <code>test/types/</code> checks the types.</td>
 </tr>
 <tr>
 <td><code>test/_helpers/</code></td>
-<td>Shared test helpers.</td>
+<td>Shared test helpers and the test sources of <code>generators/</code>.</td>
 </tr>
 <tr>
 <td><code>test/bench/</code></td>
-<td>The benchmarks.</td>
+<td>The benchmarks: see <a href="../benchmarks/">Benchmarks</a>.</td>
+</tr>
+<tr>
+<td><code>test/scripts/</code></td>
+<td>The specs of <code>scripts/</code>.</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>The checks (<code>check:*</code>) and the scripts of the release and of the documentation.</td>
+</tr>
+<tr>
+<td><code>docs/decisions/</code></td>
+<td>The ADRs, and their index with the current decisions.</td>
+</tr>
+<tr>
+<td><code>.agents/skills/</code></td>
+<td>The skills for AI agents: see <a href="../ai-agents/">Working with AI agents</a>.</td>
+</tr>
+<tr>
+<td><code>.changeset/</code></td>
+<td>The changesets waiting for the next release.</td>
 </tr>
 <tr>
 <td><code>documentation/</code></td>
@@ -1570,7 +1648,7 @@
 </tr>
 </tbody>
 </table>
-<p>The reasons behind this layout are in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0001-folder-structure-based-on-topics.md">ADR 0001</a>.</p>
+<p>The reasons behind this layout are in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0001-folder-structure-based-on-topics.md">ADR 0001</a>. How the parts work together: <a href="../architecture/">Architecture</a>.</p>
 <h2 id="adding-an-operation">Adding an operation<a class="headerlink" href="#adding-an-operation" title="Permanent link">⚓︎</a></h2>
 <ol>
 <li><strong>Write the raw function</strong> in <code>src/functions/&lt;name&gt;.ts</code>.<ul>
@@ -1598,7 +1676,7 @@
 </ul>
 </li>
 <li><strong>Document it on this site</strong>, in the right page of the <a href="../api-reference/">API Reference</a>. Add a row to the TLDR table, then a section with a "Wrapper" and a "Raw Function" tab, like the existing ones.</li>
-<li><strong>Benchmark it</strong> in <code>test/bench/functions/&lt;name&gt;.bench.ts</code>, next to a native reference (and a hand-written loop when the array method is a different algorithm), with the standard scenarios: <code>direct</code>, <code>small</code>, after a <code>map</code>, after a <code>filter</code>, the early exit and the optional callback where they apply (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0021-benchmark-standards.md">ADR 0021</a>, <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0022-benchmark-scenarios-in-practice.md">ADR 0022</a>). <code>scenarios()</code> and <code>group()</code> of <code>test/bench/helpers.ts</code> register them; <code>pnpm check:structure</code> checks that the <code>direct</code> and <code>small</code> groups are there. Paste the output of <code>pnpm bench:report functions/&lt;name&gt;</code> in the pull request. The <a href="https://github.com/Amebus/iterable-linq-utility#benchmarks">Benchmarks section of the README</a> explains how.</li>
+<li><strong>Benchmark it</strong> in <code>test/bench/functions/&lt;name&gt;.bench.ts</code>, next to a native reference (and a hand-written loop when the array method is a different algorithm), with the standard scenarios: <code>direct</code>, <code>small</code>, after a <code>map</code>, after a <code>filter</code>, the early exit and the optional callback where they apply (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0021-benchmark-standards.md">ADR 0021</a>, <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0022-benchmark-scenarios-in-practice.md">ADR 0022</a>). <code>scenarios()</code> and <code>group()</code> of <code>test/bench/helpers.ts</code> register them; <code>pnpm check:structure</code> checks that the <code>direct</code> and <code>small</code> groups are there. Paste the output of <code>pnpm bench:report functions/&lt;name&gt;</code> in the pull request. <a href="../benchmarks/">Benchmarks</a> explains how.</li>
 <li><strong>Add a changeset</strong> with <code>pnpm changeset</code>: a <code>minor</code> bump and a note for the changelog. See <a href="#commits-and-pull-requests">Commits and pull requests</a>.</li>
 </ol>
 <h2 id="code-style">Code style<a class="headerlink" href="#code-style" title="Permanent link">⚓︎</a></h2>
@@ -1670,52 +1748,10 @@
 </li>
 <li>A pull request that changes <code>src/</code> adds a changeset: run <code>pnpm changeset</code>, choose the bump and write a note for the users of the library. The CI fails without it. The note is one sentence: the operation with its signature in backticks, what changes, the native API it matches when there is one, and the issue in parentheses, like the notes in <code>CHANGELOG.md</code>: "New <code>skip(count)</code> Transformation: lazily skips the first <code>count</code> values and yields the rest (#27)." A reference to an ADR or to a page of this site is a Markdown link with an absolute URL, because the note is shown in <code>CHANGELOG.md</code> on GitHub, on npm and on this site: an ADR links to its file on GitHub, a page to the version of the site that introduces it. Only <code>#N</code> becomes a link by itself. Before 1.0 a breaking change is a <code>minor</code>. A change to <code>src/</code> that releases nothing (an internal refactor) adds an empty one with <code>pnpm changeset --empty</code>. The check also accepts a changeset that the pull request modifies: extending the note of a pending changeset is fine when it describes the new change too.</li>
 <li>Describe every breaking change in the migration guide of the next version, like <a href="../migrating-to-0.1.0/">Migrating to 0.1.0</a>, and add a new guide to the Upgrading section of the <code>nav</code> in <code>documentation/mkdocs.yml</code>, newest first.</li>
-<li><code>main</code> accepts changes only through a pull request whose <code>build</code> check passed: a direct push or a force-push is rejected. No review is required, and the branch does not have to be up to date with <code>main</code>. See <a href="#protection-rules">Protection rules</a>.</li>
+<li><code>main</code> accepts changes only through a pull request whose <code>build</code> check passed: a direct push or a force-push is rejected. No review is required, and the branch does not have to be up to date with <code>main</code>. See <a href="../releasing/#protection-rules">Protection rules</a>.</li>
 </ul>
 <h2 id="releases">Releases<a class="headerlink" href="#releases" title="Permanent link">⚓︎</a></h2>
-<p>The repository has one long-lived branch, <code>main</code>, and the changesets of the merged pull requests wait there until a release (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md">ADR 0012</a>, <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0015-checks-on-the-release-pull-request.md">ADR 0015</a>).</p>
-<ol>
-<li>Run the <strong>Prepare release</strong> workflow from the Actions tab. It runs the checks and opens, or updates, the <code>chore: release</code> pull request: the new version in <code>package.json</code>, the entries of <code>CHANGELOG.md</code>, the changesets deleted, <code>@since next</code> replaced with the version.</li>
-<li>Review the version and the changelog in that pull request. Its CI run, created by <code>github-actions</code>, waits for an approval: click "Approve and run workflows", or close and reopen the pull request (<code>check:changeset</code> is skipped for <code>changeset-release/*</code> branches). <code>main</code> requires the <code>build</code> check, so the pull request cannot be merged until that run passes.</li>
-<li>
-<p><strong>Before merging, check that nothing changed <code>src/</code> on <code>main</code> since the workflow ran.</strong> The pull request is computed when the workflow runs: a pull request merged later keeps its changeset pending for the next release, and its <code>@since next</code> is not replaced, so an API published in this version would get the next version at the next release. If that happened, run <strong>Prepare release</strong> again: it recomputes the release from <code>main</code> and updates the same pull request. A change outside <code>src/</code> (documentation, CI) needs nothing. To check, an empty output means nothing to do:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
-<span class="normal"><a href="#__codelineno-8-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>git<span class="w"> </span>fetch<span class="w"> </span>origin
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a>git<span class="w"> </span>diff<span class="w"> </span>--stat<span class="w"> </span>origin/changeset-release/main...origin/main<span class="w"> </span>--<span class="w"> </span>src<span class="w"> </span>.changeset
-</code></pre></div></td></tr></table></div>
-</li>
-<li>
-<p>Merge it. The <strong>Npm Publish</strong> workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as <code>latest</code>.</p>
-</li>
-</ol>
-<h3 id="protection-rules">Protection rules<a class="headerlink" href="#protection-rules" title="Permanent link">⚓︎</a></h3>
-<p>Two rulesets protect the repository (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0016-protection-rules-for-main-and-release-tags.md">ADR 0016</a>), and nobody bypasses them, administrators included:</p>
-<ul>
-<li><code>main</code>: no deletion, no force-push, changes only through a pull request with the <code>build</code> check passed;</li>
-<li><code>release-tags</code> (<code>X.Y.Z</code>): a tag can be created, but not deleted or moved.</li>
-</ul>
-<p>Their definitions are in <code>.github/rulesets/</code>. To change a rule, change the file in a pull request, then apply it:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
-<span class="normal"><a href="#__codelineno-9-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a>gh<span class="w"> </span>api<span class="w"> </span>repos/Amebus/iterable-linq-utility/rulesets<span class="w"> </span>--jq<span class="w"> </span><span class="s1">'.[] | "\(.id) \(.name)"'</span><span class="w">   </span><span class="c1"># the ids</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2"></a>gh<span class="w"> </span>api<span class="w"> </span>-X<span class="w"> </span>PUT<span class="w"> </span>repos/Amebus/iterable-linq-utility/rulesets/&lt;id&gt;<span class="w"> </span>--input<span class="w"> </span>.github/rulesets/main.json
-</code></pre></div></td></tr></table></div>
-<p>On a new repository, create them with <code>gh api -X POST repos/&lt;owner&gt;/&lt;repo&gt;/rulesets --input .github/rulesets/&lt;name&gt;.json</code>. In an emergency, an administrator can disable a ruleset in Settings → Rules → Rulesets, and must enable it again afterwards.</p>
-<h3 id="documentation-between-releases">Documentation between releases<a class="headerlink" href="#documentation-between-releases" title="Permanent link">⚓︎</a></h3>
-<p>The site has a <code>next</code> version, deployed on every push to <code>main</code> that changes <code>documentation/</code>, <code>src/</code> or <code>.changeset/</code>: a fix is visible there at once, and in <code>latest</code> at the next release (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0013-documentation-versions-between-releases.md">ADR 0013</a>).</p>
-<p><code>next</code> shows a banner computed from the pending changesets (<a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0017-state-of-the-next-documentation.md">ADR 0017</a>): without changesets it matches the latest release, the version in <code>package.json</code>; with changesets it links to an Upcoming page generated from their notes. The note of a changeset is therefore visible on the site as soon as the pull request is merged. To preview the banner and the page, from the root of the repository:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a>env<span class="w"> </span><span class="k">$(</span>node<span class="w"> </span>scripts/next-doc.ts<span class="k">)</span><span class="w"> </span>mkdocs<span class="w"> </span>serve<span class="w"> </span>-f<span class="w"> </span>documentation/mkdocs.yml
-</code></pre></div></td></tr></table></div>
-<p><code>scripts/next-doc.ts</code> writes <code>documentation/docs/upcoming.md</code>, which git ignores. A release or a plain <code>mkdocs serve</code> builds the site without the banner.</p>
-<p>The Changelog page includes <code>CHANGELOG.md</code>, which the release writes: every version of the site shows the notes up to its own release, and the unreleased ones are on the Upcoming page of <code>next</code>.</p>
-<p>After a deployment, the version selector can show the old title for up to 10 minutes: it reads <code>versions.json</code>, which GitHub Pages serves with <code>cache-control: max-age=600</code>, while the banner is in the page itself. A hard refresh shows the new title. For the same reason, right after a release is merged the banner can say that <code>next</code> matches the new version while <code>latest</code> still shows the previous one, until <strong>Npm Publish</strong> deploys it.</p>
-<p>For an urgent fix to a released version:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span>
-<span class="normal"><a href="#__codelineno-11-2">2</a></span>
-<span class="normal"><a href="#__codelineno-11-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>docs/0.1<span class="w"> </span><span class="m">0</span>.1.0<span class="w">   </span><span class="c1"># the release tag</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2"></a>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;commit<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>fix<span class="w"> </span>on<span class="w"> </span>main&gt;
-<a id="__codelineno-11-3" name="__codelineno-11-3"></a>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>docs/0.1
-</code></pre></div></td></tr></table></div>
-<p>Then run the <strong>Publish Doc</strong> workflow with <code>ref</code> set to <code>docs/0.1</code>. Without a <code>ref</code> it redeploys the last tag.</p>
+<p>The maintainer releases from <code>main</code>, with the changesets of the merged pull requests: see <a href="../releasing/">Releasing</a>, with the protection rules of <code>main</code> and the documentation between releases.</p>
 
 
 
@@ -1738,7 +1774,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 1, 2026 21:01:27 UTC">November 1, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 1, 2026 21:37:13 UTC">November 1, 2026</span>
   </span>
 
     
