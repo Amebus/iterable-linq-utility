@@ -1,17 +1,111 @@
 # Advanced Concepts
 
-!!! danger "WIP"
-    Most sections of this page are still to be written. For the basics see [Deferred Execution](../basic-concepts.md#deferred-execution) and the [Glossary](../glossary.md).
+This page goes deeper into what [Deferred Execution](../basic-concepts.md#deferred-execution) summarises in the Basic Concepts: when a chain reads its source, how much of it, and what it sees when the source changes.
 
 ## Deferred Execution
 
 ### Input iterable mutability
 
+A chain keeps a reference to its source, never a copy, and every run asks the source for a new iterator. So each run sees the source as it is when the run starts:
+
+```typescript
+const values = [1, 2, 3];
+const chain = IterableLinq.from(values).map(v => v * 10);
+
+chain.collectToArray(); // [10, 20, 30]
+values.push(4);
+chain.collectToArray(); // [10, 20, 30, 40]
+```
+
+During a run, the chain sees what the iterator of the source yields. An array iterator reads by index, so a value changed or added before it is reached is seen; a `Set` yields the values added during the iteration too:
+
+```typescript
+const values = [1, 2, 3];
+const seen: number[] = [];
+
+IterableLinq.from(values).forEach(v => {
+    if (v === 1) { values[2] = 30; values.push(4); }
+    seen.push(v);
+    return unit();
+});
+seen; // [1, 2, 30, 4]
+```
+
+An operation that reads the whole source before its first value ([Eager Evaluation](#eager-evaluation)) sees the source as it was at that moment: a change made later in the same run reaches only the next run.
+
+```typescript
+const values = [1, 2, 3];
+const seen: number[] = [];
+
+IterableLinq.from(values).reverse().forEach(v => {
+    if (v === 3) values.push(4);
+    seen.push(v);
+    return unit();
+});
+seen;                                            // [3, 2, 1]
+IterableLinq.from(values).reverse().collectToArray(); // [4, 3, 2, 1]
+```
+
+The other iterables of `except`, `intersect`, `innerJoin` and `groupJoin` are read again on every run too, so a change to them is seen by the next run.
+
+To fix the values of a chain, store them: [materialize](../api-reference/actions.md#materialize) takes a snapshot, while [memoize](../api-reference/transformations.md#memoize) keeps the values it has read and reads the others from the source as it is when they are needed. See the caveat on [mutable sources](#repeatable-execution-caveats) and [Memoize vs Materialize](#memoize-vs-materialize).
+
 ### Fully Deferred Execution
+
+Every [Transformation](../api-reference/transformations.md), and every function that starts a chain, reads nothing and calls no callback when it is called: it only records the work. The work happens in the iterator that each run creates (see [Architecture](../architecture.md)). So a chain over an infinite source can be built, and run as far as an action needs:
+
+```typescript
+let reads = 0;
+const naturals = { *[Symbol.iterator]() { let n = 0; while (true) { reads++; yield n++; } } };
+
+const chain = IterableLinq.from(naturals).filter(v => v % 2 === 0).map(v => v * 10);
+reads;                         // 0
+chain.take(3).collectToArray(); // [0, 20, 40]
+reads;                         // 5
+```
+
+Only the arguments are checked at the call, so a wrong argument throws when the chain is built: see [Errors](../basic-concepts.md#errors).
+
+When the chain runs, most transformations read one value of the source for each value they yield ([Lazy Evaluation](../glossary.md#lazy-evaluation)). A few read a bounded number of values ahead: `skip` and `skipWhile` read the values they skip, `skipLast(count)` and `with` with a negative index keep `count` values in a buffer, `chunk(size)` reads `size` values for each chunk.
 
 ### Partially Deferred Execution
 
+[tapChainCreation](../api-reference/taps.md#tapchaincreation) is the only operation that does part of its work at the call: its callback runs at once, with the chain built so far, while the chain itself still runs only when an action asks for the values. [tapChain](../api-reference/taps.md#tapchain), instead, calls its callback at every run:
+
+```typescript
+let calls = 0;
+let runs = 0;
+const chain = IterableLinq
+    .from([1, 2])
+    .tapChainCreation(() => { calls++; return unit(); })
+    .tapChain(() => { runs++; return unit(); });
+
+calls; // 1, at the call
+runs;  // 0
+chain.collectToArray();
+chain.collectToArray();
+calls; // still 1
+runs;  // 2, one per run
+```
+
 ### Eager Evaluation
+
+Lazy and eager say how much of the source an operation reads for each value it yields, not when the work starts, which is deferred for every transformation, nor whether the values are kept, which is the job of `memoize`. The words follow the [LINQ documentation](https://learn.microsoft.com/en-us/dotnet/standard/linq/deferred-execution-lazy-evaluation#eager-vs-lazy-evaluation): see [Lazy Evaluation](../glossary.md#lazy-evaluation) in the glossary.
+
+These operations read the whole source before they yield the first value:
+
+- [groupBy](../api-reference/transformations.md#groupby), [reverse](../api-reference/transformations.md#reverse) and [takeLast](../api-reference/transformations.md#takelast);
+- [slice](../api-reference/transformations.md#slice) with a negative `start`;
+- [memoize](../api-reference/transformations.md#memoize) with `allowPartialMemoization: false`, which is eager and keeps the values.
+
+[except](../api-reference/transformations.md#except), [intersect](../api-reference/transformations.md#intersect), [innerJoin](../api-reference/transformations.md#innerjoin) and [groupJoin](../api-reference/transformations.md#groupjoin) read their other iterable whole before the first value, and their source lazily.
+
+An eager operation holds the values it reads in memory, and on an infinite source it never yields its first value:
+
+```typescript
+IterableLinq.from(naturals).take(3).collectToArray();           // [0, 1, 2]
+IterableLinq.from(naturals).reverse().take(3).collectToArray(); // never returns
+```
 
 ## Repeatable Execution
 

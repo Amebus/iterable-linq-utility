@@ -24,6 +24,8 @@ An operation that runs as soon as it is called. [Actions](#action) and [tapChain
 
 An operation that reads its source one value at a time, only as far as the consumer needs. For example, `some` stops at the first match, so the chain before it reads only the values up to that match.
 
+The term follows the [LINQ documentation](https://learn.microsoft.com/en-us/dotnet/standard/linq/deferred-execution-lazy-evaluation#eager-vs-lazy-evaluation): it says how much of the source is read, and nothing is cached, so every run reads the source again. It is not the call-by-need of `Lazy<T>` in .NET or of Haskell, where a value is computed once and then reused: in this library that is [memoize](api-reference/transformations.md#memoize). See [Eager Evaluation](advanced-concepts/index.md#eager-evaluation).
+
 ## Operations Chain
 
 The list of data manipulation operations built over an `Iterable` with the fluent API, for example `from(values).filter(…).map(…)`. It is an `IIterableLinq`.
