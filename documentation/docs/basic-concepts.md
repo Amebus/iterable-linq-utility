@@ -64,7 +64,7 @@ When the work runs depends on the kind of operation:
 | [Transformations](api-reference/transformations.md) | [Fully deferred](glossary.md#fully-deferred-execution): nothing runs until an action reads the chain |
 | [tapChainCreation](api-reference/taps.md#tapchaincreation) | [Partially deferred](glossary.md#partially-deferred-execution): its callback runs at once, the chain still waits for an action |
 | [Actions](api-reference/actions.md) | [Immediate](glossary.md#immediate-evaluation): they run the chain when they are called |
-| [memoize](api-reference/transformations.md#memoize) with `allowPartialMemoization: false` | [Eager](glossary.md#eager-evaluation): the first read reads the whole source |
+| [groupBy](api-reference/transformations.md#groupby), [reverse](api-reference/transformations.md#reverse), [takeLast](api-reference/transformations.md#takelast), [memoize](api-reference/transformations.md#memoize) with `allowPartialMemoization: false`, [and a few more](advanced-concepts/index.md#eager-evaluation) | [Eager](glossary.md#eager-evaluation): the first read reads the whole source |
 
 Running a chain again has some pitfalls, with single-use and mutable sources, side effects and closing the source: see [Repeatable Execution](advanced-concepts/index.md#repeatable-execution).
 
