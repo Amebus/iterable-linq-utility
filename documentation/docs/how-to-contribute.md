@@ -6,7 +6,7 @@ Contributions are welcome: bug reports, new operations, fixes, benchmarks and do
 
 - **Open an issue first** for a new operation or for a change of behaviour, so the design can be agreed before the code is written. For a new operation, write its signatures in the issue: the chain method and the raw function in `Functions`.
 - **Record architecture decisions** as an ADR in [`docs/decisions/`](https://github.com/Amebus/iterable-linq-utility/tree/main/docs/decisions). Copy the format of the existing ones, and update [Current decisions](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/README.md#current-decisions), the summary of the decisions in force: add a row, merge an amendment into the row it changes, remove a superseded ADR ([ADR 0027](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0027-current-decisions-in-the-adr-index.md)).
-- **Working with an AI agent?** The repository has instructions for it: see [Working with AI agents](ai-agents.md).
+- **Working with an AI agent?** The repository has instructions for it: see [Working with AI agents](ai-agents.md). The specs and plans that an agent writes for a change stay local, in `docs/superpowers/`, which git ignores: what must last goes in the issue, the pull request or an ADR ([ADR 0028](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0028-specs-and-plans-stay-out-of-the-repository.md)).
 
 ## Set up
 
@@ -29,16 +29,27 @@ pnpm install
 
 | Path | Content |
 | --- | --- |
+| `src/index.ts` | The entry point: the starters (`from`, `fromRange`, …), `Functions`, the extension API and the types. |
 | `src/functions/` | One file per operation. These are the raw functions exported as `Functions`. |
-| `src/types/` | The exported types, including the `IIterableLinqBase` interface of the chain. |
-| `src/iterators/` | The building blocks of the lazy operations: `BaseIterator`, `SourceIterator`, `DeferredIterable`. |
 | `src/linqIterable.ts` | The chain: each method calls the matching raw function. |
-| `test/functions/` | One spec file per operation. |
-| `test/_helpers/` | Shared test helpers. |
-| `test/bench/` | The benchmarks. |
+| `src/types/` | The exported types, including the `IIterableLinqBase` interface of the chain. |
+| `src/iterators/` | The building blocks of the lazy operations: `BaseIterator`, `SourceIterator`, `DeferredIterable`, and the base classes shared by a few operations. |
+| `src/extension.ts` | `extend`, `override` and `isIterableLinq`. |
+| `src/utils/` | `Validations`, `libraryError` and the helpers shared by the operations. |
+| `src/collections/` | The linked list used by `materialize` and `reverse`. |
+| `test/functions/` | One spec file per operation, on the raw function. |
+| `test/linqIterableWrapper/` | One spec file per operation, on the chain method. |
+| `test/iterators/`, `test/utils/`, `test/collections/`, `test/types/` | The specs of the other parts of `src/`; `test/types/` checks the types. |
+| `test/_helpers/` | Shared test helpers and the test sources of `generators/`. |
+| `test/bench/` | The benchmarks: see [Benchmarks](benchmarks.md). |
+| `test/scripts/` | The specs of `scripts/`. |
+| `scripts/` | The checks (`check:*`) and the scripts of the release and of the documentation. |
+| `docs/decisions/` | The ADRs, and their index with the current decisions. |
+| `.agents/skills/` | The skills for AI agents: see [Working with AI agents](ai-agents.md). |
+| `.changeset/` | The changesets waiting for the next release. |
 | `documentation/` | This site. |
 
-The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0001-folder-structure-based-on-topics.md).
+The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0001-folder-structure-based-on-topics.md). How the parts work together: [Architecture](architecture.md).
 
 ## Adding an operation
 
@@ -61,7 +72,7 @@ The reasons behind this layout are in [ADR 0001](https://github.com/Amebus/itera
         - `throwingSource` throws at the n-th read, to check how the operation handles a source error.
     - The tests cover every line and branch of `src/`: `pnpm test:coverage` fails below 100%, and Codecov comments the pull request with the uncovered lines ([ADR 0019](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0019-full-test-coverage-of-the-library.md)). Code that no test can reach gets `/* istanbul ignore next -- <reason> */`.
 6. **Document it on this site**, in the right page of the [API Reference](api-reference/index.md). Add a row to the TLDR table, then a section with a "Wrapper" and a "Raw Function" tab, like the existing ones.
-7. **Benchmark it** in `test/bench/functions/<name>.bench.ts`, next to a native reference (and a hand-written loop when the array method is a different algorithm), with the standard scenarios: `direct`, `small`, after a `map`, after a `filter`, the early exit and the optional callback where they apply ([ADR 0021](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0021-benchmark-standards.md), [ADR 0022](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0022-benchmark-scenarios-in-practice.md)). `scenarios()` and `group()` of `test/bench/helpers.ts` register them; `pnpm check:structure` checks that the `direct` and `small` groups are there. Paste the output of `pnpm bench:report functions/<name>` in the pull request. The [Benchmarks section of the README](https://github.com/Amebus/iterable-linq-utility#benchmarks) explains how.
+7. **Benchmark it** in `test/bench/functions/<name>.bench.ts`, next to a native reference (and a hand-written loop when the array method is a different algorithm), with the standard scenarios: `direct`, `small`, after a `map`, after a `filter`, the early exit and the optional callback where they apply ([ADR 0021](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0021-benchmark-standards.md), [ADR 0022](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0022-benchmark-scenarios-in-practice.md)). `scenarios()` and `group()` of `test/bench/helpers.ts` register them; `pnpm check:structure` checks that the `direct` and `small` groups are there. Paste the output of `pnpm bench:report functions/<name>` in the pull request. [Benchmarks](benchmarks.md) explains how.
 8. **Add a changeset** with `pnpm changeset`: a `minor` bump and a note for the changelog. See [Commits and pull requests](#commits-and-pull-requests).
 
 ## Code style
@@ -134,61 +145,8 @@ mike serve
 - Open the pull request against `main` and link the issues it solves with `Closes #<number>`.
 - A pull request that changes `src/` adds a changeset: run `pnpm changeset`, choose the bump and write a note for the users of the library. The CI fails without it. The note is one sentence: the operation with its signature in backticks, what changes, the native API it matches when there is one, and the issue in parentheses, like the notes in `CHANGELOG.md`: "New `skip(count)` Transformation: lazily skips the first `count` values and yields the rest (#27)." A reference to an ADR or to a page of this site is a Markdown link with an absolute URL, because the note is shown in `CHANGELOG.md` on GitHub, on npm and on this site: an ADR links to its file on GitHub, a page to the version of the site that introduces it. Only `#N` becomes a link by itself. Before 1.0 a breaking change is a `minor`. A change to `src/` that releases nothing (an internal refactor) adds an empty one with `pnpm changeset --empty`. The check also accepts a changeset that the pull request modifies: extending the note of a pending changeset is fine when it describes the new change too.
 - Describe every breaking change in the migration guide of the next version, like [Migrating to 0.1.0](migrating-to-0.1.0.md), and add a new guide to the Upgrading section of the `nav` in `documentation/mkdocs.yml`, newest first.
-- `main` accepts changes only through a pull request whose `build` check passed: a direct push or a force-push is rejected. No review is required, and the branch does not have to be up to date with `main`. See [Protection rules](#protection-rules).
+- `main` accepts changes only through a pull request whose `build` check passed: a direct push or a force-push is rejected. No review is required, and the branch does not have to be up to date with `main`. See [Protection rules](releasing.md#protection-rules).
 
 ## Releases
 
-The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md), [ADR 0015](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0015-checks-on-the-release-pull-request.md)).
-
-1. Run the **Prepare release** workflow from the Actions tab. It runs the checks and opens, or updates, the `chore: release` pull request: the new version in `package.json`, the entries of `CHANGELOG.md`, the changesets deleted, `@since next` replaced with the version.
-2. Review the version and the changelog in that pull request. Its CI run, created by `github-actions`, waits for an approval: click "Approve and run workflows", or close and reopen the pull request (`check:changeset` is skipped for `changeset-release/*` branches). `main` requires the `build` check, so the pull request cannot be merged until that run passes.
-3. **Before merging, check that nothing changed `src/` on `main` since the workflow ran.** The pull request is computed when the workflow runs: a pull request merged later keeps its changeset pending for the next release, and its `@since next` is not replaced, so an API published in this version would get the next version at the next release. If that happened, run **Prepare release** again: it recomputes the release from `main` and updates the same pull request. A change outside `src/` (documentation, CI) needs nothing. To check, an empty output means nothing to do:
-
-    ```bash
-    git fetch origin
-    git diff --stat origin/changeset-release/main...origin/main -- src .changeset
-    ```
-
-4. Merge it. The **Npm Publish** workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as `latest`.
-
-### Protection rules
-
-Two rulesets protect the repository ([ADR 0016](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0016-protection-rules-for-main-and-release-tags.md)), and nobody bypasses them, administrators included:
-
-- `main`: no deletion, no force-push, changes only through a pull request with the `build` check passed;
-- `release-tags` (`X.Y.Z`): a tag can be created, but not deleted or moved.
-
-Their definitions are in `.github/rulesets/`. To change a rule, change the file in a pull request, then apply it:
-
-```bash
-gh api repos/Amebus/iterable-linq-utility/rulesets --jq '.[] | "\(.id) \(.name)"'   # the ids
-gh api -X PUT repos/Amebus/iterable-linq-utility/rulesets/<id> --input .github/rulesets/main.json
-```
-
-On a new repository, create them with `gh api -X POST repos/<owner>/<repo>/rulesets --input .github/rulesets/<name>.json`. In an emergency, an administrator can disable a ruleset in Settings → Rules → Rulesets, and must enable it again afterwards.
-
-### Documentation between releases
-
-The site has a `next` version, deployed on every push to `main` that changes `documentation/`, `src/` or `.changeset/`: a fix is visible there at once, and in `latest` at the next release ([ADR 0013](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0013-documentation-versions-between-releases.md)).
-
-`next` shows a banner computed from the pending changesets ([ADR 0017](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0017-state-of-the-next-documentation.md)): without changesets it matches the latest release, the version in `package.json`; with changesets it links to an Upcoming page generated from their notes. The note of a changeset is therefore visible on the site as soon as the pull request is merged. To preview the banner and the page, from the root of the repository:
-
-```bash
-env $(node scripts/next-doc.ts) mkdocs serve -f documentation/mkdocs.yml
-```
-
-`scripts/next-doc.ts` writes `documentation/docs/upcoming.md`, which git ignores. A release or a plain `mkdocs serve` builds the site without the banner.
-
-The Changelog page includes `CHANGELOG.md`, which the release writes: every version of the site shows the notes up to its own release, and the unreleased ones are on the Upcoming page of `next`.
-
-After a deployment, the version selector can show the old title for up to 10 minutes: it reads `versions.json`, which GitHub Pages serves with `cache-control: max-age=600`, while the banner is in the page itself. A hard refresh shows the new title. For the same reason, right after a release is merged the banner can say that `next` matches the new version while `latest` still shows the previous one, until **Npm Publish** deploys it.
-
-For an urgent fix to a released version:
-
-```bash
-git switch -c docs/0.1 0.1.0   # the release tag
-git cherry-pick <commit of the fix on main>
-git push -u origin docs/0.1
-```
-
-Then run the **Publish Doc** workflow with `ref` set to `docs/0.1`. Without a `ref` it redeploys the last tag.
+The maintainer releases from `main`, with the changesets of the merged pull requests: see [Releasing](releasing.md), with the protection rules of `main` and the documentation between releases.

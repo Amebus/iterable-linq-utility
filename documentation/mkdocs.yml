@@ -108,4 +108,7 @@ nav:
     - Migrating to 0.1.0: migrating-to-0.1.0.md
   - Contributing:
     - How to contribute: how-to-contribute.md
+    - Architecture: architecture.md
+    - Benchmarks: benchmarks.md
+    - Releasing: releasing.md
     - Working with AI agents: ai-agents.md

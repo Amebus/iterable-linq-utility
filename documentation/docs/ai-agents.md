@@ -41,6 +41,7 @@ The documentation site and the quality of the changelog note are not checked: lo
 - Ask the agent to run the [checks before a pull request](how-to-contribute.md#checks-before-a-pull-request) and to show you their output.
 - Review the changeset and the `@since` tags: the agent must not write a version in them.
 - Point the agent to the issue: the signatures agreed there are its specification.
+- An agent that writes a spec or a plan puts it in `docs/superpowers/`, which git ignores: the files stay on your machine. Ask it to put what matters in the issue or in the description of the pull request ([ADR 0028](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0028-specs-and-plans-stay-out-of-the-repository.md)).
 
 ## Changing the rules
 

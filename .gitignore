@@ -111,3 +111,6 @@ documentation/site
 documentation/docs/upcoming.md
 # Local benchmark baselines
 .bench/
+
+# specs and plans of the AI agents, kept local (ADR 0028)
+docs/superpowers/
