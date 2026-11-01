@@ -85,5 +85,5 @@ The library works with TypeScript `moduleResolution` set to `node10`, `node16`/`
 2. Go to [Advanced Concepts](advanced-concepts/index.md) for advanced usage scenarios, including how to [extend the API](advanced-concepts/extending.md)
 3. Check the [Glossary](glossary.md) for the meaning of the most important words used by this documentation
 4. Check how you can [integrate the utility with other libraries](advanced-concepts/interoperability-with-other-libraries.md)
-5. Upgrading from 0.0.x? Read the [migration guide](migrating-to-0.1.0.md)
+5. Upgrading from an older version? The [Changelog](changelog.md) lists every change, and each version with a breaking change has a migration guide in the Upgrading tab
 6. Compare this library with other [similar libraries](alternative-projects.md)
