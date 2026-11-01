@@ -86,24 +86,26 @@ extra_css:
   - stylesheets/extra.css
 
 nav:
-  - Overview: 
+  - Guide:
     - index.md
     - Getting Started: getting-started.md
     - Basic Concepts: basic-concepts.md
+    - Advanced Concepts:
+      - advanced-concepts/index.md
+      - Interoperability with other libraries: advanced-concepts/interoperability-with-other-libraries.md
+      - Extending the API: advanced-concepts/extending.md
+    - Glossary: glossary.md
     - Alternative Projects: alternative-projects.md
-    - Migrating to 0.13.0: migrating-to-0.13.0.md
-    - Migrating to 0.12.0: migrating-to-0.12.0.md
-    - Migrating to 0.1.0: migrating-to-0.1.0.md
-    - Changelog: changelog.md
-    - How to contribute: how-to-contribute.md
-    - Working with AI agents: ai-agents.md
-  - Advanced Concepts: 
-    - advanced-concepts/index.md
-    - Interoperability with other libraries: advanced-concepts/interoperability-with-other-libraries.md
-    - Extending the API: advanced-concepts/extending.md
   - Api Reference:
     - api-reference/index.md
     - Actions: api-reference/actions.md
     - Transformations: api-reference/transformations.md
     - Taps: api-reference/taps.md
-  - Glossary: glossary.md
+  - Upgrading:
+    - Changelog: changelog.md
+    - Migrating to 0.13.0: migrating-to-0.13.0.md
+    - Migrating to 0.12.0: migrating-to-0.12.0.md
+    - Migrating to 0.1.0: migrating-to-0.1.0.md
+  - Contributing:
+    - How to contribute: how-to-contribute.md
+    - Working with AI agents: ai-agents.md
