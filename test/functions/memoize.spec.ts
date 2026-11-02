@@ -242,4 +242,21 @@ describe('memoize', () => {
 		expect(() => collectToArray(m)).toThrow(err);
 	});
 
+	test('memoize rejects options that are not an object', () => {
+		expect(() => memoize([1], 'x' as never))
+			.toThrow(new Error('[iterable-linq-utility/memoize] The "options" parameter must be an object'));
+	});
+
+	test('memoize rejects an allowPartialMemoization that is not a boolean', () => {
+		expect(() => memoize([1], { allowPartialMemoization: 'no' as never }))
+			.toThrow(new Error('[iterable-linq-utility/memoize] The "allowPartialMemoization" option must be a boolean'));
+	});
+
+	test.each([{}, { allowPartialMemoization: undefined }])('memoize(%j) keeps the default, partial memoization', options => {
+		let reads = 0;
+		const m = memoize(map(range(10), v => { reads++; return v; }), options);
+		some(m, v => v === 1);
+		expect(reads).toBe(2);
+	});
+
 });

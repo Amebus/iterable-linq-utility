@@ -32,13 +32,14 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'memoize');
+	if (options !== undefined) {
+		Validations.throwIfNotObject(options, 'options', 'memoize');
+		if (options.allowPartialMemoization !== undefined)
+			Validations.throwIfNotBoolean(options.allowPartialMemoization, 'allowPartialMemoization', 'memoize');
+	}
 
-	const opt = {
-		...getMemoizeDefaultOptions(),
-		...options
-	};
-
-	const allowPartialMemoization = opt.allowPartialMemoization;
+	// an option that is undefined keeps its default, as an option that is not given
+	const allowPartialMemoization = options?.allowPartialMemoization ?? getMemoizeDefaultOptions().allowPartialMemoization;
 
 	if (iterable instanceof MemoizeAsFullIterable) {
 		if (allowPartialMemoization)

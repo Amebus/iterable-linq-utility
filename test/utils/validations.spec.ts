@@ -87,6 +87,26 @@ describe('Validations', () => {
 		});
 	});
 
+	describe('throwIfNotNumber', () => {
+		test.each([0, -1.5, NaN, Infinity])('accepts %s', value => {
+			expect(() => Validations.throwIfNotNumber(value, 'x', 'op')).not.toThrow();
+		});
+
+		test.each(['5', null, undefined, {}, BigInt(5)])('rejects %s', value => {
+			expect(() => Validations.throwIfNotNumber(value, 'x', 'op')).toThrow(new Error(prefixed('op', 'The "x" parameter must be a number')));
+		});
+	});
+
+	describe('throwIfNotString', () => {
+		test.each(['', 'a'])('accepts %j', value => {
+			expect(() => Validations.throwIfNotString(value, 'x', 'op')).not.toThrow();
+		});
+
+		test.each([1, null, undefined, {}])('rejects %s', value => {
+			expect(() => Validations.throwIfNotString(value, 'x', 'op')).toThrow(new Error(prefixed('op', 'The "x" parameter must be a string')));
+		});
+	});
+
 	describe('throwIfNotInteger', () => {
 		test.each([0, -0, 3, -3, Number.MAX_SAFE_INTEGER])('accepts %s', value => {
 			expect(() => Validations.throwIfNotInteger(value, 'index', 'op')).not.toThrow();

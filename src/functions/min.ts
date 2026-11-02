@@ -17,5 +17,7 @@ import { findExtreme, toCompareFunction, Validations } from '../utils';
  */
 export function min<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | undefined {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'min');
+	if (comparer !== undefined)
+		Validations.throwIfNotComparer(comparer, 'comparer', 'min');
 	return findExtreme(iterable, toCompareFunction(comparer), -1);
 }

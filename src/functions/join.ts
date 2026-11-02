@@ -17,5 +17,7 @@ import { Validations } from '../utils';
  */
 export function join<T>(iterable: Iterable<T>, separator?: string): string {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'join');
+	if (separator !== undefined)
+		Validations.throwIfNotString(separator, 'separator', 'join');
 	return Array.from(iterable).join(separator);
 }

@@ -40,6 +40,9 @@ export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions,
 	const hasStart = typeof endOrOptions === 'number';
 	const start = hasStart ? startOrEnd : 0;
 	const end = hasStart ? endOrOptions : startOrEnd;
+	if (hasStart)
+		Validations.throwIfNotNumber(start, 'start', 'range');
+	Validations.throwIfNotNumber(end, 'end', 'range');
 	if (!hasStart && options !== undefined)
 		throw libraryError('range', 'The "options" parameter must be the second argument when "start" is omitted');
 	const rangeOptions = hasStart ? options : endOrOptions;

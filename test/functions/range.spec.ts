@@ -246,4 +246,23 @@ describe('range', () => {
 			.toThrow(new Error('[iterable-linq-utility/range] The "options" parameter must be the second argument when "start" is omitted'));
 	});
 
+	describe('the bounds are numbers', () => {
+		test('a single bound that is not a number is the end', () => {
+			expect(() => range('5' as never)).toThrow(new Error('[iterable-linq-utility/range] The "end" parameter must be a number'));
+		});
+
+		test('a start that is not a number', () => {
+			expect(() => range('1' as never, 5)).toThrow(new Error('[iterable-linq-utility/range] The "start" parameter must be a number'));
+		});
+
+		test('a second argument that is not a number is the options', () => {
+			expect(() => range(0, '5' as never)).toThrow(new Error('[iterable-linq-utility/range] The "options" parameter must be an object'));
+		});
+
+		test('NaN is still an empty range', () => {
+			expect(Array.from(range(NaN))).toEqual([]);
+			expect(Array.from(range(0, NaN))).toEqual([]);
+		});
+	});
+
 });

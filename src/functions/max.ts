@@ -17,5 +17,7 @@ import { findExtreme, toCompareFunction, Validations } from '../utils';
  */
 export function max<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | undefined {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'max');
+	if (comparer !== undefined)
+		Validations.throwIfNotComparer(comparer, 'comparer', 'max');
 	return findExtreme(iterable, toCompareFunction(comparer), 1);
 }

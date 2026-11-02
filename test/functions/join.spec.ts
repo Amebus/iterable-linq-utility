@@ -36,9 +36,9 @@ describe('join', () => {
 		expect(join([1, 2, 3], undefined)).toBe('1,2,3');
 	});
 
-	test('join converts the values and the separator like Array.prototype.join', () => {
+	test('join converts the values like Array.prototype.join', () => {
 		const value = { toString: () => 'x' };
-		expect(join([value, value], 0 as never)).toBe('x0x');
+		expect(join([value, value], '0')).toBe('x0x');
 		expect(join([null, undefined])).toBe(',');
 	});
 
@@ -82,6 +82,16 @@ describe('join', () => {
 
 	test('join returns a string', () => {
 		expectTypeOf(join([1, 2])).toEqualTypeOf<string>();
+	});
+
+	test.each([1, null])('join rejects the separator %j', separator => {
+		expect(() => join([1, 2], separator as never))
+			.toThrow(new Error('[iterable-linq-utility/join] The "separator" parameter must be a string'));
+	});
+
+	test('join accepts the empty separator, and uses a comma without one', () => {
+		expect(join([1, 2], '')).toBe('12');
+		expect(join([1, 2])).toBe('1,2');
 	});
 
 });

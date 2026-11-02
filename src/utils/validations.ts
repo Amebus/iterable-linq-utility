@@ -25,6 +25,16 @@ export function throwIfNotComparer(value: unknown, name: string, operation: stri
 		throw libraryError(operation, `The "${name}" must be a function, a property key or a list of property keys`);
 }
 
+export function throwIfNotNumber(value: unknown, name: string, operation: string) {
+	if (typeof value !== 'number')
+		throw libraryError(operation, `The "${name}" parameter must be a number`);
+}
+
+export function throwIfNotString(value: unknown, name: string, operation: string) {
+	if (typeof value !== 'string')
+		throw libraryError(operation, `The "${name}" parameter must be a string`);
+}
+
 export function throwIfNotInteger(value: number, name: string, operation: string) {
 	if (!Number.isInteger(value))
 		throw libraryError(operation, `The "${name}" parameter must be an integer`);
