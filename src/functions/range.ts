@@ -37,7 +37,7 @@ export function range(end: number, options?: IRangeOptions): Iterable<number>;
  */
 export function range(start: number, end: number, options?: IRangeOptions): Iterable<number>;
 export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number> {
-	const hasStart = typeof endOrOptions === 'number';
+	const hasStart = !isRangeOptionsArgument(endOrOptions);
 	const start = hasStart ? startOrEnd : 0;
 	const end = hasStart ? endOrOptions : startOrEnd;
 	if (hasStart)
@@ -56,6 +56,14 @@ export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions,
 	if (!(normalized.length > 0))
 		return empty();
 	return new DeferredIterable(() => new RangeIterator(normalized.first, normalized.step, normalized.length));
+}
+
+/**
+ * Whether the second argument of `range` is the options: missing, or an object. Any other value is the end, so a bound of the
+ * wrong type is reported as `end`, not as the options.
+ */
+export function isRangeOptionsArgument(value: unknown): value is IRangeOptions | undefined {
+	return value === undefined || (typeof value === 'object' && value !== null);
 }
 
 interface INormalizedRange {

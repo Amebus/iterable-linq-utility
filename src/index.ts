@@ -2,6 +2,7 @@ import { libraryError, Validations } from './utils';
 import { toChain } from './linqIterable';
 
 import * as Functions from './functions';
+import { isRangeOptionsArgument } from './functions/range';
 import type { IIterableLinq, IObjectDefaultOptions, IObjectOptions, IRangeOptions, ObjectItem } from './types';
 
 /**
@@ -97,7 +98,7 @@ export function fromRange(end: number, options?: IRangeOptions): IIterableLinq<n
  */
 export function fromRange(start: number, end: number, options?: IRangeOptions): IIterableLinq<number>;
 export function fromRange(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): IIterableLinq<number> {
-	if (typeof endOrOptions === 'number')
+	if (!isRangeOptionsArgument(endOrOptions))
 		return from(Functions.range(startOrEnd, endOrOptions, options));
 	if (options !== undefined)
 		throw libraryError('fromRange', 'The "options" parameter must be the second argument when "start" is omitted');

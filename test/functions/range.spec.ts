@@ -231,7 +231,7 @@ describe('range', () => {
 	test('the old positional signatures throw', () => {
 		const legacyRange = range as (...args: unknown[]) => Iterable<number>;
 		const notAnObject = new Error('[iterable-linq-utility/range] The "options" parameter must be an object');
-		expect(() => legacyRange(10, true)).toThrow(notAnObject);
+		expect(() => legacyRange(10, true)).toThrow(new Error('[iterable-linq-utility/range] The "end" parameter must be a number'));
 		expect(() => legacyRange(0, 10, 2)).toThrow(notAnObject);
 		expect(() => legacyRange(0, 10, true)).toThrow(notAnObject);
 	});
@@ -255,8 +255,12 @@ describe('range', () => {
 			expect(() => range('1' as never, 5)).toThrow(new Error('[iterable-linq-utility/range] The "start" parameter must be a number'));
 		});
 
-		test('a second argument that is not a number is the options', () => {
-			expect(() => range(0, '5' as never)).toThrow(new Error('[iterable-linq-utility/range] The "options" parameter must be an object'));
+		test.each(['5', null, true])('a second argument %j that is not an object is the end', end => {
+			expect(() => range(0, end as never)).toThrow(new Error('[iterable-linq-utility/range] The "end" parameter must be a number'));
+		});
+
+		test('a second argument that is an object is the options', () => {
+			expect([...range(3, {})]).toEqual([0, 1, 2]);
 		});
 
 		test('NaN is still an empty range', () => {
