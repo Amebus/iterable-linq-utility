@@ -19,6 +19,12 @@ export function throwIfNotSelector(value: unknown, name: string, operation: stri
 		throw libraryError(operation, `The "${name}" must be a function or a property key`);
 }
 
+export function throwIfNotComparer(value: unknown, name: string, operation: string) {
+	const isKeyList = Array.isArray(value) && value.length > 0 && value.every(isPropertyKey);
+	if (!isFunction(value) && !isPropertyKey(value) && !isKeyList)
+		throw libraryError(operation, `The "${name}" must be a function, a property key or a list of property keys`);
+}
+
 export function throwIfNotInteger(value: number, name: string, operation: string) {
 	if (!Number.isInteger(value))
 		throw libraryError(operation, `The "${name}" parameter must be an integer`);

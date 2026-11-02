@@ -68,6 +68,25 @@ describe('Validations', () => {
 		});
 	});
 
+	describe('throwIfNotComparer', () => {
+		test.each([
+			{ name: 'an arrow function', value: () => 0 },
+			{ name: 'a string key', value: 'id' },
+			{ name: 'the empty string', value: '' },
+			{ name: 'the key 0', value: 0 },
+			{ name: 'a symbol key', value: Symbol('s') },
+			{ name: 'a list of one key', value: ['id'] },
+			{ name: 'a list of keys of every kind', value: ['group', 0, Symbol('s')] }
+		])('accepts $name', ({ value }) => {
+			expect(() => Validations.throwIfNotComparer(value, 'comparer', 'op')).not.toThrow();
+		});
+
+		test.each([undefined, null, {}, [], [{}], ['id', null], true, BigInt(10)])('rejects %s', value => {
+			expect(() => Validations.throwIfNotComparer(value, 'comparer', 'op'))
+				.toThrow(new Error(prefixed('op', 'The "comparer" must be a function, a property key or a list of property keys')));
+		});
+	});
+
 	describe('throwIfNotInteger', () => {
 		test.each([0, -0, 3, -3, Number.MAX_SAFE_INTEGER])('accepts %s', value => {
 			expect(() => Validations.throwIfNotInteger(value, 'index', 'op')).not.toThrow();
