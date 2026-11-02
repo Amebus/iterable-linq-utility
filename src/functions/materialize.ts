@@ -15,7 +15,7 @@ import { LinkedListCollection } from '../collections';
  * @since 0.0.10
  */
 export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'materialize');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'materialize');
 	if (iterable instanceof MaterializeIterable) {
 		return iterable;
 	}

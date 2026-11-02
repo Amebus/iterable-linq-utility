@@ -121,8 +121,8 @@ export function innerJoin<T, I, K, R>(
 	innerKey: Mapper<I, K> | PropertyKey,
 	result: (outer: T, inner: I) => R
 ): Iterable<R> {
-	Validations.throwIfNotIterable(iterable, 'innerJoin');
-	Validations.throwIfNotIterable(inner, 'innerJoin');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'innerJoin');
+	Validations.throwIfNotIterable(inner, 'inner', 'innerJoin');
 	Validations.throwIfNotSelector(outerKey, 'outerKey', 'innerJoin');
 	Validations.throwIfNotSelector(innerKey, 'innerKey', 'innerJoin');
 	Validations.throwIfNotFunction(result, 'result', 'innerJoin');

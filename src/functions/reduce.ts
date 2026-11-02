@@ -31,7 +31,7 @@ export function reduce<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T;
  */
 export function reduce<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>): R;
 export function reduce<T, R>(iterable: Iterable<T>, ...args: [Reducer<T, T>] | [R, Reducer<T, R>]): T | R {
-	Validations.throwIfNotIterable(iterable, 'reduce');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'reduce');
 	// the number of arguments, not their type, picks the form: undefined and functions are valid seeds
 	if (args.length === 1)
 		return reduceWithoutSeed(iterable, args[0]);
@@ -57,6 +57,6 @@ function reduceWithoutSeed<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T 
 		index++;
 	}
 	if (index === 0)
-		throw libraryError('reduce', 'The "sourceIterable" must not be empty when "reduce" has no seed');
+		throw libraryError('reduce', 'The "iterable" must not be empty when "reduce" has no seed');
 	return result as T;
 }

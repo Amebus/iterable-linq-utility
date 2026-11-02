@@ -21,7 +21,7 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
  * @param iterable - the source `Iterable`
  * @param options - `allowPartialMemoization: false` reads the whole source on the first read
  * @returns a lazy `Iterable` backed by the cache
- * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, if a provided `options` is not an object, or if `allowPartialMemoization` is given and is not a boolean
  * @example
  * ```ts
  * const cached = Functions.memoize(Functions.map(readLines(), parse));
@@ -31,14 +31,15 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
  * @since 0.0.10
  */
 export function memoize<T>(iterable: Iterable<T>, options?: IMemoizeOptions): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'memoize');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'memoize');
+	if (options !== undefined) {
+		Validations.throwIfNotObject(options, 'options', 'memoize');
+		if (options.allowPartialMemoization !== undefined)
+			Validations.throwIfNotBoolean(options.allowPartialMemoization, 'allowPartialMemoization', 'memoize');
+	}
 
-	const opt = {
-		...getMemoizeDefaultOptions(),
-		...options
-	};
-
-	const allowPartialMemoization = opt.allowPartialMemoization;
+	// an option that is undefined keeps its default, as an option that is not given
+	const allowPartialMemoization = options?.allowPartialMemoization ?? getMemoizeDefaultOptions().allowPartialMemoization;
 
 	if (iterable instanceof MemoizeAsFullIterable) {
 		if (allowPartialMemoization)

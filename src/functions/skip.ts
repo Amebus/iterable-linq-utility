@@ -15,7 +15,7 @@ import { Validations } from '../utils';
  * @since 0.3.0
  */
 export function skip<T>(iterable: Iterable<T>, count: number): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'skip');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'skip');
 	Validations.throwIfNotNonNegativeInteger(count, 'count', 'skip');
 	return new DeferredIterable(() => new SkipIterator(iterable, count));
 }

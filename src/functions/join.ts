@@ -7,7 +7,7 @@ import { Validations } from '../utils';
  * @param iterable - the source `Iterable`
  * @param separator - the string between two values; defaults to `,`
  * @returns the joined values, `''` when `iterable` is empty
- * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if a provided `separator` is not a string
  * @example
  * ```ts
  * Functions.join([1, 2, 3]); // '1,2,3'
@@ -16,6 +16,8 @@ import { Validations } from '../utils';
  * @since 0.7.0
  */
 export function join<T>(iterable: Iterable<T>, separator?: string): string {
-	Validations.throwIfNotIterable(iterable, 'join');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'join');
+	if (separator !== undefined)
+		Validations.throwIfNotString(separator, 'separator', 'join');
 	return Array.from(iterable).join(separator);
 }

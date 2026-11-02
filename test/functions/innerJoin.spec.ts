@@ -17,7 +17,7 @@ describe('innerJoin', () => {
 	});
 
 	test.each([null, undefined, 42, {}])('rejects an invalid inner %j', inner => {
-		expect(() => innerJoin([1], inner as never, identity, identity, pair)).toThrow(/^\[iterable-linq-utility\/innerJoin\] The (provided )?"sourceIterable"/);
+		expect(() => innerJoin([1], inner as never, identity, identity, pair)).toThrow(/^\[iterable-linq-utility\/innerJoin\] The (provided )?"inner"/);
 	});
 
 	test.each([

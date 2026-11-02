@@ -13,7 +13,7 @@ describe('IterableLinq.groupJoin', () => {
 	});
 
 	test('rejects an invalid inner', () => {
-		expect(() => IterableLinq.from([1]).groupJoin(null as never, identity, identity, identity)).toThrow(new Error('[iterable-linq-utility/groupJoin] The "sourceIterable" must be provided'));
+		expect(() => IterableLinq.from([1]).groupJoin(null as never, identity, identity, identity)).toThrow(new Error('[iterable-linq-utility/groupJoin] The "inner" must be provided'));
 	});
 
 	test('joins each value with the inner values of the same key, and accepts another chain', () => {

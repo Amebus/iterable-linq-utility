@@ -39,8 +39,8 @@ export function intersect<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySe
  */
 export function intersect<T>(iterable: Iterable<T>, other: Iterable<T>, key: keyof T): Iterable<T>;
 export function intersect<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'intersect');
-	Validations.throwIfNotIterable(other, 'intersect');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'intersect');
+	Validations.throwIfNotIterable(other, 'other', 'intersect');
 	if (keySelector === undefined)
 		return new DeferredIterable(() => new IntersectIterator<T, K>(iterable, other));
 	Validations.throwIfNotSelector(keySelector, 'keySelector', 'intersect');

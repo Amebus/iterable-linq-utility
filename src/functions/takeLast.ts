@@ -16,7 +16,7 @@ import { slice } from './slice';
  * @since 0.9.0
  */
 export function takeLast<T>(iterable: Iterable<T>, count: number): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'takeLast');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'takeLast');
 	Validations.throwIfNotNonNegativeInteger(count, 'count', 'takeLast');
 	// `slice(-0)` is `slice(0)`, every value: 0 is an empty slice, which closes the source without reading it
 	return count === 0 ? slice(iterable, 0, 0) : slice(iterable, -count);

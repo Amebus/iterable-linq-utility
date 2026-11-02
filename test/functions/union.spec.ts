@@ -14,7 +14,7 @@ describe('union', () => {
 	});
 
 	test.each([null, undefined, 42, {}])('rejects an invalid other %j', other => {
-		expect(() => union([1], other as never)).toThrow(/^\[iterable-linq-utility\/union\] The (provided )?"sourceIterable"/);
+		expect(() => union([1], other as never)).toThrow(/^\[iterable-linq-utility\/union\] The (provided )?"other"/);
 	});
 
 	test.each([null, false, {}])('rejects invalid keySelector %j immediately', keySelector => {

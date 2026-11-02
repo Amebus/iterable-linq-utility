@@ -1,5 +1,5 @@
 import { BaseIterator, DeferredIterable } from '../iterators';
-import { getContinueIteratorResult, getDoneIteratorResult, libraryError, Validations } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, isRangeOptionsArgument, libraryError, Validations } from '../utils';
 import type { IRangeOptions } from '../types';
 import { empty } from './empty';
 
@@ -10,7 +10,7 @@ import { empty } from './empty';
  * @param end - the bound, not included
  * @param options - `step` (default 1, sign ignored) and `reverse` (default `false`)
  * @returns a lazy, re-runnable `Iterable` of numbers
- * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @throws Error if a bound is not a number, if `options` is not an object, or if `step` is 0, `NaN` or infinite
  * @example
  * ```ts
  * Array.from(Functions.range(3)); // [0, 1, 2]
@@ -27,7 +27,7 @@ export function range(end: number, options?: IRangeOptions): Iterable<number>;
  * @param end - the bound, not included
  * @param options - `step` (default 1, sign ignored) and `reverse` (default `false`)
  * @returns a lazy, re-runnable `Iterable` of numbers
- * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @throws Error if a bound is not a number, if `options` is not an object, or if `step` is 0, `NaN` or infinite
  * @example
  * ```ts
  * Array.from(Functions.range(1, 7, { step: 2 })); // [1, 3, 5]
@@ -37,9 +37,12 @@ export function range(end: number, options?: IRangeOptions): Iterable<number>;
  */
 export function range(start: number, end: number, options?: IRangeOptions): Iterable<number>;
 export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): Iterable<number> {
-	const hasStart = typeof endOrOptions === 'number';
+	const hasStart = !isRangeOptionsArgument(endOrOptions);
 	const start = hasStart ? startOrEnd : 0;
 	const end = hasStart ? endOrOptions : startOrEnd;
+	if (hasStart)
+		Validations.throwIfNotNumber(start, 'start', 'range');
+	Validations.throwIfNotNumber(end, 'end', 'range');
 	if (!hasStart && options !== undefined)
 		throw libraryError('range', 'The "options" parameter must be the second argument when "start" is omitted');
 	const rangeOptions = hasStart ? options : endOrOptions;

@@ -1,4 +1,4 @@
-import { libraryError, Validations } from './utils';
+import { isRangeOptionsArgument, libraryError, Validations } from './utils';
 import { toChain } from './linqIterable';
 
 import * as Functions from './functions';
@@ -30,7 +30,7 @@ export function empty<T>(): IIterableLinq<T> {
  * @since 0.0.1
  */
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
-	Validations.throwIfNotIterable(iterable, 'from');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'from');
 	return toChain(iterable);
 }
 
@@ -66,7 +66,7 @@ export function fromObject<O extends object, const Options extends IObjectOption
  * @param end - the bound, not included
  * @param options - `step` and `reverse`
  * @returns a chain of numbers
- * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @throws Error if a bound is not a number, if `options` is not an object, or if `step` is 0, `NaN` or infinite
  * @example
  * ```ts
  * IterableLinq.fromRange(3).collectToArray();                       // [0, 1, 2]
@@ -86,7 +86,7 @@ export function fromRange(end: number, options?: IRangeOptions): IIterableLinq<n
  * @param end - the bound, not included
  * @param options - `step` and `reverse`
  * @returns a chain of numbers
- * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @throws Error if a bound is not a number, if `options` is not an object, or if `step` is 0, `NaN` or infinite
  * @example
  * ```ts
  * IterableLinq.fromRange(1, 7, { step: 2 }).collectToArray();       // [1, 3, 5]
@@ -97,7 +97,7 @@ export function fromRange(end: number, options?: IRangeOptions): IIterableLinq<n
  */
 export function fromRange(start: number, end: number, options?: IRangeOptions): IIterableLinq<number>;
 export function fromRange(startOrEnd: number, endOrOptions?: number | IRangeOptions, options?: IRangeOptions): IIterableLinq<number> {
-	if (typeof endOrOptions === 'number')
+	if (!isRangeOptionsArgument(endOrOptions))
 		return from(Functions.range(startOrEnd, endOrOptions, options));
 	if (options !== undefined)
 		throw libraryError('fromRange', 'The "options" parameter must be the second argument when "start" is omitted');

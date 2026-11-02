@@ -29,7 +29,7 @@ export function some<T>(iterable: Iterable<T>): boolean;
  */
 export function some<T>(iterable: Iterable<T>, predicate: Predicate<T> | undefined): boolean;
 export function some<T>(iterable: Iterable<T>, predicate?: Predicate<T>): boolean {
-	Validations.throwIfNotIterable(iterable, 'some');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'some');
 	if (predicate === undefined) {
 		for (const _value of iterable)
 			return true;

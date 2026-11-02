@@ -571,6 +571,8 @@ The relational join of LINQ is a different operation, planned as `innerJoin`.
     // 'a - b'
     ```
 
+Throws an `Error` if a separator is given and is not a string; the empty string is a valid separator.
+
 ## lastIndexOf
 
 Returns the index of the last value strictly equal (`===`) to the given value, or `-1` if there is none, like `Array.prototype.lastIndexOf`. The index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`.
@@ -695,6 +697,8 @@ By default the values are compared with `<`. A comparer changes how they are com
         // 'banana'
         ```
 
+Throws an `Error` if a comparer is given and is not a function, a property or a non-empty list of properties.
+
 ## min
 
 Returns the smallest value, or `undefined` when the chain is empty. Among equal values the first one wins; `null` and `undefined` values never win against a defined one.
@@ -743,6 +747,8 @@ Returns the smallest value, or `undefined` when the chain is empty. Among equal 
     Functions.min([{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }], 'value');
     // { value: 1 }
     ```
+
+Throws an `Error` if a comparer is given and is not a function, a property or a non-empty list of properties.
 
 ## reduce
 

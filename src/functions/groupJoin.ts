@@ -121,8 +121,8 @@ export function groupJoin<T, I, K, R>(
 	innerKey: Mapper<I, K> | PropertyKey,
 	result: (outer: T, inners: I[]) => R
 ): Iterable<R> {
-	Validations.throwIfNotIterable(iterable, 'groupJoin');
-	Validations.throwIfNotIterable(inner, 'groupJoin');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'groupJoin');
+	Validations.throwIfNotIterable(inner, 'inner', 'groupJoin');
 	Validations.throwIfNotSelector(outerKey, 'outerKey', 'groupJoin');
 	Validations.throwIfNotSelector(innerKey, 'innerKey', 'groupJoin');
 	Validations.throwIfNotFunction(result, 'result', 'groupJoin');

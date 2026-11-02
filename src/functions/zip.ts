@@ -17,9 +17,9 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * @since 0.10.0
  */
 export function zip<T, U extends unknown[]>(iterable: Iterable<T>, ...others: { [K in keyof U]: Iterable<U[K]> }): Iterable<[T, ...U]> {
-	Validations.throwIfNotIterable(iterable, 'zip');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'zip');
 	for (const other of others)
-		Validations.throwIfNotIterable(other, 'zip');
+		Validations.throwIfNotIterable(other, 'others', 'zip');
 	// copies the references of the rest parameter: the iterables are opened when the iteration starts
 	const sources: Iterable<unknown>[] = [iterable, ...others];
 	return new DeferredIterable(() => new ZipIterator(sources)) as Iterable<[T, ...U]>;

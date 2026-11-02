@@ -9,7 +9,7 @@ describe('IterableLinq.intersect', () => {
 	});
 
 	test('rejects an invalid other', () => {
-		expect(() => IterableLinq.from([1]).intersect(null as never)).toThrow(new Error('[iterable-linq-utility/intersect] The "sourceIterable" must be provided'));
+		expect(() => IterableLinq.from([1]).intersect(null as never)).toThrow(new Error('[iterable-linq-utility/intersect] The "other" must be provided'));
 	});
 
 	test('compares the values with SameValueZero', () => {

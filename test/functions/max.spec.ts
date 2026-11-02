@@ -120,4 +120,14 @@ describe('max', () => {
 		expect(max([{ v: 1, id: 'a' }, { v: 1, id: 'b' }], 'v')!.id).toBe('a');
 	});
 
+	test.each([{}, [], true, null])('max rejects the comparer %j', comparer => {
+		expect(() => max([1, 2], comparer as never))
+			.toThrow(new Error('[iterable-linq-utility/max] The "comparer" must be a function, a property key or a list of property keys'));
+	});
+
+	test('max accepts a numeric key and a list of keys', () => {
+		expect(max([[3], [1]], 0)).toEqual([3]);
+		expect(max([{ a: 1 }, { a: 2 }], ['a'])).toEqual({ a: 2 });
+	});
+
 });

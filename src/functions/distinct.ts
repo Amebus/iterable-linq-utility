@@ -36,7 +36,7 @@ export function distinct<T, K>(iterable: Iterable<T>, keySelector?: Mapper<T, K>
  */
 export function distinct<T>(iterable: Iterable<T>, key: keyof T): Iterable<T>;
 export function distinct<T, K>(iterable: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'distinct');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'distinct');
 	if (keySelector === undefined)
 		return new DeferredIterable(() => new DistinctIterator<T, K>(iterable));
 	Validations.throwIfNotSelector(keySelector, 'keySelector', 'distinct');

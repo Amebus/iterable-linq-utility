@@ -96,7 +96,7 @@ describe('reduce', () => {
 		});
 
 		test('an empty source throws', () => {
-			expect(() => reduce([] as number[], (acc, v) => acc + v)).toThrow(new Error('[iterable-linq-utility/reduce] The "sourceIterable" must not be empty when "reduce" has no seed'));
+			expect(() => reduce([] as number[], (acc, v) => acc + v)).toThrow(new Error('[iterable-linq-utility/reduce] The "iterable" must not be empty when "reduce" has no seed'));
 		});
 
 		test.each([

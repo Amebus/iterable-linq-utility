@@ -120,4 +120,14 @@ describe('min', () => {
 		expect(min([{ v: 1, id: 'a' }, { v: 1, id: 'b' }], 'v')!.id).toBe('a');
 	});
 
+	test.each([{}, [], true, null])('min rejects the comparer %j', comparer => {
+		expect(() => min([1, 2], comparer as never))
+			.toThrow(new Error('[iterable-linq-utility/min] The "comparer" must be a function, a property key or a list of property keys'));
+	});
+
+	test('min accepts a numeric key and a list of keys', () => {
+		expect(min([[3], [1]], 0)).toEqual([1]);
+		expect(min([{ a: 1 }, { a: 2 }], ['a'])).toEqual({ a: 1 });
+	});
+
 });

@@ -33,7 +33,7 @@ export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable
  */
 export function map<T, P extends keyof T>(iterable: Iterable<T>, key: P): Iterable<T[P]>;
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R> | PropertyKey): Iterable<R> {
-	Validations.throwIfNotIterable(iterable, 'map');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'map');
 	Validations.throwIfNotSelector(mapper, 'mapper', 'map');
 	if (isPropertyKey(mapper))
 		return new DeferredIterable(() => new MapKeyIterator<T, R>(iterable, mapper));

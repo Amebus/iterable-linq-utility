@@ -102,7 +102,7 @@ export function collectToMap<T, P extends keyof T, V = T>(iterable: Iterable<T>,
  */
 export function collectToMap<T, P extends keyof T, Q extends keyof T>(iterable: Iterable<T>, key: P, valueKey: Q): Map<T[P], T[Q]>;
 export function collectToMap<T, K, V>(iterable: Iterable<T>, keySelector: Mapper<T, K> | PropertyKey, valueSelector?: Mapper<T, V> | PropertyKey): Map<K, T | V> {
-	Validations.throwIfNotIterable(iterable, 'collectToMap');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'collectToMap');
 	Validations.throwIfNotSelector(keySelector, 'keySelector', 'collectToMap');
 	// each loop in its own function, so the loops of the functions keep their code (ADR 0025)
 	if (valueSelector === undefined)

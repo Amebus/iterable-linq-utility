@@ -20,8 +20,8 @@ describe('zip', () => {
 	});
 
 	test.each([undefined, null, 1, {}])('zip(range(3), %s) -> throw exception', other => {
-		expect(() => zip(range(3), other as any)).toThrow(/^\[iterable-linq-utility\/zip\] /);
-		expect(() => zip(range(3), [1], other as any)).toThrow(/^\[iterable-linq-utility\/zip\] /);
+		expect(() => zip(range(3), other as any)).toThrow(/^\[iterable-linq-utility\/zip\] The (provided )?"others"/);
+		expect(() => zip(range(3), [1], other as any)).toThrow(/^\[iterable-linq-utility\/zip\] The (provided )?"others"/);
 	});
 
 	test.each([

@@ -16,7 +16,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * @since 0.10.0
  */
 export function defaultIfEmpty<T>(iterable: Iterable<T>, value: T): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'defaultIfEmpty');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'defaultIfEmpty');
 	return new DeferredIterable(() => new DefaultIfEmptyIterator(iterable, value));
 }
 

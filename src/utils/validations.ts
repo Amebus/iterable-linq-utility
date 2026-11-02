@@ -2,11 +2,11 @@ import { libraryError } from './libraryError';
 import { isPropertyKey } from './selector';
 import { isFunction } from './utils';
 
-export function throwIfNotIterable<T>(sourceIterable: Iterable<T>, operation: string) {
-	if (sourceIterable == null)
-		throw libraryError(operation, 'The "sourceIterable" must be provided');
-	if (!isFunction(sourceIterable[Symbol.iterator]))
-		throw libraryError(operation, 'The provided "sourceIterable" does not conform to the iterator protocol https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol. It must implement the "[Symbol.iterator]" function.');
+export function throwIfNotIterable<T>(value: Iterable<T>, name: string, operation: string) {
+	if (value == null)
+		throw libraryError(operation, `The "${name}" must be provided`);
+	if (!isFunction(value[Symbol.iterator]))
+		throw libraryError(operation, `The provided "${name}" does not conform to the iterator protocol https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol. It must implement the "[Symbol.iterator]" function.`);
 }
 
 export function throwIfNotFunction(value: unknown, name: string, operation: string) {
@@ -23,6 +23,16 @@ export function throwIfNotComparer(value: unknown, name: string, operation: stri
 	const isKeyList = Array.isArray(value) && value.length > 0 && value.every(isPropertyKey);
 	if (!isFunction(value) && !isPropertyKey(value) && !isKeyList)
 		throw libraryError(operation, `The "${name}" must be a function, a property key or a list of property keys`);
+}
+
+export function throwIfNotNumber(value: unknown, name: string, operation: string) {
+	if (typeof value !== 'number')
+		throw libraryError(operation, `The "${name}" parameter must be a number`);
+}
+
+export function throwIfNotString(value: unknown, name: string, operation: string) {
+	if (typeof value !== 'string')
+		throw libraryError(operation, `The "${name}" parameter must be a string`);
 }
 
 export function throwIfNotInteger(value: number, name: string, operation: string) {

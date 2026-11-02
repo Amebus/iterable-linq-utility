@@ -19,7 +19,7 @@ import { getContinueIteratorResult, isFunction, libraryError, Validations } from
  * @since 0.10.0
  */
 export function flat<T, D extends number = 1>(iterable: Iterable<T>, depth?: D): Iterable<FlatIterable<T, D>> {
-	Validations.throwIfNotIterable(iterable, 'flat');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'flat');
 	if (depth !== undefined && depth !== Infinity && !(Number.isInteger(depth) && depth >= 0))
 		throw libraryError('flat', 'The "depth" parameter must be a non-negative integer or Infinity');
 	const levels = depth ?? 1;

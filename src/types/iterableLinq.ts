@@ -876,6 +876,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Action`
 	 * @param separator - the string between two values; defaults to `,`
 	 * @returns the joined values, `''` when the chain is empty
+	 * @throws Error if a provided `separator` is not a string
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([1, 2, 3]).join(); // '1,2,3'
@@ -949,6 +950,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Action`
 	 * @param comparer - a compare function, a key, or a list of keys to compare by; defaults to `<`
 	 * @returns the greatest value, or `undefined` when the chain is empty
+	 * @throws Error if a provided `comparer` is not a function, a key or a non-empty list of keys
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([3, 1, 2]).max(); // 3
@@ -967,6 +969,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Transformation`
 	 * @param options - `allowPartialMemoization: false` reads the whole source on the first read
 	 * @returns a new chain backed by the cache
+	 * @throws Error if a provided `options` is not an object, or if `allowPartialMemoization` is given and is not a boolean
 	 * @example
 	 * ```ts
 	 * const cached = IterableLinq.from(readLines()).map(parse).memoize();
@@ -983,6 +986,7 @@ export interface IIterableLinqBase<T> {
 	 * @operation `Action`
 	 * @param comparer - a compare function, a key, or a list of keys to compare by; defaults to `<`
 	 * @returns the smallest value, or `undefined` when the chain is empty
+	 * @throws Error if a provided `comparer` is not a function, a key or a non-empty list of keys
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([3, 1, 2]).min(); // 1

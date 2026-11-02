@@ -46,7 +46,7 @@ export function average<T>(iterable: Iterable<T>, selector: Mapper<T, number> | 
  */
 export function average<T>(iterable: Iterable<T>, key: KeysOfType<T, number>): number | undefined;
 export function average<T>(iterable: Iterable<T>, selector?: Mapper<T, number> | PropertyKey): number | undefined {
-	Validations.throwIfNotIterable(iterable, 'average');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'average');
 	if (selector === undefined) {
 		let total = 0;
 		let count = 0;

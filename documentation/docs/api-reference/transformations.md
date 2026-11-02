@@ -623,6 +623,7 @@ Starts a chain of numbers from *start* (default `0`) up to, but not including, *
 
 Throws an `Error` if:
 
+- *start* or *end* is not a number (`NaN` is a number, and gives an empty chain);
 - `options` is not an object;
 - `step` is `0`, `NaN` or infinite;
 - `options` is passed as third argument while *start* is omitted, as in `fromRange(3, undefined, { step: 2 })`.
@@ -949,6 +950,8 @@ With partial memoization, a consumer that stops early (for example [some](action
 If the source throws, every later read past the cached values throws the same error.
 
 Unlike [materialize](actions.md#materialize), `memoize` does not run anything when it is called.
+
+Throws an `Error` if the options are not an object, or if `allowPartialMemoization` is given and is not a boolean.
 
 ## prepend
 

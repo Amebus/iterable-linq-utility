@@ -14,7 +14,7 @@ describe('except', () => {
 	});
 
 	test.each([null, undefined, 42, {}])('rejects an invalid other %j', other => {
-		expect(() => except([1], other as never)).toThrow(/^\[iterable-linq-utility\/except\] The (provided )?"sourceIterable"/);
+		expect(() => except([1], other as never)).toThrow(/^\[iterable-linq-utility\/except\] The (provided )?"other"/);
 	});
 
 	test.each([null, false, {}])('rejects invalid keySelector %j immediately', keySelector => {

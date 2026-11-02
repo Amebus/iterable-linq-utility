@@ -13,7 +13,7 @@ describe('IterableLinq.innerJoin', () => {
 	});
 
 	test('rejects an invalid inner', () => {
-		expect(() => IterableLinq.from([1]).innerJoin(null as never, identity, identity, identity)).toThrow(new Error('[iterable-linq-utility/innerJoin] The "sourceIterable" must be provided'));
+		expect(() => IterableLinq.from([1]).innerJoin(null as never, identity, identity, identity)).toThrow(new Error('[iterable-linq-utility/innerJoin] The "inner" must be provided'));
 	});
 
 	test('joins the pairs of values with the same key, and accepts another chain', () => {

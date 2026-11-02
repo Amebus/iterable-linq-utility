@@ -46,7 +46,7 @@ export function sum<T>(iterable: Iterable<T>, selector: Mapper<T, number> | unde
  */
 export function sum<T>(iterable: Iterable<T>, key: KeysOfType<T, number>): number;
 export function sum<T>(iterable: Iterable<T>, selector?: Mapper<T, number> | PropertyKey): number {
-	Validations.throwIfNotIterable(iterable, 'sum');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'sum');
 	if (selector === undefined) {
 		let result = 0;
 		for (const value of iterable as Iterable<number>)

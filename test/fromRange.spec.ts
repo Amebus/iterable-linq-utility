@@ -197,4 +197,11 @@ describe('IterableLinq.fromRange', () => {
 			.toThrow(new Error('[iterable-linq-utility/fromRange] The "options" parameter must be the second argument when "start" is omitted'));
 	});
 
+	test('IterableLinq.fromRange with a bound that is not a number reports range', () => {
+		expect(() => IterableLinq.fromRange('5' as never)).toThrow(new Error('[iterable-linq-utility/range] The "end" parameter must be a number'));
+		expect(IterableLinq.fromRange(NaN).collectToArray()).toEqual([]);
+		expect(() => IterableLinq.fromRange(1, '5' as never)).toThrow(new Error('[iterable-linq-utility/range] The "end" parameter must be a number'));
+		expect(() => IterableLinq.fromRange(1, null as never)).toThrow(new Error('[iterable-linq-utility/range] The "end" parameter must be a number'));
+	});
+
 });

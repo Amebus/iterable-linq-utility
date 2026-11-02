@@ -16,7 +16,7 @@ import { getContinueIteratorResult, Validations } from '../utils';
  * @since 0.8.0
  */
 export function prepend<T>(iterable: Iterable<T>, value: T): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'prepend');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'prepend');
 	return new DeferredIterable(() => new PrependIterator(iterable, value));
 }
 
