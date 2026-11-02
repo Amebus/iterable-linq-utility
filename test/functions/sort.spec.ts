@@ -48,6 +48,15 @@ describe('sort', () => {
 			expect(collectToArray(sort([1, 3, 2], undefined as never, { descending: true }))).toEqual([3, 2, 1]);
 		});
 
+		test('infinite numbers', () => {
+			expect(collectToArray(sort([Infinity, 1, -Infinity, Infinity, 0]))).toEqual([-Infinity, 0, 1, Infinity, Infinity]);
+			expect(collectToArray(sort([Infinity, 1, -Infinity], { descending: true }))).toEqual([Infinity, 1, -Infinity]);
+		});
+
+		test('descending strings', () => {
+			expect(collectToArray(sort(['b', 'B', 'a'], { descending: true }))).toEqual(['b', 'a', 'B']);
+		});
+
 		test('empty options sort ascending', () => {
 			expect(collectToArray(sort([1, 3, 2], {}))).toEqual([1, 2, 3]);
 		});
@@ -65,6 +74,14 @@ describe('sort', () => {
 		test('is stable, in both directions', () => {
 			expect(ids(sort(items, 'k'))).toEqual(['b', 'd', 'a', 'c']);
 			expect(ids(sort(items, 'k', { descending: true }))).toEqual(['a', 'c', 'b', 'd']);
+		});
+
+		test('string keys, and infinite keys', () => {
+			const words = [{ w: 'pear' }, { w: 'Apple' }, { w: 'fig' }];
+			expect(collectToArray(sort(words, 'w')).map(x => x.w)).toEqual(['Apple', 'fig', 'pear']);
+			expect(collectToArray(sort(words, 'w', { descending: true })).map(x => x.w)).toEqual(['pear', 'fig', 'Apple']);
+			const infinite = [{ k: Infinity, id: 'a' }, { k: -Infinity, id: 'b' }, { k: Infinity, id: 'c' }, { k: 0, id: 'd' }];
+			expect(ids(sort(infinite, 'k'))).toEqual(['b', 'd', 'a', 'c']);
 		});
 
 		test('the missing keys and the null elements go last, in source order, in both directions', () => {
@@ -92,6 +109,35 @@ describe('sort', () => {
 			const values = [{ g: 1, v: 1, id: 'a' }, { g: 0, v: 1, id: 'b' }, { g: 1, v: 1, id: 'c' }, { g: 0, v: 1, id: 'd' }];
 			expect(collectToArray(sort(values, ['g', 'v'])).map(x => x.id)).toEqual(['b', 'd', 'a', 'c']);
 			expect(collectToArray(sort(values, ['g', 'v'], { descending: true })).map(x => x.id)).toEqual(['a', 'c', 'b', 'd']);
+		});
+
+		test('a list of one key sorts like the key', () => {
+			const values = [{ k: 2 }, { k: 1 }, {}, { k: 3 }];
+			expect(collectToArray(sort(values, ['k']))).toEqual(collectToArray(sort(values, 'k')));
+		});
+
+		test('three keys, in both directions', () => {
+			const values = [{ a: 1, b: 1, c: 2 }, { a: 0, b: 2, c: 0 }, { a: 1, b: 1, c: 1 }, { a: 1, b: 0, c: 9 }];
+			expect(collectToArray(sort(values, ['a', 'b', 'c']))).toEqual([{ a: 0, b: 2, c: 0 }, { a: 1, b: 0, c: 9 }, { a: 1, b: 1, c: 1 }, { a: 1, b: 1, c: 2 }]);
+			expect(collectToArray(sort(values, ['a', 'b', 'c'], { descending: true }))).toEqual([{ a: 1, b: 1, c: 2 }, { a: 1, b: 1, c: 1 }, { a: 1, b: 0, c: 9 }, { a: 0, b: 2, c: 0 }]);
+			const tied = [{ a: 1, b: 1, c: 1, id: 'x' }, { a: 1, b: 1, c: 1, id: 'y' }];
+			expect(collectToArray(sort(tied, ['a', 'b', 'c'])).map(v => v.id)).toEqual(['x', 'y']);
+		});
+
+		test('equal infinite keys fall through to the next key', () => {
+			const values = [{ g: Infinity, v: 2 }, { g: -Infinity, v: 5 }, { g: Infinity, v: 1 }, { g: -Infinity, v: 4 }];
+			expect(collectToArray(sort(values, ['g', 'v']))).toEqual([{ g: -Infinity, v: 4 }, { g: -Infinity, v: 5 }, { g: Infinity, v: 1 }, { g: Infinity, v: 2 }]);
+		});
+
+		test('string and number keys together', () => {
+			const values = [{ name: 'b', n: 2 }, { name: 'a', n: 9 }, { name: 'b', n: 1 }];
+			expect(collectToArray(sort(values, ['name', 'n']))).toEqual([{ name: 'a', n: 9 }, { name: 'b', n: 1 }, { name: 'b', n: 2 }]);
+			expect(collectToArray(sort(values, ['name', 'n'], { descending: true }))).toEqual([{ name: 'b', n: 2 }, { name: 'b', n: 1 }, { name: 'a', n: 9 }]);
+		});
+
+		test('with missing keys the equal values keep the source order', () => {
+			const values = [{ g: 1, id: 'a' }, { g: 0, v: 1, id: 'b' }, { g: 1, id: 'c' }];
+			expect(collectToArray(sort(values, ['g', 'v'] as never)).map((x: { id: string }) => x.id)).toEqual(['b', 'a', 'c']);
 		});
 
 		test('a null element goes last', () => {
