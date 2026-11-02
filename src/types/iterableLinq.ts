@@ -6,6 +6,7 @@ import type { Mapper } from './mapper';
 import type { IMemoizeOptions } from './memoizeOptions';
 import type { Predicate } from './predicate';
 import type { Reducer } from './reducer';
+import type { ISortOptions } from './sortOptions';
 import type { Tapper } from './tapper';
 import type { Unit } from './unit';
 
@@ -1234,6 +1235,46 @@ export interface IIterableLinqBase<T> {
 	 * @since 0.0.1
 	 */
 	some(predicate: Predicate<T> | undefined): boolean;
+
+	/**
+	 * Yields the values in ascending order, compared with `<`. The sort is stable, and the source is not changed, like
+	 * `Array.prototype.toSorted`; numbers are compared as numbers, not as strings.
+	 * `null`, `undefined` and `NaN` go last, in the order of the source.
+	 * The whole chain runs before the first value is yielded; every run of the chain sorts again.
+	 * @operation `Transformation`
+	 * @param options - `descending: true` sorts from the greatest to the smallest value
+	 * @returns a new chain with the sorted values
+	 * @throws Error if `options` is not an object, or `descending` is given and is not a boolean
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([3, 1, 2]).sort().collectToArray(); // [1, 2, 3]
+	 * IterableLinq.from([3, 1, 2]).sort({ descending: true }).collectToArray(); // [3, 2, 1]
+	 * ```
+	 * @since next
+	 */
+	sort(options?: ISortOptions): IIterableLinq<T>;
+
+	/**
+	 * Yields the values sorted by `comparer`: a compare function, a key, or a list of keys where the next key breaks the ties of
+	 * the previous one. The sort is stable, and the source is not changed.
+	 * With a key, the values whose key is `null`, `undefined` or `NaN`, and the `null` and `undefined` values, go last, in the
+	 * order of the source; with a list of keys the rule applies at each key. A compare function decides the order of every
+	 * value but `undefined`, which goes last.
+	 * The whole chain runs before the first value is yielded; every run of the chain sorts again.
+	 * @operation `Transformation`
+	 * @param comparer - how to compare two values: `(a, b) => number`, a key or a list of keys
+	 * @param options - `descending: true` inverts the comparison; the equal values keep the order of the source
+	 * @returns a new chain with the sorted values
+	 * @throws Error if `comparer` is not a function, a key or a non-empty list of keys, or if `options` is not valid
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(people).sort('age').collectToArray();
+	 * IterableLinq.from(people).sort(['lastName', 'firstName'], { descending: true }).collectToArray();
+	 * IterableLinq.from(words).sort((a, b) => a.localeCompare(b)).collectToArray();
+	 * ```
+	 * @since next
+	 */
+	sort(comparer: Comparer<T>, options?: ISortOptions): IIterableLinq<T>;
 
 	/**
 	 * Sums the values of a chain of numbers with `+`; runs the whole chain.

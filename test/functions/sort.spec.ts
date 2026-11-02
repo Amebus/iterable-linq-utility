@@ -88,6 +88,12 @@ describe('sort', () => {
 			expect(collectToArray(sort(values, ['g', 'v'], { descending: true }))).toEqual([{ g: 1, v: 3 }, { g: 1 }, { g: 0, v: 5 }, { g: 0 }, { v: 1 }, { v: 0 }]);
 		});
 
+		test('is stable, in both directions', () => {
+			const values = [{ g: 1, v: 1, id: 'a' }, { g: 0, v: 1, id: 'b' }, { g: 1, v: 1, id: 'c' }, { g: 0, v: 1, id: 'd' }];
+			expect(collectToArray(sort(values, ['g', 'v'])).map(x => x.id)).toEqual(['b', 'd', 'a', 'c']);
+			expect(collectToArray(sort(values, ['g', 'v'], { descending: true })).map(x => x.id)).toEqual(['a', 'c', 'b', 'd']);
+		});
+
 		test('a null element goes last', () => {
 			const values = [{ g: 1, v: 1 }, null, { g: 0, v: 1 }];
 			expect(collectToArray(sort(values, ['g', 'v'] as never))).toEqual([{ g: 0, v: 1 }, { g: 1, v: 1 }, null]);

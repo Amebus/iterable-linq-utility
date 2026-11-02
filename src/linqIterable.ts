@@ -6,6 +6,7 @@ import type {
 	IIterableLinq,
 	IIterableLinqBase,
 	IMemoizeOptions,
+	ISortOptions,
 	KeysOfType,
 	Mapper,
 	Predicate,
@@ -62,6 +63,7 @@ import {
 	skipWhile,
 	slice,
 	some,
+	sort,
 	sum,
 	take,
 	takeLast,
@@ -300,6 +302,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	some(predicate?: Predicate<T>): boolean {
 		return some(this.iterable, predicate);
+	}
+
+	sort(comparerOrOptions?: Comparer<T> | ISortOptions, options?: ISortOptions): IIterableLinq<T> {
+		return toChain(sort(this.iterable, comparerOrOptions as Comparer<T>, options));
 	}
 
 	sum(selector?: Mapper<T, number> | KeysOfType<T, number>): number {
