@@ -10,5 +10,6 @@ export * from './objectOptions';
 export * from './predicate';
 export * from './rangeOptions';
 export * from './reducer';
+export * from './sortOptions';
 export * from './tapper';
 export * from './unit';

@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
 	{
-		ignores: ['dist', 'coverage', 'node_modules', '.pnpm-store', 'documentation/site']
+		ignores: ['dist', 'coverage', 'node_modules', '.pnpm-store', 'documentation/site', 'docs/superpowers']
 	},
 	js.configs.recommended,
 	tseslint.configs.recommended,
