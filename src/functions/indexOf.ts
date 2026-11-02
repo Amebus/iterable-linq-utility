@@ -15,7 +15,7 @@ import { Validations } from '../utils';
  * @since 0.6.0
  */
 export function indexOf<T>(iterable: Iterable<T>, value: T): number {
-	Validations.throwIfNotIterable(iterable, 'indexOf');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'indexOf');
 	let index = 0;
 	// for…of closes the source when we return early
 	for (const v of iterable) {

@@ -35,7 +35,7 @@ export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<
  */
 export function flatMap<T, P extends keyof T & KeysOfType<T, Iterable<unknown>>>(iterable: Iterable<T>, key: P): Iterable<T[P] extends Iterable<infer R> ? R : never>;
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>> | PropertyKey): Iterable<R> {
-	Validations.throwIfNotIterable(iterable, 'flatMap');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'flatMap');
 	Validations.throwIfNotSelector(mapper, 'mapper', 'flatMap');
 	if (isPropertyKey(mapper))
 		return new DeferredIterable(() => new FlatMapKeyIterator<T, R>(iterable, mapper));

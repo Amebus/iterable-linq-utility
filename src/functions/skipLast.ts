@@ -16,7 +16,7 @@ import { slice } from './slice';
  * @since 0.9.0
  */
 export function skipLast<T>(iterable: Iterable<T>, count: number): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'skipLast');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'skipLast');
 	Validations.throwIfNotNonNegativeInteger(count, 'count', 'skipLast');
 	// `slice(0, -0)` is `slice(0, 0)`, no value: 0 yields every value as it is read
 	return count === 0 ? slice(iterable) : slice(iterable, 0, -count);

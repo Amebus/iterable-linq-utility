@@ -17,7 +17,7 @@ import { Validations } from '../utils';
  * @since 0.6.0
  */
 export function at<T>(iterable: Iterable<T>, index: number): T | undefined {
-	Validations.throwIfNotIterable(iterable, 'at');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'at');
 	Validations.throwIfNotInteger(index, 'index', 'at');
 	return index >= 0 ? atStart(iterable, index) : atEnd(iterable, -index);
 }

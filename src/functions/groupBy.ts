@@ -39,7 +39,7 @@ export function groupBy<T, K>(iterable: Iterable<T>, keySelector: Mapper<T, K>):
  */
 export function groupBy<T, P extends keyof T>(iterable: Iterable<T>, key: P): Iterable<[T[P], T[]]>;
 export function groupBy<T, K>(iterable: Iterable<T>, keySelector: Mapper<T, K> | PropertyKey): Iterable<[K, T[]]> {
-	Validations.throwIfNotIterable(iterable, 'groupBy');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'groupBy');
 	Validations.throwIfNotSelector(keySelector, 'keySelector', 'groupBy');
 	if (isPropertyKey(keySelector))
 		return new DeferredIterable(() => new GroupByKeyIterator<T, K>(iterable, keySelector));

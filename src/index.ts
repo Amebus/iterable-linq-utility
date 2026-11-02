@@ -30,7 +30,7 @@ export function empty<T>(): IIterableLinq<T> {
  * @since 0.0.1
  */
 export function from<T>(iterable: Iterable<T>): IIterableLinq<T> {
-	Validations.throwIfNotIterable(iterable, 'from');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'from');
 	return toChain(iterable);
 }
 

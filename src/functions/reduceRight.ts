@@ -34,7 +34,7 @@ export function reduceRight<T>(iterable: Iterable<T>, reducer: Reducer<T, T>): T
  */
 export function reduceRight<T, R>(iterable: Iterable<T>, neutralElement: R, reducer: Reducer<T, R>): R;
 export function reduceRight<T, R>(iterable: Iterable<T>, ...args: [Reducer<T, T>] | [R, Reducer<T, R>]): T | R {
-	Validations.throwIfNotIterable(iterable, 'reduceRight');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'reduceRight');
 	// the number of arguments, not their type, picks the form: undefined and functions are valid seeds
 	if (args.length === 1)
 		return reduceRightWithoutSeed(iterable, args[0]);
@@ -54,7 +54,7 @@ function reduceRightWithoutSeed<T>(iterable: Iterable<T>, reducer: Reducer<T, T>
 
 	const values = collectToArray(iterable);
 	if (values.length === 0)
-		throw libraryError('reduceRight', 'The "sourceIterable" must not be empty when "reduceRight" has no seed');
+		throw libraryError('reduceRight', 'The "iterable" must not be empty when "reduceRight" has no seed');
 	let result = values[values.length - 1];
 	for (let index = values.length - 2; index >= 0; index--)
 		result = reducer(result, values[index], index);

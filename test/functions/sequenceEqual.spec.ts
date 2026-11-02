@@ -11,7 +11,7 @@ import {
 } from '@/functions';
 import { withoutInputIterableThrowsException } from './functionsTestUtility';
 
-const NOT_ITERABLE = '[iterable-linq-utility/sequenceEqual] The provided "sourceIterable" does not conform to the iterator protocol';
+const NOT_ITERABLE = '[iterable-linq-utility/sequenceEqual] The provided "other" does not conform to the iterator protocol';
 
 describe('sequenceEqual', () => {
 
@@ -21,7 +21,7 @@ describe('sequenceEqual', () => {
 
 	test.each([undefined, null])('sequenceEqual(iterable, %j) -> throw exception without reading the source', other => {
 		const source = spyIterable([1, 2]);
-		expect(() => sequenceEqual(source, other as never)).toThrow(new Error('[iterable-linq-utility/sequenceEqual] The "sourceIterable" must be provided'));
+		expect(() => sequenceEqual(source, other as never)).toThrow(new Error('[iterable-linq-utility/sequenceEqual] The "other" must be provided'));
 		expect(source.stats).toEqual({ iterations: 0, reads: 0 });
 	});
 

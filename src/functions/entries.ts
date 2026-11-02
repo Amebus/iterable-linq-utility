@@ -14,7 +14,7 @@ import { map } from './map';
  * @since 0.10.0
  */
 export function entries<T>(iterable: Iterable<T>): Iterable<[number, T]> {
-	Validations.throwIfNotIterable(iterable, 'entries');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'entries');
 	return map(iterable, toEntry);
 }
 

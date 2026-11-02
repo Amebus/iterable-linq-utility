@@ -18,7 +18,7 @@ import { Validations } from '../utils';
  * @since 0.0.10
  */
 export function tapChain<T>(iterable: Iterable<T>, tapper: Tapper<Iterable<T>>): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'tapChain');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'tapChain');
 	Validations.throwIfNotFunction(tapper, 'tapper', 'tapChain');
 	return new DeferredIterable(() => {
 		tapper(iterable, 0);

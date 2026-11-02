@@ -21,7 +21,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, libraryError, Validat
  * @since 0.10.0
  */
 export function withValue<T>(iterable: Iterable<T>, index: number, value: T): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'with');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'with');
 	Validations.throwIfNotInteger(index, 'index', 'with');
 	return index >= 0
 		? new DeferredIterable(() => new WithFromStartIterator(iterable, index, value))

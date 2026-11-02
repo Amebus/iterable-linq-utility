@@ -17,9 +17,9 @@ import { Validations } from '../utils';
  * @since 0.8.0
  */
 export function concat<T>(iterable: Iterable<T>, ...others: Iterable<T>[]): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'concat');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'concat');
 	for (const other of others)
-		Validations.throwIfNotIterable(other, 'concat');
+		Validations.throwIfNotIterable(other, 'others', 'concat');
 	// copies the references of the rest parameter: no iterable is opened here, each one is opened in advance()
 	const sources = [iterable, ...others];
 	return new DeferredIterable(() => new ConcatIterator(sources));

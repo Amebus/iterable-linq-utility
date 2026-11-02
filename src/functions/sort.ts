@@ -63,7 +63,7 @@ export function sort<T>(iterable: Iterable<T>, compare: (a: T, b: T) => number):
  */
 export function sort<T>(iterable: Iterable<T>, keys: keyof T | Array<keyof T>, options?: ISortOptions): Iterable<T>;
 export function sort<T>(iterable: Iterable<T>, comparerOrOptions?: Comparer<T> | ISortOptions, options?: ISortOptions): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'sort');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'sort');
 	let comparer: Comparer<T> | undefined;
 	let sortOptions: ISortOptions | undefined;
 	if (options !== undefined) {

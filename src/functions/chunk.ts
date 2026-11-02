@@ -16,7 +16,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * @since 0.10.0
  */
 export function chunk<T>(iterable: Iterable<T>, size: number): Iterable<T[]> {
-	Validations.throwIfNotIterable(iterable, 'chunk');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'chunk');
 	Validations.throwIfNotPositiveInteger(size, 'size', 'chunk');
 	return new DeferredIterable(() => new ChunkIterator(iterable, size));
 }

@@ -17,7 +17,7 @@ import { Validations } from '../utils';
  * @since 0.9.0
  */
 export function reverse<T>(iterable: Iterable<T>): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'reverse');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'reverse');
 	return new DeferredIterable(() => new ReverseIterator(iterable));
 }
 

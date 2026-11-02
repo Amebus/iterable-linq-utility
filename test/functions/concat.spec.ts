@@ -20,7 +20,7 @@ describe('concat', () => {
 	});
 
 	test.each([undefined, null, 1, {}])('concat([1], [2], %s) -> throw exception', other => {
-		expect(() => concat([1], [2], other as any)).toThrow('[iterable-linq-utility/concat] ');
+		expect(() => concat([1], [2], other as any)).toThrow(/^\[iterable-linq-utility\/concat\] The (provided )?"others"/);
 	});
 
 	test.each([

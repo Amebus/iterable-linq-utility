@@ -20,7 +20,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * @since 0.8.0
  */
 export function slice<T>(iterable: Iterable<T>, start?: number, end?: number): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'slice');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'slice');
 	if (start !== undefined)
 		Validations.throwIfNotInteger(start, 'start', 'slice');
 	if (end !== undefined)

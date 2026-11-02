@@ -7,7 +7,7 @@ import * as IterableLinq from '@/index';
 describe('IterableLinq.sequenceEqual', () => {
 
 	test.each([undefined, null])('IterableLinq.sequenceEqual rejects a missing other %s', other => {
-		expect(() => IterableLinq.from([1]).sequenceEqual(other as never)).toThrow(new Error('[iterable-linq-utility/sequenceEqual] The "sourceIterable" must be provided'));
+		expect(() => IterableLinq.from([1]).sequenceEqual(other as never)).toThrow(new Error('[iterable-linq-utility/sequenceEqual] The "other" must be provided'));
 	});
 
 	test.each([null, 0, {}])('IterableLinq.sequenceEqual rejects invalid equals %s', equals => {

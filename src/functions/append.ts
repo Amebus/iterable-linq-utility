@@ -16,7 +16,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * @since 0.8.0
  */
 export function append<T>(iterable: Iterable<T>, value: T): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'append');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'append');
 	return new DeferredIterable(() => new AppendIterator(iterable, value));
 }
 

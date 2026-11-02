@@ -36,7 +36,7 @@ export function filter<T, S extends T>(iterable: Iterable<T>, predicate: (value:
  */
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T>;
 export function filter<T>(iterable: Iterable<T>, predicate: Predicate<T>): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'filter');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'filter');
 	Validations.throwIfNotFunction(predicate, 'predicate', 'filter');
 	return new DeferredIterable(() => new FilterIterator(iterable, predicate));
 }

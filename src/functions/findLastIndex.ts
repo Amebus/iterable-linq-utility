@@ -16,7 +16,7 @@ import { Validations } from '../utils';
  * @since 0.6.0
  */
 export function findLastIndex<T>(iterable: Iterable<T>, predicate: Predicate<T>): number {
-	Validations.throwIfNotIterable(iterable, 'findLastIndex');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'findLastIndex');
 	Validations.throwIfNotFunction(predicate, 'predicate', 'findLastIndex');
 	let result = -1;
 	let index = 0;

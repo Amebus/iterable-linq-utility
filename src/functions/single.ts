@@ -52,7 +52,7 @@ export function single<T, S extends T>(iterable: Iterable<T>, predicate: (value:
  */
 export function single<T>(iterable: Iterable<T>, predicate: Predicate<T> | undefined): T | undefined;
 export function single<T>(iterable: Iterable<T>, predicate?: Predicate<T>): T | undefined {
-	Validations.throwIfNotIterable(iterable, 'single');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'single');
 	let found = false;
 	let result: T | undefined;
 	// for…of closes the source when we throw at the second match and when the predicate throws

@@ -18,7 +18,7 @@ import { Validations } from '../utils';
  * @since 0.0.11
  */
 export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
-	Validations.throwIfNotIterable(iterable, 'forEach');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'forEach');
 	Validations.throwIfNotFunction(action, 'action', 'forEach');
 
 	let index = 0;
@@ -47,7 +47,7 @@ export function forEach<T>(iterable: Iterable<T>, action: Action<T>): Unit {
  * @since 0.0.11
  */
 export async function forEachAsync<T>(iterable: Iterable<T>, action: AsyncAction<T>): Promise<Unit> {
-	Validations.throwIfNotIterable(iterable, 'forEachAsync');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'forEachAsync');
 	Validations.throwIfNotFunction(action, 'action', 'forEachAsync');
 
 	let index = 0;

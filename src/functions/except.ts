@@ -39,8 +39,8 @@ export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelec
  */
 export function except<T>(iterable: Iterable<T>, other: Iterable<T>, key: keyof T): Iterable<T>;
 export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'except');
-	Validations.throwIfNotIterable(other, 'except');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'except');
+	Validations.throwIfNotIterable(other, 'other', 'except');
 	if (keySelector === undefined)
 		return new DeferredIterable(() => new ExceptIterator<T, K>(iterable, other));
 	Validations.throwIfNotSelector(keySelector, 'keySelector', 'except');

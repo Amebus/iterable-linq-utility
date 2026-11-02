@@ -16,7 +16,7 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
  * @since 0.3.0
  */
 export function take<T>(iterable: Iterable<T>, count: number): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'take');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'take');
 	Validations.throwIfNotNonNegativeInteger(count, 'count', 'take');
 	return new DeferredIterable(() => new TakeIterator(iterable, count));
 }

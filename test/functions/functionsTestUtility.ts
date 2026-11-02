@@ -27,10 +27,10 @@ export function returnClosesTheIterator<T>(iterable: Iterable<T>, returnValue: a
 
 // the error names the operation: the name of the raw function, or `operation` when it is exported under another name
 export function withoutInputIterableThrowsException(fn: any, operation: string = fn.name) {
-	const prefix = `[iterable-linq-utility/${operation}] `;
-	expect(() => fn()).toThrow(prefix);
-	expect(() => fn(undefined)).toThrow(prefix);
-	expect(() => fn(null)).toThrow(prefix);
+	const error = new Error(`[iterable-linq-utility/${operation}] The "iterable" must be provided`);
+	expect(() => fn()).toThrow(error);
+	expect(() => fn(undefined)).toThrow(error);
+	expect(() => fn(null)).toThrow(error);
 }
 
 export async function withoutInputIterableThrowsExceptionAsync(fn: any) {

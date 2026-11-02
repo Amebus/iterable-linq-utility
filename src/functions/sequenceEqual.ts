@@ -20,8 +20,8 @@ import { Validations } from '../utils';
  * @since 0.7.0
  */
 export function sequenceEqual<T>(iterable: Iterable<T>, other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean {
-	Validations.throwIfNotIterable(iterable, 'sequenceEqual');
-	Validations.throwIfNotIterable(other, 'sequenceEqual');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'sequenceEqual');
+	Validations.throwIfNotIterable(other, 'other', 'sequenceEqual');
 	if (equals !== undefined)
 		Validations.throwIfNotFunction(equals, 'equals', 'sequenceEqual');
 	const otherIterator = other[Symbol.iterator]();

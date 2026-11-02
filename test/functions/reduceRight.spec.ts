@@ -106,7 +106,7 @@ describe('reduceRight', () => {
 		});
 
 		test('an empty source throws', () => {
-			expect(() => reduceRight([] as number[], (acc, v) => acc + v)).toThrow(new Error('[iterable-linq-utility/reduceRight] The "sourceIterable" must not be empty when "reduceRight" has no seed'));
+			expect(() => reduceRight([] as number[], (acc, v) => acc + v)).toThrow(new Error('[iterable-linq-utility/reduceRight] The "iterable" must not be empty when "reduceRight" has no seed'));
 		});
 
 		test.each([

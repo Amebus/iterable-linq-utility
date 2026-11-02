@@ -14,7 +14,7 @@ describe('intersect', () => {
 	});
 
 	test.each([null, undefined, 42, {}])('rejects an invalid other %j', other => {
-		expect(() => intersect([1], other as never)).toThrow(/^\[iterable-linq-utility\/intersect\] The (provided )?"sourceIterable"/);
+		expect(() => intersect([1], other as never)).toThrow(/^\[iterable-linq-utility\/intersect\] The (provided )?"other"/);
 	});
 
 	test.each([null, false, {}])('rejects invalid keySelector %j immediately', keySelector => {

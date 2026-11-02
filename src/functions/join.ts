@@ -16,6 +16,6 @@ import { Validations } from '../utils';
  * @since 0.7.0
  */
 export function join<T>(iterable: Iterable<T>, separator?: string): string {
-	Validations.throwIfNotIterable(iterable, 'join');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'join');
 	return Array.from(iterable).join(separator);
 }

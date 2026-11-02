@@ -9,7 +9,7 @@ describe('IterableLinq.except', () => {
 	});
 
 	test('rejects an invalid other', () => {
-		expect(() => IterableLinq.from([1]).except(null as never)).toThrow(new Error('[iterable-linq-utility/except] The "sourceIterable" must be provided'));
+		expect(() => IterableLinq.from([1]).except(null as never)).toThrow(new Error('[iterable-linq-utility/except] The "other" must be provided'));
 	});
 
 	test('compares the values with SameValueZero', () => {

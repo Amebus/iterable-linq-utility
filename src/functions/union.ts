@@ -39,8 +39,8 @@ export function union<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelect
  */
 export function union<T>(iterable: Iterable<T>, other: Iterable<T>, key: keyof T): Iterable<T>;
 export function union<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {
-	Validations.throwIfNotIterable(iterable, 'union');
-	Validations.throwIfNotIterable(other, 'union');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'union');
+	Validations.throwIfNotIterable(other, 'other', 'union');
 	if (keySelector === undefined)
 		return new DeferredIterable(() => new UnionIterator<T, K>(iterable, other));
 	Validations.throwIfNotSelector(keySelector, 'keySelector', 'union');

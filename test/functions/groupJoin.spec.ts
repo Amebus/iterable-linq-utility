@@ -17,7 +17,7 @@ describe('groupJoin', () => {
 	});
 
 	test.each([null, undefined, 42, {}])('rejects an invalid inner %j', inner => {
-		expect(() => groupJoin([1], inner as never, identity, identity, pair)).toThrow(/^\[iterable-linq-utility\/groupJoin\] The (provided )?"sourceIterable"/);
+		expect(() => groupJoin([1], inner as never, identity, identity, pair)).toThrow(/^\[iterable-linq-utility\/groupJoin\] The (provided )?"inner"/);
 	});
 
 	test.each([

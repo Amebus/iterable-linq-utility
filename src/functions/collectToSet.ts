@@ -13,6 +13,6 @@ import { Validations } from '../utils';
  * @since 0.10.0
  */
 export function collectToSet<T>(iterable: Iterable<T>): Set<T> {
-	Validations.throwIfNotIterable(iterable, 'collectToSet');
+	Validations.throwIfNotIterable(iterable, 'iterable', 'collectToSet');
 	return new Set(iterable);
 }

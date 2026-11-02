@@ -2,8 +2,8 @@ import { describe, expect, test } from 'vitest';
 
 import { Validations } from '@/utils';
 
-const ITERABLE_MISSING = 'The "sourceIterable" must be provided';
-const ITERABLE_INVALID = 'The provided "sourceIterable" does not conform to the iterator protocol https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol. It must implement the "[Symbol.iterator]" function.';
+const ITERABLE_MISSING = 'The "other" must be provided';
+const ITERABLE_INVALID = 'The provided "other" does not conform to the iterator protocol https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol. It must implement the "[Symbol.iterator]" function.';
 
 function prefixed(operation: string, message: string) {
 	return `[iterable-linq-utility/${operation}] ${message}`;
@@ -19,11 +19,11 @@ describe('Validations', () => {
 			{ name: 'a Map', value: new Map() },
 			{ name: 'a generator', value: (function* () { yield 1; })() }
 		])('accepts $name', ({ value }) => {
-			expect(() => Validations.throwIfNotIterable(value, 'op')).not.toThrow();
+			expect(() => Validations.throwIfNotIterable(value, 'other', 'op')).not.toThrow();
 		});
 
 		test.each([undefined, null])('rejects %j as missing', value => {
-			expect(() => Validations.throwIfNotIterable(value as never, 'op')).toThrow(new Error(prefixed('op', ITERABLE_MISSING)));
+			expect(() => Validations.throwIfNotIterable(value as never, 'other', 'op')).toThrow(new Error(prefixed('op', ITERABLE_MISSING)));
 		});
 
 		test.each([
@@ -32,7 +32,7 @@ describe('Validations', () => {
 			{ name: 'a boolean', value: true },
 			{ name: 'an object whose [Symbol.iterator] is not a function', value: { [Symbol.iterator]: 'not a function' } }
 		])('rejects $name as not iterable', ({ value }) => {
-			expect(() => Validations.throwIfNotIterable(value as never, 'op')).toThrow(new Error(prefixed('op', ITERABLE_INVALID)));
+			expect(() => Validations.throwIfNotIterable(value as never, 'other', 'op')).toThrow(new Error(prefixed('op', ITERABLE_INVALID)));
 		});
 	});
 
