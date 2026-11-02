@@ -1228,7 +1228,7 @@ A comparer changes the order. It is the comparer of `min` and `max`:
         // ['Ann Bianchi', 'Ann Rossi', 'Bob Rossi']
         ```
 
-2. A function `(a: T, b: T) => number`: negative if `a` comes before `b`, `0` if they are equal, positive if `a` comes after `b`. For example, to compare strings in the order of a language:
+2. A function `(a: T, b: T) => number`: negative if `a` comes before `b`, `0` if they are equal, positive if `a` comes after `b`. It decides the direction too, so it takes no options. For example, to compare strings in the order of a language:
 
     ```typescript
     IterableLinq.from(['banana', 'Cherry', 'apple']).sort((a, b) => a.localeCompare(b)).collectToArray();
@@ -1237,7 +1237,7 @@ A comparer changes the order. It is the comparer of `min` and `max`:
 
 ### Descending order
 
-`{ descending: true }` sorts from the greatest to the smallest value, with or without a comparer. It inverts the comparison, so the equal values still keep the order of the source. For a different direction on each key, use a compare function.
+`{ descending: true }` sorts from the greatest to the smallest value, with no comparer or with a property or a list of properties. It inverts the comparison, so the equal values still keep the order of the source. A compare function takes no options: it decides the direction itself, also a different one on each key.
 
 ```typescript
 IterableLinq.from([3, 1, 2]).sort({ descending: true }).collectToArray();
@@ -1261,7 +1261,7 @@ IterableLinq.from([2, null, 1, undefined, NaN]).sort({ descending: true }).colle
 // [2, 1, null, undefined, NaN]
 ```
 
-Throws an `Error` if the comparer is not a function, a property or a non-empty list of properties, if the options are not an object, or if `descending` is not a boolean.
+Throws an `Error` if the comparer is not a function, a property or a non-empty list of properties, if options follow a compare function or come without a property before them (`sort(undefined, { descending: true })`), if the options are not an object, or if `descending` is not a boolean. TypeScript rejects these calls too: the forms are `sort(options?)`, `sort(compare)` and `sort(keys, options?)`.
 
 ## take
 

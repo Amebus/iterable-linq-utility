@@ -43,7 +43,7 @@ Chosen option: "A: copy, then the native `Array.prototype.sort`", with comparers
 * A property: one pass moves out the values whose property is missing, and tells whether the properties are all numbers; the others are compared on the property, in the comparison.
 * A list of properties without missing values: compared property by property on the values, with the reads written out for two properties. With a missing value, the properties are read once into one array per property and the indices are sorted, so that a missing property goes after a present one at its level.
 * A compare function: the native sort with the function.
-* `{ descending: true }` inverts the comparison, not the result, so the equal values keep the order of the source. A different direction for each property is a compare function.
+* Three signatures, which the types and the validation both enforce: `sort(options?)`, `sort(compare)` and `sort(keys, options?)`. `{ descending: true }` inverts the comparison, not the result, so the equal values keep the order of the source. A compare function takes no options: it decides the direction, also a different one for each property.
 * `null`, `undefined` and `NaN` go last, in the order of the source, in both directions. A `null` element compared by a property is missing, not a `TypeError`, as in `min` and `max`.
 
 Measured with Node 24 on 100,000 values (the spike of #41, and `pnpm bench:report functions/sort`):
@@ -99,7 +99,7 @@ B was faster than A in the spike only because A compared through the generic loo
 
 ### Descending order
 
-* `{ descending }`: one option, like the `reverse` option of `fromRange`, for every kind of comparer; the chosen one
+* `{ descending }`: one option, like the `reverse` option of `fromRange`, with no comparer or with properties; the chosen one. A compare function already decides the direction, so the option would be a second way to say it
 * `sortDescending`: one more operation with the same signatures
 * A direction for each key: changes `Comparer`, and so `min` and `max`, for what a compare function does in one line
 * A compare function only: a property or a list of properties could not be sorted in descending order

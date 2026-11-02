@@ -32,10 +32,16 @@ describe('IterableLinq.sort', () => {
 			.toEqual(['Bianchi', 'Rossi', 'Rossi']);
 	});
 
-	test('IterableLinq.sort(undefined, options) and an optional comparer', () => {
-		expect(IterableLinq.from([1, 3, 2]).sort(undefined, { descending: true }).collectToArray()).toEqual([3, 2, 1]);
-		const comparer: ((a: number, b: number) => number) | undefined = undefined as ((a: number, b: number) => number) | undefined;
-		expect(IterableLinq.from([1, 3, 2]).sort(comparer).collectToArray()).toEqual([1, 2, 3]);
+	test('IterableLinq.sort accepts only the combinations of its overloads', () => {
+		const chain = IterableLinq.from([1, 3, 2]);
+		// @ts-expect-error a missing comparer before the options
+		expect(() => chain.sort(undefined, { descending: true })).toThrow();
+		// @ts-expect-error options after a compare function
+		expect(() => chain.sort((a, b) => a - b, { descending: true })).toThrow();
+		const keys = IterableLinq.from([{ a: 1 }]);
+		// @ts-expect-error a list of keys is not options
+		expect(() => keys.sort({}, { descending: true })).toThrow();
+		expect(keys.sort(['a'], { descending: true }).collectToArray()).toEqual([{ a: 1 }]);
 	});
 
 	test('IterableLinq.sort composes with the other operations', () => {

@@ -1255,26 +1255,41 @@ export interface IIterableLinqBase<T> {
 	sort(options?: ISortOptions): IIterableLinq<T>;
 
 	/**
-	 * Yields the values sorted by `comparer`: a compare function, a key, or a list of keys where the next key breaks the ties of
-	 * the previous one. The sort is stable, and the source is not changed.
-	 * With a key, the values whose key is `null`, `undefined` or `NaN`, and the `null` and `undefined` values, go last, in the
-	 * order of the source; with a list of keys the rule applies at each key. A compare function decides the order of every
-	 * value but `undefined`, which goes last.
+	 * Yields the values sorted by `compare`, which decides the order and its direction. The sort is stable, and the source is
+	 * not changed. `undefined` values go last without calling `compare`, as in `Array.prototype.sort`.
 	 * The whole chain runs before the first value is yielded; every run of the chain sorts again.
 	 * @operation `Transformation`
-	 * @param comparer - how to compare two values: `(a, b) => number`, a key or a list of keys
+	 * @param compare - `(a, b) => number`: negative if `a` comes before `b`, `0` if they are equal, positive if `a` comes after `b`
+	 * @returns a new chain with the sorted values
+	 * @throws Error if options are given too
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(words).sort((a, b) => a.localeCompare(b)).collectToArray();
+	 * IterableLinq.from([1, 3, 2]).sort((a, b) => b - a).collectToArray(); // [3, 2, 1]
+	 * ```
+	 * @since next
+	 */
+	sort(compare: (a: T, b: T) => number): IIterableLinq<T>;
+
+	/**
+	 * Yields the values sorted by a key, compared with `<`, or by a list of keys where the next key breaks the ties of the
+	 * previous one. The sort is stable, and the source is not changed.
+	 * The values whose key is `null`, `undefined` or `NaN`, and the `null` and `undefined` values, go last, in the order of the
+	 * source; with a list of keys the rule applies at each key.
+	 * The whole chain runs before the first value is yielded; every run of the chain sorts again.
+	 * @operation `Transformation`
+	 * @param keys - a key, or a non-empty list of keys
 	 * @param options - `descending: true` inverts the comparison; the equal values keep the order of the source
 	 * @returns a new chain with the sorted values
-	 * @throws Error if `comparer` is not a function, a key or a non-empty list of keys, or if `options` is not valid
+	 * @throws Error if `keys` is not a key or a non-empty list of keys, or if `options` is not valid
 	 * @example
 	 * ```ts
 	 * IterableLinq.from(people).sort('age').collectToArray();
 	 * IterableLinq.from(people).sort(['lastName', 'firstName'], { descending: true }).collectToArray();
-	 * IterableLinq.from(words).sort((a, b) => a.localeCompare(b)).collectToArray();
 	 * ```
 	 * @since next
 	 */
-	sort(comparer: Comparer<T> | undefined, options?: ISortOptions): IIterableLinq<T>;
+	sort(keys: keyof T | Array<keyof T>, options?: ISortOptions): IIterableLinq<T>;
 
 	/**
 	 * Sums the values of a chain of numbers with `+`; runs the whole chain.

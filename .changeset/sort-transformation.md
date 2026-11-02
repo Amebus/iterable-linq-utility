@@ -2,4 +2,4 @@
 "iterable-linq-utility": minor
 ---
 
-New `sort(comparer?, options?)` Transformation: a stable sort that does not change the source, like `Array.prototype.toSorted`, with the comparer of `min` and `max`, `{ descending }`, and `null`, `undefined` and `NaN` last (#41).
+New `sort(options?)`, `sort(compare)` and `sort(keys, options?)` Transformation: a stable sort that does not change the source, like `Array.prototype.toSorted`; `{ descending: true }` sorts the other way, and `null`, `undefined` and `NaN` go last (#41).

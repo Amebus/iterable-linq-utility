@@ -305,7 +305,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 	}
 
 	sort(comparerOrOptions?: Comparer<T> | ISortOptions, options?: ISortOptions): IIterableLinq<T> {
-		return toChain(sort(this.iterable, comparerOrOptions as Comparer<T>, options));
+		// the overloads of IIterableLinqBase are the contract; Functions.sort validates the combination again
+		return toChain(sort(this.iterable, comparerOrOptions as keyof T, options));
 	}
 
 	sum(selector?: Mapper<T, number> | KeysOfType<T, number>): number {

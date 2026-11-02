@@ -45,7 +45,6 @@ describe('sort', () => {
 
 		test('descending', () => {
 			expect(collectToArray(sort([1, 3, 2], { descending: true }))).toEqual([3, 2, 1]);
-			expect(collectToArray(sort([1, 3, 2], undefined, { descending: true }))).toEqual([3, 2, 1]);
 		});
 
 		test('infinite numbers', () => {
@@ -156,9 +155,9 @@ describe('sort', () => {
 		const byK = (x: IItem, y: IItem) => (x.k as number) - (y.k as number);
 		const items: IItem[] = [{ k: 1, id: 'a' }, { k: 0, id: 'b' }, { k: 1, id: 'c' }, { k: 0, id: 'd' }];
 
-		test('is stable, in both directions', () => {
+		test('is stable, and decides the direction itself', () => {
 			expect(ids(sort(items, byK))).toEqual(['b', 'd', 'a', 'c']);
-			expect(ids(sort(items, byK, { descending: true }))).toEqual(['a', 'c', 'b', 'd']);
+			expect(ids(sort(items, (x, y) => byK(y, x)))).toEqual(['a', 'c', 'b', 'd']);
 		});
 
 		test('undefined elements go last, without calling the function', () => {
@@ -222,6 +221,19 @@ describe('sort', () => {
 		test.each([null, [], [{}], true])('rejects the comparer %j', comparer => {
 			expect(() => sort([1], comparer as never))
 				.toThrow(new Error('[iterable-linq-utility/sort] The "comparer" must be a function, a property key or a list of property keys'));
+		});
+
+		test.each([
+			{ name: 'undefined', comparer: undefined },
+			{ name: 'options', comparer: {} }
+		])('rejects $name before options', ({ comparer }) => {
+			expect(() => sort([1], comparer as never, { descending: true }))
+				.toThrow(new Error('[iterable-linq-utility/sort] The "comparer" must be a function, a property key or a list of property keys'));
+		});
+
+		test('rejects options after a compare function', () => {
+			expect(() => sort([1], ((a: number, b: number) => a - b) as never, { descending: true }))
+				.toThrow(new Error('[iterable-linq-utility/sort] The "options" cannot be given with a compare function, which decides the order'));
 		});
 
 		test('rejects options that are not an object', () => {
