@@ -1,5 +1,5 @@
 import { BaseIterator, DeferredIterable } from '../iterators';
-import { getContinueIteratorResult, getDoneIteratorResult, libraryError, Validations } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, isRangeOptionsArgument, libraryError, Validations } from '../utils';
 import type { IRangeOptions } from '../types';
 import { empty } from './empty';
 
@@ -56,14 +56,6 @@ export function range(startOrEnd: number, endOrOptions?: number | IRangeOptions,
 	if (!(normalized.length > 0))
 		return empty();
 	return new DeferredIterable(() => new RangeIterator(normalized.first, normalized.step, normalized.length));
-}
-
-/**
- * Whether the second argument of `range` is the options: missing, or an object. Any other value is the end, so a bound of the
- * wrong type is reported as `end`, not as the options.
- */
-export function isRangeOptionsArgument(value: unknown): value is IRangeOptions | undefined {
-	return value === undefined || (typeof value === 'object' && value !== null);
 }
 
 interface INormalizedRange {

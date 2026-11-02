@@ -1,8 +1,7 @@
-import { libraryError, Validations } from './utils';
+import { isRangeOptionsArgument, libraryError, Validations } from './utils';
 import { toChain } from './linqIterable';
 
 import * as Functions from './functions';
-import { isRangeOptionsArgument } from './functions/range';
 import type { IIterableLinq, IObjectDefaultOptions, IObjectOptions, IRangeOptions, ObjectItem } from './types';
 
 /**
