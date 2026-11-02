@@ -24,7 +24,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | The instructions for agents are in three levels: the CI checks, `AGENTS.md` and the skills of `.agents/skills/`; the decisions in force are summarised in this section, and `pnpm check:instructions` checks that it cites every ADR in force and no other one. | [0014](0014-instructions-for-ai-coding-agents.md), [0027](0027-current-decisions-in-the-adr-index.md) |
 | The shared test sources live in `test/_helpers/generators/`, one file and one spec each, and a source moves there when a second spec needs it. | [0018](0018-shared-test-sources.md) |
 | The tests cover 100% of `src/`, enforced by Vitest; Codecov only informs, and unreachable code gets `/* istanbul ignore next -- <reason> */`. | [0019](0019-full-test-coverage-of-the-library.md) |
-| Every error the library creates starts with `[iterable-linq-utility/<operation>]`, through `libraryError` or a `Validations` helper; the errors of the source and of the callbacks propagate unchanged. | [0020](0020-error-messages-of-the-library.md) |
+| Every error the library creates starts with `[iterable-linq-utility/<operation>]` and names the argument as the signature does, through `libraryError` or a `Validations` helper, and every argument that is given is validated; the errors of the source and of the callbacks propagate unchanged. | [0020](0020-error-messages-of-the-library.md), [0030](0030-validation-messages-name-the-argument.md) |
 | An operation with a native counterpart uses its equality (`indexOf` `===`, `includes` `SameValueZero`); every other one uses `SameValueZero`, and a different equality is a callback. | [0024](0024-equality-of-the-operations-that-compare-values.md) |
 | A selector that reads a value from the element also accepts one property key, never an array, read inline without slowing the function form; predicates, reducers and taps take functions only. | [0025](0025-property-keys-as-selectors.md), [0026](0026-arrays-of-keys-are-not-selectors.md) |
 | `sort` copies the source and sorts the copy with the native stable sort, with a comparer for each kind of `Comparer`; the forms are `sort(options?)`, `sort(compare)` and `sort(keys, options?)`, `{ descending }` inverts the comparison, and `null`, `undefined` and `NaN` go last in both directions. | [0029](0029-sorting-with-the-native-sort.md) |
@@ -53,7 +53,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted |
 | [0018](0018-shared-test-sources.md) | Shared test sources | accepted |
 | [0019](0019-full-test-coverage-of-the-library.md) | Full test coverage of the library | accepted |
-| [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted |
+| [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted, amended by [0030](0030-validation-messages-name-the-argument.md) |
 | [0021](0021-benchmark-standards.md) | Benchmark standards | accepted, amended by [0022](0022-benchmark-scenarios-in-practice.md) |
 | [0022](0022-benchmark-scenarios-in-practice.md) | Benchmark scenarios in practice | accepted |
 | [0023](0023-re-registering-an-extension.md) | Re-registering an extension | accepted |
@@ -63,6 +63,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0027](0027-current-decisions-in-the-adr-index.md) | Current decisions in the ADR index | accepted |
 | [0028](0028-specs-and-plans-stay-out-of-the-repository.md) | Specs and plans stay out of the repository | accepted |
 | [0029](0029-sorting-with-the-native-sort.md) | Sorting with the native sort | accepted |
+| [0030](0030-validation-messages-name-the-argument.md) | The validation messages name the argument | accepted |
 
 ## Adding a decision
 

@@ -66,7 +66,7 @@ export function fromObject<O extends object, const Options extends IObjectOption
  * @param end - the bound, not included
  * @param options - `step` and `reverse`
  * @returns a chain of numbers
- * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @throws Error if a bound is not a number, if `options` is not an object, or if `step` is 0, `NaN` or infinite
  * @example
  * ```ts
  * IterableLinq.fromRange(3).collectToArray();                       // [0, 1, 2]
@@ -86,7 +86,7 @@ export function fromRange(end: number, options?: IRangeOptions): IIterableLinq<n
  * @param end - the bound, not included
  * @param options - `step` and `reverse`
  * @returns a chain of numbers
- * @throws Error if `options` is not an object, or if `step` is 0, `NaN` or infinite
+ * @throws Error if a bound is not a number, if `options` is not an object, or if `step` is 0, `NaN` or infinite
  * @example
  * ```ts
  * IterableLinq.fromRange(1, 7, { step: 2 }).collectToArray();       // [1, 3, 5]

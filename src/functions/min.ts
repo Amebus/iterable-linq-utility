@@ -7,7 +7,7 @@ import { findExtreme, toCompareFunction, Validations } from '../utils';
  * @param iterable - the source `Iterable`
  * @param comparer - a compare function, a key, or a list of keys; defaults to `<`
  * @returns the smallest value, or `undefined` when `iterable` is empty
- * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, or if a provided `comparer` is not a function, a key or a non-empty list of keys
  * @example
  * ```ts
  * Functions.min([3, 1, 2]); // 1

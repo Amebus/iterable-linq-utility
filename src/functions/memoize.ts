@@ -21,7 +21,7 @@ export function getMemoizeDefaultOptions(): IMemoizeOptions {
  * @param iterable - the source `Iterable`
  * @param options - `allowPartialMemoization: false` reads the whole source on the first read
  * @returns a lazy `Iterable` backed by the cache
- * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, if a provided `options` is not an object, or if `allowPartialMemoization` is given and is not a boolean
  * @example
  * ```ts
  * const cached = Functions.memoize(Functions.map(readLines(), parse));

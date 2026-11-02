@@ -1,6 +1,6 @@
 # Migrating to 0.13.0
 
-Version 0.13.0 contains a breaking change. This page describes it, with the code to change when upgrading from 0.12.0.
+Version 0.13.0 contains breaking changes. This page describes them, with the code to change when upgrading from 0.12.0.
 
 ## Selectors accept property keys, and their validation message changes
 
@@ -29,3 +29,40 @@ Two things change for the code that already uses them:
     ```
 
 The other operations (`filter`, `some`, `reduce`, the `result` of the joins, …) keep the message `The "<name>" function must be provided`.
+
+## The validation messages name the argument, and more arguments are validated
+
+The message of an invalid iterable named it `"sourceIterable"`, whatever the argument. It now uses the name of the argument in the signature: `"iterable"` for the source, `"other"`, `"inner"` or `"others"` for the other iterables. See [ADR 0030](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0030-validation-messages-name-the-argument.md). Code that matches the message exactly must be updated:
+
+```text
+// 0.12.0
+[iterable-linq-utility/filter] The "sourceIterable" must be provided
+[iterable-linq-utility/concat] The provided "sourceIterable" does not conform to the iterator protocol …
+[iterable-linq-utility/reduce] The "sourceIterable" must not be empty when "reduce" has no seed
+
+// 0.13.0
+[iterable-linq-utility/filter] The "iterable" must be provided
+[iterable-linq-utility/concat] The provided "others" does not conform to the iterator protocol …
+[iterable-linq-utility/reduce] The "iterable" must not be empty when "reduce" has no seed
+```
+
+These arguments were accepted without a check, and now throw an `Error` when they are given and are not valid:
+
+| Operation | Argument | Now required |
+| --- | --- | --- |
+| `min`, `max` | `comparer` | a function, a property, or a non-empty list of properties |
+| `memoize` | `options` | an object, with `allowPartialMemoization` a boolean |
+| `fromRange`, `Functions.range` | *start* and *end* | numbers (`NaN` is still an empty range) |
+| `join` | `separator` | a string (`''` included) |
+
+```typescript
+// 0.12.0: accepted
+IterableLinq.from([1, 2]).join(0 as never);                                    // '102'
+IterableLinq.from([1, 2]).memoize({ allowPartialMemoization: 'no' as never }); // partial memoization
+
+// 0.13.0
+IterableLinq.from([1, 2]).join('0');                                           // '102'
+IterableLinq.from([1, 2]).memoize({ allowPartialMemoization: false });
+```
+
+`memoize({ allowPartialMemoization: undefined })` used the full memoization; it now uses the partial one, the default, as when the option is not given.

@@ -307,7 +307,7 @@ and every composition gives `[0, 4, 8]`:
     const sum = (total: number, v: number) => total + v;
 
     R.flip(Functions.reduce)(sum)([1, 2, 3]);
-    // throws: The "sourceIterable" must be provided
+    // throws: The "iterable" must be provided
     R.curry(Functions.reduce)([1, 2, 3])(sum);
     // throws: The "reducer" function must be provided
 

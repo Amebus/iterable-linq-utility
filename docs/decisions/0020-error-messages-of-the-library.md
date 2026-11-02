@@ -1,6 +1,6 @@
 # Error messages of the library
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0030](0030-validation-messages-name-the-argument.md)
 * Deciders: Amebus
 * Date: 2026-10-03
 

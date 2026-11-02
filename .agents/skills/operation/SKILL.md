@@ -19,7 +19,7 @@ The rules and their reasons are in [How to contribute](../../../documentation/do
 Do every step, in this order. For a change to an existing operation, do the steps its change touches: a new overload needs JSDoc, tests, a bench case, the documentation site and a changeset.
 
 1. **Raw function** in `src/functions/<name>.ts`.
-    - Validate the inputs with `Validations` (`throwIfNotIterable`, `throwIfNotFunction`, …), passing the name of the operation as the last argument; any other error is `throw libraryError('<name>', message)` ([ADR 0020](../../../docs/decisions/0020-error-messages-of-the-library.md)).
+    - Validate every input that is given with `Validations` (`throwIfNotIterable`, `throwIfNotFunction`, …), passing the name of the argument as the signature writes it, then the name of the operation: `Validations.throwIfNotIterable(iterable, 'iterable', 'filter')`; any other error is `throw libraryError('<name>', message)` ([ADR 0020](../../../docs/decisions/0020-error-messages-of-the-library.md), [ADR 0030](../../../docs/decisions/0030-validation-messages-name-the-argument.md)).
     - Transformation: return `new DeferredIterable(() => new <Name>Iterator(…))`, with a `SourceIterator` subclass that implements `advance()`. Copy `src/functions/map.ts`.
     - Callbacks: `try`/`catch` only around the callback call; in the `catch`, `this.closeAfterCallbackError()` then rethrow.
     - Action: a `for…of` over the iterable closes the source on an early stop. Copy `src/functions/some.ts`.
