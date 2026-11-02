@@ -1177,7 +1177,7 @@ Throws an `Error` if *start* or *end* is given and is not an integer (fractions,
 
 Yields the values in ascending order. The sort is stable, so the equal values keep the order of the source, and the source is not changed, like `Array.prototype.toSorted`. The whole source is read before the first value, and every run of the chain sorts again ([Eager Evaluation](../advanced-concepts/index.md#eager-evaluation)).
 
-By default the values are compared with `<`, like [min](actions.md#min) and [max](actions.md#max): numbers as numbers, strings by code unit. `Array.prototype.sort` without a compare function compares strings, so it puts `10` before `9`.
+By default the values are compared with `<`, like [min](actions.md#min) and [max](actions.md#max): numbers as numbers, strings by code unit. `Array.prototype.sort` without a compare function compares strings, so it puts `10` before `9`. Values that `<` cannot order have no defined order among themselves: numbers mixed with strings, or objects without a `valueOf` that returns a number or a string, like plain objects. Sort them with a compare function. A `Date` is ordered, by its time.
 
 === "Wrapper"
 
