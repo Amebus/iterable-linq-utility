@@ -87,7 +87,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">2 unreleased changes since 0.12.0</a>
+    <a href="../upcoming/">3 unreleased changes since 0.12.0</a>
           </div>
           
         </aside>
@@ -1029,6 +1029,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#the-validation-messages-name-the-argument-and-more-arguments-are-validated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The validation messages name the argument, and more arguments are validated
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1347,6 +1358,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#the-validation-messages-name-the-argument-and-more-arguments-are-validated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The validation messages name the argument, and more arguments are validated
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1368,7 +1390,7 @@
 
 
 <h1 id="migrating-to-0130">Migrating to 0.13.0<a class="headerlink" href="#migrating-to-0130" title="Permanent link">⚓︎</a></h1>
-<p>Version 0.13.0 contains a breaking change. This page describes it, with the code to change when upgrading from 0.12.0.</p>
+<p>Version 0.13.0 contains breaking changes. This page describes them, with the code to change when upgrading from 0.12.0.</p>
 <h2 id="selectors-accept-property-keys-and-their-validation-message-changes">Selectors accept property keys, and their validation message changes<a class="headerlink" href="#selectors-accept-property-keys-and-their-validation-message-changes" title="Permanent link">⚓︎</a></h2>
 <p>The selectors that read a value from the element accept a property key in place of the function: <code>map</code>, <code>flatMap</code>, <code>sum</code>, <code>average</code>, <code>distinct</code>, <code>except</code>, <code>intersect</code>, <code>union</code>, <code>groupBy</code>, <code>innerJoin</code>, <code>groupJoin</code> and <code>collectToMap</code>. See <a href="../basic-concepts/#selectors">Selectors</a> and <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0025-property-keys-as-selectors.md">ADR 0025</a>.</p>
 <p>Two things change for the code that already uses them:</p>
@@ -1401,6 +1423,78 @@
 </li>
 </ul>
 <p>The other operations (<code>filter</code>, <code>some</code>, <code>reduce</code>, the <code>result</code> of the joins, …) keep the message <code>The "&lt;name&gt;" function must be provided</code>.</p>
+<h2 id="the-validation-messages-name-the-argument-and-more-arguments-are-validated">The validation messages name the argument, and more arguments are validated<a class="headerlink" href="#the-validation-messages-name-the-argument-and-more-arguments-are-validated" title="Permanent link">⚓︎</a></h2>
+<p>The message of an invalid iterable named it <code>"sourceIterable"</code>, whatever the argument. It now uses the name of the argument in the signature: <code>"iterable"</code> for the source, <code>"other"</code>, <code>"inner"</code> or <code>"others"</code> for the other iterables. See <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0030-validation-messages-name-the-argument.md">ADR 0030</a>. Code that matches the message exactly must be updated:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span>
+<span class="normal"><a href="#__codelineno-2-4">4</a></span>
+<span class="normal"><a href="#__codelineno-2-5">5</a></span>
+<span class="normal"><a href="#__codelineno-2-6">6</a></span>
+<span class="normal"><a href="#__codelineno-2-7">7</a></span>
+<span class="normal"><a href="#__codelineno-2-8">8</a></span>
+<span class="normal"><a href="#__codelineno-2-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>// 0.12.0
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>[iterable-linq-utility/filter] The "sourceIterable" must be provided
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>[iterable-linq-utility/concat] The provided "sourceIterable" does not conform to the iterator protocol …
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>[iterable-linq-utility/reduce] The "sourceIterable" must not be empty when "reduce" has no seed
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>// 0.13.0
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a>[iterable-linq-utility/filter] The "iterable" must be provided
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a>[iterable-linq-utility/concat] The provided "others" does not conform to the iterator protocol …
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a>[iterable-linq-utility/reduce] The "iterable" must not be empty when "reduce" has no seed
+</code></pre></div></td></tr></table></div>
+<p>These arguments were accepted without a check, and now throw an <code>Error</code> when they are given and are not valid:</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Argument</th>
+<th>Now required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>min</code>, <code>max</code></td>
+<td><code>comparer</code></td>
+<td>a function, a property, or a non-empty list of properties</td>
+</tr>
+<tr>
+<td><code>memoize</code></td>
+<td><code>options</code></td>
+<td>an object, with <code>allowPartialMemoization</code> a boolean</td>
+</tr>
+<tr>
+<td><code>fromRange</code>, <code>Functions.range</code></td>
+<td><em>start</em> and <em>end</em></td>
+<td>numbers (<code>NaN</code> is still an empty range)</td>
+</tr>
+<tr>
+<td><code>join</code></td>
+<td><code>separator</code></td>
+<td>a string (<code>''</code> included)</td>
+</tr>
+</tbody>
+</table>
+<p>An argument is given when it is not <code>undefined</code>: <code>null</code> is a value, and is rejected. In 0.12.0 <code>min(null)</code> and <code>max(null)</code> compared with <code>&lt;</code>, as without a comparer, and <code>join(null)</code> used <code>"null"</code> as the separator; leave the argument out instead.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span>
+<span class="normal"><a href="#__codelineno-3-8">8</a></span>
+<span class="normal"><a href="#__codelineno-3-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1">// 0.12.0: accepted</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">]).</span><span class="nx">join</span><span class="p">(</span><span class="mf">0</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">never</span><span class="p">);</span><span class="w">                                    </span><span class="c1">// '102'</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">]).</span><span class="nx">min</span><span class="p">(</span><span class="kc">null</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">never</span><span class="p">);</span><span class="w">                                  </span><span class="c1">// 1</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">]).</span><span class="nx">memoize</span><span class="p">({</span><span class="w"> </span><span class="nx">allowPartialMemoization</span><span class="o">:</span><span class="w"> </span><span class="s1">'no'</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="nx">never</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// partial memoization: 'no' is truthy</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="c1">// 0.13.0</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">]).</span><span class="nx">join</span><span class="p">(</span><span class="s1">'0'</span><span class="p">);</span><span class="w">                                           </span><span class="c1">// '102'</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">]).</span><span class="nx">min</span><span class="p">();</span><span class="w">                                               </span><span class="c1">// 1</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="nx">IterableLinq</span><span class="p">.</span><span class="kr">from</span><span class="p">([</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2</span><span class="p">]).</span><span class="nx">memoize</span><span class="p">({</span><span class="w"> </span><span class="nx">allowPartialMemoization</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">});</span><span class="w">          </span><span class="c1">// the same partial memoization</span>
+</code></pre></div></td></tr></table></div>
+<p><code>memoize({ allowPartialMemoization: undefined })</code> used the full memoization; it now uses the partial one, the default, as when the option is not given.</p>
 
 
 
@@ -1423,7 +1517,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 13, 2026 09:13:16 UTC">October 13, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 2, 2026 21:12:09 UTC">November 2, 2026</span>
   </span>
 
     
