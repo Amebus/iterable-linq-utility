@@ -53,13 +53,14 @@ Measured with Node 24 on 100,000 values (the spike of #41, and `pnpm bench:repor
 | C, port of LINQ, against A | 26–88% slower | 26–88% slower |
 | D, heap or incremental quicksort, against A | 36–94% slower, the worst on sorted data, where the native sort is linear | 4–10 times faster |
 | E, hybrid, against A | 4–30% slower | 4–6 times faster |
-| `sort` against `toSorted` with a hand-written comparer | random numbers −11%, a property −27%, two properties −25%, a function −19% | the same as the full sort |
+| `sort` against `toSorted` with a hand-written comparer, random data | numbers −11%, a property −27%, two properties −34%, a function −14% | the same as the full sort |
+| the same, numbers already sorted | 100,000 values −59%, 1,000 values −43% | the same as the full sort |
 
-B was faster than A in the spike only because A compared through the generic loop of `toCompareFunction`: against comparers written for each kind, reading a property in the comparison is faster than an array of keys and an array of indices (one property 16.8 ms against 21.4 ms, two properties 30.4 ms against 56.7 ms). B stays only for a list of properties with missing values. The remaining distance from `toSorted` is mostly the cost of reading and yielding the values through iterators: 2.3 ms of the 18 ms of the compare function.
+B was faster than A in the spike only because A compared through the generic loop of `toCompareFunction`: against comparers written for each kind, reading a property in the comparison is faster than an array of keys and an array of indices (one property 16.8 ms against 21.4 ms, two properties 30.4 ms against 56.7 ms). B stays only for a list of properties with missing values. The remaining distance from `toSorted` is mostly the cost of reading and yielding the values through iterators, about 2.3 ms for 100,000 values: on random data it is a small part of the sort (18 ms with a compare function), on sorted data, where both sorts are linear, it is most of it (5.3 ms against 2.2 ms).
 
 ### Positive Consequences
 
-* The full sort is close to the native one, and linear on sorted data
+* On random data the full sort is within 11–34% of `toSorted` with a hand-written comparer, and on sorted data it stays linear; there the fixed cost of the iterators makes it about twice as slow as `toSorted`
 * The `Comparer` of `min` and `max` sorts too, with one option for the direction
 * The order of the values that cannot be ordered is defined and documented
 
