@@ -55,14 +55,18 @@ These arguments were accepted without a check, and now throw an `Error` when the
 | `fromRange`, `Functions.range` | *start* and *end* | numbers (`NaN` is still an empty range) |
 | `join` | `separator` | a string (`''` included) |
 
+An argument is given when it is not `undefined`: `null` is a value, and is rejected. In 0.12.0 `min(null)` and `max(null)` compared with `<`, as without a comparer, and `join(null)` used `"null"` as the separator; leave the argument out instead.
+
 ```typescript
 // 0.12.0: accepted
 IterableLinq.from([1, 2]).join(0 as never);                                    // '102'
-IterableLinq.from([1, 2]).memoize({ allowPartialMemoization: 'no' as never }); // partial memoization
+IterableLinq.from([1, 2]).min(null as never);                                  // 1
+IterableLinq.from([1, 2]).memoize({ allowPartialMemoization: 'no' as never }); // partial memoization: 'no' is truthy
 
 // 0.13.0
 IterableLinq.from([1, 2]).join('0');                                           // '102'
-IterableLinq.from([1, 2]).memoize({ allowPartialMemoization: false });
+IterableLinq.from([1, 2]).min();                                               // 1
+IterableLinq.from([1, 2]).memoize({ allowPartialMemoization: true });          // the same partial memoization
 ```
 
 `memoize({ allowPartialMemoization: undefined })` used the full memoization; it now uses the partial one, the default, as when the option is not given.
