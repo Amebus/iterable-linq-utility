@@ -126,7 +126,7 @@ describe('min', () => {
 	});
 
 	test('min accepts a numeric key and a list of keys', () => {
-		expect(() => min([[1], [2]], 0)).not.toThrow();
+		expect(min([[3], [1]], 0)).toEqual([1]);
 		expect(min([{ a: 1 }, { a: 2 }], ['a'])).toEqual({ a: 1 });
 	});
 

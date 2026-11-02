@@ -252,7 +252,10 @@ describe('memoize', () => {
 			.toThrow(new Error('[iterable-linq-utility/memoize] The "allowPartialMemoization" option must be a boolean'));
 	});
 
-	test.each([{}, { allowPartialMemoization: undefined }])('memoize(%j) keeps the default, partial memoization', options => {
+	test.each([
+		{ name: 'empty options', options: {} },
+		{ name: 'an undefined allowPartialMemoization', options: { allowPartialMemoization: undefined } }
+	])('memoize with $name keeps the default, partial memoization', ({ options }) => {
 		let reads = 0;
 		const m = memoize(map(range(10), v => { reads++; return v; }), options);
 		some(m, v => v === 1);

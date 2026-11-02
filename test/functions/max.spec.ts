@@ -126,7 +126,7 @@ describe('max', () => {
 	});
 
 	test('max accepts a numeric key and a list of keys', () => {
-		expect(() => max([[1], [2]], 0)).not.toThrow();
+		expect(max([[3], [1]], 0)).toEqual([3]);
 		expect(max([{ a: 1 }, { a: 2 }], ['a'])).toEqual({ a: 2 });
 	});
 
