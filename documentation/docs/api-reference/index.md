@@ -61,6 +61,7 @@ See [Extending the API](../advanced-concepts/extending.md).
 | `IIterableLinqBase<T>`       | The methods the library provides on every chain                                                       |
 | `Unit`                       | The type of `unit()`, returned by callbacks that have nothing to return. See [The Unit type](../basic-concepts.md#the-unit-type) |
 | `IRangeOptions`              | Options of `fromRange` and `Functions.range`: `step` and `reverse`                                    |
+| `ISortOptions`                | Options of `sort`: `descending`                                                                      |
 | `IMemoizeOptions`            | Options of `memoize`: `allowPartialMemoization`                                                       |
 | `IObjectOptions`             | Options of `fromObject`: `yield`, `inherited`, `nonEnumerable` and `symbols`                          |
 | `ObjectItem<O, Options>`     | The type of the values of `fromObject`, from `ObjectKey` and `ObjectValue`                            |

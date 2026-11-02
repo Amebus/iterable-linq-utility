@@ -41,6 +41,7 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [skipLast](#skiplast)                        | Yields every value except the last *count*                                       | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [slice](#slice)                              | Yields the values from *start* to *end*, like `Array.prototype.slice`            | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [sort](#sort)                                | Yields the values in order; stable, the source is not changed                   | :material-moon-full: :material-valve-open:  | :material-format-text-wrapping-wrap: :material-raw: |
     | [take](#take)                                | Yields the first *count* values, then closes the source                          | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeLast](#takelast)                        | Yields the last *count* values                                                   | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [takeWhile](#takewhile)                      | Yields the values while a predicate is satisfied, then closes the source         | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -1171,6 +1172,96 @@ Yields the values from *start* to *end* (excluded), like `Array.prototype.slice`
     ```
 
 Throws an `Error` if *start* or *end* is given and is not an integer (fractions, `NaN` and `Infinity` included). Unlike `Array.prototype.slice`, they are not converted to integers.
+
+## sort
+
+Yields the values in ascending order. The sort is stable, so the equal values keep the order of the source, and the source is not changed, like `Array.prototype.toSorted`. The whole source is read before the first value, and every run of the chain sorts again ([Eager Evaluation](../advanced-concepts/index.md#eager-evaluation)).
+
+By default the values are compared with `<`, like [min](actions.md#min) and [max](actions.md#max): numbers as numbers, strings by code unit. `Array.prototype.sort` without a compare function compares strings, so it puts `10` before `9`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([10, 9, 1])
+        .sort()
+        .collectToArray();
+    // [1, 9, 10]
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.sort([10, 9, 1]));
+    // [1, 9, 10]
+    ```
+
+A comparer changes the order. It is the comparer of `min` and `max`:
+
+1. The name of a property, or a list of names. With a list, ties on the first property are broken by the next one, and so on.
+
+    === "Wrapper"
+
+        ```typescript
+        import * as IterableLinq from 'iterable-linq-utility';
+
+        const people = [
+            { firstName: 'Bob', lastName: 'Rossi', age: 30 },
+            { firstName: 'Ann', lastName: 'Bianchi', age: 25 },
+            { firstName: 'Ann', lastName: 'Rossi', age: 40 }
+        ];
+
+        IterableLinq.from(people).sort('age').map('firstName').collectToArray();
+        // ['Ann', 'Bob', 'Ann']
+        IterableLinq.from(people).sort(['lastName', 'firstName']).map(p => `${p.firstName} ${p.lastName}`).collectToArray();
+        // ['Ann Bianchi', 'Ann Rossi', 'Bob Rossi']
+        ```
+    === "Raw Function"
+
+        ```typescript
+        import { Functions } from 'iterable-linq-utility';
+
+        Array.from(Functions.sort(people, ['lastName', 'firstName'])).map(p => `${p.firstName} ${p.lastName}`);
+        // ['Ann Bianchi', 'Ann Rossi', 'Bob Rossi']
+        ```
+
+2. A function `(a: T, b: T) => number`: negative if `a` comes before `b`, `0` if they are equal, positive if `a` comes after `b`. For example, to compare strings in the order of a language:
+
+    ```typescript
+    IterableLinq.from(['banana', 'Cherry', 'apple']).sort((a, b) => a.localeCompare(b)).collectToArray();
+    // ['apple', 'banana', 'Cherry']
+    ```
+
+### Descending order
+
+`{ descending: true }` sorts from the greatest to the smallest value, with or without a comparer. It inverts the comparison, so the equal values still keep the order of the source. For a different direction on each key, use a compare function.
+
+```typescript
+IterableLinq.from([3, 1, 2]).sort({ descending: true }).collectToArray();
+// [3, 2, 1]
+IterableLinq.from(people).sort('age', { descending: true }).map('age').collectToArray();
+// [40, 30, 25]
+```
+
+### Missing values
+
+`null`, `undefined` and `NaN` have no place in the order: they go last, in the order of the source, in both directions.
+
+- With no comparer, the values that are `null`, `undefined` or `NaN`.
+- With a property, the values whose property is `null`, `undefined` or `NaN`, and the values that are `null` or `undefined`, which do not throw. With a list of properties the rule applies at each property.
+- A compare function decides the order of every value, but `undefined` always goes last without calling it, as in `Array.prototype.sort`.
+
+```typescript
+IterableLinq.from([2, null, 1, undefined, NaN]).sort().collectToArray();
+// [1, 2, null, undefined, NaN]
+IterableLinq.from([2, null, 1, undefined, NaN]).sort({ descending: true }).collectToArray();
+// [2, 1, null, undefined, NaN]
+```
+
+Throws an `Error` if the comparer is not a function, a property or a non-empty list of properties, if the options are not an object, or if `descending` is not a boolean.
 
 ## take
 

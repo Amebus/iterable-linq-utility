@@ -94,7 +94,7 @@ Lazy and eager say how much of the source an operation reads for each value it y
 
 These operations read the whole source before they yield the first value:
 
-- [groupBy](../api-reference/transformations.md#groupby), [reverse](../api-reference/transformations.md#reverse) and [takeLast](../api-reference/transformations.md#takelast);
+- [groupBy](../api-reference/transformations.md#groupby), [reverse](../api-reference/transformations.md#reverse), [sort](../api-reference/transformations.md#sort) and [takeLast](../api-reference/transformations.md#takelast);
 - [slice](../api-reference/transformations.md#slice) with a negative `start`;
 - [memoize](../api-reference/transformations.md#memoize) with `allowPartialMemoization: false`, which is eager and keeps the values.
 
