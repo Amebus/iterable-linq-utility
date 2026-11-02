@@ -48,6 +48,7 @@ export { skipLast } from './skipLast';
 export { skipWhile } from './skipWhile';
 export { slice } from './slice';
 export { some } from './some';
+export { sort } from './sort';
 export { sum } from './sum';
 export { take } from './take';
 export { takeLast } from './takeLast';
