@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">1 unreleased change since 0.12.0</a>
+    <a href="../upcoming/">2 unreleased changes since 0.12.0</a>
           </div>
           
         </aside>
@@ -1305,7 +1305,8 @@
 <li>
 <p>The selectors that read a value from the element accept a property key in place of the function: <code>map('name')</code>, <code>flatMap('tags')</code>, <code>sum('price')</code>, <code>average('price')</code>, <code>distinct('email')</code>, <code>except</code>, <code>intersect</code> and <code>union</code> with a key, <code>groupBy('team')</code>, <code>collectToMap('id', 'name')</code>, and <code>innerJoin</code> / <code>groupJoin</code> with <code>'id', 'teamId'</code>. A key behaves like <code>v =&gt; v[key]</code>, and the result is typed from the property. The new type <code>KeysOfType&lt;T, V&gt;</code> gives the keys of <code>T</code> whose value is a <code>V</code>, and <code>KeysOverlapping&lt;T, V&gt;</code> the keys whose value has values in common with <code>V</code>, as the keys of a join need (<a href="https://github.com/Amebus/iterable-linq-utility/issues/185">#185</a>).</p>
 <p>The validation message of these selectors changes from <code>The "&lt;name&gt;" function must be provided</code> to <code>The "&lt;name&gt;" must be a function or a property key</code>: see <a href="https://amebus.github.io/iterable-linq-utility/0.13/migrating-to-0.13.0/">Migrating to 0.13.0</a>.</p>
-<p>(<a href="https://github.com/Amebus/iterable-linq-utility/pull/188">#188</a>)</p>
+<p>(<a href="https://github.com/Amebus/iterable-linq-utility/pull/188">#188</a>)
+- New <code>sort(options?)</code>, <code>sort(compare)</code> and <code>sort(keys, options?)</code> Transformation: a stable sort that does not change the source, like <code>Array.prototype.toSorted</code>; <code>{ descending: true }</code> sorts the other way, and <code>null</code>, <code>undefined</code> and <code>NaN</code> go last (<a href="https://github.com/Amebus/iterable-linq-utility/issues/41">#41</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/204">#204</a>)</p>
 </li>
 </ul>
 
