@@ -1,6 +1,6 @@
 import { DeferredIterable, SourceIterator } from '../iterators';
 import type { Comparer, ISortOptions } from '../types';
-import { compareValues, getContinueIteratorResult, getDoneIteratorResult, isFunction, isPropertyKey, Validations } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, isFunction, isPropertyKey, Validations } from '../utils';
 
 /**
  * Lazily yields the values in ascending order, compared with `<`. The sort is stable, and unlike `Array.prototype.sort`
@@ -44,7 +44,7 @@ export function sort<T>(iterable: Iterable<T>, options?: ISortOptions): Iterable
  * ```
  * @since next
  */
-export function sort<T>(iterable: Iterable<T>, comparer: Comparer<T>, options?: ISortOptions): Iterable<T>;
+export function sort<T>(iterable: Iterable<T>, comparer: Comparer<T> | undefined, options?: ISortOptions): Iterable<T>;
 export function sort<T>(iterable: Iterable<T>, comparerOrOptions?: Comparer<T> | ISortOptions, options?: ISortOptions): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'sort');
 	const comparer = isOptions(comparerOrOptions) ? undefined : comparerOrOptions;
@@ -119,6 +119,14 @@ function sortValues<T>(values: T[], comparer: Comparer<T> | undefined, descendin
 
 const ascendingNumbers = (a: number, b: number): number => a - b;
 const descendingNumbers = (a: number, b: number): number => b - a;
+/**
+ * `<` and `>` both ways: two values that neither precedes are a tie, so equal values that are not the same object (two `Date`s)
+ * keep the order of the source, and the next key decides. `===` would tell them apart in both directions.
+ */
+function compareValues(a: any, b: any): number {
+	return a < b ? -1 : a > b ? 1 : 0;
+}
+
 const descendingValues = (a: unknown, b: unknown): number => compareValues(b, a);
 
 /** Subtraction when every value is a number, faster than `<` with three outcomes; `Infinity - Infinity` is `NaN`, which the sort reads as equal. */

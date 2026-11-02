@@ -3,7 +3,7 @@ import { isFunction } from './utils';
 
 export type CompareFunction<T> = (a: T, b: T) => number;
 
-export function compareValues(a: unknown, b: unknown): number {
+function compareValues(a: unknown, b: unknown): number {
 	return (a as any) < (b as any) ? -1 : a === b ? 0 : 1;
 }
 

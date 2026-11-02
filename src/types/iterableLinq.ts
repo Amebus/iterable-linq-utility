@@ -1274,7 +1274,7 @@ export interface IIterableLinqBase<T> {
 	 * ```
 	 * @since next
 	 */
-	sort(comparer: Comparer<T>, options?: ISortOptions): IIterableLinq<T>;
+	sort(comparer: Comparer<T> | undefined, options?: ISortOptions): IIterableLinq<T>;
 
 	/**
 	 * Sums the values of a chain of numbers with `+`; runs the whole chain.

@@ -32,6 +32,12 @@ describe('IterableLinq.sort', () => {
 			.toEqual(['Bianchi', 'Rossi', 'Rossi']);
 	});
 
+	test('IterableLinq.sort(undefined, options) and an optional comparer', () => {
+		expect(IterableLinq.from([1, 3, 2]).sort(undefined, { descending: true }).collectToArray()).toEqual([3, 2, 1]);
+		const comparer: ((a: number, b: number) => number) | undefined = undefined as ((a: number, b: number) => number) | undefined;
+		expect(IterableLinq.from([1, 3, 2]).sort(comparer).collectToArray()).toEqual([1, 2, 3]);
+	});
+
 	test('IterableLinq.sort composes with the other operations', () => {
 		const r = IterableLinq
 			.fromRange(10)

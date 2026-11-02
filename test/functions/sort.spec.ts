@@ -45,7 +45,7 @@ describe('sort', () => {
 
 		test('descending', () => {
 			expect(collectToArray(sort([1, 3, 2], { descending: true }))).toEqual([3, 2, 1]);
-			expect(collectToArray(sort([1, 3, 2], undefined as never, { descending: true }))).toEqual([3, 2, 1]);
+			expect(collectToArray(sort([1, 3, 2], undefined, { descending: true }))).toEqual([3, 2, 1]);
 		});
 
 		test('infinite numbers', () => {
@@ -138,6 +138,12 @@ describe('sort', () => {
 		test('with missing keys the equal values keep the source order', () => {
 			const values = [{ g: 1, id: 'a' }, { g: 0, v: 1, id: 'b' }, { g: 1, id: 'c' }];
 			expect(collectToArray(sort(values, ['g', 'v'] as never)).map((x: { id: string }) => x.id)).toEqual(['b', 'a', 'c']);
+		});
+
+		test('equal dates are a tie, also when a key is missing', () => {
+			const values = [{ d: new Date(1), n: 'b' }, { d: new Date(1), n: 'a' }, { d: null, n: 'c' }];
+			expect(collectToArray(sort(values, ['d', 'n'] as never)).map((x: { n: string }) => x.n)).toEqual(['a', 'b', 'c']);
+			expect(collectToArray(sort(values.slice(0, 2), ['d', 'n'])).map(x => x.n)).toEqual(['a', 'b']);
 		});
 
 		test('a null element goes last', () => {
