@@ -117,3 +117,83 @@ for (const { name, skip, take } of windows) {
 			.run();
 	});
 }
+
+// Data the native sort reads as a few runs, where it is about linear: the rule keeps the full sort, so a window must not be
+// slower than today. `full` is today: a `map` between the sort and the window hides the sort, which is then read in full.
+const descending = (a: number, b: number): number => b - a;
+const byIdDescending = (a: Helpers.IRecord, b: Helpers.IRecord): number => b.id - a.id;
+const byId = (a: Helpers.IRecord, b: Helpers.IRecord): number => a.id - b.id;
+const byText = (a: string, b: string): number => a.localeCompare(b);
+const same = <T>(value: T): T => value;
+
+const reversed = numbers.toReversed();
+const reversedRecords = records.toReversed();
+const reversedStrings = numbers.map(i => `item-${String(i).padStart(6, '0')}`).toReversed();
+
+// a sorted copy with 1% of the values in a swapped adjacent pair, at positions drawn with a fixed seed
+seed = 7;
+const nearlySorted = [...numbers];
+for (let pair = 0; pair < numbers.length / 200; pair++) {
+	const i = Math.floor(random() * (numbers.length - 1));
+	[nearlySorted[i], nearlySorted[i + 1]] = [nearlySorted[i + 1], nearlySorted[i]];
+}
+
+for (const { name, skip, take } of windows) {
+	const end = skip + take;
+
+	test(`sort: ${name}, reversed, compare function`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/reversed`)
+			.add('native', () => sum(reversed.toSorted(ascending).slice(skip, end)))
+			.add('full', () => sum(from(reversed).sort(ascending).map(same).skip(skip).take(take)))
+			.add('chain', () => sum(from(reversed).sort(ascending).skip(skip).take(take)))
+			.run();
+	});
+
+	test(`sort: ${name}, reversed, key`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/reversedKey`)
+			.add('native', () => reversedRecords.toSorted(byId).slice(skip, end).length)
+			.add('full', () => from(reversedRecords).sort('id').map(same).skip(skip).take(take).collectToArray().length)
+			.add('chain', () => from(reversedRecords).sort('id').skip(skip).take(take).collectToArray().length)
+			.run();
+	});
+
+	test(`sort: ${name}, reversed, strings`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/reversedStrings`)
+			.add('native', () => reversedStrings.toSorted(byText).slice(skip, end).length)
+			.add('full', () => from(reversedStrings).sort(byText).map(same).skip(skip).take(take).collectToArray().length)
+			.add('chain', () => from(reversedStrings).sort(byText).skip(skip).take(take).collectToArray().length)
+			.run();
+	});
+
+	test(`sort: ${name}, the latest records, compare function`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/latest`)
+			.add('native', () => records.toSorted(byIdDescending).slice(skip, end).length)
+			.add('full', () => from(records).sort(byIdDescending).map(same).skip(skip).take(take).collectToArray().length)
+			.add('chain', () => from(records).sort(byIdDescending).skip(skip).take(take).collectToArray().length)
+			.run();
+	});
+
+	test(`sort: ${name}, the latest records, key descending`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/latestKey`)
+			.add('native', () => records.toSorted(byIdDescending).slice(skip, end).length)
+			.add('full', () => from(records).sort('id', { descending: true }).map(same).skip(skip).take(take).collectToArray().length)
+			.add('chain', () => from(records).sort('id', { descending: true }).skip(skip).take(take).collectToArray().length)
+			.run();
+	});
+
+	test(`sort: ${name}, nearly sorted, compare function`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/nearlySorted`)
+			.add('native', () => sum(nearlySorted.toSorted(ascending).slice(skip, end)))
+			.add('full', () => sum(from(nearlySorted).sort(ascending).map(same).skip(skip).take(take)))
+			.add('chain', () => sum(from(nearlySorted).sort(ascending).skip(skip).take(take)))
+			.run();
+	});
+
+	test(`sort: ${name}, nearly reversed, compare function`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/nearlyReversed`)
+			.add('native', () => sum(nearlySorted.toSorted(descending).slice(skip, end)))
+			.add('full', () => sum(from(nearlySorted).sort(descending).map(same).skip(skip).take(take)))
+			.add('chain', () => sum(from(nearlySorted).sort(descending).skip(skip).take(take)))
+			.run();
+	});
+}
