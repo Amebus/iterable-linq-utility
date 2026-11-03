@@ -25,13 +25,19 @@ export function prng(seed: number): () => number {
 }
 
 /**
- * The first element of each sampled adjacent pair `(i, i + 1)`: `Math.min(256, n >> 5)` pairs, evenly spaced.
- * With fewer than 32 values the sample is empty, so the patterns that depend on it are plain sorted data.
+ * The first element of each sampled adjacent pair, as the sample of the partial sort takes them (written again here, not
+ * imported): `Math.min(256, n >> 5)` pairs, one in each stride of `floor((n - 1) / sample)` values, at an offset drawn by
+ * mulberry32 seeded with `n ^ 0x9E3779B9`. With fewer than 32 values the sample is empty, so the patterns that depend on it
+ * are plain sorted data.
  */
 export function samplePositions(n: number): number[] {
 	const sample = Math.min(256, n >> 5);
-	const step = sample === 0 ? 0 : Math.floor((n - 1) / sample);
-	return Array.from({ length: sample }, (_, p) => p * step);
+	if (sample === 0)
+		return [];
+	const stride = Math.floor((n - 1) / sample);
+	const random = prng((n ^ 0x9E3779B9) >>> 0);
+	// prng gives the unsigned integer of mulberry32 divided by 2^32
+	return Array.from({ length: sample }, (_, p) => p * stride + (random() * 4294967296) % stride);
 }
 
 const ascending = (n: number): number[] => Array.from({ length: n }, (_, i) => i);

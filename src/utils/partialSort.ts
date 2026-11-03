@@ -1,20 +1,34 @@
 /** The order of the indices of the values, a total order: two different indices are never equal. */
 export type IndexOrder = (i: number, j: number) => number;
 
-/** The number of adjacent pairs that the sample compares: one in 32 values, at most 256. */
+/**
+ * The number of adjacent pairs that the sample compares: one in 32 values, at most 256. They are taken one per stride of
+ * `floor((n - 1) / sample)` values, at a pseudo-random offset in it (see `countSampleDescents`).
+ */
 export function sampleSize(n: number): number {
 	return Math.min(256, n >> 5);
 }
 
-/** The pairs `(i, i + 1)` of the sample, at evenly spaced fixed positions, that are out of order. */
+/** The seed of the offsets of the sample, so that they do not follow the positions of the pivot, seeded with `n`. */
+const sampleSeed = 0x9E3779B9;
+
+/**
+ * The pairs `(i, i + 1)` of the sample that are out of order. The sample is stratified: one pair in each stride of
+ * `floor((n - 1) / sample)` values, at an offset drawn by a generator seeded with `n`, so the same input takes the same path.
+ * Positions at a fixed step would always read periodic data at the same phase: with a period that divides the step, every
+ * pair would ascend (no descent, the full sort on data the partial sort is for) or straddle the end of a ramp (only descents,
+ * the partial sort on data in a few long runs).
+ */
 export function countSampleDescents(n: number, order: IndexOrder): number {
 	const sample = sampleSize(n);
 	if (sample === 0)
 		return 0;
-	const step = Math.floor((n - 1) / sample);
+	const stride = Math.floor((n - 1) / sample);
+	const random = mulberry32((n ^ sampleSeed) >>> 0);
 	let descents = 0;
 	for (let p = 0; p < sample; p++) {
-		const i = p * step;
+		// sample * stride <= n - 1, so the last position is at most n - 2 and its pair is in the values
+		const i = p * stride + random() % stride;
 		if (order(i, i + 1) > 0)
 			descents++;
 	}
@@ -71,7 +85,7 @@ function selectFirst(indices: number[], order: IndexOrder, m: number, budget: nu
 	let left = 0;
 	let right = indices.length - 1;
 	let work = 0;
-	const random = positions(indices.length);
+	const random = mulberry32(indices.length);
 	while (left < right) {
 		work += right - left + 1;
 		if (work > budget)
@@ -114,9 +128,9 @@ function medianOf(order: IndexOrder, a: number, b: number, c: number): number {
 	return order(b, c) < 0 ? c : b;
 }
 
-/** mulberry32 seeded with `n`: deterministic pseudo-random unsigned integers, for the positions of the pivot. */
-function positions(n: number): () => number {
-	let state = n >>> 0;
+/** mulberry32: deterministic pseudo-random unsigned integers, for the positions of the pivot and of the sample. */
+function mulberry32(seed: number): () => number {
+	let state = seed >>> 0;
 	return () => {
 		state = (state + 0x6D2B79F5) >>> 0;
 		let t = state;

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { numbers, patterns, records, referenceSort } from '../_helpers/sortData';
+import { numbers, patterns, prng, records, referenceSort, samplePositions } from '../_helpers/sortData';
 
 import { orderOf, PartialSort } from '@/utils';
 
@@ -60,6 +60,53 @@ describe('PartialSort', () => {
 			expect(count(numbers('sampleDescending', n, seed))).toBe(PartialSort.sampleSize(n));
 			for (const k of [1, 3, 10])
 				expect(count(numbers('descentsAt', n, seed, k))).toBe(k);
+		});
+
+		test.each([32, 64, 1000, 1024, 4096, 100_000])('reads the pairs at the positions of the test data (n = %i)', n => {
+			const read: number[] = [];
+			PartialSort.countSampleDescents(n, (i, j) => {
+				expect(j).toBe(i + 1);
+				read.push(i);
+				return -1;
+			});
+			expect(read).toEqual(samplePositions(n));
+		});
+
+		describe.each([4096, 100_000])('periodic data of period 10 (n = %i)', n => {
+			const sample = PartialSort.sampleSize(n);
+
+			test('the sample sees the ends of the periods, and the partial sort is chosen', () => {
+				const values = Array.from({ length: n }, (_, i) => i % 10);
+				const random = prng(n);
+				const rows = values.map(g => ({ group: `g${g}`, score: Math.floor(random() * 1000) }));
+				for (const order of [orderOf(values, undefined, false), orderOf(rows, ['group', 'score'], false)]) {
+					const descents = PartialSort.countSampleDescents(n, order);
+					// one pair in 10 descends: about sample / 10
+					expect(descents).toBeGreaterThan(sample / 20);
+					expect(descents).toBeLessThan(sample / 5);
+					expect(PartialSort.choosePath(n, 10, descents)).toBe('select');
+				}
+			});
+		});
+
+		test('a sawtooth whose ramps end at every position of an evenly spaced sample is seen as nearly sorted', () => {
+			const n = 100_000;
+			const sample = PartialSort.sampleSize(n);
+			const stride = Math.floor((n - 1) / sample);
+			// a ramp of `stride` values ends at every p * stride
+			const values = Array.from({ length: n }, (_, i) => (i + stride - 1) % stride);
+			const order = orderOf(values, undefined, false);
+			const evenlySpaced = Array.from({ length: sample }, (_, p) => p * stride).filter(i => order(i, i + 1) > 0).length;
+			expect(evenlySpaced).toBe(sample);
+			const descents = PartialSort.countSampleDescents(n, order);
+			expect(descents).toBeLessThan(sample / 10);
+			expect(PartialSort.choosePath(n, 10_000, descents)).toBe('full');
+		});
+
+		test('the same input gives the same descents', () => {
+			const values = numbers('random', 4096, 9);
+			const counts = [0, 1, 2].map(() => PartialSort.countSampleDescents(4096, orderOf(values, undefined, false)));
+			expect(new Set(counts).size).toBe(1);
 		});
 
 		test('an empty sample has no descent', () => {

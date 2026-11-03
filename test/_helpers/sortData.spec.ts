@@ -15,11 +15,19 @@ describe('sortData', () => {
 
 	test('samplePositions', () => {
 		expect(samplePositions(31)).toEqual([]);
-		expect(samplePositions(64)).toEqual([0, 31]);
-		const positions = samplePositions(1024);
-		expect(positions).toHaveLength(32);
-		expect(positions.at(-1)! + 1).toBeLessThan(1024);
+		expect(samplePositions(64)).toHaveLength(2);
+		expect(samplePositions(1024)).toHaveLength(32);
 		expect(samplePositions(100_000)).toHaveLength(256);
+		for (const n of [64, 1000, 1024, 100_000]) {
+			const positions = samplePositions(n);
+			const stride = Math.floor((n - 1) / positions.length);
+			// one position in each stride, and its pair in the values
+			expect(positions.every((i, p) => i >= p * stride && i < (p + 1) * stride)).toBe(true);
+			expect(positions.at(-1)! + 1).toBeLessThan(n);
+			expect(samplePositions(n)).toEqual(positions);
+		}
+		// not at a fixed phase of the stride
+		expect(new Set(samplePositions(100_000).map(i => i % 10)).size).toBeGreaterThan(5);
 	});
 
 	test('sorted is ascending', () => {
