@@ -78,13 +78,16 @@ export function renderUpcomingPage(version: string, changesets: IChangeset[], re
 		if (group.length === 0)
 			continue;
 		lines.push('', `## ${bump[0].toUpperCase()}${bump.slice(1)} changes`, '');
-		for (const { note, pullRequest } of group) {
+		group.forEach(({ note, pullRequest }, index) => {
 			const link = pullRequest === undefined ? '' : ` ([#${pullRequest}](https://github.com/${repository}/pull/${pullRequest}))`;
 			const [first, ...rest] = note.split('\n').map(line => linkifyIssueRefs(line, repository));
 			lines.push(`- ${first}${rest.length === 0 ? link : ''}`, ...rest.map(line => (line.trim() ? `    ${line}` : '')));
 			if (rest.length > 0 && link)
 				lines.push('', `    ${link.trim()}`);
-		}
+			// Markdown continues an indented paragraph on the next line: the next item would be its text without a blank line
+			if (rest.length > 0 && index < group.length - 1)
+				lines.push('');
+		});
 	}
 	return `${lines.join('\n')}\n`;
 }

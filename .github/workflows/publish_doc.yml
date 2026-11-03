@@ -1,7 +1,8 @@
 name: Publish Doc
 
 # release:  called by publish.yml with the release commit as `ref`, deploys the released minor and moves `latest`
-# next:     every push to main that changes the docs, the sources or the changesets, deploys `next`, with a banner
+# next:     every push to main that changes the docs, the sources, the changesets or the scripts of the Upcoming page,
+#           deploys `next`, with a banner
 #           that says whether it matches the latest release, and the Upcoming page (scripts/next-doc.ts)
 # redeploy: manual, deploys the minor of `ref` (default: the last tag); moves `latest` only for the latest minor
 
@@ -28,6 +29,10 @@ on:
       - src/**
       # a release deletes the changesets, and may not change src/: next must show that it matches the release
       - .changeset/**
+      # the Upcoming page and the banner: scripts/next-doc.ts and the modules it imports (ADR 0032)
+      - scripts/next-doc.ts
+      - scripts/upcoming.ts
+      - scripts/sourceFiles.ts
 
 permissions:
   contents: write

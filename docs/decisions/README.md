@@ -20,7 +20,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | The package ships ESM and UMD, with one bundled declaration file per format (`index.d.ts`, `index.d.cts`), checked with arethetypeswrong by `pnpm check:package`. | [0010](0010-package-formats-and-type-declarations.md) |
 | The benchmarks run locally with Vitest against the built bundle and a saved baseline, never in CI; each bench has the standard scenarios that apply (`direct`, `small`, after a `map` and a `filter`, the early exits) against a native reference, and a pull request pastes the output of `pnpm bench:report`. | [0011](0011-local-benchmarks-with-a-saved-baseline.md), [0021](0021-benchmark-standards.md), [0022](0022-benchmark-scenarios-in-practice.md) |
 | Releases are trunk-based with changesets: a pull request that changes `src/` adds one, new APIs use `@since next`, Prepare release runs the checks and opens the release pull request, and merging it publishes, after the maintainer checks that it is up to date with `main` and approves its CI run; `main` and the release tags are protected by the rulesets of `.github/rulesets/`, without a bypass, and `main` requires the `build` check. | [0012](0012-trunk-based-releases-with-changesets.md), [0015](0015-checks-on-the-release-pull-request.md), [0016](0016-protection-rules-for-main-and-release-tags.md) |
-| Every push to `main` that changes the documentation, `src/` or the changesets deploys the `next` version of the site, with a banner computed from the pending changesets and, when there are some, an Upcoming page built from their notes; a release deploys its minor and moves `latest`. | [0013](0013-documentation-versions-between-releases.md), [0017](0017-state-of-the-next-documentation.md) |
+| Every push to `main` that changes the documentation, `src/`, the changesets or the scripts that build the Upcoming page and the banner deploys the `next` version of the site, with a banner computed from the pending changesets and, when there are some, an Upcoming page built from their notes; a release deploys its minor and moves `latest`. | [0013](0013-documentation-versions-between-releases.md), [0017](0017-state-of-the-next-documentation.md), [0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) |
 | The instructions for agents are in three levels: the CI checks, `AGENTS.md` and the skills of `.agents/skills/`; the decisions in force are summarised in this section, and `pnpm check:instructions` checks that it cites every ADR in force and no other one. | [0014](0014-instructions-for-ai-coding-agents.md), [0027](0027-current-decisions-in-the-adr-index.md) |
 | The shared test sources live in `test/_helpers/generators/`, one file and one spec each, and a source moves there when a second spec needs it. | [0018](0018-shared-test-sources.md) |
 | The tests cover 100% of `src/`, enforced by Vitest; Codecov only informs, and unreachable code gets `/* istanbul ignore next -- <reason> */`. | [0019](0019-full-test-coverage-of-the-library.md) |
@@ -50,7 +50,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0014](0014-instructions-for-ai-coding-agents.md) | Instructions for AI coding agents | accepted, amended by [0027](0027-current-decisions-in-the-adr-index.md) |
 | [0015](0015-checks-on-the-release-pull-request.md) | Checks on the release pull request | accepted, amended by [0016](0016-protection-rules-for-main-and-release-tags.md) |
 | [0016](0016-protection-rules-for-main-and-release-tags.md) | Protection rules for main and the release tags | accepted |
-| [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted |
+| [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted, amended by [0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) |
 | [0018](0018-shared-test-sources.md) | Shared test sources | accepted |
 | [0019](0019-full-test-coverage-of-the-library.md) | Full test coverage of the library | accepted |
 | [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted, amended by [0030](0030-validation-messages-name-the-argument.md) |
@@ -65,6 +65,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0029](0029-sorting-with-the-native-sort.md) | Sorting with the native sort | accepted, amended by [0031](0031-operations-recognise-the-sort-before-them.md) |
 | [0030](0030-validation-messages-name-the-argument.md) | The validation messages name the argument | accepted |
 | [0031](0031-operations-recognise-the-sort-before-them.md) | Operations recognise the sort before them | accepted |
+| [0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) | The scripts of the Upcoming page deploy next | accepted |
 
 ## Adding a decision
 

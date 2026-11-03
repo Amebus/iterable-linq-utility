@@ -35,7 +35,7 @@ On a new repository, create them with `gh api -X POST repos/<owner>/<repo>/rules
 
 ## Documentation between releases
 
-The site has a `next` version, deployed on every push to `main` that changes `documentation/`, `src/` or `.changeset/`: a fix is visible there at once, and in `latest` at the next release ([ADR 0013](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0013-documentation-versions-between-releases.md)).
+The site has a `next` version, deployed on every push to `main` that changes `documentation/`, `src/`, `.changeset/` or the scripts that build the Upcoming page (`scripts/next-doc.ts` and the modules it imports, [ADR 0032](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0032-the-scripts-of-the-upcoming-page-deploy-next.md)): a fix is visible there at once, and in `latest` at the next release ([ADR 0013](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0013-documentation-versions-between-releases.md)).
 
 `next` shows a banner computed from the pending changesets ([ADR 0017](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0017-state-of-the-next-documentation.md)): without changesets it matches the latest release, the version in `package.json`; with changesets it links to an Upcoming page generated from their notes. The note of a changeset is therefore visible on the site as soon as the pull request is merged. To preview the banner and the page, from the root of the repository:
 

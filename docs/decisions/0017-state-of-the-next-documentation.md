@@ -1,6 +1,6 @@
 # State of the next documentation
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md)
 * Deciders: Amebus
 * Date: 2026-10-02
 
