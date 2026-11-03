@@ -98,6 +98,8 @@ These operations read the whole source before they yield the first value:
 - [slice](../api-reference/transformations.md#slice) with a negative `start`;
 - [memoize](../api-reference/transformations.md#memoize) with `allowPartialMemoization: false`, which is eager and keeps the values.
 
+`sort` followed directly by `take`, `slice` or `skip` and `take` still reads the whole source, but sorts only the values it yields: see [Reading only part of the result](../api-reference/transformations.md#reading-only-part-of-the-result).
+
 [except](../api-reference/transformations.md#except), [intersect](../api-reference/transformations.md#intersect), [innerJoin](../api-reference/transformations.md#innerjoin) and [groupJoin](../api-reference/transformations.md#groupjoin) read their other iterable whole before the first value, and their source lazily.
 
 An eager operation holds the values it reads in memory, and on an infinite source it never yields its first value:

@@ -1,6 +1,6 @@
 # Sorting with the native sort
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0031](0031-operations-recognise-the-sort-before-them.md)
 * Deciders: Amebus
 * Date: 2026-11-02
 
