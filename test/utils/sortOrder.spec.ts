@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
-import { type IRow, numbers, patterns, prng, records, referenceSort } from '../_helpers/sortData';
+import { type IRow, numbers, patterns, prng, records, referenceSort, samplePositions } from '../_helpers/sortData';
 
-import { orderOf } from '@/utils';
+import { orderOf, pairOrderOf } from '@/utils';
 
 const n = 1000;
 const seed = 7;
@@ -79,6 +79,55 @@ describe('orderOf', () => {
 				expect(order(i, j)).not.toBe(0);
 				expect(Math.sign(order(i, j))).toBe(-Math.sign(order(j, i)));
 			}
+		}
+	});
+});
+
+describe('pairOrderOf', () => {
+	const compare = (x: IRow | null, y: IRow | null) => (x?.v ?? -1) - (y?.v ?? -1);
+	const comparers: [string, unknown][] = [['the values', undefined], ['a key', 'v'], ['a list of one key', ['v']], ['two keys', ['g', 'v']], ['a compare function', compare]];
+
+	describe.each(patterns)('agrees with orderOf on the sampled pairs and on random pairs: %s', pattern => {
+		test.each(comparers)('%s', (_, comparer) => {
+			for (const n of [1000, 4096]) {
+				const values = numbers(pattern, n, seed, 4);
+				const source: unknown[] = comparer === undefined ? [...values, null, NaN, undefined, 3, 'a', 'b', 3] : records(values, seed, 5);
+				if (typeof comparer === 'function')
+					source[7] = undefined;
+				const random = prng(n);
+				const pairs: [number, number][] = [
+					...samplePositions(n).map((i): [number, number] => [i, i + 1]),
+					...Array.from({ length: 300 }, (): [number, number] => [Math.floor(random() * source.length), Math.floor(random() * source.length)]),
+					[0, 0],
+					[source.length - 1, source.length - 2]
+				];
+				for (const descending of [false, true]) {
+					const full = orderOf(source, comparer as never, descending);
+					const pair = pairOrderOf(source, comparer as never, descending);
+					for (const [i, j] of pairs)
+						expect([i, j, Math.sign(pair(i, j))]).toEqual([i, j, Math.sign(full(i, j))]);
+				}
+			}
+		});
+	});
+
+	test('reads only the two values it compares, and their keys', () => {
+		let reads = 0;
+		const rows = Array.from({ length: 100 }, (_, i) => ({
+			get v() {
+				reads++;
+				return i % 7;
+			},
+			g: 0
+		}));
+		for (const comparer of ['v', ['v'], ['g', 'v'], (x: { v: number }, y: { v: number }) => x.v - y.v] as const) {
+			reads = 0;
+			const order = pairOrderOf(rows, comparer as never, false);
+			expect(reads).toBe(0);
+			order(3, 4);
+			expect(reads).toBe(2);
+			expect(order(5, 5)).toBe(0);
+			expect(reads).toBe(2);
 		}
 	});
 });

@@ -1,5 +1,5 @@
 import type { Comparer } from '../types';
-import { getContinueIteratorResult, getDoneIteratorResult, orderOf, PartialSort, sortValues } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, orderOf, pairOrderOf, PartialSort, sortValues } from '../utils';
 import { DeferredIterable } from './deferredIterable';
 import { SourceIterator } from './sourceIterator';
 
@@ -84,14 +84,15 @@ class SortedIterator<T> extends SourceIterator<T, T> {
 
 	/**
 	 * The partial sort when the rule chooses it and it does not give up, otherwise the full sort, as `sort` alone. With half the
-	 * pairs of the sample out of order, `choosePath` decides on the sizes alone: the order is built only when the sample counts.
+	 * pairs of the sample out of order, `choosePath` decides on the sizes alone, so the sample is read only when it counts. The
+	 * sample reads only the values and keys of its pairs; the order of every index is built only for the partial sort.
 	 */
 	private sort(values: T[], end: number): T[] {
 		const n = values.length;
 		if (PartialSort.choosePath(n, end, PartialSort.sampleSize(n) >> 1) === 'select') {
-			const order = orderOf(values, this.comparer, this.descending);
-			if (PartialSort.choosePath(n, end, PartialSort.countSampleDescents(n, order)) === 'select') {
-				const indices = PartialSort.selectWindow(n, order, this.start, end);
+			const descents = PartialSort.countSampleDescents(n, pairOrderOf(values, this.comparer, this.descending));
+			if (PartialSort.choosePath(n, end, descents) === 'select') {
+				const indices = PartialSort.selectWindow(n, orderOf(values, this.comparer, this.descending), this.start, end);
 				if (indices !== undefined) {
 					this.last = indices.length;
 					return indices.map(i => values[i]);

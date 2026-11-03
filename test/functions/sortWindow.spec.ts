@@ -257,6 +257,25 @@ describe('take, skip and slice after sort', () => {
 			expect(spy).not.toHaveBeenCalled();
 		});
 
+		test('on the path of the full sort, the keys are read no more than by the full sort, plus the pairs of the sample', () => {
+			const n = 100_000;
+			let reads = 0;
+			const rows = Array.from({ length: n }, (_, i) => ({
+				get v() {
+					reads++;
+					return i;
+				}
+			}));
+			const sorted = sort(rows, 'v');
+			collectToArray(sorted);
+			const full = reads;
+			reads = 0;
+			const spy = vi.spyOn(PartialSort, 'selectWindow');
+			expect(collectToArray(take(sorted, 10))).toEqual(rows.slice(0, 10));
+			expect(spy).not.toHaveBeenCalled();
+			expect(reads).toBeLessThanOrEqual(full + 2 * PartialSort.sampleSize(n));
+		});
+
 		test('sort read alone does not use the partial sort', () => {
 			const source = numbers('random', 1024, 1);
 			const spy = vi.spyOn(PartialSort, 'selectWindow');

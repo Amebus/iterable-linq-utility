@@ -35,6 +35,41 @@ export function orderOf<T>(values: T[], comparer: Comparer<T> | undefined, desce
 }
 
 /**
+ * The order of `orderOf`, which reads the values and the keys of the two indices at each call instead of every key first: for
+ * the few comparisons of the sample of the partial sort, so that the full sort it may choose reads no key more than alone.
+ * `i - j` breaks a tie as `orderOf` does, and an index is equal to itself without reading anything.
+ */
+export function pairOrderOf<T>(values: T[], comparer: Comparer<T> | undefined, descending: boolean): (i: number, j: number) => number {
+	if (isFunction(comparer))
+		return byFunction(values, comparer);
+	const sign = descending ? -1 : 1;
+	if (comparer === undefined)
+		return (i, j) => (i === j ? 0 : compareKeys(values[i], values[j], sign) || i - j);
+	const names = isPropertyKey(comparer) ? [comparer] : comparer as PropertyKey[];
+	return (i, j) => {
+		if (i === j)
+			return 0;
+		const a: any = values[i];
+		const b: any = values[j];
+		for (const name of names) {
+			const result = compareKeys(a == null ? undefined : a[name], b == null ? undefined : b[name], sign);
+			if (result !== 0)
+				return result;
+		}
+		return i - j;
+	};
+}
+
+/** Two keys at one level: a missing key goes after a present one in both directions, two missing ones are a tie. */
+function compareKeys(a: unknown, b: unknown, sign: number): number {
+	const aMissing = isMissing(a);
+	const bMissing = isMissing(b);
+	if (aMissing || bMissing)
+		return aMissing === bMissing ? 0 : aMissing ? 1 : -1;
+	return sign * compareValues(a, b);
+}
+
+/**
  * The function decides alone; only the `undefined` elements go last, without calling it, as in `Array.prototype.sort`. An index
  * is equal to itself without calling it either, so that a function that is not `0` on equal values cannot move a pivot.
  */
