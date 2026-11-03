@@ -136,4 +136,15 @@ describe('renderUpcomingPage', () => {
 		expect(page).toContain('- First line.\n\n    Second paragraph.\n\n    ([#7](https://github.com/Amebus/iterable-linq-utility/pull/7))\n');
 	});
 
+	// Markdown continues an indented paragraph on the next line: without a blank line, `- B.` would be its text, not an item
+	test('a blank line separates a note of several lines from the next one', () => {
+		const page = renderUpcomingPage('0.3.0', [changeset('a', 'minor', 'First line.\n\nSecond paragraph.', 7), changeset('b', 'minor', 'B.', 8)], REPOSITORY);
+		expect(page).toContain('- First line.\n\n    Second paragraph.\n\n    ([#7](https://github.com/Amebus/iterable-linq-utility/pull/7))\n\n- B. ([#8](https://github.com/Amebus/iterable-linq-utility/pull/8))\n');
+	});
+
+	test('a blank line separates a note of several lines without a pull request from the next one', () => {
+		const page = renderUpcomingPage('0.3.0', [changeset('a', 'minor', 'First line.\n\nSecond paragraph.'), changeset('b', 'minor', 'B.')], REPOSITORY);
+		expect(page).toContain('- First line.\n\n    Second paragraph.\n\n- B.\n');
+	});
+
 });
