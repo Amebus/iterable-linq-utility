@@ -43,4 +43,9 @@ describe('IterableLinq.skip', () => {
 		expect(state.closed).toBe(true);
 	});
 
+	test('IterableLinq.sort(…).skip(2).take(3) yields the window of the full sort', () => {
+		const rows = [{ v: 5 }, { v: 3 }, { v: 8 }, { v: 1 }, { v: 9 }, { v: 2 }, { v: 7 }];
+		expect(IterableLinq.from(rows).sort('v').skip(2).take(3).collectToArray().map(row => row.v)).toEqual([3, 5, 7]);
+	});
+
 });

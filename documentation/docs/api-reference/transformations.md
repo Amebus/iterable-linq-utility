@@ -1032,6 +1032,8 @@ Skips the first *count* values and yields the rest, preserving their order. This
 
 *count* must be a non-negative integer. Negative values, fractions, `NaN` and `Infinity` throw when `skip` is called. Zero keeps all values; a count at least as large as a finite source leaves an empty result.
 
+After [sort](#sort), `skip` followed by `take` or `slice` sorts only the values it yields: see [Reading only part of the result](#reading-only-part-of-the-result).
+
 === "Wrapper"
 
     ```ts
@@ -1144,6 +1146,7 @@ Yields the values from *start* to *end* (excluded), like `Array.prototype.slice`
 - With non-negative indexes, the values are yielded as they are read and the source is closed at *end*, so `slice` also ends an infinite chain.
 - A negative *end* yields each value once `-end` more values have been read, keeping only those `-end` values.
 - A negative *start* runs the whole chain before yielding, keeping only the last `-start` values.
+- Directly after [sort](#sort), `slice(start, end)` with non-negative indexes sorts only the values up to *end*: see [Reading only part of the result](#reading-only-part-of-the-result).
 
 === "Wrapper"
 
@@ -1264,11 +1267,28 @@ IterableLinq.from([2, null, 1, undefined, NaN]).sort({ descending: true }).colle
 // [2, 1, null, undefined, NaN]
 ```
 
+### Reading only part of the result
+
+`sort` followed directly by `take`, `slice`, or `skip` and `take`, sorts only the values the result yields, when that is faster than a full sort. The forms are `sort(…).take(b)`, `sort(…).slice(c, d)`, `sort(…).skip(a).take(b)` and `sort(…).skip(a).slice(c, d)`, with non-negative integers: the values yielded are the same as with a full sort.
+
+```typescript
+IterableLinq.from(scores).sort({ descending: true }).take(10).collectToArray();        // the 10 greatest
+IterableLinq.from(scores).sort().skip(20).take(10).collectToArray();                   // the third page of 10
+```
+
+- The source is read whole at each run, as with a full sort: only the sort is partial.
+- Any other operation between `sort` and `take` (`map`, `filter`…), a negative index and `skip` read alone sort everything, as before.
+- A window that starts past the end of the values (`sort().skip(5)` of 3 values, or `sort().slice(5, 8)`) yields nothing without sorting, so a compare function that would throw is not called.
+- The sort chooses by itself: it is a full sort when the window is a large part of the values, when there are few values, or when the values are already almost sorted in either direction (ascending, or descending such as records by date read with the latest first), where the native sort is about linear; a partial sort otherwise. The choice looks at a small sample of pairs of values, spread over the source with a seeded pseudo-random offset in each stride, so that periodic data cannot fool it, and reads only the values and keys of those pairs. Within the noise, it is not slower than the full sort on the data shapes measured in [ADR 0031](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0031-operations-recognise-the-sort-before-them.md); on almost sorted or almost reversed data it is as fast as the full sort, not faster.
+- This holds for a comparison that is a consistent order: numbers, strings, keys of one type, any sensible compare function. With an inconsistent comparer (values that `<` cannot order, a random function, one that is not antisymmetric, or a compare function that returns a boolean, such as `(a, b) => a > b`, which never returns a negative number) the window can differ from the one of a full sort, as the result of `Array.prototype.sort` is not defined for it, and the compare function or a getter can be called a different number of times, in a different order: an error thrown only for some pairs may or may not be thrown.
+
 Throws an `Error` if the comparer is not a function, a property or a non-empty list of properties, if options follow a compare function or come without a property before them (`sort(undefined, { descending: true })`), if the options are not an object, or if `descending` is not a boolean. TypeScript rejects these calls too: the forms are `sort(options?)`, `sort(compare)` and `sort(keys, options?)`.
 
 ## take
 
 Yields the first *count* values, then closes the source. The source is never read past the *count*-th value, so `take` also ends an infinite chain.
+
+Directly after [sort](#sort), `take` sorts only the values it yields: see [Reading only part of the result](#reading-only-part-of-the-result).
 
 === "Wrapper"
 

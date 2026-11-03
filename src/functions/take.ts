@@ -1,4 +1,4 @@
-import { SourceIterator, DeferredIterable } from '../iterators';
+import { SourceIterator, DeferredIterable, SortedIterable } from '../iterators';
 import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
 
 /**
@@ -18,6 +18,8 @@ import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '.
 export function take<T>(iterable: Iterable<T>, count: number): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'take');
 	Validations.throwIfNotNonNegativeInteger(count, 'count', 'take');
+	if (iterable instanceof SortedIterable)
+		return iterable.window(0, count);
 	return new DeferredIterable(() => new TakeIterator(iterable, count));
 }
 
