@@ -35,9 +35,12 @@ export function choosePath(n: number, m: number, descents: number): 'full' | 'se
 }
 
 /**
- * The work that the quickselect may do, in values partitioned (about one comparison each), before it gives up: a consistent
- * order needs about `2 * n`, at most `4.4 * n` measured on every data pattern, seed and kind of order up to 100,000 values and
- * a window of a quarter; an inconsistent compare function or an input built against the median of three needs up to `n * m`.
+ * The work that the quickselect may do, in values partitioned (about one comparison each), before it gives up. With the
+ * pseudo-random pivot a consistent order needs about `2 * n` to `4 * n`: at most `4.96 * n` measured on the random, sorted,
+ * reversed, few distinct, clustered, organ pipe, sawtooth, sample sorted, sample descending and few descents patterns, at
+ * 1,000 to 100,000 values, 5 seeds, by value both ways, by a key and by two keys with missing ones, with windows up to a
+ * quarter. An inconsistent compare function can need up to `n * m`. A consistent order that still reaches the budget gets
+ * the full sort: the result is the same, at the cost of at most the budget of extra work.
  */
 export const selectBudget = (n: number): number => 8 * n;
 
@@ -58,26 +61,23 @@ export function selectWindow(n: number, order: IndexOrder, start: number, end: n
 }
 
 /**
- * Hoare's quickselect with a median of three: afterwards `indices[0, m)` are the `m` smallest, in no order. The scans stay in
- * the range, so that an inconsistent order ends; `false` when the values partitioned exceed `budget`.
+ * Hoare's quickselect: afterwards `indices[0, m)` are the `m` smallest, in no order. The pivot is the median of three indices
+ * at pseudo-random positions of the range, so that no arrangement of the data (organ pipe, sawtooth) defeats it, and the same
+ * input takes the same path. The scans stay in the range, so that an inconsistent order ends; `false` when the values
+ * partitioned exceed `budget`.
  */
 function selectFirst(indices: number[], order: IndexOrder, m: number, budget: number): boolean {
 	const k = m - 1;
 	let left = 0;
 	let right = indices.length - 1;
 	let work = 0;
+	const random = positions(indices.length);
 	while (left < right) {
 		work += right - left + 1;
 		if (work > budget)
 			return false;
-		const middle = (left + right) >>> 1;
-		if (order(indices[middle], indices[left]) < 0)
-			swap(indices, left, middle);
-		if (order(indices[right], indices[left]) < 0)
-			swap(indices, left, right);
-		if (order(indices[right], indices[middle]) < 0)
-			swap(indices, middle, right);
-		const pivot = indices[middle];
+		const span = right - left + 1;
+		const pivot = medianOf(order, indices[left + random() % span], indices[left + random() % span], indices[left + random() % span]);
 		let i = left;
 		let j = right;
 		while (i <= j) {
@@ -100,6 +100,30 @@ function selectFirst(indices: number[], order: IndexOrder, m: number, budget: nu
 			return true;
 	}
 	return true;
+}
+
+/** The median of three indices in `order`. */
+function medianOf(order: IndexOrder, a: number, b: number, c: number): number {
+	if (order(a, b) < 0) {
+		if (order(b, c) < 0)
+			return b;
+		return order(a, c) < 0 ? c : a;
+	}
+	if (order(a, c) < 0)
+		return a;
+	return order(b, c) < 0 ? c : b;
+}
+
+/** mulberry32 seeded with `n`: deterministic pseudo-random unsigned integers, for the positions of the pivot. */
+function positions(n: number): () => number {
+	let state = n >>> 0;
+	return () => {
+		state = (state + 0x6D2B79F5) >>> 0;
+		let t = state;
+		t = Math.imul(t ^ (t >>> 15), t | 1);
+		t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+		return (t ^ (t >>> 14)) >>> 0;
+	};
 }
 
 function swap(indices: number[], i: number, j: number): void {

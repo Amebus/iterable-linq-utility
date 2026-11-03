@@ -56,6 +56,19 @@ describe('sortData', () => {
 		expect(new Set(values).size).toBeLessThan(values.length);
 	});
 
+	test('organPipe: ascending to the middle, then descending', () => {
+		expect(numbers('organPipe', 7, 1)).toEqual([0, 1, 2, 3, 2, 1, 0]);
+		expect(numbers('organPipe', 6, 1)).toEqual([0, 1, 2, 2, 1, 0]);
+		const values = numbers('organPipe', 1000, 1);
+		expect(allDescents(values)).toBe(499);
+	});
+
+	test('sawtooth: ascending ramps of length ceil(sqrt(n))', () => {
+		expect(numbers('sawtooth', 10, 1)).toEqual([0, 1, 2, 3, 0, 1, 2, 3, 0, 1]);
+		const values = numbers('sawtooth', 1000, 1);
+		expect(allDescents(values) + 1).toBe(Math.ceil(1000 / 32));
+	});
+
 	test('reversed, fewDistinct and random', () => {
 		expect(numbers('reversed', 4, 1)).toEqual([3, 2, 1, 0]);
 		expect(new Set(numbers('fewDistinct', 100, 1)).size).toBeLessThanOrEqual(5);

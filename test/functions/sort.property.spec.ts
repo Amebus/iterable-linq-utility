@@ -1,10 +1,9 @@
 import { describe, expect, test } from 'vitest';
-import { type IRow, type Pattern, numbers, records, referenceSort } from '../_helpers/sortData';
+import { type IRow, numbers, patterns, records, referenceSort } from '../_helpers/sortData';
 
 import { collectToArray, sort } from '@/functions';
 
 const sizes = [0, 1, 2, 255, 256, 257, 1000, 1024];
-const patterns: Pattern[] = ['random', 'sorted', 'reversed', 'fewDistinct', 'clustered', 'sampleSorted', 'sampleDescending', 'descentsAt'];
 const seeds = [1, 2, 3];
 const ids = (rows: (IRow | null)[]) => rows.map(row => row?.id ?? null);
 

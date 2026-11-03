@@ -1,7 +1,10 @@
 /** Test data for the sort specs and benches, and a reference sort written from the rules of ADR 0029 only. */
 
 /** The data patterns: what a sample of adjacent pairs sees, and what the whole array looks like. */
-export type Pattern = 'random' | 'sorted' | 'reversed' | 'fewDistinct' | 'clustered' | 'sampleSorted' | 'sampleDescending' | 'descentsAt';
+export type Pattern = 'random' | 'sorted' | 'reversed' | 'fewDistinct' | 'clustered' | 'organPipe' | 'sawtooth' | 'sampleSorted' | 'sampleDescending' | 'descentsAt';
+
+/** Every pattern, for the specs that go through all of them. */
+export const patterns: Pattern[] = ['random', 'sorted', 'reversed', 'fewDistinct', 'clustered', 'organPipe', 'sawtooth', 'sampleSorted', 'sampleDescending', 'descentsAt'];
 
 export interface IRow {
 	id: number;
@@ -52,6 +55,14 @@ export function numbers(pattern: Pattern, n: number, seed: number, descents = 0)
 		case 'clustered':
 			// runs of 64 ascending values; each run starts (at 0..39) below the end of the previous one (at least 63)
 			return Array.from({ length: n }, (_, i) => ((Math.floor(i / 64) * 37) % 40) + (i % 64));
+		case 'organPipe':
+			// ascending to the middle, then descending: a pattern that defeats a pivot taken at fixed positions
+			return Array.from({ length: n }, (_, i) => Math.min(i, n - 1 - i));
+		case 'sawtooth': {
+			// ascending ramps of length ceil(sqrt(n))
+			const ramp = Math.ceil(Math.sqrt(n));
+			return Array.from({ length: n }, (_, i) => i % ramp);
+		}
 		case 'sampleSorted': {
 			const values = Array.from({ length: n }, () => Math.floor(random() * 1_000_000));
 			for (const i of samplePositions(n))

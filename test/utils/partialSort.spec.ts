@@ -1,9 +1,8 @@
 import { describe, expect, test } from 'vitest';
-import { type Pattern, numbers, records, referenceSort } from '../_helpers/sortData';
+import { numbers, patterns, records, referenceSort } from '../_helpers/sortData';
 
 import { orderOf, PartialSort } from '@/utils';
 
-const patterns: Pattern[] = ['random', 'sorted', 'reversed', 'fewDistinct', 'clustered', 'sampleSorted', 'sampleDescending', 'descentsAt'];
 const seeds = [1, 2, 3, 4, 5];
 
 describe('PartialSort', () => {
@@ -108,8 +107,11 @@ describe('PartialSort', () => {
 			expect(counter.calls).toBeLessThanOrEqual(2 * PartialSort.selectBudget(n) + n);
 		});
 
+		/** The patterns measured at 100,000 values too; all of them at 1024 and 4096. */
+		const large = new Set(['random', 'sorted', 'reversed', 'organPipe', 'sawtooth']);
+
 		describe.each(patterns)('the budget is not reached by a consistent order: %s', pattern => {
-			test.each([1024, 4096])('n = %i', n => {
+			test.each([1024, 4096, 100_000].filter(n => n < 100_000 || large.has(pattern)))('n = %i', n => {
 				const values = numbers(pattern, n, 2, 4);
 				const rows = records(values, 2, 5);
 				for (const order of [orderOf(values, undefined, false), orderOf(values, undefined, true), orderOf(rows, ['g', 'v'], false)])
