@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">3 unreleased changes since 0.12.0</a>
+    <a href="../upcoming/">4 unreleased changes since 0.12.0</a>
           </div>
           
         </aside>
@@ -1278,6 +1278,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#patch-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patch changes
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1309,6 +1320,10 @@
 - New <code>sort(options?)</code>, <code>sort(compare)</code> and <code>sort(keys, options?)</code> Transformation: a stable sort that does not change the source, like <code>Array.prototype.toSorted</code>; <code>{ descending: true }</code> sorts the other way, and <code>null</code>, <code>undefined</code> and <code>NaN</code> go last (<a href="https://github.com/Amebus/iterable-linq-utility/issues/41">#41</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/204">#204</a>)
 - The validation messages name the argument (<code>"iterable"</code>, <code>"other"</code>, <code>"inner"</code> or <code>"others"</code> instead of <code>"sourceIterable"</code>), and <code>min</code>, <code>max</code>, <code>memoize</code>, <code>fromRange</code>, <code>Functions.range</code> and <code>join</code> validate their arguments; <code>memoize({ allowPartialMemoization: undefined })</code> now uses the partial memoization, the default, instead of the full one (<a href="https://amebus.github.io/iterable-linq-utility/0.13/migrating-to-0.13.0/">migration guide</a>) (<a href="https://github.com/Amebus/iterable-linq-utility/issues/202">#202</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/205">#205</a>)</p>
 </li>
+</ul>
+<h2 id="patch-changes">Patch changes<a class="headerlink" href="#patch-changes" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li><code>sort(…)</code> followed by <code>take</code>, <code>slice</code>, or <code>skip</code> and <code>take</code>, sorts only the values it yields when that is faster (<a href="https://github.com/Amebus/iterable-linq-utility/issues/203">#203</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/206">#206</a>)</li>
 </ul>
 
 
