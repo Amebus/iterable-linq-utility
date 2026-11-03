@@ -1,6 +1,6 @@
 import { DeferredIterable, SourceIterator } from '../iterators';
 import type { Comparer, ISortOptions } from '../types';
-import { getContinueIteratorResult, getDoneIteratorResult, isFunction, isPropertyKey, libraryError, Validations } from '../utils';
+import { compareValues, getContinueIteratorResult, getDoneIteratorResult, isFunction, isMissing, isPropertyKey, keysOf, libraryError, Validations } from '../utils';
 
 /**
  * Lazily yields the values in ascending order, compared with `<`. The sort is stable, and unlike `Array.prototype.sort`
@@ -93,11 +93,6 @@ function isOptions<T>(value: Comparer<T> | ISortOptions | undefined): value is I
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-/** `null`, `undefined` and `NaN` have no place in the order: they go last. */
-function isMissing(value: unknown): boolean {
-	return value == null || value !== value;
-}
-
 class SortIterator<T> extends SourceIterator<T, T> {
 	/** The sorted values, read on the first `next()`. */
 	private sorted?: T[];
@@ -147,14 +142,6 @@ function sortValues<T>(values: T[], comparer: Comparer<T> | undefined, descendin
 
 const ascendingNumbers = (a: number, b: number): number => a - b;
 const descendingNumbers = (a: number, b: number): number => b - a;
-/**
- * `<` and `>` both ways: two values that neither precedes are a tie, so equal values that are not the same object (two `Date`s)
- * keep the order of the source, and the next key decides. `===` would tell them apart in both directions.
- */
-function compareValues(a: any, b: any): number {
-	return a < b ? -1 : a > b ? 1 : 0;
-}
-
 const descendingValues = (a: unknown, b: unknown): number => compareValues(b, a);
 
 /** Subtraction when every value is a number, faster than `<` with three outcomes; `Infinity - Infinity` is `NaN`, which the sort reads as equal. */
@@ -269,14 +256,4 @@ function withMissing(columns: unknown[][], sign: number): (i: number, j: number)
 		}
 		return 0;
 	};
-}
-
-/** The key of each value; a `null` or `undefined` value has none. */
-function keysOf<T>(values: T[], key: PropertyKey): unknown[] {
-	const keys: unknown[] = new Array(values.length);
-	for (let i = 0; i < values.length; i++) {
-		const value = values[i];
-		keys[i] = value == null ? undefined : (value as any)[key];
-	}
-	return keys;
 }
