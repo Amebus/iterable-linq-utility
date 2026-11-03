@@ -34,9 +34,14 @@ export function orderOf<T>(values: T[], comparer: Comparer<T> | undefined, desce
 	return names.length === 1 ? byColumn(keysOf(values, names[0]), sign) : byColumns(names.map(name => keysOf(values, name)), sign);
 }
 
-/** The function decides alone; only the `undefined` elements go last, without calling it, as in `Array.prototype.sort`. */
+/**
+ * The function decides alone; only the `undefined` elements go last, without calling it, as in `Array.prototype.sort`. An index
+ * is equal to itself without calling it either, so that a function that is not `0` on equal values cannot move a pivot.
+ */
 function byFunction<T>(values: T[], compare: (a: T, b: T) => number): (i: number, j: number) => number {
 	return (i, j) => {
+		if (i === j)
+			return 0;
 		const a = values[i];
 		const b = values[j];
 		if (a === undefined || b === undefined)

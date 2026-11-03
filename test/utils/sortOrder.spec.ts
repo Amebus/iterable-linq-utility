@@ -47,6 +47,15 @@ describe('orderOf', () => {
 		expect(sortedBy(values, orderOf(values, compare, false))).toEqual([second, first, undefined, undefined]);
 	});
 
+	test('an index is equal to itself without calling the compare function', () => {
+		let calls = 0;
+		const order = orderOf([1, 2], () => (calls++, -1), false);
+		expect(order(0, 0)).toBe(0);
+		expect(order(1, 1)).toBe(0);
+		expect(calls).toBe(0);
+		expect(orderOf([NaN, Infinity], undefined, false)(1, 1)).toBe(0);
+	});
+
 	test('is antisymmetric and never 0 for two different indices', () => {
 		const values = numbers('fewDistinct', n, seed);
 		const rows = records(values, seed, 5);

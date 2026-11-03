@@ -35,25 +35,41 @@ export function choosePath(n: number, m: number, descents: number): 'full' | 'se
 }
 
 /**
- * The indices of the positions `[start, end)` of `order`, with `0 <= start < end <= n`: a quickselect moves the `end` smallest
- * indices first, then the native sort orders them.
+ * The work that the quickselect may do, in values partitioned (about one comparison each), before it gives up: a consistent
+ * order needs about `2 * n`, at most `4.4 * n` measured on every data pattern, seed and kind of order up to 100,000 values and
+ * a window of a quarter; an inconsistent compare function or an input built against the median of three needs up to `n * m`.
  */
-export function selectWindow(n: number, order: IndexOrder, start: number, end: number): number[] {
+export const selectBudget = (n: number): number => 8 * n;
+
+/**
+ * The indices of the positions `[start, end)` of `order`, with `0 <= start < end <= n`: a quickselect moves the `end` smallest
+ * indices first, then the native sort orders them. `undefined` when the quickselect exceeds `selectBudget(n)`, which a
+ * consistent order does not reach: the caller then sorts the whole values.
+ */
+export function selectWindow(n: number, order: IndexOrder, start: number, end: number): number[] | undefined {
 	const indices: number[] = new Array(n);
 	for (let i = 0; i < n; i++)
 		indices[i] = i;
-	selectFirst(indices, order, end);
+	if (!selectFirst(indices, order, end, selectBudget(n)))
+		return undefined;
 	indices.length = end;
 	indices.sort(order);
 	return start === 0 ? indices : indices.slice(start);
 }
 
-/** Hoare's quickselect with a median of three: afterwards `indices[0, m)` are the `m` smallest, in no order. */
-function selectFirst(indices: number[], order: IndexOrder, m: number): void {
+/**
+ * Hoare's quickselect with a median of three: afterwards `indices[0, m)` are the `m` smallest, in no order. The scans stay in
+ * the range, so that an inconsistent order ends; `false` when the values partitioned exceed `budget`.
+ */
+function selectFirst(indices: number[], order: IndexOrder, m: number, budget: number): boolean {
 	const k = m - 1;
 	let left = 0;
 	let right = indices.length - 1;
+	let work = 0;
 	while (left < right) {
+		work += right - left + 1;
+		if (work > budget)
+			return false;
 		const middle = (left + right) >>> 1;
 		if (order(indices[middle], indices[left]) < 0)
 			swap(indices, left, middle);
@@ -65,9 +81,9 @@ function selectFirst(indices: number[], order: IndexOrder, m: number): void {
 		let i = left;
 		let j = right;
 		while (i <= j) {
-			while (order(indices[i], pivot) < 0)
+			while (i < right && order(indices[i], pivot) < 0)
 				i++;
-			while (order(indices[j], pivot) > 0)
+			while (j > left && order(indices[j], pivot) > 0)
 				j--;
 			if (i <= j) {
 				swap(indices, i, j);
@@ -81,8 +97,9 @@ function selectFirst(indices: number[], order: IndexOrder, m: number): void {
 		else if (k >= i)
 			left = i;
 		else
-			return;
+			return true;
 	}
+	return true;
 }
 
 function swap(indices: number[], i: number, j: number): void {

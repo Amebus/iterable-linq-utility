@@ -36,6 +36,14 @@ describe('PartialSort', () => {
 		});
 
 		test.each([
+			[1, 4, 'select'],
+			[0, 4, 'full'],
+			[1, 3, 'select'],
+		] as const)('few descents at an integer boundary (n = 320, 10 pairs): %i descents, m = %i → %s', (descents, m, path) => {
+			expect(PartialSort.choosePath(320, m, descents)).toBe(path);
+		});
+
+		test.each([
 			[3, 10, 'select'],
 			[3, 11, 'full'],
 			[4, 11, 'select'],
@@ -61,6 +69,55 @@ describe('PartialSort', () => {
 	});
 
 	describe('selectWindow', () => {
+		/** An order on random numbers through a compare function, counting its calls. */
+		function counted(n: number, compare: (a: number, b: number) => number) {
+			const order = orderOf(numbers('random', n, 1), compare, false);
+			const counter = { calls: 0, order: (i: number, j: number) => (counter.calls++, order(i, j)) };
+			return counter;
+		}
+
+		describe.each([
+			['(a, b) => a < b ? -1 : 1', (a: number, b: number) => a < b ? -1 : 1],
+			['() => -1', () => -1],
+			['() => 1', () => 1],
+		])('an inconsistent compare function %s', (_, compare) => {
+			test.each([[0, 10], [0, 256]])('ends, with distinct indices in range or giving up: [%i, %i)', (start, end) => {
+				const n = 1024;
+				const counter = counted(n, compare);
+				const window = PartialSort.selectWindow(n, counter.order, start, end);
+				expect(counter.calls).toBeLessThan(20 * n * Math.log2(n));
+				if (window !== undefined) {
+					expect(window).toHaveLength(end - start);
+					expect(new Set(window).size).toBe(end - start);
+					expect(window.every(i => Number.isInteger(i) && i >= 0 && i < n)).toBe(true);
+				}
+			});
+		});
+
+		test('a compare function that is not 0 only on equal values stays within the budget on distinct values', () => {
+			const n = 1024;
+			const values = Array.from({ length: n }, (_, i) => (i * 389) % n);
+			const order = orderOf(values, (a, b) => a < b ? -1 : 1, false);
+			expect(PartialSort.selectWindow(n, order, 0, 10)!.map(i => values[i])).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+		});
+
+		test.each([['() => -1', () => -1], ['() => 1', () => 1]])('gives up past the budget, within a bounded work, for %s', (_, compare) => {
+			const n = 4096;
+			const counter = counted(n, compare);
+			expect(PartialSort.selectWindow(n, counter.order, 0, 256)).toBeUndefined();
+			expect(counter.calls).toBeLessThanOrEqual(2 * PartialSort.selectBudget(n) + n);
+		});
+
+		describe.each(patterns)('the budget is not reached by a consistent order: %s', pattern => {
+			test.each([1024, 4096])('n = %i', n => {
+				const values = numbers(pattern, n, 2, 4);
+				const rows = records(values, 2, 5);
+				for (const order of [orderOf(values, undefined, false), orderOf(values, undefined, true), orderOf(rows, ['g', 'v'], false)])
+					for (const end of [1, 10, 100, n >> 3, n >> 2])
+						expect(PartialSort.selectWindow(n, order, 0, end)).toHaveLength(end);
+			});
+		});
+
 		const windows = (n: number): [number, number][] => [[0, 1], [0, 10], [0, n >> 2], [(n >> 2) - 1, (n >> 2) + 1], [20, 30], [n - 1, n]];
 
 		describe.each(patterns)('%s', pattern => {
@@ -74,8 +131,8 @@ describe('PartialSort', () => {
 					const byValue = orderOf(values, undefined, descending);
 					const byKeys = orderOf(rows, ['g', 'v'], descending);
 					for (const [start, end] of windows(n)) {
-						expect(PartialSort.selectWindow(n, byValue, start, end).map(i => values[i])).toEqual(sorted.slice(start, end));
-						expect(ids(PartialSort.selectWindow(n, byKeys, start, end))).toEqual(sortedRows.slice(start, end));
+						expect(PartialSort.selectWindow(n, byValue, start, end)!.map(i => values[i])).toEqual(sorted.slice(start, end));
+						expect(ids(PartialSort.selectWindow(n, byKeys, start, end)!)).toEqual(sortedRows.slice(start, end));
 					}
 				}
 			});
