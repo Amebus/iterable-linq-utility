@@ -56,11 +56,12 @@ const totals = (n: number): number[] => [...new Set([
 const windows = (total: number): [number, number][] =>
 	[...new Set([0, 1, total - 1])].filter(a => a >= 0 && a <= total).map(a => [a, total - a]);
 
-/** The three forms, in turn, so that every form meets every kind of window. */
+/** The four forms, in turn, so that every form meets every kind of window. */
 const forms = [
 	(s: Iterable<unknown>, a: number, b: number) => (a === 0 ? take(s, b) : take(skip(s, a), b)),
 	(s: Iterable<unknown>, a: number, b: number) => slice(s, a, a + b),
-	(s: Iterable<unknown>, a: number, b: number) => slice(skip(s, a), 0, b)
+	(s: Iterable<unknown>, a: number, b: number) => slice(skip(s, a), 0, b),
+	(s: Iterable<unknown>, a: number, b: number) => take(slice(s, a), b)
 ];
 
 interface IComparer {
@@ -150,6 +151,12 @@ describe('take, skip and slice after sort against the reference', () => {
 									failures.push(`${label}: ${selectWindow.mock.calls.length} partial sorts for the path ${path}`);
 								if (selectWindow.mock.results.some(result => result.value === undefined))
 									failures.push(`${label}: the partial sort gave up on a consistent order`);
+								// the offset alone, without a window: the full sort, skipping `a`
+								if (a === total - 1 && a > 0) {
+									const rest = collectToArray(skip(sorted, a)).map(identity);
+									if (rest.length !== Math.max(0, n - a) || rest.some((value, i) => !Object.is(value, expected[a + i])))
+										failures.push(`${label}: skip alone is not the reference`);
+								}
 								if (path !== 'none') {
 									const branch = branchOf(n, m, sampleDescents);
 									if ((branch === 'select') !== (path === 'select'))

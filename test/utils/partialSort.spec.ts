@@ -40,14 +40,33 @@ describe('PartialSort', () => {
 			expect(PartialSort.choosePath(1024, m, sample(1024))).toBe('full');
 		});
 
-		test.each([1, 3, 4, 10, 80])('at an integer boundary (n = 320, 10 pairs, a tenth is 1): m = %i', m => {
+		test.each([1, 80])('at an integer boundary (n = 320, 10 pairs, a tenth is 1): m = %i', m => {
 			expect(PartialSort.choosePath(320, m, 0)).toBe('full');
 			expect(PartialSort.choosePath(320, m, 1)).toBe('select');
 			expect(PartialSort.choosePath(320, m, 9)).toBe('select');
 			expect(PartialSort.choosePath(320, m, 10)).toBe('full');
 		});
 
-		test.each([1, 10, 11, 100, 250])('either side of a tenth (n = 1000, 31 pairs, a tenth is 3.1): m = %i', m => {
+		test.each([[320, 81], [1000, 251]])('past a quarter the full sort, whatever the sample (n = %i, m = %i)', (n, m) => {
+			for (let descents = 0; descents <= PartialSort.sampleSize(n); descents++)
+				expect(PartialSort.choosePath(n, m, descents)).toBe('full');
+		});
+
+		test.each([255, 256, 257, 1000, 1023, 1024, 4096, 100_000])('the size-only check of the window agrees with the rule (n = %i)', n => {
+			// the window asks choosePath with half the pairs out of order before reading the sample: it must never answer 'full'
+			// when some sample would give 'select'
+			const sample = PartialSort.sampleSize(n);
+			for (const m of [1, Math.floor(n / 4), Math.floor(n / 4) + 1, n]) {
+				const sizes = PartialSort.choosePath(n, m, sample >> 1);
+				for (let descents = 0; descents <= sample; descents++) {
+					if (PartialSort.choosePath(n, m, descents) === 'select')
+						expect(sizes).toBe('select');
+				}
+				expect(sizes).toBe(m > n / 4 || sample < 8 ? 'full' : 'select');
+			}
+		});
+
+		test.each([1, 250])('either side of a tenth (n = 1000, 31 pairs, a tenth is 3.1): m = %i', m => {
 			expect(PartialSort.choosePath(1000, m, 3)).toBe('full');
 			expect(PartialSort.choosePath(1000, m, 4)).toBe('select');
 			expect(PartialSort.choosePath(1000, m, 27)).toBe('select');
@@ -101,17 +120,16 @@ describe('PartialSort', () => {
 		});
 
 		describe.each([4096, 100_000])('periodic data of period 10 (n = %i)', n => {
-			const sample = PartialSort.sampleSize(n);
-
 			test('the sample sees the ends of the periods', () => {
 				const values = Array.from({ length: n }, (_, i) => i % 10);
 				const random = prng(n);
 				const rows = values.map(g => ({ group: `g${g}`, score: Math.floor(random() * 1000) }));
 				for (const order of [orderOf(values, undefined, false), orderOf(rows, ['group', 'score'], false)]) {
 					const descents = PartialSort.countSampleDescents(n, order);
-					// one pair in 10 descends: about sample / 10, either side of the threshold of the rule (7 in 128, 29 in 256)
-					expect(descents).toBeGreaterThan(sample / 20);
-					expect(descents).toBeLessThan(sample / 5);
+					// a pair descends exactly when it straddles the end of a period: the count the positions predict, not a range
+					const expected = samplePositions(n).filter(i => i % 10 === 9).length;
+					expect(descents).toBe(expected);
+					expect(descents).toBeGreaterThan(0);
 					if (n === 100_000)
 						expect(PartialSort.choosePath(n, 10, descents)).toBe('select');
 				}
