@@ -46,6 +46,16 @@ describe('orderOf', () => {
 		expect(sortedBy(values, orderOf(values, compare, false))).toEqual([second, first, undefined, undefined]);
 	});
 
+	test('a compare function receives the null elements: only the undefined ones go last without a call', () => {
+		const calls: unknown[] = [];
+		const values: (number | null | undefined)[] = [2, null, undefined, 0, null];
+		const compare = (x: number | null | undefined, y: number | null | undefined) => (calls.push(x, y), (x ?? 1) - (y ?? 1));
+		const sorted = sortedBy(values, orderOf(values, compare, false));
+		expect(calls).toContain(null);
+		expect(calls).not.toContain(undefined);
+		expect(sorted).toEqual([0, null, null, 2, undefined]);
+	});
+
 	test('an index is equal to itself without calling the compare function', () => {
 		let calls = 0;
 		const order = orderOf([1, 2], () => (calls++, -1), false);

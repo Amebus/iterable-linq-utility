@@ -83,12 +83,12 @@ class SortedIterator<T> extends SourceIterator<T, T> {
 	}
 
 	/**
-	 * The partial sort when the rule chooses it and it does not give up, otherwise the full sort, as `sort` alone. With every
-	 * pair of the sample out of order, `choosePath` decides on the sizes alone: the order is built only when the sample counts.
+	 * The partial sort when the rule chooses it and it does not give up, otherwise the full sort, as `sort` alone. With half the
+	 * pairs of the sample out of order, `choosePath` decides on the sizes alone: the order is built only when the sample counts.
 	 */
 	private sort(values: T[], end: number): T[] {
 		const n = values.length;
-		if (PartialSort.choosePath(n, end, PartialSort.sampleSize(n)) === 'select') {
+		if (PartialSort.choosePath(n, end, PartialSort.sampleSize(n) >> 1) === 'select') {
 			const order = orderOf(values, this.comparer, this.descending);
 			if (PartialSort.choosePath(n, end, PartialSort.countSampleDescents(n, order)) === 'select') {
 				const indices = PartialSort.selectWindow(n, order, this.start, end);

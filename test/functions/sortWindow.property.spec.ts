@@ -8,7 +8,10 @@ import { orderOf, PartialSort } from '@/utils';
 const sizes = [255, 256, 1000, 1023, 1024, 4096];
 const seeds = [1, 2, 3];
 
-/** A pattern, and for `descentsAt` the number of descents: 2, 3, 4, and the counts either side of a tenth of the sample. */
+/**
+ * A pattern, and its `k`: for `descentsAt` the number of descents (2, 3, 4, and the counts either side of a tenth of the
+ * sample), for `reversedRuns` the length of the runs. The descending comparers read `descentsAt` as nearly reversed.
+ */
 interface ICase {
 	pattern: Pattern;
 	descents?: number;
@@ -27,7 +30,9 @@ const cases: ICase[] = [
 	{ pattern: 'descentsAt', descents: 2 },
 	{ pattern: 'descentsAt', descents: 3 },
 	{ pattern: 'descentsAt', descents: 4 },
-	{ pattern: 'descentsAt', descents: -1 }
+	{ pattern: 'descentsAt', descents: -1 },
+	{ pattern: 'reversedRuns', descents: 4 },
+	{ pattern: 'reversedRuns', descents: 100 }
 ];
 
 const labelOf = ({ pattern, descents }: ICase): string =>
@@ -41,7 +46,7 @@ const descentCounts = (n: number, descents: number): number[] => {
 	return [...new Set([Math.floor(tenth), Math.ceil(tenth), Math.ceil(tenth) + 1])].filter(k => k > 0);
 };
 
-/** The `a + b` around the thresholds of the rule: one value in 100, a quarter, and past the end. */
+/** The `a + b` around a quarter, the threshold of the rule, small windows, one value in 100, and past the end. */
 const totals = (n: number): number[] => [...new Set([
 	1, 10, Math.floor(n / 100), Math.floor(n / 100) + 1, Math.floor(n / 4) - 1, Math.floor(n / 4), Math.floor(n / 4) + 1,
 	Math.floor(n / 2), n, n + 5
@@ -77,8 +82,11 @@ const comparers: IComparer[] = [
 	{ name: 'a compare function', data: (values, seed) => records(values, seed), comparer: byV, descending: false }
 ];
 
-/** Why the rule takes its path, independently of `choosePath`, to check that every branch is taken. */
-type Branch = 'threshold' | 'small sample' | 'no descent' | 'few descents' | 'select';
+/**
+ * Why the rule takes its path, independently of `choosePath`, to check that every branch is taken: the sample sorted in either
+ * direction, or nearly sorted (fewer than a tenth of the pairs descend) or nearly reversed (fewer than a tenth ascend).
+ */
+type Branch = 'threshold' | 'small sample' | 'sorted either way' | 'nearly sorted' | 'nearly reversed' | 'select';
 
 function branchOf(n: number, m: number, descents: number): Branch {
 	const sample = Math.min(256, n >> 5);
@@ -86,10 +94,12 @@ function branchOf(n: number, m: number, descents: number): Branch {
 		return 'threshold';
 	if (sample < 8)
 		return 'small sample';
-	if (descents === 0)
-		return 'no descent';
-	if (descents < sample / 10 && m > n / 100)
-		return 'few descents';
+	if (descents === 0 || descents === sample)
+		return 'sorted either way';
+	if (descents < sample / 10)
+		return 'nearly sorted';
+	if (sample - descents < sample / 10)
+		return 'nearly reversed';
 	return 'select';
 }
 
@@ -156,7 +166,7 @@ describe('take, skip and slice after sort against the reference', () => {
 	});
 
 	test('every branch of the rule is taken', () => {
-		expect([...branches.keys()].sort()).toEqual(['few descents', 'no descent', 'select', 'small sample', 'threshold']);
+		expect([...branches.keys()].sort()).toEqual(['nearly reversed', 'nearly sorted', 'select', 'small sample', 'sorted either way', 'threshold']);
 	});
 
 	test.each(seeds)('the sample of clustered data at 4096 values sees the runs end (seed %i)', seed => {

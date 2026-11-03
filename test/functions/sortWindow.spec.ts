@@ -237,11 +237,24 @@ describe('take, skip and slice after sort', () => {
 			{ name: 'random data, a window of 257', source: numbers('random', 1024, 1), count: 257, select: false },
 			{ name: 'data sorted where the sample looks', source: numbers('sampleSorted', 1024, 1), count: 10, select: false },
 			{ name: 'sorted data', source: numbers('sorted', 1024, 1), count: 10, select: false },
+			{ name: 'reversed data', source: numbers('reversed', 1024, 1), count: 10, select: false },
+			{ name: 'nearly reversed data', source: numbers('sampleDescending', 4096, 1).reverse(), count: 10, select: false },
+			{ name: 'ascending runs of 1,000 in descending order', source: numbers('reversedRuns', 4096, 1, 1000), count: 10, select: false },
 			{ name: 'fewer than 8 pairs in the sample', source: numbers('random', 255, 1), count: 10, select: false }
 		])('$name: the partial sort is used = $select', ({ source, count, select }) => {
 			const spy = vi.spyOn(PartialSort, 'selectWindow');
 			expect(collectToArray(take(sort(source), count))).toEqual(referenceSort(source, undefined, false).slice(0, count));
 			expect(spy).toHaveBeenCalledTimes(select ? 1 : 0);
+		});
+
+		test.each([
+			{ name: 'by a compare function', run: (s: number[]) => sort(s, (a, b) => b - a) },
+			{ name: 'descending', run: (s: number[]) => sort(s, { descending: true }) }
+		])('sorted data read in reverse, $name, keeps the full sort', ({ run }) => {
+			const source = numbers('sorted', 4096, 1);
+			const spy = vi.spyOn(PartialSort, 'selectWindow');
+			expect(collectToArray(take(run(source), 10))).toEqual(referenceSort(source, undefined, true).slice(0, 10));
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		test('sort read alone does not use the partial sort', () => {

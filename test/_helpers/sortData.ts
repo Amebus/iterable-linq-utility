@@ -1,10 +1,10 @@
 /** Test data for the sort specs and benches, and a reference sort written from the rules of ADR 0029 only. */
 
 /** The data patterns: what a sample of adjacent pairs sees, and what the whole array looks like. */
-export type Pattern = 'random' | 'sorted' | 'reversed' | 'fewDistinct' | 'clustered' | 'organPipe' | 'sawtooth' | 'sampleSorted' | 'sampleDescending' | 'descentsAt';
+export type Pattern = 'random' | 'sorted' | 'reversed' | 'fewDistinct' | 'clustered' | 'organPipe' | 'sawtooth' | 'sampleSorted' | 'sampleDescending' | 'descentsAt' | 'reversedRuns';
 
 /** Every pattern, for the specs that go through all of them. */
-export const patterns: Pattern[] = ['random', 'sorted', 'reversed', 'fewDistinct', 'clustered', 'organPipe', 'sawtooth', 'sampleSorted', 'sampleDescending', 'descentsAt'];
+export const patterns: Pattern[] = ['random', 'sorted', 'reversed', 'fewDistinct', 'clustered', 'organPipe', 'sawtooth', 'sampleSorted', 'sampleDescending', 'descentsAt', 'reversedRuns'];
 
 export interface IRow {
 	id: number;
@@ -46,8 +46,11 @@ function swap(values: number[], i: number): void {
 	[values[i], values[i + 1]] = [values[i + 1], values[i]];
 }
 
-/** Numbers (non-negative integers) arranged as `pattern`; `descents` is only for `descentsAt`. */
-export function numbers(pattern: Pattern, n: number, seed: number, descents = 0): number[] {
+/**
+ * Numbers (non-negative integers) arranged as `pattern`. `k` is the number of sampled descents of `descentsAt` and the length
+ * of the runs of `reversedRuns` (64 when it is not positive); the other patterns ignore it.
+ */
+export function numbers(pattern: Pattern, n: number, seed: number, k = 0): number[] {
 	const random = prng(seed);
 	switch (pattern) {
 		case 'random':
@@ -84,9 +87,15 @@ export function numbers(pattern: Pattern, n: number, seed: number, descents = 0)
 		}
 		case 'descentsAt': {
 			const values = ascending(n);
-			for (const i of samplePositions(n).slice(0, descents))
+			for (const i of samplePositions(n).slice(0, k))
 				swap(values, i);
 			return values;
+		}
+		case 'reversedRuns': {
+			// ascending runs of `run` distinct values, the runs in descending order: [4, 5, 6, 7, 0, 1, 2, 3] for n = 8, run = 4
+			const run = k > 0 ? k : 64;
+			const runs = Math.ceil(n / run);
+			return Array.from({ length: n }, (_, i) => (runs - 1 - Math.floor(i / run)) * run + (i % run));
 		}
 	}
 }

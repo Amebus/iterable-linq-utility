@@ -77,6 +77,15 @@ describe('sortData', () => {
 		expect(allDescents(values) + 1).toBe(Math.ceil(1000 / 32));
 	});
 
+	test('reversedRuns: ascending runs of distinct values, the runs in descending order', () => {
+		expect(numbers('reversedRuns', 8, 1, 4)).toEqual([4, 5, 6, 7, 0, 1, 2, 3]);
+		expect(numbers('reversedRuns', 7, 1, 3)).toEqual([6, 7, 8, 3, 4, 5, 0]);
+		expect(numbers('reversedRuns', 5, 1, 10)).toEqual([0, 1, 2, 3, 4]);
+		const values = numbers('reversedRuns', 1000, 1);
+		expect(allDescents(values) + 1).toBe(Math.ceil(1000 / 64));
+		expect(new Set(values).size).toBe(1000);
+	});
+
 	test('reversed, fewDistinct and random', () => {
 		expect(numbers('reversed', 4, 1)).toEqual([3, 2, 1, 0]);
 		expect(new Set(numbers('fewDistinct', 100, 1)).size).toBeLessThanOrEqual(5);

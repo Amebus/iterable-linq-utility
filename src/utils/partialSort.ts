@@ -37,13 +37,13 @@ export function countSampleDescents(n: number, order: IndexOrder): number {
 
 /**
  * Whether the first `m` of `n` values are found by a partial sort (`select`) or by the full sort (`full`), which is faster when
- * the window is more than a quarter of the values, when the sample is too small to judge (fewer than 8 pairs), when the sample
- * finds the values sorted (the native sort is linear there), or when it finds them nearly sorted and the window is more than
- * one value in 100.
+ * the window is more than a quarter of the values, when the sample is too small to judge (fewer than 8 pairs), or when the
+ * sample finds the values sorted or nearly sorted in either direction: fewer than a tenth of its pairs descend, or fewer than
+ * a tenth ascend. The native sort finds the runs there, ascending or descending, in about linear time, whatever the window.
  */
 export function choosePath(n: number, m: number, descents: number): 'full' | 'select' {
 	const sample = sampleSize(n);
-	if (m > n / 4 || sample < 8 || descents === 0 || (descents < sample / 10 && m > n / 100))
+	if (m > n / 4 || sample < 8 || Math.min(descents, sample - descents) < sample / 10)
 		return 'full';
 	return 'select';
 }
