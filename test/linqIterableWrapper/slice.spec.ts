@@ -49,4 +49,9 @@ describe('IterableLinq.slice', () => {
 		expectTypeOf(result).toEqualTypeOf<IterableLinq.IIterableLinq<number>>();
 	});
 
+	test('IterableLinq.sort(…).slice(2, 5) yields the window of the full sort', () => {
+		const rows = [{ v: 5 }, { v: 3 }, { v: 8 }, { v: 1 }, { v: 9 }, { v: 2 }, { v: 7 }];
+		expect(IterableLinq.from(rows).sort('v', { descending: true }).slice(2, 5).collectToArray().map(row => row.v)).toEqual([7, 5, 3]);
+	});
+
 });

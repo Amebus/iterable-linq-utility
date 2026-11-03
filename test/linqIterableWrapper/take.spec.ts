@@ -33,4 +33,9 @@ describe('IterableLinq.take', () => {
 		expectTransformation(source => IterableLinq.from(source).take(3));
 	});
 
+	test('IterableLinq.sort(…).take(3) yields the first values of the full sort', () => {
+		const rows = [{ v: 5 }, { v: 3 }, { v: 8 }, { v: 1 }, { v: 9 }, { v: 2 }, { v: 7 }];
+		expect(IterableLinq.from(rows).sort('v').take(3).collectToArray().map(row => row.v)).toEqual([1, 2, 3]);
+	});
+
 });

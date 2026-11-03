@@ -1,4 +1,4 @@
-import { SourceIterator, DeferredIterable } from '../iterators';
+import { SourceIterator, DeferredIterable, SortedIterable } from '../iterators';
 import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
 
 /**
@@ -30,6 +30,8 @@ export function slice<T>(iterable: Iterable<T>, start?: number, end?: number): I
 		return new DeferredIterable(() => new SliceFromEndIterator(iterable, -from, end));
 	if (end !== undefined && end < 0)
 		return new DeferredIterable(() => new SliceToEndIterator(iterable, from, -end));
+	if (iterable instanceof SortedIterable)
+		return end === undefined ? iterable.withOffset(from) : iterable.window(from, end);
 	// an `end` not after `start` yields nothing: 0 closes the source without reading it
 	const to = end === undefined ? Infinity : end > from ? end : 0;
 	return new DeferredIterable(() => new SliceIterator(iterable, from, to));

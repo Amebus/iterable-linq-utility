@@ -1,4 +1,4 @@
-import { SourceIterator, DeferredIterable } from '../iterators';
+import { SourceIterator, DeferredIterable, SortedIterable } from '../iterators';
 import { Validations } from '../utils';
 
 /**
@@ -17,6 +17,8 @@ import { Validations } from '../utils';
 export function skip<T>(iterable: Iterable<T>, count: number): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'skip');
 	Validations.throwIfNotNonNegativeInteger(count, 'count', 'skip');
+	if (iterable instanceof SortedIterable)
+		return iterable.withOffset(count);
 	return new DeferredIterable(() => new SkipIterator(iterable, count));
 }
 
