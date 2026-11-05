@@ -62,6 +62,7 @@ See [Extending the API](../advanced-concepts/extending.md).
 | `Unit`                       | The type of `unit()`, returned by callbacks that have nothing to return. See [The Unit type](../basic-concepts.md#the-unit-type) |
 | `IRangeOptions`              | Options of `fromRange` and `Functions.range`: `step` and `reverse`                                    |
 | `ISortOptions`               | Options of `sort`: `descending`                                                                       |
+| `IShuffleOptions<TSeed>`     | Options of `shuffle`: `seed` and `random`                                                             |
 | `IMemoizeOptions`            | Options of `memoize`: `allowPartialMemoization`                                                       |
 | `IObjectOptions`             | Options of `fromObject`: `yield`, `inherited`, `nonEnumerable` and `symbols`                          |
 | `ObjectItem<O, Options>`     | The type of the values of `fromObject`, from `ObjectKey` and `ObjectValue`                            |
