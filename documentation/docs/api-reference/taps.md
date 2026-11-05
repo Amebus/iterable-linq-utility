@@ -6,11 +6,16 @@ The callbacks have nothing to return, so they return [`unit()`](../basic-concept
 
 ???+ summary "TLDR list of Taps"
 
-    | Tap                                   | Brief Description                                                  | Callback runs                          |
-    | ------------------------------------- | ------------------------------------------------------------------ | -------------------------------------- |
-    | [tap](#tap)                           | Calls a callback on each value as it flows through the chain       | once per value, on every run           |
-    | [tapChain](#tapchain)                 | Calls a callback with the upstream `Iterable` when a run starts    | once per run, before the first value   |
-    | [tapChainCreation](#tapchaincreation) | Calls a callback with the chain while the chain is being built     | once, immediately                      |
+    - :material-moon-full: [Fully Deferred Execution](../glossary.md#fully-deferred-execution)
+    - :material-lightning-bolt: [Immediate Evaluation](../glossary.md#immediate-evaluation)
+    - :material-format-text-wrapping-wrap: Available on the `IIterableLinq` chain
+    - :material-raw: Available as raw function in `Functions`
+
+    | Tap                                   | Brief Description                                                  | Callback runs                          | Execution                  | Availability                                        |
+    | ------------------------------------- | ------------------------------------------------------------------ | -------------------------------------- | -------------------------- | --------------------------------------------------- |
+    | [tap](#tap)                           | Calls a callback on each value as it flows through the chain       | once per value, on every run           | :material-moon-full:       | :material-format-text-wrapping-wrap: :material-raw: |
+    | [tapChain](#tapchain)                 | Calls a callback with the upstream `Iterable` when a run starts    | once per run, before the first value   | :material-moon-full:       | :material-format-text-wrapping-wrap: :material-raw: |
+    | [tapChainCreation](#tapchaincreation) | Calls a callback with the chain while the chain is being built     | once, immediately                      | :material-lightning-bolt:  | :material-format-text-wrapping-wrap:                |
 
 ## tap
 
