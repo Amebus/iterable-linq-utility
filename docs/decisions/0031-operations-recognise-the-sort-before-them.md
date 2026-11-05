@@ -1,6 +1,6 @@
 # Operations recognise the sort before them
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0033](0033-a-second-sample-for-the-length-of-the-runs.md)
 * Deciders: Amebus
 * Date: 2026-11-03
 

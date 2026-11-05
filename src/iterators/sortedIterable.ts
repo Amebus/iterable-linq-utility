@@ -84,14 +84,16 @@ class SortedIterator<T> extends SourceIterator<T, T> {
 
 	/**
 	 * The partial sort when the rule chooses it and it does not give up, otherwise the full sort, as `sort` alone. With half the
-	 * pairs of the sample out of order, `choosePath` decides on the sizes alone, so the sample is read only when it counts. The
-	 * sample reads only the values and keys of its pairs; the order of every index is built only for the partial sort.
+	 * pairs of the sample out of order, `choosePath` decides on the sizes alone, so the sample is read only when it counts, and
+	 * the second sample, at distance 32, only when the first one looks nearly sorted. The samples read only the values and keys of
+	 * their pairs; the order of every index is built only for the partial sort.
 	 */
 	private sort(values: T[], end: number): T[] {
 		const n = values.length;
 		if (PartialSort.choosePath(n, end, PartialSort.sampleSize(n) >> 1) === 'select') {
-			const descents = PartialSort.countSampleDescents(n, pairOrderOf(values, this.comparer, this.descending));
-			if (PartialSort.choosePath(n, end, descents) === 'select') {
+			const pairOrder = pairOrderOf(values, this.comparer, this.descending);
+			const descents = PartialSort.countSampleDescents(n, pairOrder);
+			if (PartialSort.choosePath(n, end, descents) === 'select' || PartialSort.choosePath(n, end, descents, PartialSort.countLongSampleDescents(n, pairOrder)) === 'select') {
 				const indices = PartialSort.selectWindow(n, orderOf(values, this.comparer, this.descending), this.start, end);
 				if (indices !== undefined) {
 					this.last = indices.length;

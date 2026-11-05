@@ -32,7 +32,10 @@ const cases: ICase[] = [
 	{ pattern: 'descentsAt', descents: 4 },
 	{ pattern: 'descentsAt', descents: -1 },
 	{ pattern: 'reversedRuns', descents: 4 },
-	{ pattern: 'reversedRuns', descents: 100 }
+	{ pattern: 'reversedRuns', descents: 100 },
+	{ pattern: 'ascendingRuns', descents: 8 },
+	{ pattern: 'descendingRuns', descents: 12 },
+	{ pattern: 'ascendingRuns', descents: 1000 }
 ];
 
 const labelOf = ({ pattern, descents }: ICase): string =>
@@ -85,22 +88,20 @@ const comparers: IComparer[] = [
 
 /**
  * Why the rule takes its path, independently of `choosePath`, to check that every branch is taken: the sample sorted in either
- * direction, or nearly sorted (fewer than a tenth of the pairs descend) or nearly reversed (fewer than a tenth ascend).
+ * direction, or nearly sorted (fewer than a tenth of the pairs descend) or nearly reversed (fewer than a tenth ascend), each
+ * in long runs (fewer than a third of the pairs at distance 32 go the other way); in short runs (`short runs`) the partial sort.
  */
-type Branch = 'threshold' | 'small sample' | 'sorted either way' | 'nearly sorted' | 'nearly reversed' | 'select';
+type Branch = 'threshold' | 'small sample' | 'sorted either way' | 'nearly sorted' | 'nearly reversed' | 'short runs' | 'select';
 
-function branchOf(n: number, m: number, descents: number): Branch {
+function branchOf(n: number, m: number, descents: number, longDescents: number): Branch {
 	const sample = Math.min(256, n >> 5);
 	if (m > n / 4)
 		return 'threshold';
 	if (sample < 8)
 		return 'small sample';
-	if (descents === 0 || descents === sample)
-		return 'sorted either way';
-	if (descents < sample / 10)
-		return 'nearly sorted';
-	if (sample - descents < sample / 10)
-		return 'nearly reversed';
+	const far = (d: number, part: number) => d >= sample / part && sample - d >= sample / part;
+	if (!far(descents, 10))
+		return far(longDescents, 3) ? 'short runs' : descents === 0 || descents === sample ? 'sorted either way' : descents < sample / 10 ? 'nearly sorted' : 'nearly reversed';
 	return 'select';
 }
 
@@ -136,12 +137,14 @@ describe('take, skip and slice after sort against the reference', () => {
 					for (const { name, data, comparer, descending } of comparers) {
 						const source = data(values, seed);
 						const expected = referenceSort(source, comparer as never, descending).map(identity);
-						const sampleDescents = PartialSort.countSampleDescents(n, orderOf(source, comparer as Comparer<unknown> | undefined, descending));
+						const order = orderOf(source, comparer as Comparer<unknown> | undefined, descending);
+						const sampleDescents = PartialSort.countSampleDescents(n, order);
+						const longDescents = PartialSort.countLongSampleDescents(n, order);
 						const sorted = sortBy(source, comparer, descending);
 						for (const total of totals(n)) {
 							for (const [a, b] of windows(total)) {
 								const m = Math.min(a + b, n);
-								const path = a < m ? PartialSort.choosePath(n, m, sampleDescents) : 'none';
+								const path = a < m ? PartialSort.choosePath(n, m, sampleDescents, longDescents) : 'none';
 								selectWindow.mockClear();
 								const actual = collectToArray(forms[form++ % forms.length](sorted, a, b)).map(identity);
 								const label = `k ${k}, seed ${seed}, ${name}, [${a}, ${a + b})`;
@@ -158,8 +161,8 @@ describe('take, skip and slice after sort against the reference', () => {
 										failures.push(`${label}: skip alone is not the reference`);
 								}
 								if (path !== 'none') {
-									const branch = branchOf(n, m, sampleDescents);
-									if ((branch === 'select') !== (path === 'select'))
+									const branch = branchOf(n, m, sampleDescents, longDescents);
+									if ((branch === 'select' || branch === 'short runs') !== (path === 'select'))
 										failures.push(`${label}: choosePath says ${path}, the rule says ${branch}`);
 									branches.set(branch, (branches.get(branch) ?? 0) + 1);
 								}
@@ -173,12 +176,19 @@ describe('take, skip and slice after sort against the reference', () => {
 	});
 
 	test('every branch of the rule is taken', () => {
-		expect([...branches.keys()].sort()).toEqual(['nearly reversed', 'nearly sorted', 'select', 'small sample', 'sorted either way', 'threshold']);
+		expect([...branches.keys()].sort()).toEqual(['nearly reversed', 'nearly sorted', 'select', 'short runs', 'small sample', 'sorted either way', 'threshold']);
 	});
 
 	test.each(seeds)('the sample of clustered data at 4096 values sees the runs end (seed %i)', seed => {
 		const values = numbers('clustered', 4096, seed);
 		expect(PartialSort.countSampleDescents(4096, orderOf(values, undefined, false))).toBeGreaterThan(0);
 		expect(PartialSort.countSampleDescents(4096, orderOf(values, undefined, false))).toBeLessThan(PartialSort.sampleSize(4096) / 10);
+		// runs of 64: the pairs at distance 32 straddle two runs half the time, so the partial sort
+		const longDescents = PartialSort.countLongSampleDescents(4096, orderOf(values, undefined, false));
+		expect(longDescents).toBeGreaterThanOrEqual(PartialSort.sampleSize(4096) / 3);
+		expect(PartialSort.sampleSize(4096) - longDescents).toBeGreaterThanOrEqual(PartialSort.sampleSize(4096) / 3);
+		selectWindow.mockClear();
+		expect(collectToArray(take(sort(values), 10))).toEqual(values.toSorted((x, y) => x - y).slice(0, 10));
+		expect(selectWindow).toHaveBeenCalledTimes(1);
 	});
 });
