@@ -1,10 +1,10 @@
 /** Test data for the sort specs and benches, and a reference sort written from the rules of ADR 0029 only. */
 
 /** The data patterns: what a sample of adjacent pairs sees, and what the whole array looks like. */
-export type Pattern = 'random' | 'sorted' | 'reversed' | 'fewDistinct' | 'clustered' | 'organPipe' | 'sawtooth' | 'sampleSorted' | 'sampleDescending' | 'descentsAt' | 'reversedRuns';
+export type Pattern = 'random' | 'sorted' | 'reversed' | 'fewDistinct' | 'clustered' | 'organPipe' | 'sawtooth' | 'sampleSorted' | 'sampleDescending' | 'descentsAt' | 'reversedRuns' | 'ascendingRuns' | 'descendingRuns';
 
 /** Every pattern, for the specs that go through all of them. */
-export const patterns: Pattern[] = ['random', 'sorted', 'reversed', 'fewDistinct', 'clustered', 'organPipe', 'sawtooth', 'sampleSorted', 'sampleDescending', 'descentsAt', 'reversedRuns'];
+export const patterns: Pattern[] = ['random', 'sorted', 'reversed', 'fewDistinct', 'clustered', 'organPipe', 'sawtooth', 'sampleSorted', 'sampleDescending', 'descentsAt', 'reversedRuns', 'ascendingRuns', 'descendingRuns'];
 
 export interface IRow {
 	id: number;
@@ -40,6 +40,31 @@ export function samplePositions(n: number): number[] {
 	return Array.from({ length: sample }, (_, p) => p * stride + (random() * 4294967296) % stride);
 }
 
+/**
+ * The first element of each pair `(i, i + 32)` of the second sample of the partial sort, written again here, not imported: as
+ * many pairs as the first sample, one in each stride of `floor((n - 32) / sample)` values, at an offset drawn by mulberry32
+ * seeded with `n ^ 0x85EBCA6B`. Empty when there are fewer than `sample` positions with a pair.
+ */
+export function longSamplePositions(n: number): number[] {
+	const sample = Math.min(256, n >> 5);
+	if (sample === 0 || n - 32 < sample)
+		return [];
+	const stride = Math.floor((n - 32) / sample);
+	const random = prng((n ^ 0x85EBCA6B) >>> 0);
+	return Array.from({ length: sample }, (_, p) => p * stride + (random() * 4294967296) % stride);
+}
+
+/** Ascending runs of `run` consecutive integers, each run starting at a level in `[0, 1_000_000)` drawn by `random`. */
+function runsAt(n: number, run: number, random: () => number): number[] {
+	const values: number[] = new Array(n);
+	for (let start = 0; start < n; start += run) {
+		const level = Math.floor(random() * 1_000_000);
+		for (let i = start; i < Math.min(start + run, n); i++)
+			values[i] = level + i - start;
+	}
+	return values;
+}
+
 const ascending = (n: number): number[] => Array.from({ length: n }, (_, i) => i);
 
 function swap(values: number[], i: number): void {
@@ -47,8 +72,9 @@ function swap(values: number[], i: number): void {
 }
 
 /**
- * Numbers (non-negative integers) arranged as `pattern`. `k` is the number of sampled descents of `descentsAt` and the length
- * of the runs of `reversedRuns` (64 when it is not positive); the other patterns ignore it.
+ * Numbers (non-negative integers) arranged as `pattern`. `k` is the number of sampled descents of `descentsAt`, the length
+ * of the runs of `reversedRuns` (64 when it is not positive) and of `ascendingRuns` and `descendingRuns` (16 when it is not
+ * positive); the other patterns ignore it.
  */
 export function numbers(pattern: Pattern, n: number, seed: number, k = 0): number[] {
 	const random = prng(seed);
@@ -96,6 +122,17 @@ export function numbers(pattern: Pattern, n: number, seed: number, k = 0): numbe
 			const run = k > 0 ? k : 64;
 			const runs = Math.ceil(n / run);
 			return Array.from({ length: n }, (_, i) => (runs - 1 - Math.floor(i / run)) * run + (i % run));
+		}
+		case 'ascendingRuns':
+			// short runs at random levels: the adjacent pairs ascend, the pairs farther apart are random
+			return runsAt(n, k > 0 ? k : 16, random);
+		case 'descendingRuns': {
+			// the runs of ascendingRuns, each one reversed: the adjacent pairs descend, the pairs farther apart are random
+			const run = k > 0 ? k : 16;
+			const values = runsAt(n, run, random);
+			for (let start = 0; start < n; start += run)
+				values.splice(start, run, ...values.slice(start, start + run).reverse());
+			return values;
 		}
 	}
 }
