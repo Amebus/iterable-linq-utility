@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { numbers, patterns, prng, records, referenceSort, samplePositions } from '../_helpers/sortData';
+import { longSamplePositions, numbers, patterns, prng, records, referenceSort, samplePositions } from '../_helpers/sortData';
 
 import { orderOf, PartialSort } from '@/utils';
 
@@ -78,21 +78,108 @@ describe('PartialSort', () => {
 			expect(PartialSort.choosePath(1000, 251, 27)).toBe('full');
 		});
 
+		describe('the second sample, at distance 32 (n = 100,000: 256 pairs, a tenth is 25.6)', () => {
+			const n = 100_000;
+
+			test.each([0, 25, 231, 256])('the first sample nearly sorted either way (%i descents): the second one decides', descents => {
+				expect(PartialSort.choosePath(n, 10, descents, 25)).toBe('full');
+				expect(PartialSort.choosePath(n, 10, descents, 26)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, descents, 128)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, descents, 230)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, descents, 231)).toBe('full');
+				expect(PartialSort.choosePath(n, 10, descents, 0)).toBe('full');
+				expect(PartialSort.choosePath(n, 10, descents, 256)).toBe('full');
+			});
+
+			test.each([0, 128, 256])('the first sample far from sorted: the second one does not count (%i long descents)', longDescents => {
+				expect(PartialSort.choosePath(n, 10, 26, longDescents)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, 128, longDescents)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, 230, longDescents)).toBe('select');
+			});
+
+			test('without the second count, the answer of the first sample alone', () => {
+				for (let descents = 0; descents <= 256; descents++)
+					expect(PartialSort.choosePath(n, 10, descents, undefined)).toBe(PartialSort.choosePath(n, 10, descents));
+			});
+
+			test('the quarter and the minimum of 8 pairs win over the second sample', () => {
+				expect(PartialSort.choosePath(n, 25_001, 0, 128)).toBe('full');
+				expect(PartialSort.choosePath(255, 10, 0, 4)).toBe('full');
+			});
+		});
+
+		describe('the path of each shape (n = 100,000, both samples)', () => {
+			const n = 100_000;
+			const ascending = (a: number, b: number) => a - b;
+			const pathsOf = (values: number[], descending = false): string[] => {
+				const orders = [orderOf(values, undefined, descending), orderOf(values, descending ? (a: number, b: number) => b - a : ascending, false)];
+				return orders.flatMap(order => {
+					const descents = PartialSort.countSampleDescents(n, order);
+					const longDescents = PartialSort.countLongSampleDescents(n, order);
+					return [10, 1_000, 20_010].map(m => PartialSort.choosePath(n, m, descents, longDescents));
+				});
+			};
+			/** The records of the bench: each score 81 below the one before, except about 1 pair in 12. */
+			const scores = Array.from({ length: n }, (_, i) => (i * 7919) % 1000);
+
+			test.each([
+				['the scores of the bench records', scores, false],
+				['the scores of the bench records, descending', scores, true],
+				['clustered', numbers('clustered', n, 1), false],
+				['ascending runs of 64 in descending order', numbers('reversedRuns', n, 1, 64), false],
+				['descending runs of 64 in ascending order, descending', numbers('reversedRuns', n, 1, 64).reverse(), true],
+				...[8, 16, 32].map((run): [string, number[], boolean] => [`ascending runs of ${run}`, numbers('ascendingRuns', n, 1, run), false]),
+				...[12, 64].map((run): [string, number[], boolean] => [`descending runs of ${run}`, numbers('descendingRuns', n, 1, run), false])
+			] as const)('short runs take the quickselect: %s', (_, values, descending) => {
+				expect(new Set(pathsOf(values as number[], descending))).toEqual(new Set(['select']));
+			});
+
+			test('the scores of the bench records by the key', () => {
+				const rows = scores.map(score => ({ score }));
+				const order = orderOf(rows, 'score', false);
+				expect(PartialSort.choosePath(n, 10, PartialSort.countSampleDescents(n, order), PartialSort.countLongSampleDescents(n, order))).toBe('select');
+			});
+
+			test.each([
+				['sorted', numbers('sorted', n, 1)],
+				['reversed', numbers('reversed', n, 1)],
+				['sample descending', numbers('sampleDescending', n, 1)],
+				['20 sampled descents', numbers('descentsAt', n, 1, 20)],
+				['ascending runs of 1,000 in descending order', numbers('reversedRuns', n, 1, 1000)],
+				['ascending runs of 5,000 in descending order', numbers('reversedRuns', n, 1, 5000)],
+				['ascending runs of 1,000', numbers('ascendingRuns', n, 1, 1000)]
+			])('long runs keep the full sort: %s', (_, values) => {
+				expect(new Set(pathsOf(values))).toEqual(new Set(['full']));
+			});
+
+			// about 32 / run of the long pairs straddle two runs, half of them descending: the boundary is near runs of 160
+			test.each([[128, 'select'], [160, 'full'], [256, 'full']])('near the boundary, ascending runs of %i (seed 1) → %s', (run, path) => {
+				expect(new Set(pathsOf(numbers('ascendingRuns', n, 1, run)))).toEqual(new Set([path]));
+			});
+
+			test('near the boundary, a sawtooth of ramps of 317 from 0: about a tenth of the long pairs descend → select', () => {
+				expect(new Set(pathsOf(numbers('sawtooth', n, 1)))).toEqual(new Set(['select']));
+			});
+		});
+
 		describe.each([1024, 4096, 100_000])('data sorted in either direction keeps the full sort for every window (n = %i)', n => {
 			const ms = [1, 10, 100, Math.floor(n / 100), Math.floor(n / 4)];
 			const sources: [string, number[], boolean][] = [
 				['reversed', numbers('reversed', n, 1), false],
 				['sorted, descending', numbers('sorted', n, 1), true],
 				['sample descending, descending', numbers('sampleDescending', n, 1), true],
-				...[64, 1000, 1024, 5000].map((run): [string, number[], boolean] => [`ascending runs of ${run} in descending order`, numbers('reversedRuns', n, 1, run), false]),
-				...[64, 1000, 1024, 5000].map((run): [string, number[], boolean] => [`descending runs of ${run} in ascending order, descending`, numbers('reversedRuns', n, 1, run).reverse(), true])
+				...[1000, 1024, 5000].map((run): [string, number[], boolean] => [`ascending runs of ${run} in descending order`, numbers('reversedRuns', n, 1, run), false]),
+				...[1000, 1024, 5000].map((run): [string, number[], boolean] => [`descending runs of ${run} in ascending order, descending`, numbers('reversedRuns', n, 1, run).reverse(), true])
 			];
 
 			test.each(sources)('%s', (_, values, descending) => {
 				for (const order of [orderOf(values, undefined, descending), orderOf(values, descending ? (a: number, b: number) => b - a : (a: number, b: number) => a - b, false)]) {
 					const descents = PartialSort.countSampleDescents(n, order);
-					for (const m of ms)
+					const longDescents = PartialSort.countLongSampleDescents(n, order);
+					for (const m of ms) {
 						expect(PartialSort.choosePath(n, m, descents)).toBe('full');
+						expect(PartialSort.choosePath(n, m, descents, longDescents)).toBe('full');
+					}
 				}
 			});
 		});
@@ -158,6 +245,41 @@ describe('PartialSort', () => {
 
 		test('an empty sample has no descent', () => {
 			expect(PartialSort.countSampleDescents(31, () => 1)).toBe(0);
+		});
+	});
+
+	describe('countLongSampleDescents', () => {
+		test.each([32, 33, 256, 257, 1000, 1024, 1100, 4096, 100_000])('reads the pairs at the positions of the test data (n = %i)', n => {
+			const read: number[] = [];
+			PartialSort.countLongSampleDescents(n, (i, j) => {
+				expect(j).toBe(i + PartialSort.longSampleGap);
+				read.push(i);
+				return -1;
+			});
+			expect(read).toEqual(longSamplePositions(n));
+		});
+
+		test('the last pair of the long sample stays in the values', () => {
+			for (let n = 33; n <= 2_000; n++) {
+				let last = -1;
+				const descents = PartialSort.countLongSampleDescents(n, (_, j) => {
+					last = Math.max(last, j);
+					return 1;
+				});
+				expect(last).toBeLessThan(n);
+				expect(descents).toBe(PartialSort.sampleSize(n));
+			}
+		});
+
+		test('the same input gives the same descents', () => {
+			const values = numbers('random', 4096, 9);
+			const counts = [0, 1, 2].map(() => PartialSort.countLongSampleDescents(4096, orderOf(values, undefined, false)));
+			expect(new Set(counts).size).toBe(1);
+		});
+
+		test('no pair at distance 32 has no descent', () => {
+			expect(PartialSort.countLongSampleDescents(31, () => 1)).toBe(0);
+			expect(PartialSort.countLongSampleDescents(32, () => 1)).toBe(0);
 		});
 	});
 
