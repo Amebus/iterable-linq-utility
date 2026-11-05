@@ -42,6 +42,7 @@ export { reduceRight } from './reduceRight';
 export { repeat } from './repeat';
 export { reverse } from './reverse';
 export { sequenceEqual } from './sequenceEqual';
+export { shuffle } from './shuffle';
 export { single } from './single';
 export { skip } from './skip';
 export { skipLast } from './skipLast';
