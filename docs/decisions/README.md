@@ -28,6 +28,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | An operation with a native counterpart uses its equality (`indexOf` `===`, `includes` `SameValueZero`); every other one uses `SameValueZero`, and a different equality is a callback. | [0024](0024-equality-of-the-operations-that-compare-values.md) |
 | A selector that reads a value from the element also accepts one property key, never an array, read inline without slowing the function form; predicates, reducers and taps take functions only. | [0025](0025-property-keys-as-selectors.md), [0026](0026-arrays-of-keys-are-not-selectors.md) |
 | `sort` copies the source and sorts the copy with the native stable sort, with a comparer for each kind of `Comparer`; the forms are `sort(options?)`, `sort(compare)` and `sort(keys, options?)`, `{ descending }` inverts the comparison, and `null`, `undefined` and `NaN` go last in both directions; `sort` returns a `SortedIterable` that `skip`, `take` and `slice` recognise, so `take`, `slice`, or `skip` and `take`, directly after it sort only the window they yield (a quickselect, or the full sort when the window is large, the values are few or almost sorted in either direction), with the same result for a consistent comparison. | [0029](0029-sorting-with-the-native-sort.md), [0031](0031-operations-recognise-the-sort-before-them.md) |
+| `shuffle` is a uniform Fisher-Yates with one swap per `next()`, and there is no `sample` operation; `random(seed)` returns the generator, and the order of a seed with the library generator changes only with a breaking change. | [0034](0034-shuffle-swaps-at-each-next-and-its-generator-restarts-from-the-seed.md) |
 | The specs and plans that agents write for a change stay local in `docs/superpowers/`, which git ignores; a decision goes in an ADR, the agreed design in the issue or the pull request. | [0028](0028-specs-and-plans-stay-out-of-the-repository.md) |
 
 ## All records
@@ -66,6 +67,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0030](0030-validation-messages-name-the-argument.md) | The validation messages name the argument | accepted |
 | [0031](0031-operations-recognise-the-sort-before-them.md) | Operations recognise the sort before them | accepted |
 | [0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) | The scripts of the Upcoming page deploy next | accepted |
+| [0034](0034-shuffle-swaps-at-each-next-and-its-generator-restarts-from-the-seed.md) | shuffle swaps at each next, and its generator restarts from the seed | accepted |
 
 ## Adding a decision
 
