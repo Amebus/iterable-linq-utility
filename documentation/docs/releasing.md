@@ -6,16 +6,24 @@ How a version is released, and the rules that protect `main` and the release tag
 
 The repository has one long-lived branch, `main`, and the changesets of the merged pull requests wait there until a release ([ADR 0012](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0012-trunk-based-releases-with-changesets.md), [ADR 0015](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0015-checks-on-the-release-pull-request.md)).
 
-1. Run the **Prepare release** workflow from the Actions tab. It runs the checks and opens, or updates, the `chore: release` pull request: the new version in `package.json`, the entries of `CHANGELOG.md`, the changesets deleted, `@since next` replaced with the version.
-2. Review the version and the changelog in that pull request. Its CI run, created by `github-actions`, waits for an approval: click "Approve and run workflows", or close and reopen the pull request (`check:changeset` is skipped for `changeset-release/*` branches). `main` requires the `build` check, so the pull request cannot be merged until that run passes.
-3. **Before merging, check that nothing changed `src/` on `main` since the workflow ran.** The pull request is computed when the workflow runs: a pull request merged later keeps its changeset pending for the next release, and its `@since next` is not replaced, so an API published in this version would get the next version at the next release. If that happened, run **Prepare release** again: it recomputes the release from `main` and updates the same pull request. A change outside `src/` (documentation, CI) needs nothing. To check, an empty output means nothing to do:
+1. Check that the actions of the workflows are on their latest major: for each `uses:` of `.github/workflows/`, the command prints the latest release next to the version in use. A new major goes in its own pull request, after reading its release notes, before the release. The actions stay pinned to the major tag (`@v7`), so the minors and the patches need nothing. The actions that GitHub runs itself, like `actions/upload-artifact` in *pages build and deployment*, are not in the list and are updated by GitHub.
+
+    ```bash
+    grep -ho 'uses: [^.][^ ]*' .github/workflows/*.yml | sort -u | while read -r _ ref; do
+      printf '%-28s latest %s\n' "$ref" "$(gh api "repos/${ref%@*}/releases/latest" --jq .tag_name)"
+    done
+    ```
+
+2. Run the **Prepare release** workflow from the Actions tab. It runs the checks and opens, or updates, the `chore: release` pull request: the new version in `package.json`, the entries of `CHANGELOG.md`, the changesets deleted, `@since next` replaced with the version.
+3. Review the version and the changelog in that pull request. Its CI run, created by `github-actions`, waits for an approval: click "Approve and run workflows", or close and reopen the pull request (`check:changeset` is skipped for `changeset-release/*` branches). `main` requires the `build` check, so the pull request cannot be merged until that run passes.
+4. **Before merging, check that nothing changed `src/` on `main` since the workflow ran.** The pull request is computed when the workflow runs: a pull request merged later keeps its changeset pending for the next release, and its `@since next` is not replaced, so an API published in this version would get the next version at the next release. If that happened, run **Prepare release** again: it recomputes the release from `main` and updates the same pull request. A change outside `src/` (documentation, CI) needs nothing. To check, an empty output means nothing to do:
 
     ```bash
     git fetch origin
     git diff --stat origin/changeset-release/main...origin/main -- src .changeset
     ```
 
-4. Merge it. The **Npm Publish** workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as `latest`.
+5. Merge it. The **Npm Publish** workflow sees a version without a tag: it publishes the package to npm, creates the tag and the GitHub Release, and deploys the documentation of that minor as `latest`.
 
 ## Protection rules
 
