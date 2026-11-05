@@ -213,6 +213,54 @@ describe('take, skip and slice after sort', () => {
 			expect(it.next()).toEqual({ done: true, value: undefined });
 		});
 
+		describe('in the second sample', () => {
+			const n = 1024;
+			const pairs = PartialSort.sampleSize(n);
+			const inOrder = numbers('sorted', n, 1);
+
+			test('an error of the compare function propagates as the same object, closes the source, the iterator is done, a new run throws again', () => {
+				const error = new Error('boom');
+				const { state, iterable } = closableSource(inOrder);
+				let calls = 0;
+				const window = take(sort(iterable, (a, b) => {
+					// the first sample compares its pairs: only the first call after them throws, so nothing but the second sample can throw
+					if (++calls === pairs + 1)
+						throw error;
+					return a - b;
+				}), 10);
+				const second = vi.spyOn(PartialSort, 'countLongSampleDescents');
+				const select = vi.spyOn(PartialSort, 'selectWindow');
+				const it = window[Symbol.iterator]();
+				expect(() => it.next()).toThrow(error);
+				expect(second).toHaveBeenCalledTimes(1);
+				expect(select).not.toHaveBeenCalled();
+				expect(state.closed).toBe(true);
+				expect(it.next()).toEqual({ done: true, value: undefined });
+				calls = 0;
+				expect(() => collectToArray(window)).toThrow(error);
+			});
+
+			test('an error of a key read propagates as the same object, closes the source and the iterator is done', () => {
+				const error = new Error('getter');
+				let reads = 0;
+				const rows = inOrder.map(value => ({
+					get v(): number {
+						// the first sample reads the key of both values of each pair: only the first read after them throws
+						if (++reads === 2 * pairs + 1)
+							throw error;
+						return value;
+					}
+				}));
+				const { state, iterable } = closableSource(rows);
+				const second = vi.spyOn(PartialSort, 'countLongSampleDescents');
+				const it = take(sort(iterable, 'v'), 10)[Symbol.iterator]();
+				expect(() => it.next()).toThrow(error);
+				expect(second).toHaveBeenCalledTimes(1);
+				expect(state.closed).toBe(true);
+				expect(it.next()).toEqual({ done: true, value: undefined });
+			});
+		});
+
 		test('an error of the compare function closes the source', () => {
 			const { state, iterable } = closableSource([2, 1, 3]);
 			expect(() => collectToArray(take(sort(iterable, () => {
@@ -276,6 +324,32 @@ describe('take, skip and slice after sort', () => {
 			expect(collectToArray(take(sorted, 10))).toEqual(rows.slice(0, 10));
 			expect(spy).not.toHaveBeenCalled();
 			expect(reads).toBeLessThanOrEqual(full + 4 * PartialSort.sampleSize(n));
+		});
+
+		test('on the path of the full sort with a list of keys, the two samples read both keys of both values of each pair', () => {
+			const n = 100_000;
+			let reads = 0;
+			// the first key ties everywhere, so every comparison reads the second one too
+			const rows = Array.from({ length: n }, (_, i) => ({
+				get g() {
+					reads++;
+					return 0;
+				},
+				get v() {
+					reads++;
+					return i;
+				}
+			}));
+			const sorted = sort(rows, ['g', 'v']);
+			collectToArray(sorted);
+			const full = reads;
+			reads = 0;
+			const spy = vi.spyOn(PartialSort, 'selectWindow');
+			expect(collectToArray(take(sorted, 10))).toEqual(rows.slice(0, 10));
+			expect(spy).not.toHaveBeenCalled();
+			// 2 samples, 2 values for each pair, 2 keys for each value
+			expect(reads).toBeLessThanOrEqual(full + 8 * PartialSort.sampleSize(n));
+			expect(reads).toBeGreaterThan(full + 4 * PartialSort.sampleSize(n));
 		});
 
 		test.each([

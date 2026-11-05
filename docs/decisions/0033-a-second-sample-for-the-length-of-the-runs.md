@@ -84,7 +84,7 @@ Every group on data sorted or nearly sorted in either direction, and the new gro
 
 ### Negative Consequences
 
-* **Ascending runs of about 64 values in descending order are slower than today on large windows, the one exception to "never slower".** The second sample cannot tell them from short runs at unrelated levels: `d32` is near half in both, and the first 10 gain +44%. The first 25,000 are −2% above, and a page with `localeCompare` −6%; a warm-up with more kinds of comparer measured −11% to −26% on a page and on the first 25,000. Accepted: such data gains on small windows, and telling it apart would need a third sample
+* **Ascending runs of about 64 values in descending order are slower than today on large windows, the one exception to "never slower".** The second sample cannot tell them from short runs at unrelated levels: `d32` is near half in both, and the first 10 gain +44%. The first 25,000 are −2% above, and a page with `localeCompare` −6%; a warm-up with more kinds of comparer measured −11% to −26% on a page and on the first 25,000. Accepted: such data gains on small windows, and telling it apart would need a third sample, more comparisons and another threshold, which this decision does not add
 * A second threshold, gap and seed to maintain, and the positions to write again in the test helpers
 * Runs of 64 to 128 values at unrelated levels, and a sawtooth of ramps of `sqrt(n)`, take the full sort and lose the gain on small windows
 
