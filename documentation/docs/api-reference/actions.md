@@ -3,6 +3,9 @@
 An **Action** runs the **O~s~C** and returns a result. Every call to an action runs the whole chain again, from the source.
 
 ???+ summary "TLDR list of Actions"
+
+    Every Action is an :material-lightning-bolt: [Immediate Evaluation](../glossary.md#immediate-evaluation), and is available both on the `IIterableLinq` chain (:material-format-text-wrapping-wrap:) and as raw function in `Functions` (:material-raw:).
+
     | Action                            | Brief Description                                                                     | Returns                     |
     | --------------------------------- | ------------------------------------------------------------------------------------- | --------------------------- |
     | [at](#at)                         | Returns the value at an index; a negative index counts from the end                   | `T | undefined`             |
