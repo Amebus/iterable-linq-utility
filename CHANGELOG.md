@@ -1,5 +1,21 @@
 # iterable-linq-utility
 
+## 0.13.0
+
+### Minor Changes
+
+- [#188](https://github.com/Amebus/iterable-linq-utility/pull/188) [`e1cf82b`](https://github.com/Amebus/iterable-linq-utility/commit/e1cf82bfcdc6c9f2a4f61d35277704ad80b6b891) Thanks [@Amebus](https://github.com/Amebus)! - The selectors that read a value from the element accept a property key in place of the function: `map('name')`, `flatMap('tags')`, `sum('price')`, `average('price')`, `distinct('email')`, `except`, `intersect` and `union` with a key, `groupBy('team')`, `collectToMap('id', 'name')`, and `innerJoin` / `groupJoin` with `'id', 'teamId'`. A key behaves like `v => v[key]`, and the result is typed from the property. The new type `KeysOfType<T, V>` gives the keys of `T` whose value is a `V`, and `KeysOverlapping<T, V>` the keys whose value has values in common with `V`, as the keys of a join need ([#185](https://github.com/Amebus/iterable-linq-utility/issues/185)).
+  
+  The validation message of these selectors changes from `The "<name>" function must be provided` to `The "<name>" must be a function or a property key`: see [Migrating to 0.13.0](https://amebus.github.io/iterable-linq-utility/0.13/migrating-to-0.13.0/).
+
+- [#204](https://github.com/Amebus/iterable-linq-utility/pull/204) [`0b72067`](https://github.com/Amebus/iterable-linq-utility/commit/0b72067fcaa9d9f150cc18b5e94b326324cd27e8) Thanks [@Amebus](https://github.com/Amebus)! - New `sort(options?)`, `sort(compare)` and `sort(keys, options?)` Transformation: a stable sort that does not change the source, like `Array.prototype.toSorted`; `{ descending: true }` sorts the other way, and `null`, `undefined` and `NaN` go last ([#41](https://github.com/Amebus/iterable-linq-utility/issues/41)).
+
+- [#205](https://github.com/Amebus/iterable-linq-utility/pull/205) [`ec83a72`](https://github.com/Amebus/iterable-linq-utility/commit/ec83a72ec6585f745891a8847c2b7379cd516407) Thanks [@Amebus](https://github.com/Amebus)! - The validation messages name the argument (`"iterable"`, `"other"`, `"inner"` or `"others"` instead of `"sourceIterable"`), and `min`, `max`, `memoize`, `fromRange`, `Functions.range` and `join` validate their arguments; `memoize({ allowPartialMemoization: undefined })` now uses the partial memoization, the default, instead of the full one ([migration guide](https://amebus.github.io/iterable-linq-utility/0.13/migrating-to-0.13.0/)) ([#202](https://github.com/Amebus/iterable-linq-utility/issues/202)).
+
+### Patch Changes
+
+- [#206](https://github.com/Amebus/iterable-linq-utility/pull/206) [`6f0deb0`](https://github.com/Amebus/iterable-linq-utility/commit/6f0deb080c4a561511e264d6bce372a9a72cb50f) Thanks [@Amebus](https://github.com/Amebus)! - `sort(…)` followed by `take`, `slice`, or `skip` and `take`, sorts only the values it yields when that is faster ([#203](https://github.com/Amebus/iterable-linq-utility/issues/203)).
+
 ## 0.12.0
 
 ### Minor Changes

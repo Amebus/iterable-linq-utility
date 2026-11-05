@@ -18,7 +18,7 @@ import { isFunction, libraryError, Validations } from '../utils';
  * Array.from(Functions.sort([3, 1, 2])); // [1, 2, 3]
  * Array.from(Functions.sort([3, 1, 2], { descending: true })); // [3, 2, 1]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function sort<T>(iterable: Iterable<T>, options?: ISortOptions): Iterable<T>;
 /**
@@ -37,7 +37,7 @@ export function sort<T>(iterable: Iterable<T>, options?: ISortOptions): Iterable
  * Array.from(Functions.sort(words, (a, b) => a.localeCompare(b)));
  * Array.from(Functions.sort([1, 3, 2], (a, b) => b - a)); // [3, 2, 1]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function sort<T>(iterable: Iterable<T>, compare: (a: T, b: T) => number): Iterable<T>;
 /**
@@ -59,7 +59,7 @@ export function sort<T>(iterable: Iterable<T>, compare: (a: T, b: T) => number):
  * Array.from(Functions.sort(people, 'age'));
  * Array.from(Functions.sort(people, ['lastName', 'firstName'], { descending: true }));
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function sort<T>(iterable: Iterable<T>, keys: keyof T | Array<keyof T>, options?: ISortOptions): Iterable<T>;
 export function sort<T>(iterable: Iterable<T>, comparerOrOptions?: Comparer<T> | ISortOptions, options?: ISortOptions): Iterable<T> {

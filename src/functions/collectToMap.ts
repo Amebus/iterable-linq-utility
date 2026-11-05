@@ -30,7 +30,7 @@ export function collectToMap<T, K>(iterable: Iterable<T>, keySelector: Mapper<T,
  * ```ts
  * Functions.collectToMap([{ id: 1, name: 'a' }, { id: 2, name: 'b' }], 'id'); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function collectToMap<T, P extends keyof T>(iterable: Iterable<T>, key: P): Map<T[P], T>;
 /**
@@ -64,7 +64,7 @@ export function collectToMap<T, K, V = T>(iterable: Iterable<T>, keySelector: Ma
  * ```ts
  * Functions.collectToMap([{ id: 1, name: 'a' }, { id: 2, name: 'b' }], v => v.id, 'name'); // Map { 1 => 'a', 2 => 'b' }
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function collectToMap<T, K, Q extends keyof T>(iterable: Iterable<T>, keySelector: Mapper<T, K>, valueKey: Q): Map<K, T[Q]>;
 /**
@@ -81,7 +81,7 @@ export function collectToMap<T, K, Q extends keyof T>(iterable: Iterable<T>, key
  * ```ts
  * Functions.collectToMap([{ id: 1, name: 'a' }, { id: 2, name: 'b' }], 'id', v => v.name.toUpperCase()); // Map { 1 => 'A', 2 => 'B' }
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function collectToMap<T, P extends keyof T, V = T>(iterable: Iterable<T>, key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
 /**
@@ -98,7 +98,7 @@ export function collectToMap<T, P extends keyof T, V = T>(iterable: Iterable<T>,
  * ```ts
  * Functions.collectToMap([{ id: 1, name: 'a' }, { id: 2, name: 'b' }], 'id', 'name'); // Map { 1 => 'a', 2 => 'b' }
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function collectToMap<T, P extends keyof T, Q extends keyof T>(iterable: Iterable<T>, key: P, valueKey: Q): Map<T[P], T[Q]>;
 export function collectToMap<T, K, V>(iterable: Iterable<T>, keySelector: Mapper<T, K> | PropertyKey, valueSelector?: Mapper<T, V> | PropertyKey): Map<K, T | V> {

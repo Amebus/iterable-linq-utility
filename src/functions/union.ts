@@ -35,7 +35,7 @@ export function union<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelect
  * ```ts
  * Array.from(Functions.union([{ id: 1 }, { id: 2 }], [{ id: 2 }, { id: 3 }], 'id')); // [{ id: 1 }, { id: 2 }, { id: 3 }]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function union<T>(iterable: Iterable<T>, other: Iterable<T>, key: keyof T): Iterable<T>;
 export function union<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {

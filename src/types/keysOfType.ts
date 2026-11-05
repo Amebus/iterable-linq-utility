@@ -14,7 +14,7 @@ type Overlaps<A, B> = [Extract<A, B>] extends [never] ? ([Extract<B, A>] extends
  * type NumberKeys = KeysOfType<Order, number>; // 'id'
  * type EntryKeys = KeysOfType<[string, number], number>; // 1
  * ```
- * @since next
+ * @since 0.13.0
  */
 export type KeysOfType<T, V> = [T] extends [readonly unknown[]]
 	? number extends T['length']
@@ -32,7 +32,7 @@ export type KeysOfType<T, V> = [T] extends [readonly unknown[]]
  * type Order = { customerId?: number; note: string };
  * type CustomerKeys = KeysOverlapping<Order, number>; // 'customerId'
  * ```
- * @since next
+ * @since 0.13.0
  */
 export type KeysOverlapping<T, V> = [T] extends [readonly unknown[]]
 	? number extends T['length']

@@ -51,7 +51,7 @@ export function groupJoin<T, I, K, R>(
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
  * Array.from(Functions.groupJoin(teams, players, 'id', p => p.team, (t, ps) => [t.name, ps.length])); // [['a', 2], ['b', 0]]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function groupJoin<T, I, PO extends keyof T, R>(
 	iterable: Iterable<T>,
@@ -78,7 +78,7 @@ export function groupJoin<T, I, PO extends keyof T, R>(
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
  * Array.from(Functions.groupJoin(teams, players, t => t.id, 'team', (t, ps) => [t.name, ps.length])); // [['a', 2], ['b', 0]]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function groupJoin<T, I, K, PI extends KeysOverlapping<I, K>, R>(
 	iterable: Iterable<T>,
@@ -105,7 +105,7 @@ export function groupJoin<T, I, K, PI extends KeysOverlapping<I, K>, R>(
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
  * Array.from(Functions.groupJoin(teams, players, 'id', 'team', (t, ps) => [t.name, ps.length])); // [['a', 2], ['b', 0]]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function groupJoin<T, I, PO extends keyof T, PI extends KeysOverlapping<I, T[PO]>, R>(
 	iterable: Iterable<T>,

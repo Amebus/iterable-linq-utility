@@ -35,7 +35,7 @@ export function intersect<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySe
  * ```ts
  * Array.from(Functions.intersect([{ id: 1 }, { id: 2 }], [{ id: 2 }], 'id')); // [{ id: 2 }]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function intersect<T>(iterable: Iterable<T>, other: Iterable<T>, key: keyof T): Iterable<T>;
 export function intersect<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {
