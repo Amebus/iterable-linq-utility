@@ -36,8 +36,8 @@ export function countSampleDescents(n: number, order: IndexOrder): number {
 /**
  * The pairs `(i, i + 32)` of the second sample that are out of order, as many as the pairs of the first one, one in each
  * stride of `floor((n - 32) / sample)` values, at an offset drawn with another seed. In runs much longer than 32 values most
- * pairs are in one run and go the same way as the adjacent ones; in shorter runs most of them straddle two runs, at random
- * levels, so about half descend. `0` when there are fewer positions with a pair than the sample.
+ * pairs are in one run and go the same way as the adjacent ones; in shorter runs most of them straddle two runs, and at
+ * unrelated levels about half descend. `0` when there are fewer positions with a pair than the sample.
  */
 export function countLongSampleDescents(n: number, order: IndexOrder): number {
 	return countDescents(n, order, longSampleGap, longSampleSeed);
@@ -63,19 +63,26 @@ function countDescents(n: number, order: IndexOrder, gap: number, seed: number):
 const nearlySorted = (descents: number, sample: number): boolean => Math.min(descents, sample - descents) < sample / 10;
 
 /**
+ * Fewer than a third of the pairs at distance 32 go the other way. Runs laid out in order, or in blocks, keep most of those
+ * pairs on one side even when they are not long: ascending runs in descending order give about `sample * 32 / run` descents.
+ * The partial sort does two to four times the comparisons of the full sort there, from runs of 128 values. Short runs at
+ * unrelated levels, where it gains, give about half.
+ */
+const longRuns = (longDescents: number, sample: number): boolean => Math.min(longDescents, sample - longDescents) < sample / 3;
+
+/**
  * Whether the first `m` of `n` values are found by a partial sort (`select`) or by the full sort (`full`), which is faster when
  * the window is more than a quarter of the values, when the sample is too small to judge (fewer than 8 pairs), or when the
  * values are sorted or nearly sorted in either direction in long runs. The native sort finds the runs there, ascending or
  * descending, in about linear time, whatever the window. The first sample, of adjacent pairs, says whether the values look
  * nearly sorted in either direction; when they do, `longDescents`, the descents of the second sample at distance 32, says
- * whether the runs are long: nearly sorted at that distance too, or short: the partial sort. Without `longDescents` the first
- * sample decides alone.
+ * whether the runs are long, or short: the partial sort. Without `longDescents` the first sample decides alone.
  */
 export function choosePath(n: number, m: number, descents: number, longDescents?: number): 'full' | 'select' {
 	const sample = sampleSize(n);
 	if (m > n / 4 || sample < 8)
 		return 'full';
-	if (nearlySorted(descents, sample) && (longDescents === undefined || nearlySorted(longDescents, sample)))
+	if (nearlySorted(descents, sample) && (longDescents === undefined || longRuns(longDescents, sample)))
 		return 'full';
 	return 'select';
 }

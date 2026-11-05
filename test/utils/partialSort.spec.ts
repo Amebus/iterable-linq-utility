@@ -78,16 +78,16 @@ describe('PartialSort', () => {
 			expect(PartialSort.choosePath(1000, 251, 27)).toBe('full');
 		});
 
-		describe('the second sample, at distance 32 (n = 100,000: 256 pairs, a tenth is 25.6)', () => {
+		describe('the second sample, at distance 32 (n = 100,000: 256 pairs, a third is 85.3)', () => {
 			const n = 100_000;
 
 			test.each([0, 25, 231, 256])('the first sample nearly sorted either way (%i descents): the second one decides', descents => {
-				expect(PartialSort.choosePath(n, 10, descents, 25)).toBe('full');
-				expect(PartialSort.choosePath(n, 10, descents, 26)).toBe('select');
-				expect(PartialSort.choosePath(n, 10, descents, 128)).toBe('select');
-				expect(PartialSort.choosePath(n, 10, descents, 230)).toBe('select');
-				expect(PartialSort.choosePath(n, 10, descents, 231)).toBe('full');
 				expect(PartialSort.choosePath(n, 10, descents, 0)).toBe('full');
+				expect(PartialSort.choosePath(n, 10, descents, 85)).toBe('full');
+				expect(PartialSort.choosePath(n, 10, descents, 86)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, descents, 128)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, descents, 170)).toBe('select');
+				expect(PartialSort.choosePath(n, 10, descents, 171)).toBe('full');
 				expect(PartialSort.choosePath(n, 10, descents, 256)).toBe('full');
 			});
 
@@ -121,6 +121,12 @@ describe('PartialSort', () => {
 			};
 			/** The records of the bench: each score 81 below the one before, except about 1 pair in 12. */
 			const scores = Array.from({ length: n }, (_, i) => (i * 7919) % 1000);
+			/** Blocks of `run` values: 128 values in a pair of swapped blocks, or two repeated values, one per block. */
+			const swappedBlocks = (run: number) => Array.from({ length: n }, (_, i) => {
+				const block = Math.floor(i / run);
+				return (block ^ 1) * run + i % run;
+			});
+			const repeatedBlocks = (run: number) => Array.from({ length: n }, (_, i) => Math.floor(i / run) % 2);
 
 			test.each([
 				['the scores of the bench records', scores, false],
@@ -128,8 +134,8 @@ describe('PartialSort', () => {
 				['clustered', numbers('clustered', n, 1), false],
 				['ascending runs of 64 in descending order', numbers('reversedRuns', n, 1, 64), false],
 				['descending runs of 64 in ascending order, descending', numbers('reversedRuns', n, 1, 64).reverse(), true],
-				...[8, 16, 32].map((run): [string, number[], boolean] => [`ascending runs of ${run}`, numbers('ascendingRuns', n, 1, run), false]),
-				...[12, 64].map((run): [string, number[], boolean] => [`descending runs of ${run}`, numbers('descendingRuns', n, 1, run), false])
+				...[1, 2, 3].flatMap(seed => [8, 16, 32].map((run): [string, number[], boolean] => [`ascending runs of ${run}, seed ${seed}`, numbers('ascendingRuns', n, seed, run), false])),
+				...[1, 2, 3].map((seed): [string, number[], boolean] => [`descending runs of 12, seed ${seed}`, numbers('descendingRuns', n, seed, 12), false])
 			] as const)('short runs take the quickselect: %s', (_, values, descending) => {
 				expect(new Set(pathsOf(values as number[], descending))).toEqual(new Set(['select']));
 			});
@@ -140,25 +146,20 @@ describe('PartialSort', () => {
 				expect(PartialSort.choosePath(n, 10, PartialSort.countSampleDescents(n, order), PartialSort.countLongSampleDescents(n, order))).toBe('select');
 			});
 
+			// the quickselect is slower than the full sort on a page of these, from runs of 128 values, the more so with an expensive comparison
 			test.each([
 				['sorted', numbers('sorted', n, 1)],
 				['reversed', numbers('reversed', n, 1)],
 				['sample descending', numbers('sampleDescending', n, 1)],
 				['20 sampled descents', numbers('descentsAt', n, 1, 20)],
-				['ascending runs of 1,000 in descending order', numbers('reversedRuns', n, 1, 1000)],
-				['ascending runs of 5,000 in descending order', numbers('reversedRuns', n, 1, 5000)],
-				['ascending runs of 1,000', numbers('ascendingRuns', n, 1, 1000)]
+				['sawtooth', numbers('sawtooth', n, 1)],
+				['swapped blocks of 128', swappedBlocks(128)],
+				['blocks of 64 repeated values', repeatedBlocks(64)],
+				...[128, 200, 256, 316, 512, 1000, 5000].map((run): [string, number[]] => [`ascending runs of ${run} in descending order`, numbers('reversedRuns', n, 1, run)]),
+				...[1, 2, 3].flatMap(seed => [64, 128, 160, 256, 1000].map((run): [string, number[]] => [`ascending runs of ${run}, seed ${seed}`, numbers('ascendingRuns', n, seed, run)])),
+				...[1, 2, 3].map((seed): [string, number[]] => [`descending runs of 64, seed ${seed}`, numbers('descendingRuns', n, seed, 64)])
 			])('long runs keep the full sort: %s', (_, values) => {
 				expect(new Set(pathsOf(values))).toEqual(new Set(['full']));
-			});
-
-			// about 32 / run of the long pairs straddle two runs, half of them descending: the boundary is near runs of 160
-			test.each([[128, 'select'], [160, 'full'], [256, 'full']])('near the boundary, ascending runs of %i (seed 1) → %s', (run, path) => {
-				expect(new Set(pathsOf(numbers('ascendingRuns', n, 1, run)))).toEqual(new Set([path]));
-			});
-
-			test('near the boundary, a sawtooth of ramps of 317 from 0: about a tenth of the long pairs descend → select', () => {
-				expect(new Set(pathsOf(numbers('sawtooth', n, 1)))).toEqual(new Set(['select']));
 			});
 		});
 

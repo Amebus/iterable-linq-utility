@@ -140,7 +140,10 @@ for (let pair = 0; pair < numbers.length / 200; pair++) {
 
 // ascending runs of 1,000 in descending order: the pairs at distance 32 go the same way as the adjacent ones, so the second
 // sample of the rule keeps the full sort, where the partial sort of a page is slower
-const longRuns = numbers.map(i => (Math.floor((numbers.length - 1) / 1_000) - Math.floor(i / 1_000)) * 1_000 + i % 1_000);
+const runsInDescendingOrder = (run: number): number[] => numbers.map(i => (Math.floor((numbers.length - 1) / run) - Math.floor(i / run)) * run + i % run);
+const longRuns = runsInDescendingOrder(1_000);
+// the same with runs of 200: a tenth of the pairs at distance 32 descend, and the partial sort does three times the comparisons
+const middleRuns = runsInDescendingOrder(200);
 
 for (const { name, skip, take } of windows) {
 	const end = skip + take;
@@ -190,6 +193,14 @@ for (const { name, skip, take } of windows) {
 			.add('native', () => sum(longRuns.toSorted(ascending).slice(skip, end)))
 			.add('full', () => sum(from(longRuns).sort(ascending).map(same).skip(skip).take(take)))
 			.add('chain', () => sum(from(longRuns).sort(ascending).skip(skip).take(take)))
+			.run();
+	});
+
+	test(`sort: ${name}, middle runs, compare function`, async ({ bench }) => {
+		await cases(bench, `sort/${name}/middleRuns`)
+			.add('native', () => sum(middleRuns.toSorted(ascending).slice(skip, end)))
+			.add('full', () => sum(from(middleRuns).sort(ascending).map(same).skip(skip).take(take)))
+			.add('chain', () => sum(from(middleRuns).sort(ascending).skip(skip).take(take)))
 			.run();
 	});
 
