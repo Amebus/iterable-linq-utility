@@ -42,7 +42,7 @@ export function average<T>(iterable: Iterable<T>, selector: Mapper<T, number> | 
  * ```ts
  * Functions.average([{ price: 10 }, { price: 5 }], 'price'); // 7.5
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function average<T>(iterable: Iterable<T>, key: KeysOfType<T, number>): number | undefined;
 export function average<T>(iterable: Iterable<T>, selector?: Mapper<T, number> | PropertyKey): number | undefined {

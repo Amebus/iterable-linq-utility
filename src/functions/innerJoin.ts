@@ -51,7 +51,7 @@ export function innerJoin<T, I, K, R>(
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
  * Array.from(Functions.innerJoin(teams, players, 'id', p => p.team, (t, p) => `${t.name}-${p.name}`)); // ['a-x', 'a-y']
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function innerJoin<T, I, PO extends keyof T, R>(
 	iterable: Iterable<T>,
@@ -78,7 +78,7 @@ export function innerJoin<T, I, PO extends keyof T, R>(
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
  * Array.from(Functions.innerJoin(teams, players, t => t.id, 'team', (t, p) => `${t.name}-${p.name}`)); // ['a-x', 'a-y']
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function innerJoin<T, I, K, PI extends KeysOverlapping<I, K>, R>(
 	iterable: Iterable<T>,
@@ -105,7 +105,7 @@ export function innerJoin<T, I, K, PI extends KeysOverlapping<I, K>, R>(
  * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
  * Array.from(Functions.innerJoin(teams, players, 'id', 'team', (t, p) => `${t.name}-${p.name}`)); // ['a-x', 'a-y']
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function innerJoin<T, I, PO extends keyof T, PI extends KeysOverlapping<I, T[PO]>, R>(
 	iterable: Iterable<T>,

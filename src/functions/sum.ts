@@ -42,7 +42,7 @@ export function sum<T>(iterable: Iterable<T>, selector: Mapper<T, number> | unde
  * ```ts
  * Functions.sum([{ price: 10 }, { price: 5 }], 'price'); // 15
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function sum<T>(iterable: Iterable<T>, key: KeysOfType<T, number>): number;
 export function sum<T>(iterable: Iterable<T>, selector?: Mapper<T, number> | PropertyKey): number {

@@ -99,7 +99,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ price: 10 }, { price: 5 }]).average('price'); // 7.5
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	average(key: KeysOfType<T, number>): number | undefined;
 
@@ -158,7 +158,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id'); // Map { 1 => { id: 1, name: 'a' }, 2 => { id: 2, name: 'b' } }
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	collectToMap<P extends keyof T>(key: P): Map<T[P], T>;
 
@@ -192,7 +192,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, 'name'); // Map { 1 => 'a', 2 => 'b' }
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	collectToMap<K, Q extends keyof T>(keySelector: Mapper<T, K>, valueKey: Q): Map<K, T[Q]>;
 
@@ -209,7 +209,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id', v => v.name.toUpperCase()); // Map { 1 => 'A', 2 => 'B' }
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	collectToMap<P extends keyof T, V = T>(key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
 
@@ -226,7 +226,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id', 'name'); // Map { 1 => 'a', 2 => 'b' }
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	collectToMap<P extends keyof T, Q extends keyof T>(key: P, valueKey: Q): Map<T[P], T[Q]>;
 
@@ -328,7 +328,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1 }, { id: 1 }, { id: 2 }]).distinct('id').collectToArray(); // [{ id: 1 }, { id: 2 }]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	distinct(key: keyof T): IIterableLinq<T>;
 
@@ -390,7 +390,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).except([{ id: 2 }], 'id').collectToArray(); // [{ id: 1 }]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	except(other: Iterable<T>, key: keyof T): IIterableLinq<T>;
 
@@ -559,7 +559,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ tags: ['a', 'b'] }, { tags: ['c'] }]).flatMap('tags').collectToArray(); // ['a', 'b', 'c']
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	flatMap<P extends keyof T & KeysOfType<T, Iterable<unknown>>>(key: P): IIterableLinq<T[P] extends Iterable<infer R> ? R : never>;
 
@@ -632,7 +632,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([{ team: 'red' }, { team: 'blue' }, { team: 'red' }]).groupBy('team').map(([team, players]) => [team, players.length]).collectToArray();
 	 * // [['red', 2], ['blue', 1]]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	groupBy<P extends keyof T>(key: P): IIterableLinq<[T[P], T[]]>;
 
@@ -677,7 +677,7 @@ export interface IIterableLinqBase<T> {
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', p => p.team, (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	groupJoin<I, PO extends keyof T, R>(inner: Iterable<I>, outerKey: PO, innerKey: Mapper<I, T[PO]>, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
 
@@ -697,7 +697,7 @@ export interface IIterableLinqBase<T> {
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, t => t.id, 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	groupJoin<I, K, PI extends KeysOverlapping<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
 
@@ -717,7 +717,7 @@ export interface IIterableLinqBase<T> {
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).groupJoin(players, 'id', 'team', (t, ps) => [t.name, ps.length]).collectToArray(); // [['a', 2], ['b', 0]]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	groupJoin<I, PO extends keyof T, PI extends KeysOverlapping<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inners: I[]) => R): IIterableLinq<R>;
 
@@ -790,7 +790,7 @@ export interface IIterableLinqBase<T> {
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', p => p.team, (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	innerJoin<I, PO extends keyof T, R>(inner: Iterable<I>, outerKey: PO, innerKey: Mapper<I, T[PO]>, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
@@ -810,7 +810,7 @@ export interface IIterableLinqBase<T> {
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, t => t.id, 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	innerJoin<I, K, PI extends KeysOverlapping<I, K>, R>(inner: Iterable<I>, outerKey: Mapper<T, K>, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
@@ -830,7 +830,7 @@ export interface IIterableLinqBase<T> {
 	 * const players = [{ team: 1, name: 'x' }, { team: 1, name: 'y' }];
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).innerJoin(players, 'id', 'team', (t, p) => `${t.name}-${p.name}`).collectToArray(); // ['a-x', 'a-y']
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	innerJoin<I, PO extends keyof T, PI extends KeysOverlapping<I, T[PO]>, R>(inner: Iterable<I>, outerKey: PO, innerKey: PI, result: (outer: T, inner: I) => R): IIterableLinq<R>;
 
@@ -866,7 +866,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).intersect([{ id: 2 }], 'id').collectToArray(); // [{ id: 2 }]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	intersect(other: Iterable<T>, key: keyof T): IIterableLinq<T>;
 
@@ -926,7 +926,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ name: 'Ann' }, { name: 'Bob' }]).map('name').collectToArray(); // ['Ann', 'Bob']
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	map<P extends keyof T>(key: P): IIterableLinq<T[P]>;
 
@@ -1254,7 +1254,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from([3, 1, 2]).sort().collectToArray(); // [1, 2, 3]
 	 * IterableLinq.from([3, 1, 2]).sort({ descending: true }).collectToArray(); // [3, 2, 1]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	sort(options?: ISortOptions): IIterableLinq<T>;
 
@@ -1271,7 +1271,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from(words).sort((a, b) => a.localeCompare(b)).collectToArray();
 	 * IterableLinq.from([1, 3, 2]).sort((a, b) => b - a).collectToArray(); // [3, 2, 1]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	sort(compare: (a: T, b: T) => number): IIterableLinq<T>;
 
@@ -1291,7 +1291,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.from(people).sort('age').collectToArray();
 	 * IterableLinq.from(people).sort(['lastName', 'firstName'], { descending: true }).collectToArray();
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	sort(keys: keyof T | Array<keyof T>, options?: ISortOptions): IIterableLinq<T>;
 
@@ -1334,7 +1334,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ price: 10 }, { price: 5 }]).sum('price'); // 15
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	sum(key: KeysOfType<T, number>): number;
 
@@ -1488,7 +1488,7 @@ export interface IIterableLinqBase<T> {
 	 * ```ts
 	 * IterableLinq.from([{ id: 1 }, { id: 2 }]).union([{ id: 2 }, { id: 3 }], 'id').collectToArray(); // [{ id: 1 }, { id: 2 }, { id: 3 }]
 	 * ```
-	 * @since next
+	 * @since 0.13.0
 	 */
 	union(other: Iterable<T>, key: keyof T): IIterableLinq<T>;
 

@@ -31,7 +31,7 @@ export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<
  * ```ts
  * Array.from(Functions.flatMap([{ tags: ['a', 'b'] }, { tags: ['c'] }], 'tags')); // ['a', 'b', 'c']
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function flatMap<T, P extends keyof T & KeysOfType<T, Iterable<unknown>>>(iterable: Iterable<T>, key: P): Iterable<T[P] extends Iterable<infer R> ? R : never>;
 export function flatMap<T, R>(iterable: Iterable<T>, mapper: Mapper<T, Iterable<R>> | PropertyKey): Iterable<R> {

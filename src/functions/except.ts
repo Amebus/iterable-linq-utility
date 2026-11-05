@@ -35,7 +35,7 @@ export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelec
  * ```ts
  * Array.from(Functions.except([{ id: 1 }, { id: 2 }], [{ id: 2 }], 'id')); // [{ id: 1 }]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function except<T>(iterable: Iterable<T>, other: Iterable<T>, key: keyof T): Iterable<T>;
 export function except<T, K>(iterable: Iterable<T>, other: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {

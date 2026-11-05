@@ -35,7 +35,7 @@ export function groupBy<T, K>(iterable: Iterable<T>, keySelector: Mapper<T, K>):
  * Array.from(Functions.groupBy([{ team: 'red' }, { team: 'blue' }, { team: 'red' }], 'team'));
  * // [['red', [{ team: 'red' }, { team: 'red' }]], ['blue', [{ team: 'blue' }]]]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function groupBy<T, P extends keyof T>(iterable: Iterable<T>, key: P): Iterable<[T[P], T[]]>;
 export function groupBy<T, K>(iterable: Iterable<T>, keySelector: Mapper<T, K> | PropertyKey): Iterable<[K, T[]]> {

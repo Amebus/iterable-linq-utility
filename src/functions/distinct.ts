@@ -32,7 +32,7 @@ export function distinct<T, K>(iterable: Iterable<T>, keySelector?: Mapper<T, K>
  * ```ts
  * Array.from(Functions.distinct([{ id: 1 }, { id: 1 }, { id: 2 }], 'id')); // [{ id: 1 }, { id: 2 }]
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function distinct<T>(iterable: Iterable<T>, key: keyof T): Iterable<T>;
 export function distinct<T, K>(iterable: Iterable<T>, keySelector?: Mapper<T, K> | PropertyKey): Iterable<T> {

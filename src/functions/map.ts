@@ -29,7 +29,7 @@ export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R>): Iterable
  * ```ts
  * Array.from(Functions.map([{ name: 'Ann' }, { name: 'Bob' }], 'name')); // ['Ann', 'Bob']
  * ```
- * @since next
+ * @since 0.13.0
  */
 export function map<T, P extends keyof T>(iterable: Iterable<T>, key: P): Iterable<T[P]>;
 export function map<T, R>(iterable: Iterable<T>, mapper: Mapper<T, R> | PropertyKey): Iterable<R> {
