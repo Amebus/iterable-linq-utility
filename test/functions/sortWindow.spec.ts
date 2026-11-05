@@ -235,7 +235,9 @@ describe('take, skip and slice after sort', () => {
 			{ name: 'random data, a window of 10', source: numbers('random', 1024, 1), count: 10, select: true },
 			{ name: 'random data, a window of 256 (a quarter)', source: numbers('random', 1024, 1), count: 256, select: true },
 			{ name: 'random data, a window of 257', source: numbers('random', 1024, 1), count: 257, select: false },
-			{ name: 'data sorted where the sample looks', source: numbers('sampleSorted', 1024, 1), count: 10, select: false },
+			{ name: 'random data sorted only where the first sample looks: the second one sees it', source: numbers('sampleSorted', 1024, 1), count: 10, select: true },
+			{ name: 'short runs that look sorted', source: numbers('ascendingRuns', 4096, 1, 16), count: 10, select: true },
+			{ name: 'short runs that look reversed', source: numbers('descendingRuns', 4096, 1, 16), count: 10, select: true },
 			{ name: 'sorted data', source: numbers('sorted', 1024, 1), count: 10, select: false },
 			{ name: 'reversed data', source: numbers('reversed', 1024, 1), count: 10, select: false },
 			{ name: 'nearly reversed data', source: numbers('sampleDescending', 4096, 1).reverse(), count: 10, select: false },
@@ -257,7 +259,7 @@ describe('take, skip and slice after sort', () => {
 			expect(spy).not.toHaveBeenCalled();
 		});
 
-		test('on the path of the full sort, the keys are read no more than by the full sort, plus the pairs of the sample', () => {
+		test('on the path of the full sort, the keys are read no more than by the full sort, plus the pairs of the two samples', () => {
 			const n = 100_000;
 			let reads = 0;
 			const rows = Array.from({ length: n }, (_, i) => ({
@@ -273,7 +275,24 @@ describe('take, skip and slice after sort', () => {
 			const spy = vi.spyOn(PartialSort, 'selectWindow');
 			expect(collectToArray(take(sorted, 10))).toEqual(rows.slice(0, 10));
 			expect(spy).not.toHaveBeenCalled();
-			expect(reads).toBeLessThanOrEqual(full + 2 * PartialSort.sampleSize(n));
+			expect(reads).toBeLessThanOrEqual(full + 4 * PartialSort.sampleSize(n));
+		});
+
+		test.each([
+			{ name: 'random data: the first sample is enough', source: numbers('random', 4096, 1), calls: 0 },
+			{ name: 'sorted data: the first sample asks for the second', source: numbers('sorted', 4096, 1), calls: 1 }
+		])('$name', ({ source, calls }) => {
+			const spy = vi.spyOn(PartialSort, 'countLongSampleDescents');
+			collectToArray(take(sort(source), 10));
+			expect(spy).toHaveBeenCalledTimes(calls);
+		});
+
+		test('a window past a quarter reads neither sample', () => {
+			const first = vi.spyOn(PartialSort, 'countSampleDescents');
+			const second = vi.spyOn(PartialSort, 'countLongSampleDescents');
+			collectToArray(take(sort(numbers('sorted', 4096, 1)), 2000));
+			expect(first).not.toHaveBeenCalled();
+			expect(second).not.toHaveBeenCalled();
 		});
 
 		test('sort read alone does not use the partial sort', () => {
