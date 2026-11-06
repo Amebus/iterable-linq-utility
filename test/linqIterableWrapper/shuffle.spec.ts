@@ -26,7 +26,8 @@ describe('IterableLinq.shuffle', () => {
 	test('IterableLinq.shuffle with a seed, after a map, repeats the order when the chain is read again', () => {
 		const chain = IterableLinq.fromRange(10).map(v => v).shuffle({ seed: 42 });
 		expect(chain.take(3).collectToArray()).toEqual([6, 5, 8]);
-		expect(chain.collectToArray()).toEqual(chain.collectToArray());
+		expect(chain.collectToArray()).toEqual([6, 5, 8, 7, 1, 3, 4, 2, 9, 0]);
+		expect(chain.collectToArray()).toEqual([6, 5, 8, 7, 1, 3, 4, 2, 9, 0]);
 	});
 
 	test('IterableLinq.shuffle validates the seed', () => {

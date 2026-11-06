@@ -5,52 +5,38 @@ import { getContinueIteratorResult, getDoneIteratorResult, isFunction, libraryEr
 type Random<TSeed> = (seed: TSeed) => () => number;
 
 /**
- * Lazily yields the values in uniform random order; the source is not changed. Without a seed every iteration gives a new
- * order, with `Math.random`; with a seed every iteration of the same source gives the same order. The order of a seed is a
- * promise: it changes only with a breaking change. `take(shuffle(iterable), k)` gives `k` random values.
- * The whole source is read before the first value is yielded, so `shuffle` does not end on an infinite source.
- * Every iteration reads the source again.
- * @operation `Transformation`
- * @param iterable - the source `Iterable`
- * @param options - `seed`: an integer that repeats the order, of which 32 bits are used, so `0` and `2 ** 32` give the same order
- * @returns a lazy, re-runnable `Iterable` of the values in random order
- * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, if `options` is not an object, or if `seed` is not an integer
- * @example
- * ```ts
- * Array.from(Functions.shuffle([1, 2, 3])); // for example [2, 3, 1]
- * Array.from(Functions.shuffle(Functions.range(5), { seed: 42 })); // the same order at every iteration
- * ```
- * @since next
- */
-export function shuffle<T>(iterable: Iterable<T>, options?: Omit<IShuffleOptions, 'random'>): Iterable<T>;
-/**
- * Lazily yields the values in random order, drawn from a generator you give; the source is not changed.
- * `random` is called with `seed` once per iteration, on the first `next()`, after the source is read, and returns the generator.
- * The generator is called once per value and returns a number from 0 up to, but not including, 1. A generator created from
- * the seed repeats the order at every iteration of the same source; `random` receives `undefined` without a seed.
+ * Lazily yields the values in random order; the source is not changed. Without options every iteration gives a new order,
+ * with `Math.random`. With `seed` every iteration of the same source gives the same order; that order is a promise, which
+ * changes only with a breaking change. With `random` the numbers come from your generator: `random` is called with `seed`
+ * once per iteration, on the first `next()`, after the source is read, and the order repeats only if it creates a new
+ * generator from the seed at each call. `take(shuffle(iterable), k)` gives `k` random values.
+ * The order is uniform as far as the generator allows: a `seed` has 32 bits, so from 13 values up it cannot reach every order.
+ * Neither `Math.random` nor the `seed` is suitable for security; for that, give a stronger generator with `random`.
  * The whole source is read before the first value is yielded, so `shuffle` does not end on an infinite source.
  * Every iteration reads the source again. The errors of `random` and of the generator propagate unchanged.
  * @operation `Transformation`
  * @param iterable - the source `Iterable`
- * @param options - `random`: `(seed) => () => number`; `seed`: a value of any type, passed to `random`
+ * @param options - `seed`: without `random` an integer, of which 32 bits are used, so `0` and `2 ** 32` give the same order;
+ * `random`: `(seed) => () => number`, with a `seed` of any type, or `undefined` without one
  * @returns a lazy, re-runnable `Iterable` of the values in random order
- * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, if `options` is not an object or `random`
- * is not a function; during the iteration, if `random` does not return a function or the generator returns anything else than
- * a number from 0 up to, but not including, 1
+ * @throws Error if `iterable` is missing or does not implement `[Symbol.iterator]`, if `options` is not an object, if `random`
+ * is not a function, or if `seed` is not an integer without `random`; during the iteration, if `random` does not return a
+ * function or the generator returns anything else than a number from 0 up to, but not including, 1
  * @example
  * ```ts
+ * Array.from(Functions.shuffle([1, 2, 3])); // for example [2, 3, 1]
+ * Array.from(Functions.shuffle(Functions.range(10), { seed: 42 })); // [6, 5, 8, 7, 1, 3, 4, 2, 9, 0], at every iteration
  * Array.from(Functions.shuffle([1, 2, 3], { seed: 'abc', random: seed => seedrandom(seed) }));
  * Array.from(Functions.shuffle([1, 2, 3], { random: () => Math.random }));
  * ```
  * @since next
  */
-export function shuffle<T, TSeed>(iterable: Iterable<T>, options: IShuffleOptions<TSeed> & Required<Pick<IShuffleOptions<TSeed>, 'random'>>): Iterable<T>;
-export function shuffle<T, TSeed>(iterable: Iterable<T>, options?: IShuffleOptions<TSeed>): Iterable<T> {
+export function shuffle<T, TSeed = undefined>(iterable: Iterable<T>, options?: IShuffleOptions<TSeed>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'shuffle');
 	if (options !== undefined)
 		Validations.throwIfNotObject(options, 'options', 'shuffle');
 	const seed = options?.seed as TSeed;
-	const given = options?.random;
+	const given = options?.random as Random<TSeed> | undefined;
 	if (given !== undefined)
 		Validations.throwIfNotFunction(given, 'random', 'shuffle');
 	else if (seed !== undefined)

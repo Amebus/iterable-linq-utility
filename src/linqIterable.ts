@@ -280,9 +280,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return sequenceEqual(this.iterable, other, equals);
 	}
 
-	shuffle<TSeed>(options?: IShuffleOptions<TSeed>): IIterableLinq<T> {
-		// the overloads of IIterableLinqBase are the contract; Functions.shuffle validates the options
-		return toChain(shuffle(this.iterable, options as IShuffleOptions<TSeed> & Required<Pick<IShuffleOptions<TSeed>, 'random'>>));
+	shuffle<TSeed = undefined>(options?: IShuffleOptions<TSeed>): IIterableLinq<T> {
+		return toChain(shuffle(this.iterable, options));
 	}
 
 	single<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;

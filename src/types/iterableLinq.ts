@@ -1106,43 +1106,32 @@ export interface IIterableLinqBase<T> {
 	sequenceEqual(other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean;
 
 	/**
-	 * Lazily yields the values in uniform random order. Without a seed every run of the chain gives a new order, with
-	 * `Math.random`; with a seed every run over the same source gives the same order. The order of a seed is a promise: it
-	 * changes only with a breaking change. `shuffle().take(k)` gives `k` random values.
-	 * The whole chain runs before the first value is yielded, so `shuffle` does not end on an infinite chain.
-	 * @operation `Transformation`
-	 * @param options - `seed`: an integer that repeats the order, of which 32 bits are used, so `0` and `2 ** 32` give the same order
-	 * @returns a new chain of the values in random order
-	 * @throws Error if `options` is not an object, or if `seed` is not an integer
-	 * @example
-	 * ```ts
-	 * IterableLinq.from([1, 2, 3]).shuffle().collectToArray(); // for example [2, 3, 1]
-	 * IterableLinq.fromRange(5).shuffle({ seed: 42 }).collectToArray(); // the same order at every run
-	 * IterableLinq.fromRange(100).shuffle().take(3).collectToArray(); // 3 random values
-	 * ```
-	 * @since next
-	 */
-	shuffle(options?: Omit<IShuffleOptions, 'random'>): IIterableLinq<T>;
-	/**
-	 * Lazily yields the values in random order, drawn from a generator you give.
-	 * `random` is called with `seed` once per run of the chain, on the first read, after the chain has run, and returns the
-	 * generator. The generator is called once per value and returns a number from 0 up to, but not including, 1. A generator
-	 * created from the seed repeats the order at every run over the same source; `random` receives `undefined` without a seed.
+	 * Lazily yields the values in random order. Without options every run of the chain gives a new order, with `Math.random`.
+	 * With `seed` every run over the same source gives the same order; that order is a promise, which changes only with a
+	 * breaking change. With `random` the numbers come from your generator: `random` is called with `seed` once per run, on the
+	 * first read, after the chain has run, and the order repeats only if it creates a new generator from the seed at each call.
+	 * `shuffle().take(k)` gives `k` random values.
+	 * The order is uniform as far as the generator allows: a `seed` has 32 bits, so from 13 values up it cannot reach every order.
+	 * Neither `Math.random` nor the `seed` is suitable for security; for that, give a stronger generator with `random`.
 	 * The whole chain runs before the first value is yielded, so `shuffle` does not end on an infinite chain.
 	 * The errors of `random` and of the generator propagate unchanged.
 	 * @operation `Transformation`
-	 * @param options - `random`: `(seed) => () => number`; `seed`: a value of any type, passed to `random`
+	 * @param options - `seed`: without `random` an integer, of which 32 bits are used, so `0` and `2 ** 32` give the same order;
+	 * `random`: `(seed) => () => number`, with a `seed` of any type, or `undefined` without one
 	 * @returns a new chain of the values in random order
-	 * @throws Error if `options` is not an object or `random` is not a function; during the run, if `random` does not return a
-	 * function or the generator returns anything else than a number from 0 up to, but not including, 1
+	 * @throws Error if `options` is not an object, if `random` is not a function, or if `seed` is not an integer without `random`;
+	 * during the run, if `random` does not return a function or the generator returns anything else than a number from 0 up to,
+	 * but not including, 1
 	 * @example
 	 * ```ts
+	 * IterableLinq.from([1, 2, 3]).shuffle().collectToArray(); // for example [2, 3, 1]
+	 * IterableLinq.fromRange(10).shuffle({ seed: 42 }).collectToArray(); // [6, 5, 8, 7, 1, 3, 4, 2, 9, 0], at every run
+	 * IterableLinq.fromRange(100).shuffle().take(3).collectToArray(); // 3 random values
 	 * IterableLinq.from([1, 2, 3]).shuffle({ seed: 'abc', random: seed => seedrandom(seed) }).collectToArray();
-	 * IterableLinq.from([1, 2, 3]).shuffle({ random: () => Math.random }).collectToArray();
 	 * ```
 	 * @since next
 	 */
-	shuffle<TSeed>(options: IShuffleOptions<TSeed> & Required<Pick<IShuffleOptions<TSeed>, 'random'>>): IIterableLinq<T>;
+	shuffle<TSeed = undefined>(options?: IShuffleOptions<TSeed>): IIterableLinq<T>;
 
 	/**
 	 * Returns the only value of the chain, `undefined` if it is empty; throws if it has more than one.

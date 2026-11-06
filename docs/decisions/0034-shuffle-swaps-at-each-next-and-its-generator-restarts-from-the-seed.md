@@ -40,6 +40,7 @@ For the generator:
 Chosen options: "A: Fisher-Yates, one swap per `next()`" and "D: `random(seed)` returns the generator".
 
 * The whole source is read on the first `next()`, because the last value must be able to come first. Then each `next()` picks one remaining value.
+* The type of the options does not let a `random` that needs a seed omit it. Without a seed, `random` receives `undefined`.
 * `shuffle(x)` uses `Math.random`, and every run gives a new order. `shuffle(x, { seed })` needs an integer, uses mulberry32 from `src/utils/mulberry32.ts`, not exported, and repeats the order. `shuffle(x, { seed, random })` calls `random(seed)` once per run, after the source is read, and the seed can be of any type.
 * The order of a seed with the library generator is a promise: changing mulberry32 or the loop of `ShuffleIterator` is a breaking change. The specs pin it.
 * `random` not returning a function, and a value of the generator that is not a number from 0 up to, but not including, 1, throw through `libraryError`. The errors of `random` and of the generator propagate unchanged (ADR 0008).
@@ -47,8 +48,8 @@ Chosen options: "A: Fisher-Yates, one swap per `next()`" and "D: `random(seed)` 
 
 ### Positive Consequences
 
-* `shuffle().take(k)` does k swaps and k calls to the generator, with no change to `take` and no recognition like the one of ADR 0031. In the spike it was 14% to 46% faster than option B.
-* A generator of any library restarts at every run, so it repeats the order too.
+* `shuffle().take(k)` does k swaps and k calls to the generator, with no change to `take` and no recognition like the one of ADR 0031. In a spike, option B was 14% to 46% slower with `take`.
+* A factory that creates a new generator from the seed at each call restarts at every run, so it repeats the order, with a generator of any library. A factory that shares one generator continues from where it stopped, and the order changes.
 * A generator that returns `1`, `NaN` or `false` throws, instead of yielding `undefined` or a biased order.
 
 ### Negative Consequences
@@ -57,6 +58,7 @@ Chosen options: "A: Fisher-Yates, one swap per `next()`" and "D: `random(seed)` 
 * mulberry32 and the shuffle loop cannot change without a breaking change.
 * `{ random: Math.random }` is not valid: it is written `{ random: () => Math.random }`, and the wrong form throws at the first read.
 * An error of the generator can come in the middle of the sequence, after some values were yielded.
+* The order is uniform only as far as the generator allows: a seed has 32 bits, so from 13 values up it cannot reach every order, and neither `Math.random` nor the seed is suitable for security.
 * The seed costs time: on the 100,000 numbers the chain reads 238 ops/s with a seed and 290 without, against 405 to 408 for the hand-written loop.
 
 ## Pros and Cons of the Options
@@ -79,11 +81,11 @@ It gives the same order as A with the same generator, so an option between the t
 ### C: `sort` with random keys
 
 * Good, because it reuses `sort`.
-* Bad, because it is O(n log n), and a random comparer gives a biased order.
+* Bad, because it is O(n log n), where Fisher-Yates is O(n).
 
 ### D: `random(seed)` returns the generator
 
-* Good, because the generator restarts at every run, with a seed of any type.
+* Good, because a factory that creates a new generator restarts at every run, with a seed of any type.
 * Good, because many seeded generators already have this form.
 * Bad, because `{ random: Math.random }` does not work.
 

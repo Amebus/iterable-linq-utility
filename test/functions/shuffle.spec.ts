@@ -307,6 +307,14 @@ describe('shuffle', () => {
 			expect(it.next().done).toBe(true);
 		});
 
+		test('a bad value in the middle of the sequence throws, and the iterator is done', () => {
+			const generated = [0, 0, NaN];
+			const it = shuffle([1, 2, 3, 4], { random: () => () => generated.shift()! })[Symbol.iterator]();
+			expect([it.next().value, it.next().value]).toEqual([1, 2]);
+			expect(() => it.next()).toThrow(error(OUT_OF_RANGE));
+			expect(it.next().done).toBe(true);
+		});
+
 		test.each([
 			{ value: 0 },
 			{ value: -0 },
