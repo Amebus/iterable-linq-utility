@@ -4,6 +4,8 @@
 * Deciders: Amebus
 * Date: 2026-11-05
 
+Technical Story: https://github.com/Amebus/iterable-linq-utility/pull/220
+
 ## Context and Problem Statement
 
 `shuffle` yields the values in random order. It is the first operation of the library that uses randomness, and a Transformation is re-runnable (ADR 0004), so one chain can be read several times. Some users want a new order at every run, others the same order, for example in their tests or to replay a game. A generator with its own state continues from where it stopped, so a plain `random: () => number` cannot give the same order twice. The tests of the library also need a known order.
@@ -59,7 +61,7 @@ Chosen options: "A: Fisher-Yates, one swap per `next()`" and "D: `random(seed)` 
 * `{ random: Math.random }` is not valid: it is written `{ random: () => Math.random }`, and the wrong form throws at the first read.
 * An error of the generator can come in the middle of the sequence, after some values were yielded.
 * The order is uniform only as far as the generator allows: a seed has 32 bits, so from 13 values up it cannot reach every order, and neither `Math.random` nor the seed is suitable for security.
-* The seed costs time: on the 100,000 numbers the chain reads 238 ops/s with a seed and 290 without, against 405 to 408 for the hand-written loop.
+* The seed costs time: on the 100,000 numbers the chain reads 235 ops/s with a seed and 281 without, against 395 to 403 for the hand-written loop.
 
 ## Pros and Cons of the Options
 
