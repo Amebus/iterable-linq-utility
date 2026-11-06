@@ -62,8 +62,10 @@ class ShuffleIterator<T, TSeed> extends SourceIterator<T, T> {
 	protected advance(): IteratorResult<T> {
 		const values = this.values ?? this.start();
 		const i = this.index;
-		if (i >= values.length)
+		if (i >= values.length) {
+			this.values = undefined;
 			return getDoneIteratorResult();
+		}
 		// the order of a seed is a promise: changing these lines is a breaking change
 		const j = i + Math.floor(this.draw() * (values.length - i));
 		const value = values[j];
