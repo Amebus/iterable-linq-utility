@@ -86,8 +86,8 @@
         <aside class="md-banner">
           <div class="md-banner__inner md-grid md-typeset">
             
-            This is the <strong>next</strong> version: it matches the latest release, 0.13.0.
-    <a href="../../../latest/">Go to the latest version</a>
+            This is the <strong>next</strong> version:
+    <a href="../../upcoming/">1 unreleased change since 0.13.0</a>
           </div>
           
         </aside>
@@ -4336,7 +4336,7 @@
 <li>The source is read whole at each run, as with a full sort: only the sort is partial.</li>
 <li>Any other operation between <code>sort</code> and <code>take</code> (<code>map</code>, <code>filter</code>…), a negative index and <code>skip</code> read alone sort everything, as before.</li>
 <li>A window that starts past the end of the values (<code>sort().skip(5)</code> of 3 values, or <code>sort().slice(5, 8)</code>) yields nothing without sorting, so a compare function that would throw is not called.</li>
-<li>The sort chooses by itself: it is a full sort when the window is a large part of the values, when there are few values, or when the values are already almost sorted in either direction (ascending, or descending such as records by date read with the latest first), where the native sort is about linear; a partial sort otherwise. The choice looks at a small sample of pairs of values, spread over the source with a seeded pseudo-random offset in each stride, so that periodic data cannot fool it, and reads only the values and keys of those pairs. Within the noise, it is not slower than the full sort on the data shapes measured in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0031-operations-recognise-the-sort-before-them.md">ADR 0031</a>; on almost sorted or almost reversed data it is as fast as the full sort, not faster.</li>
+<li>The sort chooses by itself: it is a full sort when the window is a large part of the values, when there are few values, or when the values are already almost sorted in either direction (ascending, or descending such as records by date read with the latest first) in runs long enough for the native sort to be about linear; a partial sort otherwise. The choice looks at a small sample of pairs of values, spread over the source with a seeded pseudo-random offset in each stride, so that periodic data cannot fool it, and reads only the values and keys of those pairs: adjacent pairs, and when they look almost sorted, pairs 32 positions apart, which tell long runs from short ones. Within the noise, it is not slower than the full sort on the data shapes measured in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0031-operations-recognise-the-sort-before-them.md">ADR 0031</a> and <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0033-a-second-sample-for-the-length-of-the-runs.md">ADR 0033</a>; on almost sorted or almost reversed data in long runs it is as fast as the full sort, not faster. The known exception: ascending runs of about 64 values laid out in descending order are slower on a large window, up to about a quarter.</li>
 <li>This holds for a comparison that is a consistent order: numbers, strings, keys of one type, any sensible compare function. With an inconsistent comparer (values that <code>&lt;</code> cannot order, a random function, one that is not antisymmetric, or a compare function that returns a boolean, such as <code>(a, b) =&gt; a &gt; b</code>, which never returns a negative number) the window can differ from the one of a full sort, as the result of <code>Array.prototype.sort</code> is not defined for it, and the compare function or a getter can be called a different number of times, in a different order: an error thrown only for some pairs may or may not be thrown.</li>
 </ul>
 <p>Throws an <code>Error</code> if the comparer is not a function, a property or a non-empty list of properties, if options follow a compare function or come without a property before them (<code>sort(undefined, { descending: true })</code>), if the options are not an object, or if <code>descending</code> is not a boolean. TypeScript rejects these calls too: the forms are <code>sort(options?)</code>, <code>sort(compare)</code> and <code>sort(keys, options?)</code>.</p>
@@ -4666,7 +4666,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 3, 2026 20:16:50 UTC">November 3, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 5, 2026 22:11:48 UTC">November 5, 2026</span>
   </span>
 
     
