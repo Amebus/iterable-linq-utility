@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { numbers, prng, records, referenceSort, samplePositions } from './sortData';
+import { longSamplePositions, numbers, prng, records, referenceSort, samplePositions } from './sortData';
 
 const descentsOf = (values: number[], positions: number[]) => positions.filter(i => values[i] > values[i + 1]).length;
 const allDescents = (values: number[]) => values.slice(1).filter((v, i) => values[i] > v).length;
@@ -28,6 +28,22 @@ describe('sortData', () => {
 		}
 		// not at a fixed phase of the stride
 		expect(new Set(samplePositions(100_000).map(i => i % 10)).size).toBeGreaterThan(5);
+	});
+
+	test('longSamplePositions', () => {
+		expect(longSamplePositions(32)).toEqual([]);
+		expect(longSamplePositions(33)).toEqual([0]);
+		for (const n of [256, 1000, 1024, 100_000]) {
+			const positions = longSamplePositions(n);
+			expect(positions).toHaveLength(Math.min(256, n >> 5));
+			const stride = Math.floor((n - 32) / positions.length);
+			// one position in each stride, and the pair at distance 32 in the values
+			expect(positions.every((i, p) => i >= p * stride && i < (p + 1) * stride)).toBe(true);
+			expect(positions.at(-1)!).toBeLessThanOrEqual(n - 33);
+			expect(longSamplePositions(n)).toEqual(positions);
+		}
+		// not the positions of the first sample
+		expect(longSamplePositions(100_000)).not.toEqual(samplePositions(100_000));
 	});
 
 	test('sorted is ascending', () => {
@@ -84,6 +100,32 @@ describe('sortData', () => {
 		const values = numbers('reversedRuns', 1000, 1);
 		expect(allDescents(values) + 1).toBe(Math.ceil(1000 / 64));
 		expect(new Set(values).size).toBe(1000);
+	});
+
+	test.each([8, 12])('ascendingRuns: runs of %i ascending by 1, each starting at a seeded level', k => {
+		const values = numbers('ascendingRuns', 1000, 1, k);
+		expect(values).toHaveLength(1000);
+		for (let i = 0; i + 1 < values.length; i++)
+			if ((i + 1) % k !== 0)
+				expect(values[i + 1]).toBe(values[i] + 1);
+		expect(values.every(v => v >= 0 && v < 1_000_000 + k)).toBe(true);
+		expect(numbers('ascendingRuns', 1000, 1, k)).toEqual(values);
+		expect(numbers('ascendingRuns', 1000, 2, k)).not.toEqual(values);
+	});
+
+	test('ascendingRuns: runs of 16 when k is not positive', () => {
+		expect(numbers('ascendingRuns', 100, 1)).toEqual(numbers('ascendingRuns', 100, 1, 16));
+	});
+
+	test.each([8, 12])('descendingRuns: the runs of ascendingRuns, each one reversed (k = %i)', k => {
+		const ascending = numbers('ascendingRuns', 1000, 3, k);
+		const values = numbers('descendingRuns', 1000, 3, k);
+		for (let start = 0; start < values.length; start += k) {
+			const run = values.slice(start, start + k);
+			for (let i = 0; i + 1 < run.length; i++)
+				expect(run[i + 1]).toBe(run[i] - 1);
+			expect(run.toReversed()).toEqual(ascending.slice(start, start + k));
+		}
 	});
 
 	test('reversed, fewDistinct and random', () => {
