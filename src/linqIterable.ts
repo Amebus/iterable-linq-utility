@@ -6,6 +6,7 @@ import type {
 	IIterableLinq,
 	IIterableLinqBase,
 	IMemoizeOptions,
+	IShuffleOptions,
 	ISortOptions,
 	KeysOfType,
 	Mapper,
@@ -57,6 +58,7 @@ import {
 	reduceRight,
 	reverse,
 	sequenceEqual,
+	shuffle,
 	single,
 	skip,
 	skipLast,
@@ -276,6 +278,10 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 
 	sequenceEqual(other: Iterable<T>, equals?: (a: T, b: T) => boolean): boolean {
 		return sequenceEqual(this.iterable, other, equals);
+	}
+
+	shuffle<TSeed = undefined>(options?: IShuffleOptions<TSeed>): IIterableLinq<T> {
+		return toChain(shuffle(this.iterable, options));
 	}
 
 	single<S extends T>(predicate: (value: T, index: number) => value is S): S | undefined;

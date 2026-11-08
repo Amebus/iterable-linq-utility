@@ -37,6 +37,7 @@ The functions that start a chain (`from`, `fromObject`, `fromRange`, `repeat` an
     | [prepend](#prepend)                          | Yields one value, then the values                                                | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [repeat](#repeat) :material-ray-start:       | Starts a chain that yields the same value *n* times                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [reverse](#reverse)                          | Yields the values in reverse order                                               | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
+    | [shuffle](#shuffle)                          | Yields the values in random order                                                | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skip](#skip)                                | Skips the first *count* values and yields the rest                              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipLast](#skiplast)                        | Yields every value except the last *count*                                       | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
     | [skipWhile](#skipwhile)                      | Skips the values while a predicate is satisfied and yields the rest              | :material-moon-full:                        | :material-format-text-wrapping-wrap: :material-raw: |
@@ -1025,6 +1026,77 @@ Yields the values in reverse order. Unlike `Array.prototype.reverse`, the source
     Array.from(Functions.reverse([1, 2, 3]));
     // [3, 2, 1]
     ```
+
+## shuffle
+
+Yields the values in random order. The source is not changed. The whole chain runs before the first value is yielded, so `shuffle` does not end on an infinite chain, and every run of the chain reads the source again.
+
+- Without options, every run of the chain gives a new order, with `Math.random`.
+- `options.seed` gives the same order at every run over the same source. Without `random` it must be an integer, of which 32 bits are used: `seed: 0` and `seed: 2 ** 32` give the same order. The order of this seed is a promise: it changes only with a breaking change.
+- `options.random` uses your generator, with a seed of any type. It is called with `seed` once per run, on the first read, after the chain has run, and it returns the generator: a function called once per value that returns a number from 0 up to, but not including, 1. The order repeats only if `random` creates a new generator from the seed at each call: a generator shared across the calls continues from where it stopped, and the order changes. Without a seed it receives `undefined`, and a `random` that needs a seed is a type error. For a plain generator, write `{ random: () => Math.random }`, not `{ random: Math.random }`.
+
+The order is uniform as far as the generator allows. A `seed` has 32 bits, so from 13 values up it cannot reach every order. Neither `Math.random` nor the `seed` is suitable for security, such as a draw with money at stake: for that, give a stronger generator with `random`.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .from([1, 2, 3])
+        .shuffle()
+        .collectToArray();
+    // for example [2, 3, 1]
+
+    IterableLinq
+        .fromRange(10)
+        .shuffle({ seed: 42 })
+        .collectToArray();
+    // [6, 5, 8, 7, 1, 3, 4, 2, 9, 0], at every run
+
+    IterableLinq
+        .fromRange(10)
+        .shuffle({ seed: 'abc', random: seed => seedrandom(seed) })
+        .collectToArray();
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.shuffle([1, 2, 3]));
+    // for example [2, 3, 1]
+
+    Array.from(Functions.shuffle(Functions.range(10), { seed: 42 }));
+    // [6, 5, 8, 7, 1, 3, 4, 2, 9, 0], at every iteration
+
+    Array.from(Functions.shuffle(Functions.range(10), { seed: 'abc', random: seed => seedrandom(seed) }));
+    ```
+
+To take a random sample of *k* values, without repetitions, follow it with `take`. Only *k* values are shuffled, but the whole source is still read and kept in memory; [issue #216](https://github.com/Amebus/iterable-linq-utility/issues/216) discusses large and infinite sources.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    IterableLinq
+        .fromRange(100)
+        .shuffle()
+        .take(3)
+        .collectToArray();
+    // 3 random values
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    Array.from(Functions.take(Functions.shuffle(Functions.range(100)), 3));
+    // 3 random values
+    ```
+
+Throws an `Error` if *options* is not an object, if *random* is not a function, or if *seed* is not an integer without *random*. During the run, it throws if *random* does not return a function, or if the generator returns anything else than a number from 0 up to, but not including, 1. The errors of *random* and of the generator propagate unchanged.
 
 ## skip
 
