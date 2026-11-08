@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">1 unreleased change since 0.13.0</a>
+    <a href="../upcoming/">2 unreleased changes since 0.13.0</a>
           </div>
           
         </aside>
@@ -1268,6 +1268,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#minor-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Minor changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#patch-changes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1300,6 +1311,10 @@
 
 <h1 id="upcoming">Upcoming<a class="headerlink" href="#upcoming" title="Permanent link">⚓︎</a></h1>
 <p>The changes merged since 0.13.0, which the next release will contain. They are the notes of the pending changesets: the changelog of the release will have the same text.</p>
+<h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>New <code>shuffle(options?)</code> Transformation: lazily yields the values in uniform random order, a new one at each run, where <code>{ seed }</code> repeats the same order, <code>{ seed, random }</code> uses your generator with a seed of any type, and <code>shuffle().take(k)</code> gives k random values (<a href="https://github.com/Amebus/iterable-linq-utility/issues/220">#220</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/220">#220</a>)</li>
+</ul>
 <h2 id="patch-changes">Patch changes<a class="headerlink" href="#patch-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li><code>sort(…)</code> followed by <code>take</code>, <code>slice</code>, or <code>skip</code> and <code>take</code>, also sorts only the values it yields on data of short runs that look almost sorted or almost reversed, such as <code>(i * 7919) % 1000</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/207">#207</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/218">#218</a>)</li>
