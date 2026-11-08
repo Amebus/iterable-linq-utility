@@ -13,6 +13,16 @@ export function sampleSize(n: number): number {
 const sampleSeed = 0x9E3779B9;
 
 /**
+ * The distance of the pairs of the second sample: the scale of the minimum run of the native sort (32 to 64 values). It
+ * finds the runs at least that long in about linear time, and sorts the shorter ones by insertion and merges them, at about
+ * `n log(n / run)`, so data in short runs is not cheap for it even when its adjacent pairs look sorted or reversed.
+ */
+export const longSampleGap = 32;
+
+/** The seed of the offsets of the second sample, so that its positions do not follow those of the first one. */
+const longSampleSeed = 0x85EBCA6B;
+
+/**
  * The pairs `(i, i + 1)` of the sample that are out of order. The sample is stratified: one pair in each stride of
  * `floor((n - 1) / sample)` values, at an offset drawn by a generator seeded with `n`, so the same input takes the same path.
  * Positions at a fixed step would always read periodic data at the same phase: with a period that divides the step, every
@@ -20,30 +30,59 @@ const sampleSeed = 0x9E3779B9;
  * the partial sort on data in a few long runs).
  */
 export function countSampleDescents(n: number, order: IndexOrder): number {
+	return countDescents(n, order, 1, sampleSeed);
+}
+
+/**
+ * The pairs `(i, i + 32)` of the second sample that are out of order, as many as the pairs of the first one, one in each
+ * stride of `floor((n - 32) / sample)` values, at an offset drawn with another seed. In runs much longer than 32 values most
+ * pairs are in one run and go the same way as the adjacent ones; in shorter runs most of them straddle two runs, and at
+ * unrelated levels about half descend. `0` when there are fewer positions with a pair than the sample.
+ */
+export function countLongSampleDescents(n: number, order: IndexOrder): number {
+	return countDescents(n, order, longSampleGap, longSampleSeed);
+}
+
+function countDescents(n: number, order: IndexOrder, gap: number, seed: number): number {
 	const sample = sampleSize(n);
-	if (sample === 0)
+	if (sample === 0 || n - gap < sample)
 		return 0;
-	const stride = Math.floor((n - 1) / sample);
-	const random = mulberry32((n ^ sampleSeed) >>> 0);
+	const stride = Math.floor((n - gap) / sample);
+	const random = mulberry32((n ^ seed) >>> 0);
 	let descents = 0;
 	for (let p = 0; p < sample; p++) {
-		// sample * stride <= n - 1, so the last position is at most n - 2 and its pair is in the values
+		// sample * stride <= n - gap, so the last position is at most n - gap - 1 and its pair is in the values
 		const i = p * stride + random() % stride;
-		if (order(i, i + 1) > 0)
+		if (order(i, i + gap) > 0)
 			descents++;
 	}
 	return descents;
 }
 
+/** Fewer than a tenth of the pairs of the sample descend, or fewer than a tenth ascend. */
+const nearlySorted = (descents: number, sample: number): boolean => Math.min(descents, sample - descents) < sample / 10;
+
+/**
+ * Fewer than a third of the pairs at distance 32 go the other way. Runs laid out in order, or in blocks, keep most of those
+ * pairs on one side even when they are not long: ascending runs in descending order give about `sample * 32 / run` descents.
+ * The partial sort does two to four times the comparisons of the full sort there, from runs of 128 values. Short runs at
+ * unrelated levels, where it gains, give about half.
+ */
+const longRuns = (longDescents: number, sample: number): boolean => Math.min(longDescents, sample - longDescents) < sample / 3;
+
 /**
  * Whether the first `m` of `n` values are found by a partial sort (`select`) or by the full sort (`full`), which is faster when
  * the window is more than a quarter of the values, when the sample is too small to judge (fewer than 8 pairs), or when the
- * sample finds the values sorted or nearly sorted in either direction: fewer than a tenth of its pairs descend, or fewer than
- * a tenth ascend. The native sort finds the runs there, ascending or descending, in about linear time, whatever the window.
+ * values are sorted or nearly sorted in either direction in long runs. The native sort finds the runs there, ascending or
+ * descending, in about linear time, whatever the window. The first sample, of adjacent pairs, says whether the values look
+ * nearly sorted in either direction; when they do, `longDescents`, the descents of the second sample at distance 32, says
+ * whether the runs are long, or short: the partial sort. Without `longDescents` the first sample decides alone.
  */
-export function choosePath(n: number, m: number, descents: number): 'full' | 'select' {
+export function choosePath(n: number, m: number, descents: number, longDescents?: number): 'full' | 'select' {
 	const sample = sampleSize(n);
-	if (m > n / 4 || sample < 8 || Math.min(descents, sample - descents) < sample / 10)
+	if (m > n / 4 || sample < 8)
+		return 'full';
+	if (nearlySorted(descents, sample) && (longDescents === undefined || longRuns(longDescents, sample)))
 		return 'full';
 	return 'select';
 }
