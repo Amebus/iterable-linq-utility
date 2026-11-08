@@ -1,6 +1,6 @@
 # State of the next documentation
 
-* Status: accepted, amended by [ADR 0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md)
+* Status: accepted, amended by [ADR 0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) and [ADR 0035](0035-an-adr-does-not-point-to-work-to-come.md)
 * Deciders: Amebus
 * Date: 2026-10-02
 

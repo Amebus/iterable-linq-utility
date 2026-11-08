@@ -40,7 +40,7 @@ The decisions in force are summarised in [Current decisions](docs/decisions/READ
 - A new or changed operation is documented in `documentation/docs/api-reference/` (ADR 0013).
 - The operations are in alphabetical order in `src/functions/index.ts`, `src/linqIterable.ts`, `IIterableLinqBase` and the API reference pages, with the overloads next to each other. The imports of specs and benches: `vitest`, the test helpers, a blank line, the code under test, the local utilities (`pnpm lint-fix` sorts them).
 - The tests cover every line and branch of `src/`: `pnpm test:coverage` fails below 100%. Code that no test can reach gets `/* istanbul ignore next -- <reason> */` (ADR 0019).
-- An architecture decision is recorded as a new ADR.
+- An architecture decision is recorded as a new ADR. It says what holds, limits included, and does not point to work or decisions to come: an issue is cited only as the source of a fact or as the origin of the decision (ADR 0035).
 - The specs and plans written for a change stay in `docs/superpowers/`, which git ignores: never commit them. A decision goes in an ADR, the agreed design in the issue or the pull request (ADR 0028).
 - Commits follow Conventional Commits, with a body that says what changes or why (always for `feat`, `fix`, `perf`, `refactor`) and `Closes #<number>` in the commit that solves an issue; branch from `main`, one pull request per topic. `main` changes only through a pull request with the `build` check passed, and the release tags cannot be deleted or moved: GitHub rejects anything else (ADR 0016).
 
