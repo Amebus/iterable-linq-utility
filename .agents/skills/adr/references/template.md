@@ -32,7 +32,7 @@ Chosen option: "<A: option>".
 
 ### Negative Consequences
 
-* <consequence>
+* <consequence: a cost or a limit the decision accepts, stated as it is, without a pointer to an issue or to work to come>
 
 ## Pros and Cons of the Options
 

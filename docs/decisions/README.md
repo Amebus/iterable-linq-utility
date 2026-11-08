@@ -30,6 +30,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | `sort` copies the source and sorts the copy with the native stable sort, with a comparer for each kind of `Comparer`; the forms are `sort(options?)`, `sort(compare)` and `sort(keys, options?)`, `{ descending }` inverts the comparison, and `null`, `undefined` and `NaN` go last in both directions; `sort` returns a `SortedIterable` that `skip`, `take` and `slice` recognise, so `take`, `slice`, or `skip` and `take`, directly after it sort only the window they yield (a quickselect, or the full sort when the window is large, the values are few or almost sorted in either direction in long runs, which a second sample at distance 32 tells from short ones), with the same result for a consistent comparison. | [0029](0029-sorting-with-the-native-sort.md), [0031](0031-operations-recognise-the-sort-before-them.md), [0033](0033-a-second-sample-for-the-length-of-the-runs.md) |
 | `shuffle` is a uniform Fisher-Yates with one swap per `next()`, and there is no `sample` operation; `random(seed)` returns the generator, and the order of a seed with the library generator changes only with a breaking change. | [0034](0034-shuffle-swaps-at-each-next-and-its-generator-restarts-from-the-seed.md) |
 | The specs and plans that agents write for a change stay local in `docs/superpowers/`, which git ignores; a decision goes in an ADR, the agreed design in the issue or the pull request. | [0028](0028-specs-and-plans-stay-out-of-the-repository.md) |
+| An ADR says what holds, limits included, and does not point to work or decisions to come; an issue is cited only as the source of a fact or as the origin of the decision, and the passages of ADR 0017, 0021 and 0025 that pointed to open issues bind nothing. | [0035](0035-an-adr-does-not-point-to-work-to-come.md) |
 
 ## All records
 
@@ -51,15 +52,15 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0014](0014-instructions-for-ai-coding-agents.md) | Instructions for AI coding agents | accepted, amended by [0027](0027-current-decisions-in-the-adr-index.md) |
 | [0015](0015-checks-on-the-release-pull-request.md) | Checks on the release pull request | accepted, amended by [0016](0016-protection-rules-for-main-and-release-tags.md) |
 | [0016](0016-protection-rules-for-main-and-release-tags.md) | Protection rules for main and the release tags | accepted |
-| [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted, amended by [0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) |
+| [0017](0017-state-of-the-next-documentation.md) | State of the next documentation | accepted, amended by [0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) and [0035](0035-an-adr-does-not-point-to-work-to-come.md) |
 | [0018](0018-shared-test-sources.md) | Shared test sources | accepted |
 | [0019](0019-full-test-coverage-of-the-library.md) | Full test coverage of the library | accepted |
 | [0020](0020-error-messages-of-the-library.md) | Error messages of the library | accepted, amended by [0030](0030-validation-messages-name-the-argument.md) |
-| [0021](0021-benchmark-standards.md) | Benchmark standards | accepted, amended by [0022](0022-benchmark-scenarios-in-practice.md) |
+| [0021](0021-benchmark-standards.md) | Benchmark standards | accepted, amended by [0022](0022-benchmark-scenarios-in-practice.md) and [0035](0035-an-adr-does-not-point-to-work-to-come.md) |
 | [0022](0022-benchmark-scenarios-in-practice.md) | Benchmark scenarios in practice | accepted |
 | [0023](0023-re-registering-an-extension.md) | Re-registering an extension | accepted |
 | [0024](0024-equality-of-the-operations-that-compare-values.md) | Equality of the operations that compare values | accepted |
-| [0025](0025-property-keys-as-selectors.md) | Property keys as selectors | accepted, amended by [0026](0026-arrays-of-keys-are-not-selectors.md) |
+| [0025](0025-property-keys-as-selectors.md) | Property keys as selectors | accepted, amended by [0026](0026-arrays-of-keys-are-not-selectors.md) and [0035](0035-an-adr-does-not-point-to-work-to-come.md) |
 | [0026](0026-arrays-of-keys-are-not-selectors.md) | Arrays of keys are not selectors | accepted |
 | [0027](0027-current-decisions-in-the-adr-index.md) | Current decisions in the ADR index | accepted |
 | [0028](0028-specs-and-plans-stay-out-of-the-repository.md) | Specs and plans stay out of the repository | accepted |
@@ -69,11 +70,12 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0032](0032-the-scripts-of-the-upcoming-page-deploy-next.md) | The scripts of the Upcoming page deploy next | accepted |
 | [0033](0033-a-second-sample-for-the-length-of-the-runs.md) | A second sample for the length of the runs | accepted |
 | [0034](0034-shuffle-swaps-at-each-next-and-its-generator-restarts-from-the-seed.md) | shuffle swaps at each next, and its generator restarts from the seed | accepted |
+| [0035](0035-an-adr-does-not-point-to-work-to-come.md) | An ADR does not point to work to come | accepted |
 
 ## Adding a decision
 
 1. Copy the structure of an existing ADR: Context and Problem Statement, Decision Drivers, Considered Options, Decision Outcome (with the positive and negative consequences), Pros and Cons of the Options.
 2. Name the file with the next number and a short title in kebab case, for example `0012-my-decision.md`.
-3. Link the issue or the pull request in `Technical Story`, add the ADR to All records, and add its decision to Current decisions.
+3. Link the issue or the pull request in `Technical Story`, add the ADR to All records, and add its decision to Current decisions. The ADR says what was decided, limits included, and does not point to work or decisions to come: the open question stays in its issue, which may link the ADR. An issue is cited only as the source of a fact or as the origin of the decision ([ADR 0035](0035-an-adr-does-not-point-to-work-to-come.md)).
 4. A decision that replaces an older one does not edit it: set the old one to `superseded by [ADR NNNN](…)`, in its file and in All records, and remove it from Current decisions. A decision that corrects or completes part of an older one sets it to `accepted, amended by [ADR NNNN](…)`, in its file and in All records, links it with `Amends:`, and rewrites the row of the older decision in Current decisions with the merged state and a link to both.
 5. `pnpm check:instructions` checks that Current decisions cites every accepted ADR once and no ADR that is not in force, and that the statuses of All records match the files.
