@@ -10,7 +10,7 @@ import {
 	indexOf,
 	range
 } from '@/functions';
-import { withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('indexOf', () => {
 
@@ -97,6 +97,40 @@ describe('indexOf', () => {
 		expectTypeOf(indexOf<number | string>).parameter(1).toEqualTypeOf<number | string>();
 		expectTypeOf(indexOf(values, 'two')).toEqualTypeOf<number>();
 		expect(indexOf(values, 'two')).toBe(1);
+	});
+
+	describe('on an array read by the built-in iterator', () => {
+
+		test('indexOf reads an array without iterating it', () => {
+			expect(expectNoIteration(Array.prototype, () => indexOf([1, 2, 3, 2], 2))).toBe(1);
+			expect(expectNoIteration(Array.prototype, () => indexOf([1, 2, 3], 4))).toBe(-1);
+		});
+
+		test('indexOf uses strict equality on an array', () => {
+			expect(indexOf([NaN], NaN)).toBe(-1);
+			expect(indexOf([-0], 0)).toBe(0);
+		});
+
+		test('indexOf finds a hole of a sparse array as undefined, like the iteration', () => {
+			// eslint-disable-next-line no-sparse-arrays
+			expect(indexOf([1, , 3, undefined], undefined)).toBe(1);
+			// eslint-disable-next-line no-sparse-arrays
+			expect(indexOf([1, , 3], 3)).toBe(2);
+			expect(indexOf([1, 2], undefined)).toBe(-1);
+		});
+
+		test('indexOf ignores an indexOf redefined by a subclass', () => {
+			class OtherArray<T> extends Array<T> {
+				override indexOf(): number { return 7; }
+			}
+			expect(indexOf(OtherArray.from([1, 2]), 2)).toBe(1);
+		});
+
+		test('indexOf reads an array with its own iterator through that iterator', () => {
+			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 2; } });
+			expect(indexOf(array, 2)).toBe(0);
+		});
+
 	});
 
 });

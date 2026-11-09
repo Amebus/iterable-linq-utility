@@ -1,9 +1,9 @@
-import { Validations } from '../utils';
+import { isPlainArray, Validations } from '../utils';
 
 /**
  * Returns the value at `index`, like `Array.prototype.at`; a negative index counts from the end.
  * A non-negative index reads up to the value, then closes the source; a negative index reads the whole source,
- * keeping only the last `-index` values.
+ * keeping only the last `-index` values. An array read by its built-in iterator is read at the index, without iterating it.
  * @operation `Action`
  * @param iterable - the source `Iterable`
  * @param index - an integer; `-1` is the last value
@@ -19,7 +19,14 @@ import { Validations } from '../utils';
 export function at<T>(iterable: Iterable<T>, index: number): T | undefined {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'at');
 	Validations.throwIfNotInteger(index, 'index', 'at');
+	// a direct access, like Array.prototype.at, which ES2019 does not have (ADR 0036)
+	if (isPlainArray(iterable))
+		return atIndex(iterable, index < 0 ? iterable.length + index : index);
 	return index >= 0 ? atStart(iterable, index) : atEnd(iterable, -index);
+}
+
+function atIndex<T>(array: readonly T[], position: number): T | undefined {
+	return position >= 0 && position < array.length ? array[position] : undefined;
 }
 
 function atStart<T>(iterable: Iterable<T>, index: number): T | undefined {

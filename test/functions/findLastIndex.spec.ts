@@ -10,7 +10,7 @@ import {
 	findLastIndex,
 	range
 } from '@/functions';
-import { withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('findLastIndex', () => {
 
@@ -50,9 +50,9 @@ describe('findLastIndex', () => {
 		expect(findLastIndex(filter([6, 1, 6, 3, 6, 5], v => v % 2 === 0), v => v === 6)).toBe(2);
 	});
 
-	test('findLastIndex calls the predicate on every value with its index', () => {
+	test('findLastIndex calls the predicate on every value of an iterable with its index', () => {
 		const calls: [string, number][] = [];
-		expect(findLastIndex(['a', 'b', 'c'], (value, index) => {
+		expect(findLastIndex(spyIterable(['a', 'b', 'c']), (value, index) => {
 			calls.push([value, index]);
 			return index < 2;
 		})).toBe(1);
@@ -110,6 +110,63 @@ describe('findLastIndex', () => {
 		});
 		expectTypeOf(result).toEqualTypeOf<number>();
 		expect(result).toBe(2);
+	});
+
+	describe('on an array read by the built-in iterator', () => {
+
+		test('findLastIndex reads an array from the end without iterating it', () => {
+			expect(expectNoIteration(Array.prototype, () => findLastIndex([1, 5, 2], v => v > 4))).toBe(1);
+		});
+
+		test('findLastIndex calls the predicate from the last value of an array and stops at the first match, like Array.prototype.findLastIndex', () => {
+			const calls: [string, number][] = [];
+			expect(findLastIndex(['a', 'b', 'c'], (value, index) => {
+				calls.push([value, index]);
+				return index < 2;
+			})).toBe(1);
+			expect(calls).toEqual([['c', 2], ['b', 1]]);
+		});
+
+		test('findLastIndex calls the predicate on every value of an array without a match', () => {
+			const calls: number[] = [];
+			expect(findLastIndex([1, 2, 3], (_, index) => {
+				calls.push(index);
+				return false;
+			})).toBe(-1);
+			expect(calls).toEqual([2, 1, 0]);
+		});
+
+		test('findLastIndex reads the length of an array once, before the first call', () => {
+			const values = [1, 2];
+			const calls: number[] = [];
+			findLastIndex(values, (value, index) => {
+				calls.push(index);
+				values.push(value);
+				return false;
+			});
+			expect(calls).toEqual([1, 0]);
+		});
+
+		test('findLastIndex sees a hole of a sparse array as undefined', () => {
+			// eslint-disable-next-line no-sparse-arrays
+			expect(findLastIndex([1, , 3], (v, i) => v === undefined && i === 1)).toBe(1);
+		});
+
+		test('a predicate error on an array propagates unchanged', () => {
+			const error = new Error('predicate');
+			expect(() => findLastIndex([1, 2], () => { throw error; })).toThrow(error);
+		});
+
+		test('findLastIndex reads an array with its own iterator through that iterator', () => {
+			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 5; yield 1; } });
+			const calls: number[] = [];
+			findLastIndex(array, (_, index) => {
+				calls.push(index);
+				return false;
+			});
+			expect(calls).toEqual([0, 1]);
+		});
+
 	});
 
 });

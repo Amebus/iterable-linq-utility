@@ -1,4 +1,4 @@
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 
 export function returnClosesTheIterator<T>(iterable: Iterable<T>, returnValue: any) {
 	const iterator = iterable[Symbol.iterator]();
@@ -38,4 +38,19 @@ export async function withoutInputIterableThrowsExceptionAsync(fn: any) {
 	await expect(() => fn()).rejects.toThrow(prefix);
 	await expect(() => fn(undefined)).rejects.toThrow(prefix);
 	await expect(() => fn(null)).rejects.toThrow(prefix);
+}
+
+/**
+ * Runs `action` with the built-in iterator of `prototype` replaced by a spy, and checks that the action never calls it: the
+ * Action reads an array or a `Set` without iterating it (ADR 0036).
+ */
+export function expectNoIteration<R>(prototype: typeof Array.prototype | typeof Set.prototype, action: () => R): R {
+	const iterator = vi.spyOn(prototype as any, Symbol.iterator as any);
+	try {
+		const result = action();
+		expect(iterator).not.toHaveBeenCalled();
+		return result;
+	} finally {
+		iterator.mockRestore();
+	}
 }

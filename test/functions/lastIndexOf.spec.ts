@@ -10,7 +10,7 @@ import {
 	lastIndexOf,
 	range
 } from '@/functions';
-import { withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('lastIndexOf', () => {
 
@@ -92,6 +92,40 @@ describe('lastIndexOf', () => {
 		expectTypeOf(lastIndexOf<number | string>).parameter(1).toEqualTypeOf<number | string>();
 		expectTypeOf(lastIndexOf(values, 'two')).toEqualTypeOf<number>();
 		expect(lastIndexOf(values, 'two')).toBe(1);
+	});
+
+	describe('on an array read by the built-in iterator', () => {
+
+		test('lastIndexOf reads an array without iterating it', () => {
+			expect(expectNoIteration(Array.prototype, () => lastIndexOf([1, 2, 3, 2], 2))).toBe(3);
+			expect(expectNoIteration(Array.prototype, () => lastIndexOf([1, 2, 3], 4))).toBe(-1);
+		});
+
+		test('lastIndexOf uses strict equality on an array', () => {
+			expect(lastIndexOf([NaN], NaN)).toBe(-1);
+			expect(lastIndexOf([-0, 1], 0)).toBe(0);
+		});
+
+		test('lastIndexOf finds a hole of a sparse array as undefined, like the iteration', () => {
+			// eslint-disable-next-line no-sparse-arrays
+			expect(lastIndexOf([undefined, 1, , 3], undefined)).toBe(2);
+			// eslint-disable-next-line no-sparse-arrays
+			expect(lastIndexOf([1, , 3], 1)).toBe(0);
+			expect(lastIndexOf([1, 2], undefined)).toBe(-1);
+		});
+
+		test('lastIndexOf ignores a lastIndexOf redefined by a subclass', () => {
+			class OtherArray<T> extends Array<T> {
+				override lastIndexOf(): number { return 7; }
+			}
+			expect(lastIndexOf(OtherArray.from([2, 2]), 2)).toBe(1);
+		});
+
+		test('lastIndexOf reads an array with its own iterator through that iterator', () => {
+			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 2; yield 1; } });
+			expect(lastIndexOf(array, 2)).toBe(0);
+		});
+
 	});
 
 });

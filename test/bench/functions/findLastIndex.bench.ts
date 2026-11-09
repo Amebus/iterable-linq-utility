@@ -14,7 +14,7 @@ function findLastIndex(value: number): Helpers.IVariants {
 	};
 }
 
-// findLastIndex reads the whole source; the native method reads the array from the end, so it stops early
+// on an array findLastIndex reads from the end and stops early, like the native method (ADR 0036); after a map or a filter it reads the whole source
 scenarios('findLastIndex', findLastIndex(missing));
 group('findLastIndex', 'end', findLastIndex(N - 1));
 group('findLastIndex', 'middle', findLastIndex(middle));

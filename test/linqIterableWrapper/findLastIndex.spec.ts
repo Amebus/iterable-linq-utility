@@ -25,7 +25,7 @@ describe('IterableLinq.findLastIndex', () => {
 
 	test('IterableLinq.findLastIndex passes the index and restarts it on every call', () => {
 		const indexes: number[] = [];
-		const chain = IterableLinq.from(['a', 'b', 'c']);
+		const chain = IterableLinq.from(new Set(['a', 'b', 'c']));
 		const predicate = (_: string, index: number) => {
 			indexes.push(index);
 			return index < 2;
@@ -33,6 +33,18 @@ describe('IterableLinq.findLastIndex', () => {
 		expect(chain.findLastIndex(predicate)).toBe(1);
 		expect(chain.findLastIndex(predicate)).toBe(1);
 		expect(indexes).toEqual([0, 1, 2, 0, 1, 2]);
+	});
+
+	test('IterableLinq.findLastIndex on an array reads it from the end, on every call', () => {
+		const indexes: number[] = [];
+		const chain = IterableLinq.from(['a', 'b', 'c']);
+		const predicate = (_: string, index: number) => {
+			indexes.push(index);
+			return index < 2;
+		};
+		expect(chain.findLastIndex(predicate)).toBe(1);
+		expect(chain.findLastIndex(predicate)).toBe(1);
+		expect(indexes).toEqual([2, 1, 2, 1]);
 	});
 
 	test('IterableLinq.findLastIndex is action', () => {

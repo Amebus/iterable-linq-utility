@@ -1,8 +1,10 @@
 import { Predicate } from '../types';
-import { Validations } from '../utils';
+import { isPlainArray, Validations } from '../utils';
 
 /**
  * Returns the last value accepted by a type guard, narrowing its type; reads the whole source.
+ * On an array read by its built-in iterator, `predicate` is called from the last value backward, up to the first match,
+ * like `Array.prototype.findLast`.
  * If `predicate` throws, the source is closed and the error propagates.
  * @operation `Action`
  * @param iterable - the source `Iterable`
@@ -20,6 +22,8 @@ export function findLast<T, S extends T>(iterable: Iterable<T>, predicate: (valu
 
 /**
  * Returns the last value that satisfies `predicate`; reads the whole source.
+ * On an array read by its built-in iterator, `predicate` is called from the last value backward, up to the first match,
+ * like `Array.prototype.findLast`.
  * If `predicate` throws, the source is closed and the error propagates.
  * @operation `Action`
  * @param iterable - the source `Iterable`
@@ -36,6 +40,8 @@ export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T |
 export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'findLast');
 	Validations.throwIfNotFunction(predicate, 'predicate', 'findLast');
+	if (isPlainArray(iterable))
+		return findLastInArray(iterable, predicate);
 	let result: T | undefined;
 	let index = 0;
 	// for…of closes the source when the predicate throws
@@ -44,4 +50,16 @@ export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T |
 			result = value;
 	}
 	return result;
+}
+
+/**
+ * Reads the array from the end and stops at the first match, like `Array.prototype.findLast`: the length is read once, before
+ * the first call of `predicate` (ADR 0036).
+ */
+function findLastInArray<T>(array: readonly T[], predicate: Predicate<T>): T | undefined {
+	for (let i = array.length - 1; i >= 0; i--) {
+		if (predicate(array[i], i))
+			return array[i];
+	}
+	return undefined;
 }
