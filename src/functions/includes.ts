@@ -1,8 +1,9 @@
-import { Validations } from '../utils';
+import { isPlainArray, isPlainSet, Validations } from '../utils';
 
 /**
  * Tells whether `iterable` contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
- * stops and closes the source at the first match.
+ * stops and closes the source at the first match. An array or a `Set` read by its built-in iterator is searched with
+ * `Array.prototype.includes` or `Set.prototype.has`, without iterating it.
  * @operation `Action`
  * @param iterable - the source `Iterable`
  * @param value - the value to look for; `NaN` matches `NaN`, and `+0` matches `-0`
@@ -16,6 +17,11 @@ import { Validations } from '../utils';
  */
 export function includes<T>(iterable: Iterable<T>, value: T): boolean {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'includes');
+	// the native methods scan the storage directly, with the same SameValueZero (ADR 0036)
+	if (isPlainArray(iterable))
+		return Array.prototype.includes.call(iterable, value);
+	if (isPlainSet(iterable))
+		return Set.prototype.has.call(iterable, value);
 	// SameValueZero: === except that NaN equals NaN
 	const isNaNValue = value !== value;
 	// for…of closes the source when we return early

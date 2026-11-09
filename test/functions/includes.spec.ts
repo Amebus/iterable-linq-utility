@@ -9,7 +9,7 @@ import {
 	includes,
 	range
 } from '@/functions';
-import { withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('includes', () => {
 
@@ -33,6 +33,12 @@ describe('includes', () => {
 		expect(includes([undefined], undefined)).toBe(true);
 		expect(includes([null], undefined)).toBe(false);
 		expect(includes([1], '1' as never)).toBe(false);
+	});
+
+	test('includes uses SameValueZero on an iterable that is not an array or a Set', () => {
+		expect(includes(spyIterable([1, NaN]), NaN)).toBe(true);
+		expect(includes(spyIterable([1, 2]), NaN)).toBe(false);
+		expect(includes(spyIterable([-0]), 0)).toBe(true);
 	});
 
 	test('includes compares objects by reference', () => {
@@ -92,6 +98,52 @@ describe('includes', () => {
 		expectTypeOf(includes<number | string>).parameter(1).toEqualTypeOf<number | string>();
 		expectTypeOf(includes(values, 'two')).toEqualTypeOf<boolean>();
 		expect(includes(values, 'two')).toBe(true);
+	});
+
+	describe('on an array or a Set read by the built-in iterator', () => {
+
+		test('includes reads an array without iterating it', () => {
+			expect(expectNoIteration(Array.prototype, () => includes([1, 2, 3], 3))).toBe(true);
+			expect(expectNoIteration(Array.prototype, () => includes([1, 2, 3], 4))).toBe(false);
+		});
+
+		test('includes reads a Set without iterating it', () => {
+			expect(expectNoIteration(Set.prototype, () => includes(new Set([1, 2, 3]), 3))).toBe(true);
+			expect(expectNoIteration(Set.prototype, () => includes(new Set([1, 2, 3]), 4))).toBe(false);
+		});
+
+		test('includes uses SameValueZero on an array and on a Set', () => {
+			expect(includes([NaN], NaN)).toBe(true);
+			expect(includes([-0], 0)).toBe(true);
+			expect(includes(new Set([NaN]), NaN)).toBe(true);
+			expect(includes(new Set([-0]), 0)).toBe(true);
+		});
+
+		test('includes sees a hole of a sparse array as undefined', () => {
+			// eslint-disable-next-line no-sparse-arrays
+			expect(includes([1, , 3], undefined)).toBe(true);
+		});
+
+		test('includes ignores an includes or a has redefined by a subclass', () => {
+			class OtherArray<T> extends Array<T> {
+				override includes(): boolean { return true; }
+			}
+			class OtherSet<T> extends Set<T> {
+				override has(): boolean { return true; }
+			}
+			expect(includes(OtherArray.from([1, 2]), 3)).toBe(false);
+			expect(includes(new OtherSet([1, 2]), 3)).toBe(false);
+		});
+
+		test('includes reads an array or a Set with its own iterator through that iterator', () => {
+			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 3; } });
+			const set = Object.assign(new Set([1, 2]), { *[Symbol.iterator]() { yield 3; } });
+			expect(includes(array, 3)).toBe(true);
+			expect(includes(array, 1)).toBe(false);
+			expect(includes(set, 3)).toBe(true);
+			expect(includes(set, 1)).toBe(false);
+		});
+
 	});
 
 });

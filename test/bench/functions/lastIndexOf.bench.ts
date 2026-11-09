@@ -14,7 +14,7 @@ function lastIndexOf(value: number): Helpers.IVariants {
 	};
 }
 
-// lastIndexOf reads the whole source; the native method reads the array from the end, so it stops early
+// on an array lastIndexOf reads from the end and stops early, like the native method (ADR 0036); after a map or a filter it reads the whole source
 scenarios('lastIndexOf', lastIndexOf(missing));
 group('lastIndexOf', 'end', lastIndexOf(N - 1));
 group('lastIndexOf', 'middle', lastIndexOf(middle));

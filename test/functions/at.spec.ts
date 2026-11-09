@@ -10,7 +10,7 @@ import {
 	filter,
 	range
 } from '@/functions';
-import { withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('at', () => {
 
@@ -120,6 +120,39 @@ describe('at', () => {
 		const values: (number | string)[] = [1, 'two'];
 		expectTypeOf(at(values, 0)).toEqualTypeOf<number | string | undefined>();
 		expect(at(values, -1)).toBe('two');
+	});
+
+	describe('on an array read by the built-in iterator', () => {
+
+		test.each([
+			{ index: 0, expectedResult: 'a' },
+			{ index: 2, expectedResult: 'c' },
+			{ index: 3, expectedResult: undefined },
+			{ index: -1, expectedResult: 'c' },
+			{ index: -3, expectedResult: 'a' },
+			{ index: -4, expectedResult: undefined }
+		])('at reads an array without iterating it: at([a, b, c], $index) -> $expectedResult', ({ index, expectedResult }) => {
+			expect(expectNoIteration(Array.prototype, () => at(['a', 'b', 'c'], index))).toBe(expectedResult);
+		});
+
+		test('at reads only the indices of an array, not its other properties', () => {
+			const array = Object.assign(['a'], { '-1': 'x', '1': undefined });
+			array.length = 1;
+			expect(at(array, -2)).toBeUndefined();
+			expect(at(array, 1)).toBeUndefined();
+		});
+
+		test('at sees a hole of a sparse array as undefined', () => {
+			// eslint-disable-next-line no-sparse-arrays
+			expect(at([1, , 3], 1)).toBeUndefined();
+		});
+
+		test('at reads an array with its own iterator through that iterator', () => {
+			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 3; } });
+			expect(at(array, 0)).toBe(3);
+			expect(at(array, -1)).toBe(3);
+		});
+
 	});
 
 });

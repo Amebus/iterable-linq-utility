@@ -14,9 +14,9 @@ function at(index: number): Helpers.IVariants {
 	};
 }
 
-// direct: an index out of range, so the whole source is read
+// direct: an index out of range; on an array at is a direct access (ADR 0036), after a map or a filter it reads the whole source
 scenarios('at', at(N));
 group('at', 'start', at(first));
 group('at', 'middle', at(middle));
-// a negative index keeps the last `middle` values in a buffer
+// on an iterable that is not an array, a negative index keeps the last `middle` values in a buffer
 group('at', 'negative', at(-middle));
