@@ -87,7 +87,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../../upcoming/">2 unreleased changes since 0.13.0</a>
+    <a href="../../upcoming/">3 unreleased changes since 0.13.0</a>
           </div>
           
         </aside>
@@ -2167,7 +2167,7 @@
 </table>
 </details>
 <h2 id="at">at<a class="headerlink" href="#at" title="Permanent link">⚓︎</a></h2>
-<p>Returns the value at the index, or <code>undefined</code> if the chain has no value there, like <code>Array.prototype.at</code>. A negative index counts from the end: <code>-1</code> is the last value.</p>
+<p>Returns the value at the index, or <code>undefined</code> if the chain has no value there, like <code>Array.prototype.at</code>. A negative index counts from the end: <code>-1</code> is the last value. On an array read by its built-in iterator (the array passed to <code>Functions</code>, or a chain created with <code>from</code> on an array with no operation before), it reads the value at the index directly.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Wrapper</label><label for="__tabbed_1_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2580,7 +2580,7 @@
 </div>
 <p>Throws an <code>Error</code> if the predicate is not a function.</p>
 <h2 id="findlast">findLast<a class="headerlink" href="#findlast" title="Permanent link">⚓︎</a></h2>
-<p>Returns the last value that satisfies the predicate, or <code>undefined</code> if there is none, like <code>Array.prototype.findLast</code>. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with <code>take</code> or <code>takeWhile</code>. An accepted <code>undefined</code> value and no match both return <code>undefined</code>.</p>
+<p>Returns the last value that satisfies the predicate, or <code>undefined</code> if there is none, like <code>Array.prototype.findLast</code>. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with <code>take</code> or <code>takeWhile</code>. An accepted <code>undefined</code> value and no match both return <code>undefined</code>. On an array read by its built-in iterator (the array passed to <code>Functions</code>, or a chain created with <code>from</code> on an array with no operation before), it reads the array from the end, like <code>Array.prototype.findLast</code>: the predicate is called from the last value backward and the search stops at the first match, so a predicate with side effects sees fewer calls, in the opposite order.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="13:2"><input checked="checked" id="__tabbed_13_1" name="__tabbed_13" type="radio" /><input id="__tabbed_13_2" name="__tabbed_13" type="radio" /><div class="tabbed-labels"><label for="__tabbed_13_1">Wrapper</label><label for="__tabbed_13_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2640,7 +2640,7 @@
 </div>
 </div>
 <h2 id="findlastindex">findLastIndex<a class="headerlink" href="#findlastindex" title="Permanent link">⚓︎</a></h2>
-<p>Returns the index of the last value that satisfies the predicate, or <code>-1</code> if there is none, like <code>Array.prototype.findLastIndex</code>. The predicate is called with each value and its index; the index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with <code>take</code> or <code>takeWhile</code>.</p>
+<p>Returns the index of the last value that satisfies the predicate, or <code>-1</code> if there is none, like <code>Array.prototype.findLastIndex</code>. The predicate is called with each value and its index; the index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with <code>take</code> or <code>takeWhile</code>. On an array read by its built-in iterator (the array passed to <code>Functions</code>, or a chain created with <code>from</code> on an array with no operation before), it reads the array from the end, like <code>Array.prototype.findLastIndex</code>: the predicate is called from the last value backward and the search stops at the first match, so a predicate with side effects sees fewer calls, in the opposite order.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="15:2"><input checked="checked" id="__tabbed_15_1" name="__tabbed_15" type="radio" /><input id="__tabbed_15_2" name="__tabbed_15" type="radio" /><div class="tabbed-labels"><label for="__tabbed_15_1">Wrapper</label><label for="__tabbed_15_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2776,7 +2776,7 @@
 </div>
 <p>If the callback is not a function, the returned promise is rejected with an <code>Error</code>.</p>
 <h2 id="includes">includes<a class="headerlink" href="#includes" title="Permanent link">⚓︎</a></h2>
-<p>Tells whether the chain contains the value. Values are compared with <code>SameValueZero</code>, like <code>Array.prototype.includes</code>: <code>NaN</code> matches <code>NaN</code>, <code>+0</code> matches <code>-0</code>, and objects are compared by reference. It stops at the first match and closes the source, so it also works on infinite sources that contain the value.</p>
+<p>Tells whether the chain contains the value. Values are compared with <code>SameValueZero</code>, like <code>Array.prototype.includes</code>: <code>NaN</code> matches <code>NaN</code>, <code>+0</code> matches <code>-0</code>, and objects are compared by reference. It stops at the first match and closes the source, so it also works on infinite sources that contain the value. On an array read by its built-in iterator (the array passed to <code>Functions</code>, or a chain created with <code>from</code> on an array with no operation before) or on a <code>Set</code>, it calls <code>Array.prototype.includes</code> or <code>Set.prototype.has</code>, with the same result.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="18:2"><input checked="checked" id="__tabbed_18_1" name="__tabbed_18" type="radio" /><input id="__tabbed_18_2" name="__tabbed_18" type="radio" /><div class="tabbed-labels"><label for="__tabbed_18_1">Wrapper</label><label for="__tabbed_18_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2806,7 +2806,7 @@
 </div>
 </div>
 <h2 id="indexof">indexOf<a class="headerlink" href="#indexof" title="Permanent link">⚓︎</a></h2>
-<p>Returns the index of the first value strictly equal (<code>===</code>) to the given value, or <code>-1</code> if there is none, like <code>Array.prototype.indexOf</code>. The index counts the values of the chain, from 0. It stops at the first match and closes the source, so it also works on infinite sources that contain the value.</p>
+<p>Returns the index of the first value strictly equal (<code>===</code>) to the given value, or <code>-1</code> if there is none, like <code>Array.prototype.indexOf</code>. The index counts the values of the chain, from 0. It stops at the first match and closes the source, so it also works on infinite sources that contain the value. On an array read by its built-in iterator (the array passed to <code>Functions</code>, or a chain created with <code>from</code> on an array with no operation before), it searches the array without iterating it, with the same result.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="19:2"><input checked="checked" id="__tabbed_19_1" name="__tabbed_19" type="radio" /><input id="__tabbed_19_2" name="__tabbed_19" type="radio" /><div class="tabbed-labels"><label for="__tabbed_19_1">Wrapper</label><label for="__tabbed_19_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -2881,7 +2881,7 @@
 </div>
 <p>Throws an <code>Error</code> if a separator is given and is not a string; the empty string is a valid separator.</p>
 <h2 id="lastindexof">lastIndexOf<a class="headerlink" href="#lastindexof" title="Permanent link">⚓︎</a></h2>
-<p>Returns the index of the last value strictly equal (<code>===</code>) to the given value, or <code>-1</code> if there is none, like <code>Array.prototype.lastIndexOf</code>. The index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with <code>take</code> or <code>takeWhile</code>.</p>
+<p>Returns the index of the last value strictly equal (<code>===</code>) to the given value, or <code>-1</code> if there is none, like <code>Array.prototype.lastIndexOf</code>. The index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with <code>take</code> or <code>takeWhile</code>. On an array read by its built-in iterator (the array passed to <code>Functions</code>, or a chain created with <code>from</code> on an array with no operation before), it reads the array from the end and stops at the first match.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="21:2"><input checked="checked" id="__tabbed_21_1" name="__tabbed_21" type="radio" /><input id="__tabbed_21_2" name="__tabbed_21" type="radio" /><div class="tabbed-labels"><label for="__tabbed_21_1">Wrapper</label><label for="__tabbed_21_2">Raw Function</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -3476,7 +3476,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 5, 2026 20:21:56 UTC">November 5, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 9, 2026 22:42:26 UTC">November 9, 2026</span>
   </span>
 
     

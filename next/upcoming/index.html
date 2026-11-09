@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">2 unreleased changes since 0.13.0</a>
+    <a href="../upcoming/">3 unreleased changes since 0.13.0</a>
           </div>
           
         </aside>
@@ -1314,6 +1314,7 @@
 <h2 id="minor-changes">Minor changes<a class="headerlink" href="#minor-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>New <code>shuffle(options?)</code> Transformation: lazily yields the values in uniform random order, a new one at each run, where <code>{ seed }</code> repeats the same order, <code>{ seed, random }</code> uses your generator with a seed of any type, and <code>shuffle().take(k)</code> gives k random values (<a href="https://github.com/Amebus/iterable-linq-utility/issues/220">#220</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/220">#220</a>)</li>
+<li><code>includes</code>, <code>indexOf</code>, <code>lastIndexOf</code>, <code>at</code>, <code>findLast</code> and <code>findLastIndex</code> read an array with the built-in iterator by index, and <code>includes</code> calls <code>Set.prototype.has</code> on a <code>Set</code>, with the same result: on 100,000 numbers they are from 2× to thousands of times faster, and <code>findLast(predicate)</code> and <code>findLastIndex(predicate)</code> on an array call <code>predicate</code> from the last value backward up to the first match, like <code>Array.prototype.findLast</code>, as described in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0036-actions-read-an-array-by-index.md">ADR 0036</a> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/138">#138</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/222">#222</a>)</li>
 </ul>
 <h2 id="patch-changes">Patch changes<a class="headerlink" href="#patch-changes" title="Permanent link">⚓︎</a></h2>
 <ul>
