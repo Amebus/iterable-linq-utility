@@ -1,5 +1,5 @@
 import type { Comparer } from '../types';
-import { findExtreme, toCompareFunction, Validations } from '../utils';
+import { findExtreme, findMinValue, toCompareFunction, Validations } from '../utils';
 
 /**
  * Returns the smallest value; the first one among equals. `null`/`undefined` never win against a defined value.
@@ -17,7 +17,9 @@ import { findExtreme, toCompareFunction, Validations } from '../utils';
  */
 export function min<T>(iterable: Iterable<T>, comparer?: Comparer<T>): T | undefined {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'min');
-	if (comparer !== undefined)
-		Validations.throwIfNotComparer(comparer, 'comparer', 'min');
+	// without a comparer, a loop with the comparison inline (#177)
+	if (comparer === undefined)
+		return findMinValue(iterable);
+	Validations.throwIfNotComparer(comparer, 'comparer', 'min');
 	return findExtreme(iterable, toCompareFunction(comparer), -1);
 }
