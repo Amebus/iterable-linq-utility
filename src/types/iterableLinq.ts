@@ -1148,7 +1148,7 @@ export interface IIterableLinqBase<T> {
 	 * IterableLinq.fromRange(100).shuffle().take(3).collectToArray(); // 3 random values
 	 * IterableLinq.from([1, 2, 3]).shuffle({ seed: 'abc', random: seed => seedrandom(seed) }).collectToArray();
 	 * ```
-	 * @since next
+	 * @since 0.14.0
 	 */
 	shuffle<TSeed = undefined>(options?: IShuffleOptions<TSeed>): IIterableLinq<T>;
 

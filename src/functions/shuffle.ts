@@ -29,7 +29,7 @@ type Random<TSeed> = (seed: TSeed) => () => number;
  * Array.from(Functions.shuffle([1, 2, 3], { seed: 'abc', random: seed => seedrandom(seed) }));
  * Array.from(Functions.shuffle([1, 2, 3], { random: () => Math.random }));
  * ```
- * @since next
+ * @since 0.14.0
  */
 export function shuffle<T, TSeed = undefined>(iterable: Iterable<T>, options?: IShuffleOptions<TSeed>): Iterable<T> {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'shuffle');
