@@ -87,7 +87,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../../upcoming/">4 unreleased changes since 0.13.0</a>
+    <a href="../../upcoming/">5 unreleased changes since 0.13.0</a>
           </div>
           
         </aside>
@@ -3940,6 +3940,7 @@
 </table>
 <p>With partial memoization, a consumer that stops early (for example <a href="../actions/#some">some</a>) keeps the source open, so that another consumer can continue from where it stopped.</p>
 <p>If the source throws, every later read past the cached values throws the same error.</p>
+<p>The cache is an array. Right after <code>memoize</code>, <a href="../actions/#count">count</a>, <a href="../actions/#at">at</a>, <a href="../actions/#includes">includes</a>, <a href="../actions/#indexof">indexOf</a>, <a href="../actions/#lastindexof">lastIndexOf</a>, <a href="../actions/#findlast">findLast</a> and <a href="../actions/#findlastindex">findLastIndex</a> read it by index, without iterating it, when it is complete: with <code>allowPartialMemoization: false</code>, after filling it as the first read does; with partial memoization, once a consumer has read the chain to the end. A cache that holds an error of the source is iterated, so the error is thrown where the iteration throws it.</p>
 <p>Unlike <a href="../actions/#materialize">materialize</a>, <code>memoize</code> does not run anything when it is called.</p>
 <p>Throws an <code>Error</code> if the options are not an object, or if <code>allowPartialMemoization</code> is given and is not a boolean.</p>
 <h2 id="prepend">prepend<a class="headerlink" href="#prepend" title="Permanent link">⚓︎</a></h2>
@@ -4798,7 +4799,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 6, 2026 08:09:07 UTC">November 6, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 14, 2026 16:42:07 UTC">November 14, 2026</span>
   </span>
 
     
