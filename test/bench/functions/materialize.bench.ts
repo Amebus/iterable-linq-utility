@@ -40,3 +40,32 @@ test('materialize: after a filter', async ({ bench }) => {
 		.add('Functions', () => sum(Functions.materialize(Functions.filter(numbers, isEven))))
 		.run();
 });
+
+// count, at and includes read the stored values by index (ADR 0038)
+const stored = from(numbers).map(double).materialize();
+const storedValues = Functions.materialize(Functions.map(numbers, double));
+const doubled = numbers.map(double);
+
+test('materialize: count', async ({ bench }) => {
+	await cases(bench, 'materialize/count')
+		.add('native', () => doubled.length)
+		.add('chain', () => stored.count())
+		.add('Functions', () => Functions.count(storedValues))
+		.run();
+});
+
+test('materialize: at(-1)', async ({ bench }) => {
+	await cases(bench, 'materialize/at-end')
+		.add('native', () => doubled[doubled.length - 1])
+		.add('chain', () => stored.at(-1))
+		.add('Functions', () => Functions.at(storedValues, -1))
+		.run();
+});
+
+test('materialize: includes a missing value', async ({ bench }) => {
+	await cases(bench, 'materialize/includes')
+		.add('native', () => doubled.includes(-1))
+		.add('chain', () => stored.includes(-1))
+		.add('Functions', () => Functions.includes(storedValues, -1))
+		.run();
+});

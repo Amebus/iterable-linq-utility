@@ -37,7 +37,7 @@ An **Action** runs the **O~s~C** and returns a result. Every call to an action r
 
 ## at
 
-Returns the value at the index, or `undefined` if the chain has no value there, like `Array.prototype.at`. A negative index counts from the end: `-1` is the last value. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), it reads the value at the index directly.
+Returns the value at the index, or `undefined` if the chain has no value there, like `Array.prototype.at`. A negative index counts from the end: `-1` is the last value. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), and on the values stored by [materialize](#materialize) or by a [memoize](transformations.md#memoize) that is full or has been read to the end, it reads the value at the index directly.
 
 === "Wrapper"
 
@@ -223,7 +223,7 @@ Collects the values of the chain into a `Set`. A value equal to an earlier one i
 
 ## count
 
-Counts the values of the chain; with a predicate, only the values that satisfy it. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. Without a predicate, on an array, a `Set` or a `Map` read by its built-in iterator (the one passed to `Functions`, or a chain created with `from` on it with no operation before), it returns the length or the size without iterating it.
+Counts the values of the chain; with a predicate, only the values that satisfy it. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. Without a predicate, on an array, a `Set` or a `Map` read by its built-in iterator (the one passed to `Functions`, or a chain created with `from` on it with no operation before), and on the values stored by [materialize](#materialize) or by a [memoize](transformations.md#memoize) that is full or has been read to the end, it returns the length or the size without iterating it.
 
 === "Wrapper"
 
@@ -350,7 +350,7 @@ Throws an `Error` if the predicate is not a function.
 
 ## findLast
 
-Returns the last value that satisfies the predicate, or `undefined` if there is none, like `Array.prototype.findLast`. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. An accepted `undefined` value and no match both return `undefined`. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), it reads the array from the end, like `Array.prototype.findLast`: the predicate is called from the last value backward and the search stops at the first match, so a predicate with side effects sees fewer calls, in the opposite order.
+Returns the last value that satisfies the predicate, or `undefined` if there is none, like `Array.prototype.findLast`. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. An accepted `undefined` value and no match both return `undefined`. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), and on the values stored by [materialize](#materialize) or by a [memoize](transformations.md#memoize) that is full or has been read to the end, it reads the array from the end, like `Array.prototype.findLast`: the predicate is called from the last value backward and the search stops at the first match, so a predicate with side effects sees fewer calls, in the opposite order.
 
 === "Wrapper"
 
@@ -396,7 +396,7 @@ With a type guard, `findLast` narrows the type of the result, as [find](#find) d
 
 ## findLastIndex
 
-Returns the index of the last value that satisfies the predicate, or `-1` if there is none, like `Array.prototype.findLastIndex`. The predicate is called with each value and its index; the index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), it reads the array from the end, like `Array.prototype.findLastIndex`: the predicate is called from the last value backward and the search stops at the first match, so a predicate with side effects sees fewer calls, in the opposite order.
+Returns the index of the last value that satisfies the predicate, or `-1` if there is none, like `Array.prototype.findLastIndex`. The predicate is called with each value and its index; the index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), and on the values stored by [materialize](#materialize) or by a [memoize](transformations.md#memoize) that is full or has been read to the end, it reads the array from the end, like `Array.prototype.findLastIndex`: the predicate is called from the last value backward and the search stops at the first match, so a predicate with side effects sees fewer calls, in the opposite order.
 
 === "Wrapper"
 
@@ -497,7 +497,7 @@ If the callback is not a function, the returned promise is rejected with an `Err
 
 ## includes
 
-Tells whether the chain contains the value. Values are compared with `SameValueZero`, like `Array.prototype.includes`: `NaN` matches `NaN`, `+0` matches `-0`, and objects are compared by reference. It stops at the first match and closes the source, so it also works on infinite sources that contain the value. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before) or on a `Set`, it calls `Array.prototype.includes` or `Set.prototype.has`, with the same result.
+Tells whether the chain contains the value. Values are compared with `SameValueZero`, like `Array.prototype.includes`: `NaN` matches `NaN`, `+0` matches `-0`, and objects are compared by reference. It stops at the first match and closes the source, so it also works on infinite sources that contain the value. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), and on the values stored by [materialize](#materialize) or by a [memoize](transformations.md#memoize) that is full or has been read to the end or on a `Set`, it calls `Array.prototype.includes` or `Set.prototype.has`, with the same result.
 
 === "Wrapper"
 
@@ -520,7 +520,7 @@ Tells whether the chain contains the value. Values are compared with `SameValueZ
 
 ## indexOf
 
-Returns the index of the first value strictly equal (`===`) to the given value, or `-1` if there is none, like `Array.prototype.indexOf`. The index counts the values of the chain, from 0. It stops at the first match and closes the source, so it also works on infinite sources that contain the value. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), it searches the array without iterating it, with the same result.
+Returns the index of the first value strictly equal (`===`) to the given value, or `-1` if there is none, like `Array.prototype.indexOf`. The index counts the values of the chain, from 0. It stops at the first match and closes the source, so it also works on infinite sources that contain the value. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), and on the values stored by [materialize](#materialize) or by a [memoize](transformations.md#memoize) that is full or has been read to the end, it searches the array without iterating it, with the same result.
 
 === "Wrapper"
 
@@ -578,7 +578,7 @@ Throws an `Error` if a separator is given and is not a string; the empty string 
 
 ## lastIndexOf
 
-Returns the index of the last value strictly equal (`===`) to the given value, or `-1` if there is none, like `Array.prototype.lastIndexOf`. The index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), it reads the array from the end and stops at the first match.
+Returns the index of the last value strictly equal (`===`) to the given value, or `-1` if there is none, like `Array.prototype.lastIndexOf`. The index counts the values of the chain, from 0. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. On an array read by its built-in iterator (the array passed to `Functions`, or a chain created with `from` on an array with no operation before), and on the values stored by [materialize](#materialize) or by a [memoize](transformations.md#memoize) that is full or has been read to the end, it reads the array from the end and stops at the first match.
 
 === "Wrapper"
 
@@ -628,7 +628,7 @@ Runs the chain immediately and stores its values, so later chains start from the
     // [10, 20, 30, 40]
     ```
 
-Materializing a materialized chain does not copy the values again. To store the values lazily, the first time they are read, use [memoize](transformations.md#memoize).
+Materializing a materialized chain does not copy the values again. The values are stored in an array: [count](#count), [at](#at), [includes](#includes), [indexOf](#indexof), [lastIndexOf](#lastindexof), [findLast](#findlast) and [findLastIndex](#findlastindex) right after `materialize` read it by index, without iterating it. To store the values lazily, the first time they are read, use [memoize](transformations.md#memoize).
 
 ## max
 

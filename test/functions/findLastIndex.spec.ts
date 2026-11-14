@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, test } from 'vitest';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { closableSource } from '../_helpers/generators/closableSource';
 import { infiniteSource } from '../_helpers/generators/infiniteSource';
 import { spyIterable } from '../_helpers/generators/spyIterable';
@@ -10,7 +10,7 @@ import {
 	findLastIndex,
 	range
 } from '@/functions';
-import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectIterationOf, expectNoIteration, expectNoIterationOf, failedMemoize, storedSources, unfinishedMemoize, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('findLastIndex', () => {
 
@@ -165,6 +165,35 @@ describe('findLastIndex', () => {
 				return false;
 			});
 			expect(calls).toEqual([0, 1]);
+		});
+
+	});
+
+	describe('on the values of a memoize or a materialize', () => {
+
+		test.each(storedSources())('findLastIndex reads $name without iterating it', ({ create }) => {
+			const source = create([1, 5, 2, 5]);
+			expect(expectNoIterationOf(source, () => findLastIndex(source, v => v > 4))).toBe(3);
+		});
+
+		test.each(storedSources())('findLastIndex calls the predicate on $name from the last value backward', ({ create }) => {
+			const predicate = vi.fn((value: number) => value > 4);
+			expect(findLastIndex(create([1, 5, 2, 5]), predicate)).toBe(3);
+			expect(predicate.mock.calls).toEqual([[5, 3]]);
+		});
+
+		test('findLastIndex iterates a partial memoize that is not finished', () => {
+			const source = unfinishedMemoize([1, 2, 3]);
+			expect(expectIterationOf(source, () => findLastIndex(source, v => v > 1))).toBe(2);
+		});
+
+		test.each([
+			{ allowPartialMemoization: false },
+			{ allowPartialMemoization: true }
+		])('findLastIndex iterates a memoize whose cache holds an error, which is thrown where the iteration throws it (allowPartialMemoization: $allowPartialMemoization)', ({ allowPartialMemoization }) => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, allowPartialMemoization);
+			expect(() => expectIterationOf(failed, () => findLastIndex(failed, v => v > 0))).toThrow(error);
 		});
 
 	});

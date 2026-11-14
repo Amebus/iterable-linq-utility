@@ -9,7 +9,7 @@ import {
 	filter,
 	range
 } from '@/functions';
-import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectIterationOf, expectNoIteration, expectNoIterationOf, failedMemoize, storedSources, unfinishedMemoize, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('count', () => {
 
@@ -149,6 +149,29 @@ describe('count', () => {
 				return index > 0;
 			})).toBe(2);
 			expect(calls).toEqual([0, 1, 2]);
+		});
+
+	});
+
+	describe('on the values of a memoize or a materialize', () => {
+
+		test.each(storedSources())('count reads $name without iterating it', ({ create }) => {
+			const source = create([1, 5, 2, 5]);
+			expect(expectNoIterationOf(source, () => count(source))).toBe(4);
+		});
+
+		test('count iterates a partial memoize that is not finished', () => {
+			const source = unfinishedMemoize([1, 2, 3]);
+			expect(expectIterationOf(source, () => count(source))).toBe(3);
+		});
+
+		test.each([
+			{ allowPartialMemoization: false },
+			{ allowPartialMemoization: true }
+		])('count iterates a memoize whose cache holds an error, which is thrown where the iteration throws it (allowPartialMemoization: $allowPartialMemoization)', ({ allowPartialMemoization }) => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, allowPartialMemoization);
+			expect(() => expectIterationOf(failed, () => count(failed))).toThrow(error);
 		});
 
 	});

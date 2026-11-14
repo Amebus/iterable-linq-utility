@@ -46,3 +46,32 @@ test('memoize: partial read', async ({ bench }) => {
 		.add('chain, full', () => from(numbers).memoize(full).some(v => v === 100))
 		.run();
 });
+
+// count, at and includes read a full cache, or a partial one read to the end, by index (ADR 0038)
+const cachedChain = from(numbers).map(v => v).memoize(partial);
+const cachedValues = Functions.memoize(Functions.map(numbers, v => v), full);
+sum(cachedChain);
+
+test('memoize: count', async ({ bench }) => {
+	await cases(bench, 'memoize/count')
+		.add('native', () => numbers.length)
+		.add('chain, partial', () => cachedChain.count())
+		.add('Functions, full', () => Functions.count(cachedValues))
+		.run();
+});
+
+test('memoize: at(-1)', async ({ bench }) => {
+	await cases(bench, 'memoize/at-end')
+		.add('native', () => numbers[numbers.length - 1])
+		.add('chain, partial', () => cachedChain.at(-1))
+		.add('Functions, full', () => Functions.at(cachedValues, -1))
+		.run();
+});
+
+test('memoize: includes a missing value', async ({ bench }) => {
+	await cases(bench, 'memoize/includes')
+		.add('native', () => numbers.includes(-1))
+		.add('chain, partial', () => cachedChain.includes(-1))
+		.add('Functions, full', () => Functions.includes(cachedValues, -1))
+		.run();
+});

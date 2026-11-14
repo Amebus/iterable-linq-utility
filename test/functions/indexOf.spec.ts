@@ -10,7 +10,7 @@ import {
 	indexOf,
 	range
 } from '@/functions';
-import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectIterationOf, expectNoIteration, expectNoIterationOf, failedMemoize, storedSources, unfinishedMemoize, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('indexOf', () => {
 
@@ -129,6 +129,33 @@ describe('indexOf', () => {
 		test('indexOf reads an array with its own iterator through that iterator', () => {
 			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 2; } });
 			expect(indexOf(array, 2)).toBe(0);
+		});
+
+	});
+
+	describe('on the values of a memoize or a materialize', () => {
+
+		test.each(storedSources())('indexOf reads $name without iterating it', ({ create }) => {
+			const source = create([1, 5, 2, 5]);
+			expect(expectNoIterationOf(source, () => [indexOf(source, 5), indexOf(source, 9)])).toEqual([1, -1]);
+		});
+
+		test('indexOf iterates a partial memoize that is not finished', () => {
+			const source = unfinishedMemoize([1, 2, 3]);
+			expect(expectIterationOf(source, () => indexOf(source, 3))).toBe(2);
+		});
+
+		test('indexOf iterates a partial memoize whose cache holds an error, which is thrown where the iteration throws it', () => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, true);
+			expect(expectIterationOf(failed, () => indexOf(failed, 2))).toBe(1);
+			expect(() => expectIterationOf(failed, () => indexOf(failed, 9))).toThrow(error);
+		});
+
+		test('indexOf iterates a full memoize whose cache holds an error, which throws on the first read', () => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, false);
+			expect(() => expectIterationOf(failed, () => indexOf(failed, 2))).toThrow(error);
 		});
 
 	});

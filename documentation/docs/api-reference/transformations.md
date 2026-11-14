@@ -950,6 +950,8 @@ With partial memoization, a consumer that stops early (for example [some](action
 
 If the source throws, every later read past the cached values throws the same error.
 
+The cache is an array. Right after `memoize`, [count](actions.md#count), [at](actions.md#at), [includes](actions.md#includes), [indexOf](actions.md#indexof), [lastIndexOf](actions.md#lastindexof), [findLast](actions.md#findlast) and [findLastIndex](actions.md#findlastindex) read it by index, without iterating it, when it is complete: with `allowPartialMemoization: false`, after filling it as the first read does; with partial memoization, once a consumer has read the chain to the end. A cache that holds an error of the source is iterated, so the error is thrown where the iteration throws it.
+
 Unlike [materialize](actions.md#materialize), `memoize` does not run anything when it is called.
 
 Throws an `Error` if the options are not an object, or if `allowPartialMemoization` is given and is not a boolean.

@@ -1,10 +1,11 @@
 import { Predicate } from '../types';
-import { isPlainArray, Validations } from '../utils';
+import { arrayOf, Validations } from '../utils';
 
 /**
  * Returns the index of the last value that satisfies `predicate`; reads the whole source.
  * On an array read by its built-in iterator, `predicate` is called from the last value backward, up to the first match,
  * like `Array.prototype.findLastIndex`.
+ * The same holds for the iterable of `materialize`, and for the one of a `memoize` that is full or has been read to the end.
  * If `predicate` throws, the source is closed and the error propagates.
  * @operation `Action`
  * @param iterable - the source `Iterable`
@@ -20,8 +21,9 @@ import { isPlainArray, Validations } from '../utils';
 export function findLastIndex<T>(iterable: Iterable<T>, predicate: Predicate<T>): number {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'findLastIndex');
 	Validations.throwIfNotFunction(predicate, 'predicate', 'findLastIndex');
-	if (isPlainArray(iterable))
-		return findLastIndexInArray(iterable, predicate);
+	const array = arrayOf(iterable);
+	if (array !== undefined)
+		return findLastIndexInArray(array, predicate);
 	let result = -1;
 	let index = 0;
 	// for…of closes the source when the predicate throws

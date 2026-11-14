@@ -1,5 +1,5 @@
 import { Predicate } from '../types';
-import { isPlainArray, isPlainMap, isPlainSet, Validations } from '../utils';
+import { arrayOf, isPlainMap, isPlainSet, Validations } from '../utils';
 
 // the getters of the prototypes, called with `call`
 const setSize = Object.getOwnPropertyDescriptor(Set.prototype, 'size')!.get!;
@@ -8,6 +8,7 @@ const mapSize = Object.getOwnPropertyDescriptor(Map.prototype, 'size')!.get!;
 /**
  * Counts the values of `iterable`; reads the whole source. Of an array, a `Set` or a `Map` read by its built-in iterator it
  * returns the length or the size, without iterating it.
+ * The same holds for the iterable of `materialize`, and for the one of a `memoize` that is full or has been read to the end.
  * @operation `Action`
  * @param iterable - the source `Iterable`
  * @returns the number of values in `iterable`
@@ -39,8 +40,9 @@ export function count<T>(iterable: Iterable<T>, predicate?: Predicate<T>): numbe
 	let result = 0;
 	if (predicate === undefined) {
 		// the length or the size, from the prototype, so that a subclass that redefines it changes nothing (ADR 0037)
-		if (isPlainArray(iterable))
-			return iterable.length;
+		const array = arrayOf(iterable);
+		if (array !== undefined)
+			return array.length;
 		if (isPlainSet(iterable))
 			return setSize.call(iterable);
 		if (isPlainMap(iterable))

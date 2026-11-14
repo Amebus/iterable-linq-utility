@@ -10,7 +10,7 @@ import {
 	lastIndexOf,
 	range
 } from '@/functions';
-import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectIterationOf, expectNoIteration, expectNoIterationOf, failedMemoize, storedSources, unfinishedMemoize, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('lastIndexOf', () => {
 
@@ -124,6 +124,29 @@ describe('lastIndexOf', () => {
 		test('lastIndexOf reads an array with its own iterator through that iterator', () => {
 			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 2; yield 1; } });
 			expect(lastIndexOf(array, 2)).toBe(0);
+		});
+
+	});
+
+	describe('on the values of a memoize or a materialize', () => {
+
+		test.each(storedSources())('lastIndexOf reads $name without iterating it', ({ create }) => {
+			const source = create([1, 5, 2, 5]);
+			expect(expectNoIterationOf(source, () => [lastIndexOf(source, 5), lastIndexOf(source, 9)])).toEqual([3, -1]);
+		});
+
+		test('lastIndexOf iterates a partial memoize that is not finished', () => {
+			const source = unfinishedMemoize([1, 2, 3]);
+			expect(expectIterationOf(source, () => lastIndexOf(source, 1))).toBe(0);
+		});
+
+		test.each([
+			{ allowPartialMemoization: false },
+			{ allowPartialMemoization: true }
+		])('lastIndexOf iterates a memoize whose cache holds an error, which is thrown where the iteration throws it (allowPartialMemoization: $allowPartialMemoization)', ({ allowPartialMemoization }) => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, allowPartialMemoization);
+			expect(() => expectIterationOf(failed, () => lastIndexOf(failed, 1))).toThrow(error);
 		});
 
 	});

@@ -1,6 +1,6 @@
 # count reads the size, and other is copied with the Set constructor
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0038](0038-memoize-and-materialize-give-their-values-as-an-array.md)
 * Deciders: Amebus
 * Date: 2026-11-14
 

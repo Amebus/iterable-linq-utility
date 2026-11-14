@@ -1,5 +1,6 @@
-import { Validations } from '../utils';
-import { LinkedListCollection } from '../collections';
+import { BaseIterator } from '../iterators';
+import { collectToArray } from './collectToArray';
+import { getContinueIteratorResult, getDoneIteratorResult, type IStoredValues, storedValues, Validations } from '../utils';
 
 /**
  * Reads `iterable` immediately and stores its values.
@@ -22,14 +23,37 @@ export function materialize<T>(iterable: Iterable<T>): Iterable<T> {
 	return new MaterializeIterable(iterable);
 }
 
-class MaterializeIterable<T> implements Iterable<T> {
-	private readonly source: LinkedListCollection.LinkedList<T>;
+class MaterializeIterable<T> implements Iterable<T>, IStoredValues<T> {
+	private readonly values: readonly T[];
 
 	constructor(iterable: Iterable<T>) {
-		this.source = LinkedListCollection.from(iterable);
+		// Array.from on an array or a Set, a loop on the iterators of the library, where Array.from is about 2× slower (ADR 0038)
+		this.values = collectToArray(iterable);
 	}
 
 	[Symbol.iterator](): Iterator<T> {
-		return this.source[Symbol.iterator]();
+		return new StoredValuesIterator(this.values);
+	}
+
+	[storedValues](): readonly T[] {
+		return this.values;
+	}
+}
+
+/**
+ * Reads the stored values by index: as fast as an iterator over a linked list, while the built-in iterator of the array is
+ * slower (ADR 0038).
+ */
+class StoredValuesIterator<T> extends BaseIterator<T> {
+	private index = 0;
+
+	constructor(private readonly values: readonly T[]) {
+		super();
+	}
+
+	protected advance(): IteratorResult<T> {
+		if (this.index < this.values.length)
+			return getContinueIteratorResult(this.values[this.index++]);
+		return getDoneIteratorResult();
 	}
 }
