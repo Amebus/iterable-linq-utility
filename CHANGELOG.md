@@ -1,5 +1,23 @@
 # iterable-linq-utility
 
+## 0.14.0
+
+### Minor Changes
+
+- [#222](https://github.com/Amebus/iterable-linq-utility/pull/222) [`61ec2dd`](https://github.com/Amebus/iterable-linq-utility/commit/61ec2dd1304c2e8db91ee26ad3667b8b43ae6d55) Thanks [@Amebus](https://github.com/Amebus)! - `includes`, `indexOf`, `lastIndexOf`, `at`, `findLast` and `findLastIndex` read an array with the built-in iterator by index, and `includes` calls `Set.prototype.has` on a `Set`, with the same result: on 100,000 numbers they are from 2× to thousands of times faster, and `findLast(predicate)` and `findLastIndex(predicate)` on an array call `predicate` from the last value backward up to the first match, like `Array.prototype.findLast`, as described in [ADR 0036](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0036-actions-read-an-array-by-index.md) ([#138](https://github.com/Amebus/iterable-linq-utility/issues/138)).
+
+- [#220](https://github.com/Amebus/iterable-linq-utility/pull/220) [`83690e0`](https://github.com/Amebus/iterable-linq-utility/commit/83690e076cf402b8420f000bb361c625c40389fb) Thanks [@Amebus](https://github.com/Amebus)! - New `shuffle(options?)` Transformation: lazily yields the values in uniform random order, a new one at each run, where `{ seed }` repeats the same order, `{ seed, random }` uses your generator with a seed of any type, and `shuffle().take(k)` gives k random values ([#220](https://github.com/Amebus/iterable-linq-utility/issues/220)).
+
+### Patch Changes
+
+- [#226](https://github.com/Amebus/iterable-linq-utility/pull/226) [`ae418bb`](https://github.com/Amebus/iterable-linq-utility/commit/ae418bb0000242cbaf99e52b235054d74f8cdbdb) Thanks [@Amebus](https://github.com/Amebus)! - `count()`, `at(index)`, `includes(value)`, `indexOf(value)`, `lastIndexOf(value)`, `findLast(predicate)` and `findLastIndex(predicate)` read by index, without iterating them, the values stored by `materialize()`, now kept in an array with a quarter of the memory, and the cache of a `memoize()` that is full or has been read to the end, with the same results, as described in [ADR 0038](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0038-memoize-and-materialize-give-their-values-as-an-array.md) ([#225](https://github.com/Amebus/iterable-linq-utility/issues/225)).
+
+- [#227](https://github.com/Amebus/iterable-linq-utility/pull/227) [`d81cf1d`](https://github.com/Amebus/iterable-linq-utility/commit/d81cf1ddd82b713ef8f24b8a6291a743c034920c) Thanks [@Amebus](https://github.com/Amebus)! - `min()` and `max()` without a comparer compare the values in their own loop instead of calling the default compare function, about 40% faster, and with a comparer they are from 33% to 100% faster, with the same results ([#177](https://github.com/Amebus/iterable-linq-utility/issues/177)).
+
+- [#224](https://github.com/Amebus/iterable-linq-utility/pull/224) [`612bb3b`](https://github.com/Amebus/iterable-linq-utility/commit/612bb3bfa4726a29bc5f33f92f44e8aed6c52af3) Thanks [@Amebus](https://github.com/Amebus)! - `count()` returns the `length` of an array and the `size` of a `Set` or a `Map` without iterating them, and `intersect(other)` and `except(other)` copy a `Set` or an array given as `other` faster, with the same results, as described in [ADR 0037](https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0037-count-reads-the-size-and-other-is-copied-with-the-set-constructor.md) ([#223](https://github.com/Amebus/iterable-linq-utility/issues/223)).
+
+- [#218](https://github.com/Amebus/iterable-linq-utility/pull/218) [`ffe5952`](https://github.com/Amebus/iterable-linq-utility/commit/ffe59520189330daea47ed81036ff5080340af78) Thanks [@Amebus](https://github.com/Amebus)! - `sort(…)` followed by `take`, `slice`, or `skip` and `take`, also sorts only the values it yields on data of short runs that look almost sorted or almost reversed, such as `(i * 7919) % 1000` ([#207](https://github.com/Amebus/iterable-linq-utility/issues/207)).
+
 ## 0.13.0
 
 ### Minor Changes

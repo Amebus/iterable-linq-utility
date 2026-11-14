@@ -5,7 +5,7 @@
  * - `{ seed, random }`: `random` is called with `seed` once per iteration and returns the generator: a function called once
  * per value that returns a number from 0 up to, but not including, 1. The order repeats only if `random` creates a new
  * generator from the seed at each call. The `seed` can be omitted only if `random` accepts `undefined`, which it then receives.
- * @since next
+ * @since 0.14.0
  */
 export type IShuffleOptions<TSeed = number> =
 	| { seed?: number; random?: undefined }
