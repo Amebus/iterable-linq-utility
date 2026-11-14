@@ -83,7 +83,7 @@
           <div class="md-banner__inner md-grid md-typeset">
             
             This is the <strong>next</strong> version:
-    <a href="../upcoming/">5 unreleased changes since 0.13.0</a>
+    <a href="../upcoming/">6 unreleased changes since 0.13.0</a>
           </div>
           
         </aside>
@@ -1321,6 +1321,7 @@
 <li><code>sort(…)</code> followed by <code>take</code>, <code>slice</code>, or <code>skip</code> and <code>take</code>, also sorts only the values it yields on data of short runs that look almost sorted or almost reversed, such as <code>(i * 7919) % 1000</code> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/207">#207</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/218">#218</a>)</li>
 <li><code>count()</code> returns the <code>length</code> of an array and the <code>size</code> of a <code>Set</code> or a <code>Map</code> without iterating them, and <code>intersect(other)</code> and <code>except(other)</code> copy a <code>Set</code> or an array given as <code>other</code> faster, with the same results, as described in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0037-count-reads-the-size-and-other-is-copied-with-the-set-constructor.md">ADR 0037</a> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/223">#223</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/224">#224</a>)</li>
 <li><code>count()</code>, <code>at(index)</code>, <code>includes(value)</code>, <code>indexOf(value)</code>, <code>lastIndexOf(value)</code>, <code>findLast(predicate)</code> and <code>findLastIndex(predicate)</code> read by index, without iterating them, the values stored by <code>materialize()</code>, now kept in an array with a quarter of the memory, and the cache of a <code>memoize()</code> that is full or has been read to the end, with the same results, as described in <a href="https://github.com/Amebus/iterable-linq-utility/blob/main/docs/decisions/0038-memoize-and-materialize-give-their-values-as-an-array.md">ADR 0038</a> (<a href="https://github.com/Amebus/iterable-linq-utility/issues/225">#225</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/226">#226</a>)</li>
+<li><code>min()</code> and <code>max()</code> without a comparer compare the values in their own loop instead of calling the default compare function, about 40% faster, and with a comparer they are from 33% to 100% faster, with the same results (<a href="https://github.com/Amebus/iterable-linq-utility/issues/177">#177</a>). (<a href="https://github.com/Amebus/iterable-linq-utility/pull/227">#227</a>)</li>
 </ul>
 
 
