@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { spyIterable } from '../_helpers/generators/spyIterable';
 
-import { isPlainArray, isPlainSet } from '@/utils';
+import { isPlainArray, isPlainMap, isPlainSet } from '@/utils';
 
 function* generator(): Generator<number> {
 	yield 1;
@@ -85,6 +85,37 @@ describe('isPlainSet', () => {
 		{ name: 'an object with the iterator of a Set', value: { [Symbol.iterator]: Set.prototype[Symbol.iterator] } }
 	])('$name is not a plain Set', ({ value }) => {
 		expect(isPlainSet(value as Iterable<unknown>)).toBe(false);
+	});
+
+});
+
+describe('isPlainMap', () => {
+
+	test.each([
+		{ name: 'an empty Map', value: new Map() },
+		{ name: 'a Map', value: new Map([[1, 2]]) }
+	])('$name is a plain Map', ({ value }) => {
+		expect(isPlainMap(value)).toBe(true);
+	});
+
+	test('a subclass that keeps the built-in iterator is a plain Map', () => {
+		class OtherMap<K, V> extends Map<K, V> {
+			override get size(): number { return 7; }
+		}
+		expect(isPlainMap(new OtherMap([[1, 2]]))).toBe(true);
+	});
+
+	test('a Map with its own iterator is not a plain Map', () => {
+		expect(isPlainMap(Object.assign(new Map([[1, 2]]), { *[Symbol.iterator]() { yield [3, 4] as [number, number]; } }))).toBe(false);
+	});
+
+	test.each([
+		{ name: 'an array', value: [[1, 2]] },
+		{ name: 'a Set', value: new Set([1, 2]) },
+		{ name: 'a generator', value: generator() },
+		{ name: 'an object with the iterator of a Map', value: { [Symbol.iterator]: Map.prototype[Symbol.iterator] } }
+	])('$name is not a plain Map', ({ value }) => {
+		expect(isPlainMap(value as Iterable<unknown>)).toBe(false);
 	});
 
 });

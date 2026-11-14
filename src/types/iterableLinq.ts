@@ -261,7 +261,8 @@ export interface IIterableLinqBase<T> {
 	concat(...others: Iterable<T>[]): IIterableLinq<T>;
 
 	/**
-	 * Counts the values of the chain; runs the whole chain.
+	 * Counts the values of the chain; runs the whole chain. On a chain created with `from` on an array, a `Set` or a `Map`, with no
+	 * operation before, it returns the length or the size.
 	 * @operation `Action`
 	 * @returns the number of values in the chain
 	 * @example

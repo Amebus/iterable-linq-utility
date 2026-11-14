@@ -1,4 +1,5 @@
 import type { Mapper } from '../types';
+import { isPlainArray, isPlainSet } from '../utils';
 import { SourceIterator } from './sourceIterator';
 
 /**
@@ -49,17 +50,20 @@ export abstract class OtherKeysIterator<T, K> extends SourceIterator<T, T> {
 	}
 
 	private readOther(): Set<unknown> {
-		const keys = new Set<unknown>();
-		let index = 0;
 		// also around the reading of `other`: if it throws, the source is closed too, as in sequenceEqual;
 		// for…of closes `other` when the keySelector throws
 		try {
+			// the Set constructor copies a Set or an array with the built-in iterator faster than the loop (ADR 0037)
+			if (this.keySelector === undefined && this.key === undefined && (isPlainSet(this.other) || isPlainArray(this.other)))
+				return new Set<unknown>(this.other);
+			const keys = new Set<unknown>();
+			let index = 0;
 			for (const value of this.other)
 				keys.add(this.keySelector === undefined ? (this.key === undefined ? value : (value as any)[this.key]) : this.keySelector(value, index++));
+			return keys;
 		} catch (error) {
 			this.closeAfterCallbackError();
 			throw error;
 		}
-		return keys;
 	}
 }

@@ -29,3 +29,10 @@ export function isPlainArray<T>(iterable: Iterable<T>): iterable is readonly T[]
 export function isPlainSet<T>(iterable: Iterable<T>): iterable is ReadonlySet<T> {
 	return iterable instanceof Set && iterable[Symbol.iterator] === Set.prototype[Symbol.iterator];
 }
+
+/**
+ * Whether an Action may read `iterable` as a `Map` (ADR 0037): a `Map` whose `[Symbol.iterator]` is the built-in one.
+ */
+export function isPlainMap<K, V>(iterable: Iterable<[K, V]> | Iterable<unknown>): iterable is ReadonlyMap<K, V> {
+	return iterable instanceof Map && iterable[Symbol.iterator] === Map.prototype[Symbol.iterator];
+}

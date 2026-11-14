@@ -9,7 +9,7 @@ import {
 	filter,
 	range
 } from '@/functions';
-import { withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('count', () => {
 
@@ -102,6 +102,55 @@ describe('count', () => {
 		});
 		expectTypeOf(result).toEqualTypeOf<number>();
 		expect(result).toBe(1);
+	});
+
+	describe('on an array, a Set or a Map read by the built-in iterator', () => {
+
+		test('count without a predicate reads the length of an array without iterating it', () => {
+			expect(expectNoIteration(Array.prototype, () => count([1, 2, 3]))).toBe(3);
+			expect(expectNoIteration(Array.prototype, () => count([]))).toBe(0);
+		});
+
+		test('count without a predicate reads the size of a Set without iterating it', () => {
+			expect(expectNoIteration(Set.prototype, () => count(new Set([1, 2, 3])))).toBe(3);
+		});
+
+		test('count without a predicate reads the size of a Map without iterating it', () => {
+			expect(expectNoIteration(Map.prototype, () => count(new Map([[1, 'a'], [2, 'b']])))).toBe(2);
+		});
+
+		test('count counts the holes of a sparse array, like the iteration', () => {
+			// eslint-disable-next-line no-sparse-arrays
+			expect(count([1, , 3])).toBe(3);
+		});
+
+		test('count ignores a size redefined by a subclass', () => {
+			class OtherSet<T> extends Set<T> {
+				override get size(): number { return 7; }
+			}
+			class OtherMap<K, V> extends Map<K, V> {
+				override get size(): number { return 7; }
+			}
+			expect(count(new OtherSet([1, 2]))).toBe(2);
+			expect(count(new OtherMap([[1, 2]]))).toBe(1);
+		});
+
+		test('count reads an array, a Set or a Map with its own iterator through that iterator', () => {
+			const iterator = { *[Symbol.iterator]() { yield 1; } };
+			expect(count(Object.assign([1, 2, 3], iterator))).toBe(1);
+			expect(count(Object.assign(new Set([1, 2, 3]), iterator))).toBe(1);
+			expect(count(Object.assign(new Map([[1, 2], [3, 4]]), iterator))).toBe(1);
+		});
+
+		test('count with a predicate still calls it on every value of an array', () => {
+			const calls: number[] = [];
+			expect(count([1, 2, 3], (_, index) => {
+				calls.push(index);
+				return index > 0;
+			})).toBe(2);
+			expect(calls).toEqual([0, 1, 2]);
+		});
+
 	});
 
 });

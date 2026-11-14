@@ -47,3 +47,14 @@ test('intersect: key', async ({ bench }) => {
 		.add('key', () => sum(Functions.map(Functions.intersect(records, otherRecords, 'group'), record => record.score)))
 		.run();
 });
+
+// a Set as other is copied with the Set constructor (ADR 0037)
+const otherSet = new Set(other);
+
+test('intersect: other is a Set', async ({ bench }) => {
+	await cases(bench, 'intersect/set-other')
+		.add('native', () => sum(new Set(numbers).intersection(otherSet)))
+		.add('chain', () => sum(from(numbers).intersect(otherSet)))
+		.add('Functions', () => sum(Functions.intersect(numbers, otherSet)))
+		.run();
+});
