@@ -3,6 +3,7 @@ import { expectAction } from '../_helpers/operationKind';
 
 import { LinkedListCollection } from '@/collections';
 import * as IterableLinq from '@/index';
+import { Functions } from '@/index';
 
 describe('IterableLinq.materialize', () => {
 
@@ -66,6 +67,19 @@ describe('IterableLinq.materialize', () => {
 
 	test('IterableLinq.materialize is action', () => {
 		expectAction(source => IterableLinq.from(source).materialize());
+	});
+
+	test('the Actions after materialize read the stored values without iterating them', () => {
+		const materialized = IterableLinq.from([1, 5, 2, 5]).map(v => v * 10).materialize();
+		const iterator = vi.spyOn(Object.getPrototypeOf(Functions.materialize([])), Symbol.iterator);
+		try {
+			expect(materialized.count()).toBe(4);
+			expect(materialized.at(-1)).toBe(50);
+			expect(materialized.lastIndexOf(50)).toBe(3);
+			expect(iterator).not.toHaveBeenCalled();
+		} finally {
+			iterator.mockRestore();
+		}
 	});
 
 });

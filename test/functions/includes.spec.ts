@@ -9,7 +9,7 @@ import {
 	includes,
 	range
 } from '@/functions';
-import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectIterationOf, expectNoIteration, expectNoIterationOf, failedMemoize, storedSources, unfinishedMemoize, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('includes', () => {
 
@@ -142,6 +142,33 @@ describe('includes', () => {
 			expect(includes(array, 1)).toBe(false);
 			expect(includes(set, 3)).toBe(true);
 			expect(includes(set, 1)).toBe(false);
+		});
+
+	});
+
+	describe('on the values of a memoize or a materialize', () => {
+
+		test.each(storedSources())('includes reads $name without iterating it', ({ create }) => {
+			const source = create([1, 5, 2, 5]);
+			expect(expectNoIterationOf(source, () => [includes(source, 2), includes(source, 9)])).toEqual([true, false]);
+		});
+
+		test('includes iterates a partial memoize that is not finished', () => {
+			const source = unfinishedMemoize([1, 2, 3]);
+			expect(expectIterationOf(source, () => includes(source, 3))).toBe(true);
+		});
+
+		test('includes iterates a partial memoize whose cache holds an error, which is thrown where the iteration throws it', () => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, true);
+			expect(expectIterationOf(failed, () => includes(failed, 1))).toBe(true);
+			expect(() => expectIterationOf(failed, () => includes(failed, 9))).toThrow(error);
+		});
+
+		test('includes iterates a full memoize whose cache holds an error, which throws on the first read', () => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, false);
+			expect(() => expectIterationOf(failed, () => includes(failed, 1))).toThrow(error);
 		});
 
 	});

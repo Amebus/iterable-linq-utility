@@ -1,6 +1,6 @@
 import { BaseIterator } from '../iterators';
 import type { IMemoizeOptions } from '../types';
-import { getContinueIteratorResult, getDoneIteratorResult, Validations } from '../utils';
+import { getContinueIteratorResult, getDoneIteratorResult, type IStoredValues, storedValues, Validations } from '../utils';
 
 /**
  * Returns the options `memoize` uses when none are given.
@@ -96,7 +96,7 @@ function pull<T>(iterable: Iterable<T>, cache: IMemoizeCache<T>): boolean {
 	return true;
 }
 
-class MemoizeAsFullIterable<T> implements Iterable<T> {
+class MemoizeAsFullIterable<T> implements Iterable<T>, IStoredValues<T> {
 	private readonly cache = createCache<T>();
 
 	constructor(private readonly source: Iterable<T>) {}
@@ -105,18 +105,37 @@ class MemoizeAsFullIterable<T> implements Iterable<T> {
 		return new MemoizeIterator(this.source, this.cache, true);
 	}
 
+	/**
+	 * Fills the cache, as the first `next()` of an iterator does, and gives it; a cache with an error is iterated, which throws
+	 * the error after the cached values (ADR 0038).
+	 */
+	[storedValues](): readonly T[] | undefined {
+		if (this.cache.error)
+			return undefined;
+		while (pull(this.source, this.cache));
+		return this.cache.values;
+	}
+
 	changePartialMemoizationBehaviour(): MemoizeAsPartialIterable<T> {
 		return new MemoizeAsPartialIterable(this.source);
 	}
 }
 
-class MemoizeAsPartialIterable<T> implements Iterable<T> {
+class MemoizeAsPartialIterable<T> implements Iterable<T>, IStoredValues<T> {
 	private readonly cache = createCache<T>();
 
 	constructor(private readonly source: Iterable<T>) {}
 
 	[Symbol.iterator](): Iterator<T> {
 		return new MemoizeIterator(this.source, this.cache, false);
+	}
+
+	/**
+	 * Gives the cache once a consumer has read it to the end: before, an Action iterates it and reads no further than it needs
+	 * (ADR 0038). A cache with an error is never finished.
+	 */
+	[storedValues](): readonly T[] | undefined {
+		return this.cache.finished ? this.cache.values : undefined;
 	}
 
 	changePartialMemoizationBehaviour(): MemoizeAsFullIterable<T> {

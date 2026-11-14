@@ -1,10 +1,11 @@
 import { Predicate } from '../types';
-import { isPlainArray, Validations } from '../utils';
+import { arrayOf, Validations } from '../utils';
 
 /**
  * Returns the last value accepted by a type guard, narrowing its type; reads the whole source.
  * On an array read by its built-in iterator, `predicate` is called from the last value backward, up to the first match,
  * like `Array.prototype.findLast`.
+ * The same holds for the iterable of `materialize`, and for the one of a `memoize` that is full or has been read to the end.
  * If `predicate` throws, the source is closed and the error propagates.
  * @operation `Action`
  * @param iterable - the source `Iterable`
@@ -24,6 +25,7 @@ export function findLast<T, S extends T>(iterable: Iterable<T>, predicate: (valu
  * Returns the last value that satisfies `predicate`; reads the whole source.
  * On an array read by its built-in iterator, `predicate` is called from the last value backward, up to the first match,
  * like `Array.prototype.findLast`.
+ * The same holds for the iterable of `materialize`, and for the one of a `memoize` that is full or has been read to the end.
  * If `predicate` throws, the source is closed and the error propagates.
  * @operation `Action`
  * @param iterable - the source `Iterable`
@@ -40,8 +42,9 @@ export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T |
 export function findLast<T>(iterable: Iterable<T>, predicate: Predicate<T>): T | undefined {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'findLast');
 	Validations.throwIfNotFunction(predicate, 'predicate', 'findLast');
-	if (isPlainArray(iterable))
-		return findLastInArray(iterable, predicate);
+	const array = arrayOf(iterable);
+	if (array !== undefined)
+		return findLastInArray(array, predicate);
 	let result: T | undefined;
 	let index = 0;
 	// for…of closes the source when the predicate throws

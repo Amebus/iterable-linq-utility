@@ -1,8 +1,9 @@
-import { isPlainArray, Validations } from '../utils';
+import { arrayOf, Validations } from '../utils';
 
 /**
  * Returns the index of the first value strictly equal (`===`) to `value`, like `Array.prototype.indexOf`;
  * stops and closes the source at the first match. An array read by its built-in iterator is searched without iterating it.
+ * The same holds for the iterable of `materialize`, and for the one of a `memoize` that is full or has been read to the end.
  * @operation `Action`
  * @param iterable - the source `Iterable`
  * @param value - the value to look for; `NaN` is never found, use `includes` or `findIndex` for it
@@ -17,8 +18,9 @@ import { isPlainArray, Validations } from '../utils';
 export function indexOf<T>(iterable: Iterable<T>, value: T): number {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'indexOf');
 	// the native method skips the holes, which the iteration reads as undefined: it is used only for another value (ADR 0036)
-	if (isPlainArray(iterable))
-		return value === undefined ? indexOfUndefined(iterable) : Array.prototype.indexOf.call(iterable, value);
+	const array = arrayOf(iterable);
+	if (array !== undefined)
+		return value === undefined ? indexOfUndefined(array) : Array.prototype.indexOf.call(array, value);
 	let index = 0;
 	// for…of closes the source when we return early
 	for (const v of iterable) {

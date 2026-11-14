@@ -2,6 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { expectTransformation } from '../_helpers/operationKind';
 
 import * as IterableLinq from '@/index';
+import { Functions } from '@/index';
 import { unit } from '@/types';
 
 const tapper = () => unit();
@@ -126,6 +127,28 @@ describe('IterableLinq.memoize', () => {
 				memoized.collectToArray();
 				expect(tapperSpy).toHaveBeenCalledTimes(expectedCalls);
 			});
+	});
+
+	test.each([
+		{ allowPartialMemoization: false, readFirst: false },
+		{ allowPartialMemoization: true, readFirst: true }
+	])('the Actions after a finished memoize($allowPartialMemoization) read the cache without iterating it', ({ allowPartialMemoization, readFirst }) => {
+		const memoized = IterableLinq.from([1, 5, 2, 5]).memoize({ allowPartialMemoization });
+		// a partial memoize is finished once read to the end; a full one is filled by the first Action
+		if (readFirst)
+			expect([...memoized]).toEqual([1, 5, 2, 5]);
+		const prototype = Object.getPrototypeOf(Functions.memoize([], { allowPartialMemoization }));
+		const iterator = vi.spyOn(prototype, Symbol.iterator);
+		try {
+			expect(memoized.count()).toBe(4);
+			expect(memoized.at(-1)).toBe(5);
+			const predicate = vi.fn((value: number) => value > 4);
+			expect(memoized.findLastIndex(predicate)).toBe(3);
+			expect(predicate.mock.calls).toEqual([[5, 3]]);
+			expect(iterator).not.toHaveBeenCalled();
+		} finally {
+			iterator.mockRestore();
+		}
 	});
 
 });

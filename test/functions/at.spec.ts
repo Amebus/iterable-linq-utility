@@ -10,7 +10,7 @@ import {
 	filter,
 	range
 } from '@/functions';
-import { expectNoIteration, withoutInputIterableThrowsException } from './functionsTestUtility';
+import { expectIterationOf, expectNoIteration, expectNoIterationOf, failedMemoize, storedSources, unfinishedMemoize, withoutInputIterableThrowsException } from './functionsTestUtility';
 
 describe('at', () => {
 
@@ -151,6 +151,33 @@ describe('at', () => {
 			const array = Object.assign([1, 2], { *[Symbol.iterator]() { yield 3; } });
 			expect(at(array, 0)).toBe(3);
 			expect(at(array, -1)).toBe(3);
+		});
+
+	});
+
+	describe('on the values of a memoize or a materialize', () => {
+
+		test.each(storedSources())('at reads $name without iterating it', ({ create }) => {
+			const source = create([1, 5, 2, 5]);
+			expect(expectNoIterationOf(source, () => [at(source, -2), at(source, 1), at(source, 4)])).toEqual([2, 5, undefined]);
+		});
+
+		test('at iterates a partial memoize that is not finished', () => {
+			const source = unfinishedMemoize([1, 2, 3]);
+			expect(expectIterationOf(source, () => at(source, -1))).toBe(3);
+		});
+
+		test('at iterates a partial memoize whose cache holds an error, which is thrown where the iteration throws it', () => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, true);
+			expect(expectIterationOf(failed, () => at(failed, 1))).toBe(2);
+			expect(() => expectIterationOf(failed, () => at(failed, -1))).toThrow(error);
+		});
+
+		test('at iterates a full memoize whose cache holds an error, which throws on the first read', () => {
+			const error = new Error('source');
+			const failed = failedMemoize(error, false);
+			expect(() => expectIterationOf(failed, () => at(failed, 1))).toThrow(error);
 		});
 
 	});

@@ -24,6 +24,32 @@ export function isPlainArray<T>(iterable: Iterable<T>): iterable is readonly T[]
 }
 
 /**
+ * The key of the method by which the iterables of `memoize` and `materialize` give their stored values as an array (ADR 0038).
+ * The package does not export it, so no other iterable has the method.
+ */
+export const storedValues: unique symbol = Symbol('storedValues');
+
+/**
+ * An iterable of the library that stores its values in an array: `[storedValues]()` gives the array, which nothing changes
+ * afterwards, or `undefined` when the iterable must be iterated.
+ */
+export interface IStoredValues<T> {
+	[storedValues](): readonly T[] | undefined;
+}
+
+/**
+ * The array an Action may read by index instead of iterating `iterable` (ADR 0036, 0038): a plain array itself, the stored
+ * values of a `materialize`, the cache of a full `memoize`, filled first, or of a partial `memoize` once it is finished.
+ * @returns `undefined` for any other iterable, for a partial `memoize` not finished and for a `memoize` whose cache holds an
+ * error
+ */
+export function arrayOf<T>(iterable: Iterable<T>): readonly T[] | undefined {
+	if (isPlainArray(iterable))
+		return iterable;
+	return (iterable as Partial<IStoredValues<T>>)[storedValues]?.();
+}
+
+/**
  * Whether an Action may read `iterable` as a `Set` (ADR 0036): a `Set` whose `[Symbol.iterator]` is the built-in one.
  */
 export function isPlainSet<T>(iterable: Iterable<T>): iterable is ReadonlySet<T> {

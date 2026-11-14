@@ -1,8 +1,9 @@
-import { isPlainArray, Validations } from '../utils';
+import { arrayOf, Validations } from '../utils';
 
 /**
  * Returns the index of the last value strictly equal (`===`) to `value`, like `Array.prototype.lastIndexOf`;
  * reads the whole source. An array read by its built-in iterator is read from the end, up to the first match.
+ * The same holds for the iterable of `materialize`, and for the one of a `memoize` that is full or has been read to the end.
  * @operation `Action`
  * @param iterable - the source `Iterable`
  * @param value - the value to look for; `NaN` is never found, use `findLastIndex` for it
@@ -16,8 +17,9 @@ import { isPlainArray, Validations } from '../utils';
  */
 export function lastIndexOf<T>(iterable: Iterable<T>, value: T): number {
 	Validations.throwIfNotIterable(iterable, 'iterable', 'lastIndexOf');
-	if (isPlainArray(iterable))
-		return lastIndexOfInArray(iterable, value);
+	const array = arrayOf(iterable);
+	if (array !== undefined)
+		return lastIndexOfInArray(array, value);
 	let result = -1;
 	let index = 0;
 	for (const v of iterable) {

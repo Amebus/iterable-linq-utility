@@ -49,6 +49,7 @@ export interface IIterableLinqBase<T> {
 	 * A non-negative index runs the chain up to the value, then closes the source; a negative index runs the whole chain,
 	 * keeping only the last `-index` values. On a chain created with `from` on an array, with no operation before, it reads the
 	 * array at the index.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * @operation `Action`
 	 * @param index - an integer; `-1` is the last value
 	 * @returns the value at `index`, or `undefined` if the chain has no value there
@@ -263,6 +264,7 @@ export interface IIterableLinqBase<T> {
 	/**
 	 * Counts the values of the chain; runs the whole chain. On a chain created with `from` on an array, a `Set` or a `Map`, with no
 	 * operation before, it returns the length or the size.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * @operation `Action`
 	 * @returns the number of values in the chain
 	 * @example
@@ -475,6 +477,7 @@ export interface IIterableLinqBase<T> {
 	 * Returns the last value accepted by a type guard, narrowing its type; runs the whole chain.
 	 * On a chain created with `from` on an array, with no operation before, `predicate` is called from the last value
 	 * backward, up to the first match, like `Array.prototype.findLast`.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Action`
 	 * @param predicate - a type guard called with each value and its index
@@ -493,6 +496,7 @@ export interface IIterableLinqBase<T> {
 	 * Returns the last value that satisfies `predicate`; runs the whole chain.
 	 * On a chain created with `from` on an array, with no operation before, `predicate` is called from the last value
 	 * backward, up to the first match, like `Array.prototype.findLast`.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Action`
 	 * @param predicate - called with each value and its index
@@ -510,6 +514,7 @@ export interface IIterableLinqBase<T> {
 	 * Returns the index of the last value that satisfies `predicate`; runs the whole chain.
 	 * On a chain created with `from` on an array, with no operation before, `predicate` is called from the last value
 	 * backward, up to the first match, like `Array.prototype.findLastIndex`.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * If `predicate` throws, the source is closed and the error propagates.
 	 * @operation `Action`
 	 * @param predicate - called with each value and its index
@@ -734,6 +739,7 @@ export interface IIterableLinqBase<T> {
 	 * Tells whether the chain contains `value`, compared with `SameValueZero` like `Array.prototype.includes`;
 	 * stops and closes the source at the first match. On a chain created with `from` on an array or a `Set`, with no operation
 	 * before, it uses `Array.prototype.includes` or `Set.prototype.has`.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * @operation `Action`
 	 * @param value - the value to look for; `NaN` matches `NaN`, and `+0` matches `-0`
 	 * @returns `true` if the chain contains `value`; `false` otherwise
@@ -749,6 +755,7 @@ export interface IIterableLinqBase<T> {
 	 * Returns the index of the first value strictly equal (`===`) to `value`, like `Array.prototype.indexOf`;
 	 * stops and closes the source at the first match. On a chain created with `from` on an array, with no operation before, it
 	 * searches the array without iterating it.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * @operation `Action`
 	 * @param value - the value to look for; `NaN` is never found, use `includes` or `findIndex` for it
 	 * @returns the index of the first value equal to `value`, or `-1` if there is none
@@ -901,6 +908,7 @@ export interface IIterableLinqBase<T> {
 	 * Returns the index of the last value strictly equal (`===`) to `value`, like `Array.prototype.lastIndexOf`;
 	 * runs the whole chain. On a chain created with `from` on an array, with no operation before, it reads the array from the
 	 * end, up to the first match.
+	 * The same holds right after `materialize()`, and after a `memoize()` that is full or has been read to the end.
 	 * @operation `Action`
 	 * @param value - the value to look for; `NaN` is never found, use `findLastIndex` for it
 	 * @returns the index of the last value equal to `value`, or `-1` if there is none
