@@ -130,4 +130,29 @@ describe('min', () => {
 		expect(min([{ a: 1 }, { a: 2 }], ['a'])).toEqual({ a: 1 });
 	});
 
+	describe('without a comparer, the default comparison', () => {
+
+		// the default comparison as a compare function: `<`, then `===`, otherwise 1
+		const defaultCompare = (a: unknown, b: unknown): number => ((a as any) < (b as any) ? -1 : a === b ? 0 : 1);
+		const date = new Date(0);
+		const sameDate = new Date(0);
+
+		test.each([
+			{ name: 'numbers', data: [3, 1, 4, 1, 5, 9, 2, 6] },
+			{ name: 'NaN first', data: [NaN, 1, 2] },
+			{ name: 'NaN in the middle', data: [1, NaN, 0, 2] },
+			{ name: '0 and -0', data: [0, -0] },
+			{ name: '-0 and 0', data: [-0, 0] },
+			{ name: 'strings', data: ['b', 'a', 'c', 'B'] },
+			{ name: 'numbers and strings', data: [2, '10', 3, '1', 1] },
+			{ name: 'equal dates', data: [date, sameDate] },
+			{ name: 'null and undefined', data: [undefined, null, 1, null] },
+			{ name: 'only null and undefined', data: [null, undefined] },
+			{ name: 'empty', data: [] }
+		])('min($name) gives the value of the default comparison as a function', ({ data }) => {
+			expect(min(data as unknown[])).toBe(min(data as unknown[], defaultCompare));
+		});
+
+	});
+
 });
