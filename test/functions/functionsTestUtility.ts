@@ -42,9 +42,9 @@ export async function withoutInputIterableThrowsExceptionAsync(fn: any) {
 
 /**
  * Runs `action` with the built-in iterator of `prototype` replaced by a spy, and checks that the action never calls it: the
- * Action reads an array or a `Set` without iterating it (ADR 0036).
+ * Action reads an array, a `Set` or a `Map` without iterating it (ADR 0036, 0037).
  */
-export function expectNoIteration<R>(prototype: typeof Array.prototype | typeof Set.prototype, action: () => R): R {
+export function expectNoIteration<R>(prototype: typeof Array.prototype | typeof Set.prototype | typeof Map.prototype, action: () => R): R {
 	const iterator = vi.spyOn(prototype as any, Symbol.iterator as any);
 	try {
 		const result = action();

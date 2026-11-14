@@ -31,7 +31,7 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | `shuffle` is a uniform Fisher-Yates with one swap per `next()`, and there is no `sample` operation; `random(seed)` returns the generator, and the order of a seed with the library generator changes only with a breaking change. | [0034](0034-shuffle-swaps-at-each-next-and-its-generator-restarts-from-the-seed.md) |
 | The specs and plans that agents write for a change stay local in `docs/superpowers/`, which git ignores; a decision goes in an ADR, the agreed design in the issue or the pull request. | [0028](0028-specs-and-plans-stay-out-of-the-repository.md) |
 | An ADR says what holds, limits included, and does not point to work or decisions to come; an issue is cited only as the source of a fact or as the origin of the decision, and the passages of ADR 0017, 0021 and 0025 that pointed to open issues bind nothing. | [0035](0035-an-adr-does-not-point-to-work-to-come.md) |
-| An Action reads by index an array whose `[Symbol.iterator]` is the built-in one, and `includes` calls `Set.prototype.has` on a `Set` with the built-in iterator, with the result of the iteration (a hole is `undefined`): `includes`, `indexOf`, `lastIndexOf`, `at`, `findLast` and `findLastIndex`, the last four from the end, and `findLast` and `findLastIndex` call the predicate backward up to the first match, like their native counterparts. | [0036](0036-actions-read-an-array-by-index.md) |
+| An Action reads by index an array whose `[Symbol.iterator]` is the built-in one, and a `Set` or a `Map` with the built-in iterator through the methods and getters of its prototype, with the result of the iteration (a hole is `undefined`): `includes`, `indexOf`, `lastIndexOf`, `at`, `findLast` and `findLastIndex`, the last four from the end, with `findLast` and `findLastIndex` calling the predicate backward up to the first match, like their native counterparts; `count()` returns the `length` or the `size`; `intersect` and `except` without a key selector copy such a `Set` or array given as `other` with the `Set` constructor, and `distinct` always keeps its `Set` of the values seen. | [0036](0036-actions-read-an-array-by-index.md), [0037](0037-count-reads-the-size-and-other-is-copied-with-the-set-constructor.md) |
 
 ## All records
 
@@ -72,7 +72,8 @@ What holds today, one row per decision, with the amendments merged in. The reaso
 | [0033](0033-a-second-sample-for-the-length-of-the-runs.md) | A second sample for the length of the runs | accepted |
 | [0034](0034-shuffle-swaps-at-each-next-and-its-generator-restarts-from-the-seed.md) | shuffle swaps at each next, and its generator restarts from the seed | accepted |
 | [0035](0035-an-adr-does-not-point-to-work-to-come.md) | An ADR does not point to work to come | accepted |
-| [0036](0036-actions-read-an-array-by-index.md) | Actions read an array by index | accepted |
+| [0036](0036-actions-read-an-array-by-index.md) | Actions read an array by index | accepted, amended by [0037](0037-count-reads-the-size-and-other-is-copied-with-the-set-constructor.md) |
+| [0037](0037-count-reads-the-size-and-other-is-copied-with-the-set-constructor.md) | count reads the size, and other is copied with the Set constructor | accepted |
 
 ## Adding a decision
 

@@ -49,3 +49,14 @@ test('except: key', async ({ bench }) => {
 		.add('key', () => sum(Functions.map(Functions.except(records, otherRecords, 'group'), record => record.score)))
 		.run();
 });
+
+// a Set as other is copied with the Set constructor (ADR 0037)
+const otherSet = new Set(other);
+
+test('except: other is a Set', async ({ bench }) => {
+	await cases(bench, 'except/set-other')
+		.add('native', () => sum(new Set(numbers).difference(otherSet)))
+		.add('chain', () => sum(from(numbers).except(otherSet)))
+		.add('Functions', () => sum(Functions.except(numbers, otherSet)))
+		.run();
+});

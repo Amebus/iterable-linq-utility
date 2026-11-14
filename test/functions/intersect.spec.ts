@@ -183,4 +183,35 @@ describe('intersect', () => {
 			intersect(users, others, 'missing');
 		});
 	});
+
+	describe('with a Set or an array read by the built-in iterator as other', () => {
+
+		test.each([
+			{ name: 'a Set', other: () => new Set([2, 3, NaN]) },
+			{ name: 'an array', other: () => [2, 3, NaN] }
+		])('copies $name given as other and leaves it unchanged', ({ other }) => {
+			const values = other();
+			const result = intersect([1, 2, 2, NaN, 4], values);
+			expect([...result]).toEqual([2, NaN]);
+			expect([...result]).toEqual([2, NaN]);
+			expect([...values]).toEqual([2, 3, NaN]);
+		});
+
+		test('a change to a Set given as other is seen by the next run, not by the run that started', () => {
+			const other = new Set([1]);
+			const result = intersect([1, 2], other);
+			const iterator = result[Symbol.iterator]();
+			expect(iterator.next()).toEqual({ done: false, value: 1 });
+			other.add(2);
+			expect([...{ [Symbol.iterator]: () => iterator }]).toEqual([]);
+			expect([...result]).toEqual([1, 2]);
+		});
+
+		test('reads a Set given as other with its own iterator through that iterator', () => {
+			const other = Object.assign(new Set([1]), { *[Symbol.iterator]() { yield 2; } });
+			expect([...intersect([1, 2], other)]).toEqual([2]);
+		});
+
+	});
+
 });

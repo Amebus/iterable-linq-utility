@@ -1,8 +1,13 @@
 import { Predicate } from '../types';
-import { Validations } from '../utils';
+import { isPlainArray, isPlainMap, isPlainSet, Validations } from '../utils';
+
+// the getters of the prototypes, called with `call`
+const setSize = Object.getOwnPropertyDescriptor(Set.prototype, 'size')!.get!;
+const mapSize = Object.getOwnPropertyDescriptor(Map.prototype, 'size')!.get!;
 
 /**
- * Counts the values of `iterable`; reads the whole source.
+ * Counts the values of `iterable`; reads the whole source. Of an array, a `Set` or a `Map` read by its built-in iterator it
+ * returns the length or the size, without iterating it.
  * @operation `Action`
  * @param iterable - the source `Iterable`
  * @returns the number of values in `iterable`
@@ -33,6 +38,13 @@ export function count<T>(iterable: Iterable<T>, predicate?: Predicate<T>): numbe
 	Validations.throwIfNotIterable(iterable, 'iterable', 'count');
 	let result = 0;
 	if (predicate === undefined) {
+		// the length or the size, from the prototype, so that a subclass that redefines it changes nothing (ADR 0037)
+		if (isPlainArray(iterable))
+			return iterable.length;
+		if (isPlainSet(iterable))
+			return setSize.call(iterable);
+		if (isPlainMap(iterable))
+			return mapSize.call(iterable);
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		for (const _value of iterable)
 			result++;

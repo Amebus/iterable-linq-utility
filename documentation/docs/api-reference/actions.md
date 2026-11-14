@@ -223,7 +223,7 @@ Collects the values of the chain into a `Set`. A value equal to an earlier one i
 
 ## count
 
-Counts the values of the chain; with a predicate, only the values that satisfy it. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`.
+Counts the values of the chain; with a predicate, only the values that satisfy it. The predicate is called with each value and its index. It reads the whole chain, so it does not terminate on an infinite source: limit it first, for example with `take` or `takeWhile`. Without a predicate, on an array, a `Set` or a `Map` read by its built-in iterator (the one passed to `Functions`, or a chain created with `from` on it with no operation before), it returns the length or the size without iterating it.
 
 === "Wrapper"
 

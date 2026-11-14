@@ -1,6 +1,6 @@
 # Actions read an array by index
 
-* Status: accepted
+* Status: accepted, amended by [ADR 0037](0037-count-reads-the-size-and-other-is-copied-with-the-set-constructor.md)
 * Deciders: Amebus
 * Date: 2026-11-09
 
