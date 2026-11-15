@@ -1,4 +1,5 @@
 import type {
+	ICollectToMapOptions,
 	Action,
 	AsyncAction,
 	Comparer,
@@ -120,8 +121,8 @@ export class IterableLinqWrapper<T> implements IIterableLinqBase<T> {
 		return collectToArray(this.iterable);
 	}
 
-	collectToMap<K, V>(keySelector: Mapper<T, K> | keyof T, valueSelector?: Mapper<T, V> | keyof T): Map<K, T | V> {
-		return collectToMap(this.iterable, keySelector as Mapper<T, K>, valueSelector as Mapper<T, V>);
+	collectToMap<K, V>(keySelector: Mapper<T, K> | keyof T, valueSelector?: Mapper<T, V> | keyof T | ICollectToMapOptions<K, T | V>, options?: ICollectToMapOptions<K, T | V>): Map<K, T | V> {
+		return collectToMap(this.iterable, keySelector as Mapper<T, K>, valueSelector as Mapper<T, T | V>, options);
 	}
 
 	collectToSet(): Set<T> {

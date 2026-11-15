@@ -60,6 +60,7 @@ See [Extending the API](../advanced-concepts/extending.md).
 | `IIterableLinq<T>`           | The chain. Augment it to declare the methods added with `extend`                                     |
 | `IIterableLinqBase<T>`       | The methods the library provides on every chain                                                       |
 | `Unit`                       | The type of `unit()`, returned by callbacks that have nothing to return. See [The Unit type](../basic-concepts.md#the-unit-type) |
+| `ICollectToMapOptions<K, V>` | Options of `collectToMap`: `merge`                                                                   |
 | `IRangeOptions`              | Options of `fromRange` and `Functions.range`: `step` and `reverse`                                    |
 | `ISortOptions`               | Options of `sort`: `descending`                                                                       |
 | `IShuffleOptions<TSeed>`     | Options of `shuffle`: `seed` and `random`                                                             |

@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, test } from 'vitest';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import { closableSource } from '../_helpers/generators/closableSource';
 import { throwingSource } from '../_helpers/generators/throwingSource';
 import { expectAction } from '../_helpers/operationKind';
@@ -27,7 +27,7 @@ describe('collectToMap', () => {
 		expect(() => collectToMapJs([], keySelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "keySelector" must be a function or a property key'));
 	});
 
-	test.each([null, {}, false])('collectToMap(range(5), v => v, %s) -> throw exception', valueSelector => {
+	test.each([null, false, ['a'], [() => 1]])('collectToMap(range(5), v => v, %s) -> throw exception', valueSelector => {
 		const collectToMapJs = collectToMap as any;
 		expect(() => collectToMapJs(range(5), (v: number) => v, valueSelector)).toThrow(new Error('[iterable-linq-utility/collectToMap] The "valueSelector" must be a function or a property key'));
 	});
@@ -157,4 +157,128 @@ describe('collectToMap', () => {
 		expectTypeOf(collectToMap(people, 'id', undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
 		expectTypeOf(collectToMap(people, p => p.id, undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
 	});
+
+	describe('with a merge function', () => {
+
+		const words = ['apple', 'avocado', 'banana', 'apricot', 'blueberry', 'cherry'];
+		const initial = (word: string): string => word[0];
+
+		test('merge decides the value of a repeated key', () => {
+			expect(collectToMap(words, initial, undefined, { merge: existing => existing }))
+				.toEqual(new Map([['a', 'apple'], ['b', 'banana'], ['c', 'cherry']]));
+			expect(collectToMap(words, initial, () => 1, { merge: (existing, incoming) => existing + incoming }))
+				.toEqual(new Map([['a', 3], ['b', 2], ['c', 1]]));
+		});
+
+		test('merge is called only for a repeated key, with the value stored, the selected value and the key', () => {
+			const merge = vi.fn((existing: number, incoming: number) => existing + incoming);
+			collectToMap(words, initial, word => word.length, { merge });
+			expect(merge.mock.calls).toEqual([
+				[5, 7, 'a'],
+				[12, 7, 'a'],
+				[6, 9, 'b']
+			]);
+		});
+
+		test('merge is called for a key stored with an undefined value', () => {
+			const merge = vi.fn(() => 'merged');
+			const result = collectToMap([1, 2, 3], () => 'key', v => (v === 1 ? undefined : String(v)), { merge });
+			expect(merge.mock.calls[0]).toEqual([undefined, '2', 'key']);
+			expect(result).toEqual(new Map([['key', 'merged']]));
+		});
+
+		test('the keys of merge are compared with SameValueZero', () => {
+			const merge = vi.fn((existing: number, incoming: number) => existing + incoming);
+			expect(collectToMap([NaN, NaN, 0, -0], v => v, () => 1, { merge })).toEqual(new Map([[NaN, 2], [0, 2]]));
+			expect(merge).toHaveBeenCalledTimes(2);
+		});
+
+		test('a repeated key keeps its position', () => {
+			expect([...collectToMap(words, initial, undefined, { merge: (_existing, incoming) => incoming }).keys()]).toEqual(['a', 'b', 'c']);
+		});
+
+		test.each([
+			{ name: 'keys', keySelector: 'id' as const, valueSelector: 'name' as const },
+			{ name: 'a key and a function', keySelector: 'id' as const, valueSelector: (p: { name: string }) => p.name },
+			{ name: 'a function and a key', keySelector: (p: { id: number }) => p.id, valueSelector: 'name' as const },
+			{ name: 'functions', keySelector: (p: { id: number }) => p.id, valueSelector: (p: { name: string }) => p.name }
+		])('merge works with $name as selectors', ({ keySelector, valueSelector }) => {
+			const merge = (existing: string, incoming: string): string => `${existing}+${incoming}`;
+			expect(collectToMap(people, keySelector as never, valueSelector as never, { merge } as never))
+				.toEqual(new Map([[1, 'Ada+Cy'], [2, 'Bob']]));
+		});
+
+		test('the options can follow the key selector, to store the values themselves', () => {
+			expect(collectToMap(people, 'id', { merge: existing => existing }))
+				.toEqual(new Map([[1, people[0]], [2, people[1]]]));
+			expect(collectToMap(words, initial, { merge: existing => existing }))
+				.toEqual(new Map([['a', 'apple'], ['b', 'banana'], ['c', 'cherry']]));
+			expectTypeOf(collectToMap(words, initial, { merge: existing => existing })).toEqualTypeOf<Map<string, string>>();
+			expectTypeOf(collectToMap(people, 'id', { merge: existing => existing })).toEqualTypeOf<Map<number, { id: number; name: string }>>();
+		});
+
+		test('empty options after the key selector keep the last value', () => {
+			expect(collectToMap(people, 'id', {})).toEqual(new Map([[1, people[2]], [2, people[1]]]));
+		});
+
+		test('options after the key selector are validated as options', () => {
+			expect(() => collectToMap(people, 'id', { merge: 1 } as never))
+				.toThrow(new Error('[iterable-linq-utility/collectToMap] The "merge" function must be provided'));
+		});
+
+		test('an object after the key selector is a value selector when the options follow it', () => {
+			expect(() => collectToMap(people, 'id', {} as never, {}))
+				.toThrow(new Error('[iterable-linq-utility/collectToMap] The "valueSelector" must be a function or a property key'));
+		});
+
+		test('merge works with a key and the values themselves', () => {
+			expect(collectToMap(people, 'id', undefined, { merge: existing => existing }))
+				.toEqual(new Map([[1, people[0]], [2, people[1]]]));
+		});
+
+		test('a merge that throws closes the source and the error propagates', () => {
+			const error = new Error('duplicate key');
+			const { state, iterable } = closableSource([1, 2, 1, 3]);
+			expect(() => collectToMap(iterable, v => v, undefined, {
+				merge: () => {
+					throw error;
+				}
+			})).toThrow(error);
+			expect(state.closed).toBe(true);
+		});
+
+		test.each([
+			{ name: 'no options', options: undefined },
+			{ name: 'empty options', options: {} },
+			{ name: 'an undefined merge', options: { merge: undefined } }
+		])('with $name a later value replaces the earlier one', ({ options }) => {
+			expect(collectToMap(people, 'id', 'name', options)).toEqual(new Map([[1, 'Cy'], [2, 'Bob']]));
+		});
+
+		test.each([null, 1, 'merge', () => 1])('collectToMap rejects the options %s', options => {
+			expect(() => collectToMap(people, 'id', 'name', options as never))
+				.toThrow(new Error('[iterable-linq-utility/collectToMap] The "options" parameter must be an object'));
+		});
+
+		test.each([null, 1, 'last', {}])('collectToMap rejects the merge %s', merge => {
+			expect(() => collectToMap(people, 'id', 'name', { merge } as never))
+				.toThrow(new Error('[iterable-linq-utility/collectToMap] The "merge" function must be provided'));
+		});
+
+		test('merge takes and returns the type of the values stored', () => {
+			expectTypeOf(collectToMap(words, initial, () => 1, { merge: (existing, incoming) => existing + incoming })).toEqualTypeOf<Map<string, number>>();
+			collectToMap(words, initial, () => 1, {
+				merge: (existing, incoming, key) => {
+					expectTypeOf(existing).toEqualTypeOf<number>();
+					expectTypeOf(incoming).toEqualTypeOf<number>();
+					expectTypeOf(key).toEqualTypeOf<string>();
+					return existing;
+				}
+			});
+			// @ts-expect-error merge returns the type of the values stored
+			collectToMap(words, initial, () => 1, { merge: () => 'one' });
+		});
+
+	});
+
 });
