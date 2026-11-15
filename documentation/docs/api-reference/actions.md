@@ -145,7 +145,7 @@ Collects the values of the chain into an `Array`, in order.
 
 ## collectToMap
 
-Collects the values of the chain into a `Map`, with the key returned by the key selector. A later value with the same key replaces the earlier one; the keys are compared as `Map` does (`SameValueZero`). The value selector, when given, returns the value to store instead of the value itself. Both selectors are called with each value and its index.
+Collects the values of the chain into a `Map`, with the key returned by the key selector. A later value with the same key replaces the earlier one, unless a `merge` function [combines them](#with-a-merge-function); the keys are compared as `Map` does (`SameValueZero`). The value selector, when given, returns the value to store instead of the value itself. Both selectors are called with each value and its index.
 
 === "Wrapper"
 
@@ -173,7 +173,7 @@ Collects the values of the chain into a `Map`, with the key returned by the key 
     // Map { 1 => 'Ada', 2 => 'Bob' }
     ```
 
-Throws an `Error` if the key selector is neither a function nor a property key, or if a value selector is given and is neither a function nor a property key.
+Throws an `Error` if the key selector is neither a function nor a property key, if a value selector is given and is neither a function nor a property key, if the options are not an object, or if `merge` is given and is not a function.
 
 ### With a property key
 
@@ -196,6 +196,47 @@ In place of the key selector and the value selector, each one can be a property 
     const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
     Functions.collectToMap(orders, 'id', 'customer');
     // Map { 1 => 'Ann', 2 => 'Bob', 3 => 'Ann' }
+    ```
+
+### With a merge function
+
+An options object, after the value selector or right after the key selector, takes a `merge` function. When a key is already in the `Map`, `merge` is called with the value stored, the value selected from the new element and the key, and its result is stored. The key keeps its position. To keep the values themselves, pass the options right after the key selector: `collectToMap('customer', { merge })`.
+
+| To                         | `merge`                                                                  |
+| -------------------------- | ------------------------------------------------------------------------ |
+| keep the last value        | omit it: the default                                                     |
+| keep the first value       | `existing => existing`                                                   |
+| combine the values         | `(existing, incoming) => existing + incoming`                            |
+| reject a repeated key      | a function that throws, as `ToDictionary` in LINQ                        |
+
+If `merge` throws, the source is closed and the error propagates.
+
+=== "Wrapper"
+
+    ```typescript
+    import * as IterableLinq from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+
+    IterableLinq.from(orders).collectToMap('customer', 'price', { merge: (total, price) => total + price });
+    // Map { 'Ann' => 17, 'Bob' => 5 }
+
+    IterableLinq.from(orders).collectToMap('customer', { merge: first => first });
+    // Map { 'Ann' => { id: 1, customer: 'Ann', price: 10 }, 'Bob' => { id: 2, customer: 'Bob', price: 5 } }
+
+    IterableLinq.from(orders).collectToMap('customer', 'id', {
+        merge: (_first, _second, customer) => { throw new Error(`Repeated customer: ${customer}`); }
+    });
+    // Error: Repeated customer: Ann
+    ```
+=== "Raw Function"
+
+    ```typescript
+    import { Functions } from 'iterable-linq-utility';
+
+    const orders = [{ id: 1, customer: 'Ann', price: 10 }, { id: 2, customer: 'Bob', price: 5 }, { id: 3, customer: 'Ann', price: 7 }];
+    Functions.collectToMap(orders, 'customer', 'price', { merge: (total, price) => total + price });
+    // Map { 'Ann' => 17, 'Bob' => 5 }
     ```
 
 ## collectToSet

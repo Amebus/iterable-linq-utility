@@ -1,4 +1,5 @@
 import type { Action, AsyncAction } from './action';
+import type { ICollectToMapOptions } from './collectToMapOptions';
 import type { Comparer } from './comparer';
 import type { FlatIterable } from './flatIterable';
 import type { KeysOfType, KeysOverlapping } from './keysOfType';
@@ -166,72 +167,112 @@ export interface IIterableLinqBase<T> {
 	collectToMap<P extends keyof T>(key: P): Map<T[P], T>;
 
 	/**
+	 * Runs the chain and collects its values into a `Map`, with the key returned by `keySelector`; `options.merge` decides the
+	 * value of a repeated key (`SameValueZero`, as in `Map`), which otherwise keeps the later value.
+	 * If `keySelector` or `merge` throws, the source is closed and the error propagates.
+	 * @operation `Action`
+	 * @param keySelector - called with each value and its index; returns the key of the value
+	 * @param options - `merge`, called when a key is repeated with the value stored, the new value and the key; returns the value to store
+	 * @returns a `Map` from each key to its value; an empty `Map` when the chain is empty
+	 * @throws Error if `keySelector` is neither a function nor a property key, or if a provided `merge` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from(['apple', 'avocado', 'banana']).collectToMap(w => w[0], { merge: first => first }); // Map { 'a' => 'apple', 'b' => 'banana' }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<K>(keySelector: Mapper<T, K>, options: ICollectToMapOptions<K, T>): Map<K, T>;
+
+	/**
+	 * Collects the values of the chain into a `Map`, with their property `key` as the key; `options.merge` decides the value of
+	 * a repeated key (`SameValueZero`, as in `Map`), which otherwise keeps the later value.
+	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read, and an error of `merge` propagates:
+	 * the source is closed.
+	 * @operation `Action`
+	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
+	 * @param options - `merge`, called when a key is repeated with the value stored, the new value and the key; returns the value to store
+	 * @returns a `Map` from each key to its value; an empty `Map` when the chain is empty
+	 * @throws Error if `key` is not a property key, or if a provided `merge` is not a function
+	 * @example
+	 * ```ts
+	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 1, name: 'b' }]).collectToMap('id', { merge: first => first }); // Map { 1 => { id: 1, name: 'a' } }
+	 * ```
+	 * @since next
+	 */
+	collectToMap<P extends keyof T>(key: P, options: ICollectToMapOptions<T[P], T>): Map<T[P], T>;
+
+	/**
 	 * Runs the chain and collects its values into a `Map`, with the key returned by `keySelector` and the value returned by `valueSelector`.
-	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one, unless `options.merge` combines them.
 	 * If `keySelector` or `valueSelector` throws, the source is closed and the error propagates.
 	 * @operation `Action`
 	 * @param keySelector - called with each value and its index; returns the key of the value
 	 * @param valueSelector - called with each value and its index; returns the value to store; `undefined` stores the value itself
+	 * @param options - `merge`, called when a key is repeated with the value stored, the value selected from the new element and the key; returns the value to store. If it throws, the source is closed and the error propagates
 	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
-	 * @throws Error if `keySelector` is neither a function nor a property key, or if a provided `valueSelector` is neither a function nor a property key
+	 * @throws Error if `keySelector` is neither a function nor a property key, if a provided `valueSelector` is neither a function nor a property key, if a provided `options` is not an object, or if a provided `merge` is not a function
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, v => v.name); // Map { 1 => 'a', 2 => 'b' }
+	 * IterableLinq.from(['apple', 'avocado', 'banana']).collectToMap(w => w[0], () => 1, { merge: (a, b) => a + b }); // Map { 'a' => 2, 'b' => 1 }
 	 * ```
 	 * @since 0.10.0
 	 */
-	collectToMap<K, V = T>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined): Map<K, V>;
+	collectToMap<K, V = T>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, V> | undefined, options?: ICollectToMapOptions<K, V>): Map<K, V>;
 
 	/**
 	 * Collects the values of the chain into a `Map`, with the key returned by `keySelector` and their property `valueKey` as the value.
-	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one, unless `options.merge` combines them.
 	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
 	 * @operation `Action`
 	 * @param keySelector - called with each value and its index; returns the key of the value
 	 * @param valueKey - the property to store: a `string`, a `symbol` or a `number`
+	 * @param options - `merge`, called when a key is repeated with the value stored, the value selected from the new element and the key; returns the value to store. If it throws, the source is closed and the error propagates
 	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
-	 * @throws Error if a selector is neither a function nor a property key
+	 * @throws Error if a selector is neither a function nor a property key, if a provided `options` is not an object, or if a provided `merge` is not a function
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap(v => v.id, 'name'); // Map { 1 => 'a', 2 => 'b' }
 	 * ```
 	 * @since 0.13.0
 	 */
-	collectToMap<K, Q extends keyof T>(keySelector: Mapper<T, K>, valueKey: Q): Map<K, T[Q]>;
+	collectToMap<K, Q extends keyof T>(keySelector: Mapper<T, K>, valueKey: Q, options?: ICollectToMapOptions<K, T[Q]>): Map<K, T[Q]>;
 
 	/**
 	 * Collects the values of the chain into a `Map`, with their property `key` as the key and the value returned by `valueSelector`.
-	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one, unless `options.merge` combines them.
 	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
 	 * @operation `Action`
 	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
 	 * @param valueSelector - called with each value and its index; returns the value to store; `undefined` stores the value itself
+	 * @param options - `merge`, called when a key is repeated with the value stored, the value selected from the new element and the key; returns the value to store. If it throws, the source is closed and the error propagates
 	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
-	 * @throws Error if a selector is neither a function nor a property key
+	 * @throws Error if a selector is neither a function nor a property key, if a provided `options` is not an object, or if a provided `merge` is not a function
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id', v => v.name.toUpperCase()); // Map { 1 => 'A', 2 => 'B' }
 	 * ```
 	 * @since 0.13.0
 	 */
-	collectToMap<P extends keyof T, V = T>(key: P, valueSelector: Mapper<T, V> | undefined): Map<T[P], V>;
+	collectToMap<P extends keyof T, V = T>(key: P, valueSelector: Mapper<T, V> | undefined, options?: ICollectToMapOptions<T[P], V>): Map<T[P], V>;
 
 	/**
 	 * Collects the values of the chain into a `Map`, with their property `key` as the key and their property `valueKey` as the value.
-	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one.
+	 * A later value with the same key (`SameValueZero`, as in `Map`) replaces the earlier one, unless `options.merge` combines them.
 	 * A value that is `null` or `undefined` throws a `TypeError` where a property is read: the source is closed and the error propagates.
 	 * @operation `Action`
 	 * @param key - the property that gives the key: a `string`, a `symbol` or a `number`
 	 * @param valueKey - the property to store: a `string`, a `symbol` or a `number`
+	 * @param options - `merge`, called when a key is repeated with the value stored, the value selected from the new element and the key; returns the value to store. If it throws, the source is closed and the error propagates
 	 * @returns a `Map` from each key to the value selected from the last value with that key; an empty `Map` when the chain is empty
-	 * @throws Error if a selector is neither a function nor a property key
+	 * @throws Error if a selector is neither a function nor a property key, if a provided `options` is not an object, or if a provided `merge` is not a function
 	 * @example
 	 * ```ts
 	 * IterableLinq.from([{ id: 1, name: 'a' }, { id: 2, name: 'b' }]).collectToMap('id', 'name'); // Map { 1 => 'a', 2 => 'b' }
 	 * ```
 	 * @since 0.13.0
 	 */
-	collectToMap<P extends keyof T, Q extends keyof T>(key: P, valueKey: Q): Map<T[P], T[Q]>;
+	collectToMap<P extends keyof T, Q extends keyof T>(key: P, valueKey: Q, options?: ICollectToMapOptions<T[P], T[Q]>): Map<T[P], T[Q]>;
 
 	/**
 	 * Runs the chain and collects its values into a `Set`: a value equal to an earlier one (`SameValueZero`, as in `Set`) is left out.

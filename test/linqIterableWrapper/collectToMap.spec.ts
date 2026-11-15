@@ -16,9 +16,9 @@ describe('IterableLinq.collectToMap', () => {
 		expect(() => chain.collectToMap(keySelector)).toThrow(Error);
 	});
 
-	test('IterableLinq.fromRange(5).collectToMap(v => v, {}) -> throw exception', () => {
+	test('IterableLinq.fromRange(5).collectToMap(v => v, [\'a\']) -> throw exception', () => {
 		const chain = IterableLinq.fromRange(5) as any;
-		expect(() => chain.collectToMap((v: number) => v, {})).toThrow(Error);
+		expect(() => chain.collectToMap((v: number) => v, ['a'] as never)).toThrow(Error);
 	});
 
 	test('IterableLinq.collectToMap keeps the last value of each key', () => {
@@ -58,4 +58,19 @@ describe('IterableLinq.collectToMap', () => {
 		expectTypeOf(chain.collectToMap('id', undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
 		expectTypeOf(chain.collectToMap(p => p.id, undefined)).toEqualTypeOf<Map<number, { id: number; name: string }>>();
 	});
+
+	test('merge decides the value of a repeated key', () => {
+		const words = IterableLinq.from(['apple', 'avocado', 'banana', 'apricot']);
+		expect(words.collectToMap(w => w[0], () => 1, { merge: (existing, incoming) => existing + incoming }))
+			.toEqual(new Map([['a', 3], ['b', 1]]));
+		expect(words.collectToMap(w => w[0], undefined, { merge: existing => existing }))
+			.toEqual(new Map([['a', 'apple'], ['b', 'banana']]));
+		expect(words.collectToMap(w => w[0], { merge: existing => existing }))
+			.toEqual(new Map([['a', 'apple'], ['b', 'banana']]));
+		expect(IterableLinq.from([{ id: 1, n: 'a' }, { id: 1, n: 'b' }]).collectToMap('id', { merge: existing => existing }))
+			.toEqual(new Map([[1, { id: 1, n: 'a' }]]));
+		expect(IterableLinq.from([{ id: 1, n: 'a' }, { id: 1, n: 'b' }]).collectToMap('id', 'n', { merge: (existing, incoming) => existing + incoming }))
+			.toEqual(new Map([[1, 'ab']]));
+	});
+
 });

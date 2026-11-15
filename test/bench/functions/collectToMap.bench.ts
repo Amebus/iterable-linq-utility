@@ -39,3 +39,24 @@ test('collectToMap: records by id', async ({ bench }) => {
 		.add('key', () => Functions.collectToMap(records, 'id'))
 		.run();
 });
+
+// the total of the scores by group: merge against a loop that reads the Map
+function totalsByGroup(values: Helpers.IRecord[]): Map<string, number> {
+	const map = new Map<string, number>();
+	for (const r of values) {
+		const total = map.get(r.group);
+		map.set(r.group, total === undefined ? r.score : total + r.score);
+	}
+	return map;
+}
+
+const add = (total: number, score: number): number => total + score;
+
+test('collectToMap: merge', async ({ bench }) => {
+	await cases(bench, 'collectToMap/merge')
+		.add('native', () => totalsByGroup(records))
+		.add('chain', () => from(records).collectToMap(r => r.group, r => r.score, { merge: add }))
+		.add('Functions', () => Functions.collectToMap(records, r => r.group, r => r.score, { merge: add }))
+		.add('keys', () => Functions.collectToMap(records, 'group', 'score', { merge: add }))
+		.run();
+});
